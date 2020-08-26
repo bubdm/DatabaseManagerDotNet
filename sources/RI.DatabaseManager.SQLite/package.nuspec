@@ -1,0 +1,32 @@
+﻿<?xml version="1.0"?>
+
+<package xmlns="http://schemas.microsoft.com/packaging/2013/05/nuspec.xsd">
+  <metadata>
+    <id>RI.DatabaseManager.SQLite</id>
+    <version>1.0.0.0</version>
+    <authors>RotenInformatik</authors>
+    <owners>RotenInformatik</owners>
+    <title>RI.DatabaseManager.SQLite</title>
+    <copyright>Copyright (c) 2017-2020 Roten Informatik</copyright>
+    <description>Database manager for .NET</description>
+    <tags>dotnet database manager sqlite sql-server</tags>
+    <icon>images\ICON.png</icon>
+    <requireLicenseAcceptance>true</requireLicenseAcceptance>
+    <license type="expression">Apache-2.0</license>
+    <projectUrl>https://github.com/RotenInformatik/DatabaseManagerDotNet</projectUrl>
+    <dependencies>
+      <group targetFramework=".NETStandard2.0">
+        <dependency id="RI.Abstractions.Common" version="1.0.0" />
+        <dependency id="RI.DatabaseManager.Common" version="1.0.0" />
+        <dependency id="System.Data.SQLite.Core" version="1.0.113.1" />
+      </group>
+    </dependencies>
+  </metadata>
+  <files>
+    <file src="bin\Debug\netstandard2.0\RI.DatabaseManager.SQLite.dll"
+          target="lib\netstandard2.0\RI.DatabaseManager.SQLite.dll" />
+    <file src="bin\Debug\netstandard2.0\RI.DatabaseManager.SQLite.xml"
+          target="lib\netstandard2.0\RI.DatabaseManager.SQLite.xml" />
+    <file src="..\..\ICON.png" target="images\ICON.png" />
+  </files>
+</package>
