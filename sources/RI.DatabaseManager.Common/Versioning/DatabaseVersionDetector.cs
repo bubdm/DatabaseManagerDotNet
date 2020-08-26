@@ -1,9 +1,11 @@
 ﻿using System.Data.Common;
 
+using RI.DatabaseManager.Manager;
 
 
 
-namespace RI.Framework.Data.Database.Versioning
+
+namespace RI.DatabaseManager.Versioning
 {
     /// <summary>
     ///     Implements a base class for database version detectors.

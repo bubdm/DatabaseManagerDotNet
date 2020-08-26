@@ -2,11 +2,11 @@
 
 <package xmlns="http://schemas.microsoft.com/packaging/2013/05/nuspec.xsd">
   <metadata>
-    <id>RI.DatabaseManager.SqlServer</id>
+    <id>RI.DatabaseManager.Microsoft.SqlServer</id>
     <version>1.0.0.0</version>
     <authors>RotenInformatik</authors>
     <owners>RotenInformatik</owners>
-    <title>RI.DatabaseManager.SqlServer</title>
+    <title>RI.DatabaseManager.Microsoft.SqlServer</title>
     <copyright>Copyright (c) 2017-2020 Roten Informatik</copyright>
     <description>Database manager for .NET</description>
     <tags>dotnet database manager sqlite sql-server</tags>
@@ -23,10 +23,10 @@
     </dependencies>
   </metadata>
   <files>
-    <file src="bin\Debug\netstandard2.0\RI.DatabaseManager.SqlServer.dll"
-          target="lib\netstandard2.0\RI.DatabaseManager.SqlServer.dll" />
-    <file src="bin\Debug\netstandard2.0\RI.DatabaseManager.SqlServer.xml"
-          target="lib\netstandard2.0\RI.DatabaseManager.SqlServer.xml" />
+    <file src="bin\Debug\netstandard2.0\RI.DatabaseManager.Microsoft.SqlServer.dll"
+          target="lib\netstandard2.0\RI.DatabaseManager.Microsoft.SqlServer.dll" />
+    <file src="bin\Debug\netstandard2.0\RI.DatabaseManager.Microsoft.SqlServer.xml"
+          target="lib\netstandard2.0\RI.DatabaseManager.Microsoft.SqlServer.xml" />
     <file src="..\..\ICON.png" target="images\ICON.png" />
   </files>
 </package>

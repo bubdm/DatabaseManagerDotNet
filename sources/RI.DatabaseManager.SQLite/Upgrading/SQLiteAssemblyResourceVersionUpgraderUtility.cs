@@ -1,9 +1,11 @@
 ﻿using System.Data.SQLite;
 
+using RI.DatabaseManager.Manager;
 
 
 
-namespace RI.Framework.Data.Database.Upgrading
+
+namespace RI.DatabaseManager.Upgrading
 {
     /// <summary>
     ///     Implements an assembly version upgrade step extractor for SQLite databases.

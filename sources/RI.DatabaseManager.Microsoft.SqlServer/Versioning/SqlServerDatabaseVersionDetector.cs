@@ -4,10 +4,12 @@ using System.Data;
 
 using Microsoft.Data.SqlClient;
 
+using RI.DatabaseManager.Manager;
 
 
 
-namespace RI.Framework.Data.Database.Versioning
+
+namespace RI.DatabaseManager.Versioning
 {
     /// <summary>
     ///     Implements a database version detector for SQL Server databases.

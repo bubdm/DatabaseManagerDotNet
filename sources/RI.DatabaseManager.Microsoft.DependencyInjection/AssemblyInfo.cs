@@ -5,16 +5,16 @@ using System.Runtime.InteropServices;
 
 
 
-[assembly: AssemblyTitle("RI.DatabaseManager.SqlServer"),]
+[assembly: AssemblyTitle("RI.DatabaseManager.Microsoft.DependencyInjection"),]
 [assembly: AssemblyDescription("Database manager for .NET"),]
-[assembly: Guid("A818288C-1A73-4B2D-9488-1DB535DF0C4F"),]
+[assembly: Guid("DD095019-BDF2-41E5-9E4B-3FE5C70961C9"),]
 
 [assembly: AssemblyProduct("RotenInformatik/DatabaseManagerDotNet"),]
 [assembly: AssemblyCompany("Roten Informatik"),]
 [assembly: AssemblyCopyright("Copyright (c) 2017-2020 Roten Informatik"),]
 [assembly: AssemblyTrademark(""),]
 [assembly: AssemblyCulture(""),]
-[assembly: CLSCompliant(true),]
+[assembly: CLSCompliant(false),]
 [assembly: AssemblyVersion("1.0.0.0"),]
 [assembly: AssemblyFileVersion("1.0.0.0"),]
 [assembly: AssemblyInformationalVersion("1.0.0.0"),]

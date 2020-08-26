@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="15.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <PropertyGroup>
     <!-- The configuration and platform will be used to determine which assemblies to include from solution and
@@ -29,7 +29,7 @@
     <DocumentationSources>
       <DocumentationSource sourceFile="..\RI.DatabaseManager.Common\RI.DatabaseManager.Common.csproj" />
       <DocumentationSource sourceFile="..\RI.DatabaseManager.SQLite\RI.DatabaseManager.SQLite.csproj" />
-      <DocumentationSource sourceFile="..\RI.DatabaseManager.SqlServer\RI.DatabaseManager.SqlServer.csproj" />
+      <DocumentationSource sourceFile="..\RI.DatabaseManager.Microsoft.SqlServer\RI.DatabaseManager.Microsoft.SqlServer.csproj" />
     </DocumentationSources>
   </PropertyGroup>
   <!-- There are no properties for these groups.  AnyCPU needs to appear in order for Visual Studio to perform
@@ -78,8 +78,8 @@
       <Project>{327ac415-7175-41a4-a5fa-10132d23426b}</Project>
       <Private>True</Private>
     </ProjectReference>
-    <ProjectReference Include="..\RI.DatabaseManager.SqlServer\RI.DatabaseManager.SqlServer.csproj">
-      <Name>RI.DatabaseManager.SqlServer</Name>
+    <ProjectReference Include="..\RI.DatabaseManager.Microsoft.SqlServer\RI.DatabaseManager.Microsoft.SqlServer.csproj">
+      <Name>RI.DatabaseManager.Microsoft.SqlServer</Name>
       <Project>{b5024b4c-46eb-4fe3-b32b-6cc0fa6bc429}</Project>
       <Private>True</Private>
     </ProjectReference>

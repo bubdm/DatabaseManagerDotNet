@@ -4,12 +4,13 @@ using System.Data;
 
 using Microsoft.Data.SqlClient;
 
-using RI.Framework.Data.Database.Scripts;
+using RI.DatabaseManager.Manager;
+using RI.DatabaseManager.Scripts;
 
 
 
 
-namespace RI.Framework.Data.Database.Cleanup
+namespace RI.DatabaseManager.Cleanup
 {
     /// <summary>
     ///     Implements a database cleanup processor for SQL Server databases.

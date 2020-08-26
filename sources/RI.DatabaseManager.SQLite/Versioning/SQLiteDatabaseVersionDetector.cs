@@ -3,10 +3,12 @@ using System.Collections.Generic;
 using System.Data;
 using System.Data.SQLite;
 
+using RI.DatabaseManager.Manager;
 
 
 
-namespace RI.Framework.Data.Database.Versioning
+
+namespace RI.DatabaseManager.Versioning
 {
     /// <summary>
     ///     Implements a database version detector for SQLite databases.

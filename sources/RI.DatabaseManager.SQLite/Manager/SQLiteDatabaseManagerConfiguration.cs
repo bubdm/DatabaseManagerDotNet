@@ -4,7 +4,7 @@ using System.Data.SQLite;
 
 
 
-namespace RI.Framework.Data.Database
+namespace RI.DatabaseManager.Manager
 {
     /// <summary>
     ///     Stores the database configuration for an SQLite database manager.

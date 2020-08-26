@@ -7,12 +7,13 @@ using System.Linq;
 using System.Reflection;
 using System.Text;
 
-using RI.Framework.Data.Database.Scripts;
+using RI.DatabaseManager.Manager;
+using RI.DatabaseManager.Scripts;
 
 
 
 
-namespace RI.Framework.Data.Database.Upgrading
+namespace RI.DatabaseManager.Upgrading
 {
     /// <summary>
     ///     Provides an utility to extract all version upgrade steps from an assembly.

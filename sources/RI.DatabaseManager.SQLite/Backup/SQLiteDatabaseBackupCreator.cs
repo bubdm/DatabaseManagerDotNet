@@ -4,10 +4,12 @@ using System.Data.SQLite;
 using System.IO;
 using System.Threading;
 
+using RI.DatabaseManager.Manager;
 
 
 
-namespace RI.Framework.Data.Database.Backup
+
+namespace RI.DatabaseManager.Backup
 {
     /// <summary>
     ///     Implements a database backup creator for SQLite databases.

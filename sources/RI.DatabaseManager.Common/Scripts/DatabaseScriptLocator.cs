@@ -2,10 +2,12 @@
 using System.Collections.Generic;
 using System.Linq;
 
+using RI.DatabaseManager.Manager;
 
 
 
-namespace RI.Framework.Data.Database.Scripts
+
+namespace RI.DatabaseManager.Scripts
 {
     /// <summary>
     ///     Implements a base class for database script locators.

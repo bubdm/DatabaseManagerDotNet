@@ -3,7 +3,7 @@
 
 
 
-namespace RI.Framework.Data.Database.Upgrading
+namespace RI.DatabaseManager.Upgrading
 {
 	/// <summary>
 	///     Contains database version upgraders.

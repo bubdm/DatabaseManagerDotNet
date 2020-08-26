@@ -5,7 +5,7 @@ using System.Data.Common;
 
 
 
-namespace RI.Framework.Data.Database
+namespace RI.DatabaseManager.Manager
 {
     /// <summary>
     ///     Defines the interface for a single database processing step.
@@ -174,12 +174,10 @@ namespace RI.Framework.Data.Database
     /// <typeparam name="TManager"> </typeparam>
     /// <typeparam name="TConfiguration"> </typeparam>
     /// <threadsafety static="false" instance="false" />
-    public interface IDatabaseProcessingStep <TConnection, TTransaction, TConnectionStringBuilder, TManager, TConfiguration> : IDatabaseProcessingStep
+    public interface IDatabaseProcessingStep <TConnection, TTransaction, TManager> : IDatabaseProcessingStep
         where TConnection : DbConnection
         where TTransaction : DbTransaction
-        where TConnectionStringBuilder : DbConnectionStringBuilder
-        where TManager : class, IDatabaseManager<TConnection, TTransaction, TConnectionStringBuilder, TManager, TConfiguration>
-        where TConfiguration : class, IDatabaseManagerConfiguration<TConnection, TTransaction, TConnectionStringBuilder, TManager, TConfiguration>, new()
+        where TManager : class, IDatabaseManager<TConnection, TTransaction, TManager>
     {
         /// <summary>
         ///     Adds application code as a callback.
@@ -191,7 +189,7 @@ namespace RI.Framework.Data.Database
         ///     </para>
         /// </remarks>
         /// <exception cref="ArgumentNullException"> <paramref name="callback" /> is null. </exception>
-        void AddCode (DatabaseProcessingStepDelegate<TConnection, TTransaction, TConnectionStringBuilder, TManager, TConfiguration> callback);
+        void AddCode (DatabaseProcessingStepDelegate<TConnection, TTransaction, TManager> callback);
 
         /// <summary>
         ///     Adds application code as a callback.
@@ -199,7 +197,7 @@ namespace RI.Framework.Data.Database
         /// <param name="callback"> The callback which is executed when the sub-step executes. </param>
         /// <param name="transactionRequirement"> The transaction requirement. </param>
         /// <exception cref="ArgumentNullException"> <paramref name="callback" /> is null. </exception>
-        void AddCode (DatabaseProcessingStepDelegate<TConnection, TTransaction, TConnectionStringBuilder, TManager, TConfiguration> callback, DatabaseProcessingStepTransactionRequirement transactionRequirement);
+        void AddCode (DatabaseProcessingStepDelegate<TConnection, TTransaction, TManager> callback, DatabaseProcessingStepTransactionRequirement transactionRequirement);
 
         /// <summary>
         ///     Executes the processing step and all its sub-steps.

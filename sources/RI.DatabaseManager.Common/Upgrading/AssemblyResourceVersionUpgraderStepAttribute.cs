@@ -3,7 +3,7 @@
 
 
 
-namespace RI.Framework.Data.Database.Upgrading
+namespace RI.DatabaseManager.Upgrading
 {
     /// <summary>
     ///     The attribute which defines the source version associated with a <see cref="IAssemblyResourceVersionUpgraderStepConfigurator{TProcessingStep,TConnection,TTransaction,TConnectionStringBuilder,TManager,TConfiguration}" /> implementation.

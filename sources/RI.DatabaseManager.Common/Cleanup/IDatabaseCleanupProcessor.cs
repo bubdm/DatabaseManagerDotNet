@@ -1,9 +1,11 @@
 ﻿using System.Data.Common;
 
+using RI.DatabaseManager.Manager;
 
 
 
-namespace RI.Framework.Data.Database.Cleanup
+
+namespace RI.DatabaseManager.Cleanup
 {
     /// <summary>
     ///     Defines the interface for database cleanup processors.

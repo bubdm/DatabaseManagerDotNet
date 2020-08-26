@@ -3,7 +3,7 @@
 
 
 
-namespace RI.Framework.Data.Database.Cleanup
+namespace RI.DatabaseManager.Cleanup
 {
 	/// <summary>
 	///     Contains database cleanup processors.

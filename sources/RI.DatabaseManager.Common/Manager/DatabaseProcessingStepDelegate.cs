@@ -4,7 +4,7 @@ using System.Diagnostics.CodeAnalysis;
 
 
 
-namespace RI.Framework.Data.Database
+namespace RI.DatabaseManager.Manager
 {
     /// <summary>
     ///     Defines a delegate which can be used to define code sub-steps for <see cref="DatabaseProcessingStep{TConnection, TTransaction, TConnectionStringBuilder, TManager, TConfiguration}" />s.

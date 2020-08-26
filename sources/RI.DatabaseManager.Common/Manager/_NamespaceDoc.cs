@@ -3,10 +3,10 @@
 
 
 
-namespace RI.Framework.Data.Database
+namespace RI.DatabaseManager.Manager
 {
 	/// <summary>
-	///     Contains types for implementing low-level database functionality.
+	///     Contains the actual database manager implementation.
 	/// </summary>
 	[CompilerGenerated]
 	public sealed class NamespaceDoc

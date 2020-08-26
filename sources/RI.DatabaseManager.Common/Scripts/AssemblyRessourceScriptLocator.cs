@@ -3,10 +3,12 @@ using System.IO;
 using System.Reflection;
 using System.Text;
 
+using RI.DatabaseManager.Manager;
 
 
 
-namespace RI.Framework.Data.Database.Scripts
+
+namespace RI.DatabaseManager.Scripts
 {
     /// <summary>
     ///     Implements a database script locator which uses assembly resources to locate scripts.

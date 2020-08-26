@@ -6,7 +6,7 @@ using System.Linq;
 
 
 
-namespace RI.Framework.Data.Database
+namespace RI.DatabaseManager.Manager
 {
     /// <summary>
     ///     Implements a single database processing step.

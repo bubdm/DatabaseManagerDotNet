@@ -1,4 +1,4 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <TargetFramework>netstandard2.0</TargetFramework>
@@ -6,7 +6,7 @@
   </PropertyGroup>
 
   <PropertyGroup>
-    <AssemblyName>RI.DatabaseManager.Common</AssemblyName>
+    <AssemblyName>RI.DatabaseManager.Microsoft.SqlServer</AssemblyName>
     <RootNamespace>RI.DatabaseManager</RootNamespace>
     <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
   </PropertyGroup>
@@ -29,6 +29,11 @@
 
   <ItemGroup>
     <PackageReference Include="RI.Abstractions.Common" Version="1.0.0" />
+    <PackageReference Include="Microsoft.Data.SqlClient" Version="2.0.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\RI.DatabaseManager.Common\RI.DatabaseManager.Common.csproj" />
   </ItemGroup>
 
 </Project>

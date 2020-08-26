@@ -1,9 +1,9 @@
-﻿using System.Data.SqlClient;
+﻿using RI.DatabaseManager.Manager;
 
 
 
 
-namespace RI.Framework.Data.Database.Upgrading
+namespace RI.DatabaseManager.Upgrading
 {
     /// <summary>
     ///     Implements an assembly version upgrade step extractor for SQL Server databases.

@@ -3,7 +3,7 @@
 
 
 
-namespace RI.Framework.Data.Database
+namespace RI.DatabaseManager.Manager
 {
 	/// <summary>
 	///     Describes the transaction requirements of a processing sub-step.

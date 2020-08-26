@@ -5,10 +5,12 @@ using System.Linq;
 
 using Microsoft.Data.SqlClient;
 
+using RI.DatabaseManager.Manager;
 
 
 
-namespace RI.Framework.Data.Database.Upgrading
+
+namespace RI.DatabaseManager.Upgrading
 {
     /// <summary>
     ///     Implements a database version upgrader for SQL Server databases.

@@ -1,10 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
 
+using RI.DatabaseManager.Manager;
 
 
 
-namespace RI.Framework.Data.Database.Scripts
+
+namespace RI.DatabaseManager.Scripts
 {
     /// <summary>
     ///     Implements a database script locator which uses name-script-pairs.

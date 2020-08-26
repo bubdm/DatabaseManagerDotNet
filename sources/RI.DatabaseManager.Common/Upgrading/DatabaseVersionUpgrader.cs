@@ -1,9 +1,11 @@
 ﻿using System.Data.Common;
 
+using RI.DatabaseManager.Manager;
 
 
 
-namespace RI.Framework.Data.Database.Upgrading
+
+namespace RI.DatabaseManager.Upgrading
 {
     /// <summary>
     ///     Implements a base class for database version upgraders.

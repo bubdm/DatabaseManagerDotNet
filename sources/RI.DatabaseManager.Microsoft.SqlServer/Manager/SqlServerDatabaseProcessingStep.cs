@@ -1,15 +1,14 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 
 using Microsoft.Data.SqlClient;
 
-using RI.Framework.Data.Database.Cleanup;
-using RI.Framework.Data.Database.Upgrading;
+using RI.DatabaseManager.Cleanup;
+using RI.DatabaseManager.Upgrading;
 
 
 
 
-namespace RI.Framework.Data.Database
+namespace RI.DatabaseManager.Manager
 {
     /// <summary>
     ///     Implements a single SQL Server database processing step.

@@ -1,14 +1,11 @@
 ﻿using System.Collections.Generic;
 
-using RI.Framework.Data.Database.Backup;
-using RI.Framework.Data.Database.Cleanup;
-using RI.Framework.Data.Database.Upgrading;
-using RI.Framework.Data.Database.Versioning;
+using RI.DatabaseManager.Manager;
 
 
 
 
-namespace RI.Framework.Data.Database.Scripts
+namespace RI.DatabaseManager.Scripts
 {
     /// <summary>
     ///     Defines the interface for database script locators.

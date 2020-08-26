@@ -1,15 +1,14 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Data.SQLite;
 
-using RI.Framework.Data.Database.Backup;
-using RI.Framework.Data.Database.Cleanup;
-using RI.Framework.Data.Database.Upgrading;
+using RI.DatabaseManager.Backup;
+using RI.DatabaseManager.Cleanup;
+using RI.DatabaseManager.Upgrading;
 
 
 
 
-namespace RI.Framework.Data.Database
+namespace RI.DatabaseManager.Manager
 {
     /// <summary>
     ///     Implements a single SQLite database processing step.

@@ -3,7 +3,7 @@
 
 
 
-namespace RI.Framework.Data.Database
+namespace RI.DatabaseManager.Manager
 {
     /// <summary>
     ///     Implements a database manager for SQL Server databases.

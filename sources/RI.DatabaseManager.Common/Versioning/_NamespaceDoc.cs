@@ -3,7 +3,7 @@
 
 
 
-namespace RI.Framework.Data.Database.Versioning
+namespace RI.DatabaseManager.Versioning
 {
 	/// <summary>
 	///     Contains database version detectors.

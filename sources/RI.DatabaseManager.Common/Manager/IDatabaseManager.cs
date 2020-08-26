@@ -1,25 +1,24 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Data;
 using System.Data.Common;
 
-using RI.Framework.Data.Database.Backup;
-using RI.Framework.Data.Database.Cleanup;
-using RI.Framework.Data.Database.Scripts;
-using RI.Framework.Data.Database.Upgrading;
+using RI.DatabaseManager.Backup;
+using RI.DatabaseManager.Cleanup;
+using RI.DatabaseManager.Scripts;
+using RI.DatabaseManager.Upgrading;
 
 
 
 
-namespace RI.Framework.Data.Database
+namespace RI.DatabaseManager.Manager
 {
     /// <summary>
-    ///     Defines the interface for a database manager.
+    ///     The database manager.
     /// </summary>
     /// <remarks>
     ///     <para>
-    ///         A database manager encapsulates low-level database functionality so that high-level database functionality (such as <see cref="IRepositoryContext" />) can be implemented on top without having to worry about low-level and/or database-specific details.
-    ///         A database manager is intended to handle all low-level database stuff, such as connection management, versioning, migration, backup, etc., so that the high-level functionality can focus on the actual task of working with the data or accessing the database respectively.
+    ///         A database manager encapsulates low-level database management functionality so that high-level database functionality (such as repositories, Entity Framework contexts, Dapper, etc.) can be used on top without having to worry about database management.
+    ///         A database manager is intended to handle all low-level database management, such as connection and database creation, versioning, migration, backup, etc., so that the high-level functionality can focus on the actual task of working with the data or accessing the database respectively.
     ///     </para>
     ///     <para>
     ///         The link from the database manager to higher-level functionality are the database connections which can be created using <see cref="CreateConnection" />.
@@ -31,14 +30,9 @@ namespace RI.Framework.Data.Database
     ///         Backups (<see cref="Backup" />) and Restores (<see cref="Restore" />) are possible in any state except <see cref="DatabaseState.Uninitialized" />.
     ///     </para>
     ///     <para>
-    ///         If the database supports connection tracking (see <see cref="SupportsConnectionTracking" />), <see cref="Close" /> or <see cref="CloseTrackedConnections" /> will close all currently non-closed connections which were created using <see cref="CreateConnection" />.
+    ///         A database manager makes no assumptions or requirements regarding the used threading model. It passes through to the underlying database provider ina threading-agnostic way.
     ///     </para>
-    ///     <note type="implement">
-    ///         While a database is initialized, its configuration (<see cref="Configuration" />) can be changed.
-    ///         However, it is recommend to change configuration only when the database is in the uninitialized state.
-    ///     </note>
     /// </remarks>
-    /// <threadsafety static="false" instance="false" />
     public interface IDatabaseManager : IDisposable
     {
         /// <summary>
@@ -50,31 +44,15 @@ namespace RI.Framework.Data.Database
         bool CanUpgrade { get; }
 
         /// <summary>
-        ///     Gets the configuration used by this database.
-        /// </summary>
-        /// <value>
-        ///     The configuration used by this database.
-        /// </value>
-        /// <remarks>
-        ///     <note type="implement">
-        ///         This property must never be null.
-        ///     </note>
-        /// </remarks>
-        IDatabaseManagerConfiguration Configuration { get; }
-
-        /// <summary>
         ///     Gets the state of the database after initialization.
         /// </summary>
         /// <value>
         ///     The state of the database after initialization.
         /// </value>
         /// <remarks>
-        ///     <para>
+        ///     <note type="implement">
         ///         This property is set during <see cref="Initialize" /> and reset during <see cref="Close" />.
-        ///     </para>
-        ///     <para>
-        ///         See <see cref="State" /> for more details.
-        ///     </para>
+        ///     </note>
         /// </remarks>
         DatabaseState InitialState { get; }
 
@@ -85,17 +63,14 @@ namespace RI.Framework.Data.Database
         ///     The version of the database after initialization.
         /// </value>
         /// <remarks>
-        ///     <para>
+        ///     <note type="implement">
         ///         This property is set during <see cref="Initialize" /> and reset during <see cref="Close" />.
-        ///     </para>
-        ///     <para>
-        ///         See <see cref="Version" /> for more details.
-        ///     </para>
+        ///     </note>
         /// </remarks>
         int InitialVersion { get; }
 
         /// <summary>
-        ///     Gets whether the database is ready for use and connections can be created or backups and cleanups can be performed.
+        ///     Gets whether the database is ready for use and connections can be created and backups, restores, and cleanups can be performed (depending on what is actually supported).
         /// </summary>
         /// <value>
         ///     true if the database is in <see cref="DatabaseState.ReadyUnknown" />, <see cref="DatabaseState.ReadyNew" />, or <see cref="DatabaseState.ReadyOld" /> state, false otherwise.
@@ -108,6 +83,11 @@ namespace RI.Framework.Data.Database
         /// <value>
         ///     The highest version supported for upgrading (as a target version) or -1 if upgrading is not supported.
         /// </value>
+        /// <remarks>
+        ///     <note type="implement">
+        ///         <see cref="MaxVersion"/> should be set during the construction of the database manager and then remain unchanged and independent of the current database state or version (only depending on the database manager configuration).
+        ///     </note>
+        /// </remarks>
         int MaxVersion { get; }
 
         /// <summary>
@@ -116,6 +96,11 @@ namespace RI.Framework.Data.Database
         /// <value>
         ///     The lowest version supported for upgrading (as a source version) or -1 if upgrading is not supported.
         /// </value>
+        /// <remarks>
+        ///     <note type="implement">
+        ///         <see cref="MinVersion"/> should be set during the construction of the database manager and then remain unchanged and independent of the current database state or version (only depending on the database manager configuration).
+        ///     </note>
+        /// </remarks>
         int MinVersion { get; }
 
         /// <summary>
@@ -127,59 +112,81 @@ namespace RI.Framework.Data.Database
         DatabaseState State { get; }
 
         /// <summary>
-        ///     Gets whether the database supports the backup functionality.
+        ///     Gets whether the database manager supports the backup functionality.
         /// </summary>
         /// <value>
-        ///     true if the database supports backup, false otherwise.
+        ///     true if the database manager supports backup, false otherwise.
         /// </value>
+        /// <remarks>
+        ///     <note type="implement">
+        ///         <see cref="SupportsBackup"/> should be set during the construction of the database manager and then remain unchanged and independent of the current database state or version (only depending on the database manager configuration).
+        ///     </note>
+        /// </remarks>
         bool SupportsBackup { get; }
 
         /// <summary>
-        ///     Gets whether the database supports the cleanup functionality.
+        ///     Gets whether the database manager supports the cleanup functionality.
         /// </summary>
         /// <value>
-        ///     true if the database supports cleanup, false otherwise.
+        ///     true if the database manager supports cleanup, false otherwise.
         /// </value>
+        /// <remarks>
+        ///     <note type="implement">
+        ///         <see cref="SupportsCleanup"/> should be set during the construction of the database manager and then remain unchanged and independent of the current database state or version (only depending on the database manager configuration).
+        ///     </note>
+        /// </remarks>
         bool SupportsCleanup { get; }
 
         /// <summary>
-        ///     Gets whether the database supports connection tracking.
+        ///     Gets whether the database manager supports read-only connections.
         /// </summary>
         /// <value>
-        ///     true if the database supports connection tracking, false otherwise.
+        ///     true if the database manager supports read-only connections, false otherwise.
         /// </value>
-        bool SupportsConnectionTracking { get; }
-
-        /// <summary>
-        ///     Gets whether the database supports read-only connections.
-        /// </summary>
-        /// <value>
-        ///     true if the database supports read-only connections, false otherwise.
-        /// </value>
+        /// <remarks>
+        ///     <note type="implement">
+        ///         <see cref="SupportsReadOnly"/> should be set during the construction of the database manager and then remain unchanged and independent of the current database state or version (only depending on the database manager configuration).
+        ///     </note>
+        /// </remarks>
         bool SupportsReadOnly { get; }
 
         /// <summary>
-        ///     Gets whether the database supports the restore functionality.
+        ///     Gets whether the database manager supports the restore functionality.
         /// </summary>
         /// <value>
-        ///     true if the database supports restore, false otherwise.
+        ///     true if the database manager supports restore, false otherwise.
         /// </value>
+        /// <remarks>
+        ///     <note type="implement">
+        ///         <see cref="SupportsRestore"/> should be set during the construction of the database manager and then remain unchanged and independent of the current database state or version (only depending on the database manager configuration).
+        ///     </note>
+        /// </remarks>
         bool SupportsRestore { get; }
 
         /// <summary>
-        ///     Gets whether the database supports script retrieval.
+        ///     Gets whether the database manager supports script retrieval.
         /// </summary>
         /// <value>
-        ///     true if the database supports script retrieval, false otherwise.
+        ///     true if the database manager supports script retrieval, false otherwise.
         /// </value>
+        /// <remarks>
+        ///     <note type="implement">
+        ///         <see cref="SupportsScripts"/> should be set during the construction of the database manager and then remain unchanged and independent of the current database state or version (only depending on the database manager configuration).
+        ///     </note>
+        /// </remarks>
         bool SupportsScripts { get; }
 
         /// <summary>
-        ///     Gets whether the database supports the upgrade functionality.
+        ///     Gets whether the database manager supports the upgrade functionality.
         /// </summary>
         /// <value>
-        ///     true if the database supports upgrading, false otherwise.
+        ///     true if the database manager supports upgrading, false otherwise.
         /// </value>
+        /// <remarks>
+        ///     <note type="implement">
+        ///         <see cref="SupportsUpgrade"/> should be set during the construction of the database manager and then remain unchanged and independent of the current database state or version (only depending on the database manager configuration).
+        ///     </note>
+        /// </remarks>
         bool SupportsUpgrade { get; }
 
         /// <summary>
@@ -189,58 +196,32 @@ namespace RI.Framework.Data.Database
         ///     The current version of the database.
         /// </value>
         /// <remarks>
-        ///     <para>
+        ///     <note type="implement">
         ///         Any version below zero (usually -1) indicates an invalid version or a damaged database respectively.
-        ///     </para>
-        ///     <para>
+        ///     </note>
+        ///     <note type="implement">
         ///         A version of zero indicates that the database does not yet exist and must be created before it can be used.
-        ///     </para>
+        ///     </note>
         /// </remarks>
         int Version { get; }
 
         /// <summary>
-        ///     Raised when the state of a tracked connection has changed.
-        /// </summary>
-        event EventHandler<DatabaseConnectionChangedEventArgs> ConnectionChanged;
-
-        /// <summary>
-        ///     Raised when a connection has been created using <see cref="CreateConnection" />.
-        /// </summary>
-        event EventHandler<DatabaseConnectionCreatedEventArgs> ConnectionCreated;
-
-        /// <summary>
-        ///     Raised when a script has been retrieved using <see cref="GetScriptBatch" />.
-        /// </summary>
-        event EventHandler<DatabaseScriptRetrievedEventArgs> ScriptRetrieved;
-
-        /// <summary>
-        ///     Raised when the state of this database has changed (<see cref="State" />).
-        /// </summary>
-        event EventHandler<DatabaseStateChangedEventArgs> StateChanged;
-
-        /// <summary>
-        ///     Raised when the version of this database has changed (<see cref="Version" />).
-        /// </summary>
-        event EventHandler<DatabaseVersionChangedEventArgs> VersionChanged;
-
-        /// <summary>
         ///     Performs a backup using the configured <see cref="IDatabaseBackupCreator" />.
         /// </summary>
-        /// <param name="backupTarget"> The backup creator specific object which describes the backup target. </param>
+        /// <param name="backupTarget"> The backup creator specific object which abstracts the backup target. </param>
         /// <returns>
         ///     true if the backup was successful, false otherwise.
-        ///     Details can be obtained from the log.
+        ///     Details about failures should be written to logs.
         /// </returns>
         /// <remarks>
-        ///     <para>
-        ///         <see cref="State" /> and <see cref="Version" /> are updated to reflect the current state and version of the database after backup.
-        ///     </para>
+        ///     <note type="implement">
+        ///         <see cref="State" />, <see cref="Version" />, <see cref="IsReady"/>, <see cref="CanUpgrade"/> are updated to reflect the current state and version of the database after restore.
+        ///     </note>
         /// </remarks>
         /// <exception cref="ArgumentNullException"> <paramref name="backupTarget" /> is null. </exception>
-        /// <exception cref="InvalidTypeArgumentException"> <paramref name="backupTarget" /> is of a type which is not supported by the used backup creator. </exception>
+        /// <exception cref="ArgumentException"> <paramref name="backupTarget" /> is of a type which is not supported by the used <see cref="IDatabaseBackupCreator"/>. </exception>
         /// <exception cref="InvalidOperationException"> The database is not initialized. </exception>
-        /// <exception cref="NotSupportedException"> Backup is not supported by the database or no <see cref="IDatabaseBackupCreator" /> is configured. </exception>
-        /// <exception cref="InvalidDatabaseConfigurationException"> The database configuration specified by <see cref="Configuration" /> is not valid. </exception>
+        /// <exception cref="NotSupportedException"> Backup is not supported by the database manager or no <see cref="IDatabaseBackupCreator" /> is configured. </exception>
         bool Backup (object backupTarget);
 
         /// <summary>
@@ -248,55 +229,41 @@ namespace RI.Framework.Data.Database
         /// </summary>
         /// <returns>
         ///     true if the cleanup was successful, false otherwise.
-        ///     Details can be obtained from the log.
+        ///     Details about failures should be written to logs.
         /// </returns>
         /// <remarks>
-        ///     <para>
-        ///         <see cref="State" /> and <see cref="Version" /> are updated to reflect the current state and version of the database after cleanup.
-        ///     </para>
+        ///     <note type="implement">
+        ///         <see cref="State" />, <see cref="Version" />, <see cref="IsReady"/>, <see cref="CanUpgrade"/> are updated to reflect the current state and version of the database after cleanup.
+        ///     </note>
         /// </remarks>
         /// <exception cref="InvalidOperationException"> The database is not in a ready or the new state. </exception>
-        /// <exception cref="NotSupportedException"> Cleanup is not supported by the database or no <see cref="IDatabaseCleanupProcessor" /> is configured. </exception>
-        /// <exception cref="InvalidDatabaseConfigurationException"> The database configuration specified by <see cref="Configuration" /> is not valid. </exception>
+        /// <exception cref="NotSupportedException"> Cleanup is not supported by the database manager or no <see cref="IDatabaseCleanupProcessor" /> is configured. </exception>
         bool Cleanup ();
 
         /// <summary>
-        ///     Closes the database.
+        ///     Closes the database manager.
         /// </summary>
         /// <remarks>
-        ///     <para>
-        ///         <see cref="State" /> and <see cref="InitialState" /> are set to <see cref="DatabaseState.Uninitialized" /> and <see cref="Version" /> and <see cref="InitialVersion" /> are set to -1.
-        ///     </para>
-        ///     <note type="note">
-        ///         All tracked connections will be closed.
-        ///         Untracked connections remain unchanged.
+        ///     <note type="implement">
+        ///         <see cref="State" /> and <see cref="InitialState" /> are set to <see cref="DatabaseState.Uninitialized" />, <see cref="Version" /> and <see cref="InitialVersion" /> are set to -1, <see cref="IsReady"/> and <see cref="CanUpgrade"/> are set to false.
+        ///     </note>
+        ///     <note type="implement">
+        ///         <see cref="Close"/> should be callable multiple times and independent of the current state and version.
         ///     </note>
         /// </remarks>
         void Close ();
 
         /// <summary>
-        ///     Closes all currently tracked connections.
-        /// </summary>
-        /// <remarks>
-        ///     <para>
-        ///         Untracked connections remain unchanged.
-        ///     </para>
-        /// </remarks>
-        void CloseTrackedConnections ();
-
-        /// <summary>
         ///     Creates a new connection which can be used to work with the database.
         /// </summary>
         /// <param name="readOnly"> Specifies whether the connection should be read-only. </param>
-        /// <param name="track"> Specifies whether the connection should be tracked. </param>
         /// <returns>
         ///     The newly created and already opened connection or null if the connection could not be created.
-        ///     Details can be obtained from the log.
+        ///     Details about failures should be written to logs.
         /// </returns>
         /// <exception cref="InvalidOperationException"> The database is not in a ready state. </exception>
-        /// <exception cref="NotSupportedException"> <paramref name="readOnly" /> is true but read-only connections are not supported or <paramref name="track" /> is true but connection tracking is not supported. </exception>
-        /// <exception cref="InvalidDatabaseConfigurationException"> The database configuration specified by <see cref="Configuration" /> is not valid. </exception>
-        DbConnection CreateConnection (bool readOnly, bool track);
+        /// <exception cref="NotSupportedException"> <paramref name="readOnly" /> is true but read-only connections are not supported. </exception>
+        DbConnection CreateConnection (bool readOnly);
 
         /// <summary>
         ///     Creates a new processing step which can be used to perform database actions.
@@ -304,72 +271,66 @@ namespace RI.Framework.Data.Database
         /// <returns>
         ///     The newly created processing step.
         /// </returns>
-        /// <exception cref="InvalidDatabaseConfigurationException"> The database configuration specified by <see cref="Configuration" /> is not valid. </exception>
+        /// <remarks>
+        ///     <note type="implement">
+        ///         <see cref="CreateProcessingStep"/> should be callable at any time as the created processing step is just created, not executed.
+        ///     </note>
+        /// </remarks>
         IDatabaseProcessingStep CreateProcessingStep ();
 
         /// <summary>
         ///     Retrieves a script batch using the configured <see cref="IDatabaseScriptLocator" />.
         /// </summary>
         /// <param name="name"> The name of the script. </param>
-        /// <param name="preprocess"> Specifies whether the script is to be preprocessed. </param>
+        /// <param name="preprocess"> Specifies whether the script is to be preprocessed, if applicable. </param>
         /// <returns>
-        ///     The list of batches in the script.
-        ///     If the script is empty or does not contain any batches respectively, an empty list is returned.
+        ///     The batch in the script (list of independently executed commands).
+        ///     If the script is empty or does not contain any commands respectively, an empty list is returned.
         ///     If the script could not be found, null is returned.
-        /// </returns>
-        /// <exception cref="ArgumentNullException"> <paramref name="name" /> is null. </exception>
-        /// <exception cref="EmptyStringArgumentException"> <paramref name="name" /> is an empty string. </exception>
-        /// <exception cref="InvalidOperationException"> The database is not initialized. </exception>
-        /// <exception cref="NotSupportedException"> Retrieving scripts is not supported by the database or no <see cref="IDatabaseScriptLocator" /> is configured. </exception>
-        /// <exception cref="InvalidDatabaseConfigurationException"> The database configuration specified by <see cref="Configuration" /> is not valid. </exception>
-        List<string> GetScriptBatch (string name, bool preprocess);
-
-        /// <summary>
-        ///     Gets a list of all tracked connections.
-        /// </summary>
-        /// <returns>
-        ///     The list of tracked connections or null if connection tracking is not supported.
-        ///     If connection tracking is supported but no connections are currently being tracked, an empty list is returned.
         /// </returns>
         /// <remarks>
         ///     <note type="implement">
-        ///         Connections which are in a <see cref="ConnectionState.Closed" /> or <see cref="ConnectionState.Broken" /> state must be removed from the list of tracked connections.
+        ///         <see cref="GetScriptBatch"/> should be callable at any time as the retrieved script is just retrieved, not executed.
         ///     </note>
         /// </remarks>
-        List<DbConnection> GetTrackedConnections ();
+        /// <exception cref="ArgumentNullException"> <paramref name="name" /> is null. </exception>
+        /// <exception cref="ArgumentException"> <paramref name="name" /> is an empty string. </exception>
+        /// <exception cref="NotSupportedException"> Retrieving scripts is not supported by the database manager or no <see cref="IDatabaseScriptLocator" /> is configured. </exception>
+        List<string> GetScriptBatch (string name, bool preprocess);
 
         /// <summary>
-        ///     Initializes the database.
+        ///     Initializes the database manager.
         /// </summary>
         /// <remarks>
-        ///     <para>
-        ///         <see cref="State" /> and <see cref="Version" /> as well as <see cref="InitialState" /> and <see cref="InitialVersion" /> are updated to reflect the current state and version of the database after initialization.
-        ///     </para>
-        ///     <note type="note">
+        ///     <note type="implement">
+        ///         <see cref="State" />, <see cref="Version" />, <see cref="IsReady"/>, <see cref="CanUpgrade"/>, <see cref="InitialState"/>, <see cref="InitialVersion"/> are updated to reflect the current state and version of the database after initialization.
+        ///     </note>
+        ///     <note type="implement">
         ///         If the database is already initialized, it will be closed first (implicitly calling <see cref="Close" />).
         ///     </note>
+        ///     <note type="implement">
+        ///         <see cref="Initialize"/> should be callable multiple times and independent of the current state and version.
+        ///     </note>
         /// </remarks>
-        /// <exception cref="InvalidDatabaseConfigurationException"> The database configuration specified by <see cref="Configuration" /> is not valid. </exception>
         void Initialize ();
 
         /// <summary>
         ///     Performs a backup using the configured <see cref="IDatabaseBackupCreator" />.
         /// </summary>
-        /// <param name="backupSource"> The backup creator specific object which describes the backup source. </param>
+        /// <param name="backupSource"> The backup creator specific object which abstracts the backup source. </param>
         /// <returns>
         ///     true if the restore was successful, false otherwise.
-        ///     Details can be obtained from the log.
+        ///     Details about failures should be written to logs.
         /// </returns>
         /// <remarks>
-        ///     <para>
-        ///         <see cref="State" /> and <see cref="Version" /> are updated to reflect the current state and version of the database after restore.
-        ///     </para>
+        ///     <note type="implement">
+        ///         <see cref="State" />, <see cref="Version" />, <see cref="IsReady"/>, <see cref="CanUpgrade"/> are updated to reflect the current state and version of the database after restore.
+        ///     </note>
         /// </remarks>
         /// <exception cref="ArgumentNullException"> <paramref name="backupSource" /> is null. </exception>
-        /// <exception cref="InvalidTypeArgumentException"> <paramref name="backupSource" /> is of a type which is not supported by the used backup creator. </exception>
+        /// <exception cref="ArgumentException"> <paramref name="backupSource" /> is of a type which is not supported by the used <see cref="IDatabaseBackupCreator"/>. </exception>
         /// <exception cref="InvalidOperationException"> The database is not initialized. </exception>
-        /// <exception cref="NotSupportedException"> Restore is not supported by the database or no <see cref="IDatabaseBackupCreator" /> is configured. </exception>
-        /// <exception cref="InvalidDatabaseConfigurationException"> The database configuration specified by <see cref="Configuration" /> is not valid. </exception>
+        /// <exception cref="NotSupportedException"> Restore is not supported by the database manager or no <see cref="IDatabaseBackupCreator" /> is configured. </exception>
         bool Restore (object backupSource);
 
         /// <summary>
@@ -378,23 +339,22 @@ namespace RI.Framework.Data.Database
         /// <param name="version"> The version to upgrade the database to. </param>
         /// <returns>
         ///     true if the upgrade was successful, false otherwise.
-        ///     Details can be obtained from the log.
+        ///     Details about failures should be written to logs.
         /// </returns>
         /// <remarks>
-        ///     <para>
-        ///         <see cref="State" /> and <see cref="Version" /> are updated to reflect the current state and version of the database after upgrade.
-        ///     </para>
-        ///     <para>
-        ///         If <paramref name="version" /> is the same as <see cref="Version" />, nothing is done.
-        ///     </para>
+        ///     <note type="implement">
+        ///         <see cref="State" />, <see cref="Version" />, <see cref="IsReady"/>, <see cref="CanUpgrade"/> are updated to reflect the current state and version of the database after upgrade.
+        ///     </note>
+        ///     <note type="implement">
+        ///         If <paramref name="version" /> is the same as <see cref="Version" />, nothing should be done.
+        ///     </note>
         ///     <note type="implement">
         ///         Upgrading is to be performed incrementally, upgrading from n to n+1 until the desired version, as specified by <paramref name="version" />, is reached.
         ///     </note>
         /// </remarks>
         /// <exception cref="InvalidOperationException"> The database is not in a ready or the new state. </exception>
-        /// <exception cref="NotSupportedException"> Upgrading is not supported by the database or no <see cref="IDatabaseVersionUpgrader" /> is configured. </exception>
+        /// <exception cref="NotSupportedException"> Upgrading is not supported by the database manager or no <see cref="IDatabaseVersionUpgrader" /> is configured. </exception>
         /// <exception cref="ArgumentOutOfRangeException"> <paramref name="version" /> is less than <see cref="MinVersion" />, greater than <see cref="MaxVersion" />, or less than <see cref="Version" />. </exception>
-        /// <exception cref="InvalidDatabaseConfigurationException"> The database configuration specified by <see cref="Configuration" /> is not valid. </exception>
         bool Upgrade (int version);
 
         /// <summary>
@@ -402,55 +362,37 @@ namespace RI.Framework.Data.Database
         /// </summary>
         /// <returns>
         ///     true if the upgrade was successful, false otherwise.
-        ///     Details can be obtained from the log.
+        ///     Details about failures should be written to logs.
         /// </returns>
         /// <remarks>
-        ///     <para>
-        ///         <see cref="State" /> and <see cref="Version" /> are updated to reflect the current state and version of the database after upgrade.
-        ///     </para>
-        ///     <para>
-        ///         If <see cref="MaxVersion" /> is the same as <see cref="Version" />, nothing is done.
-        ///     </para>
+        ///     <note type="implement">
+        ///         <see cref="State" />, <see cref="Version" />, <see cref="IsReady"/>, <see cref="CanUpgrade"/> are updated to reflect the current state and version of the database after upgrade.
+        ///     </note>
+        ///     <note type="implement">
+        ///         If <see cref="MaxVersion" /> is the same as <see cref="Version" />, nothing should be done.
+        ///     </note>
         ///     <note type="implement">
         ///         Upgrading is to be performed incrementally, upgrading from n to n+1 until the desired version, <see cref="MaxVersion" />, is reached.
         ///     </note>
         /// </remarks>
         /// <exception cref="InvalidOperationException"> The database is not in a ready or the new state. </exception>
-        /// <exception cref="NotSupportedException"> Upgrading is not supported by the database or no <see cref="IDatabaseVersionUpgrader" /> is configured. </exception>
-        /// <exception cref="InvalidDatabaseConfigurationException"> The database configuration specified by <see cref="Configuration" /> is not valid. </exception>
+        /// <exception cref="NotSupportedException"> Upgrading is not supported by the database manager or no <see cref="IDatabaseVersionUpgrader" /> is configured. </exception>
         bool Upgrade ();
     }
 
     /// <inheritdoc cref="IDatabaseManager" />
-    /// <typeparam name="TConnection"> The database connection type, subclass of <see cref="DbConnection" />. </typeparam>
-    /// <typeparam name="TTransaction"> The database transaction type, subclass of <see cref="DbTransaction" />. </typeparam>
-    /// <typeparam name="TConnectionStringBuilder"> The connection string builder type, subclass of <see cref="DbConnectionStringBuilder" />. </typeparam>
+    /// <typeparam name="TConnection"> The database connection type. </typeparam>
+    /// <typeparam name="TTransaction"> The database transaction type. </typeparam>
     /// <typeparam name="TManager"> The type of the database manager. </typeparam>
-    /// <typeparam name="TConfiguration"> The type of database configuration. </typeparam>
-    /// <threadsafety static="false" instance="false" />
-    public interface IDatabaseManager <TConnection, TTransaction, TConnectionStringBuilder, TManager, TConfiguration> : IDatabaseManager
+    public interface IDatabaseManager <TConnection, TTransaction, TManager> : IDatabaseManager
         where TConnection : DbConnection
         where TTransaction : DbTransaction
-        where TConnectionStringBuilder : DbConnectionStringBuilder
-        where TManager : class, IDatabaseManager<TConnection, TTransaction, TConnectionStringBuilder, TManager, TConfiguration>
-        where TConfiguration : class, IDatabaseManagerConfiguration<TConnection, TTransaction, TConnectionStringBuilder, TManager, TConfiguration>, new()
+        where TManager : class, IDatabaseManager<TConnection, TTransaction, TManager>
     {
-        /// <inheritdoc cref="IDatabaseManager.Configuration" />
-        new IDatabaseManagerConfiguration<TConnection, TTransaction, TConnectionStringBuilder, TManager, TConfiguration> Configuration { get; }
-
-        /// <inheritdoc cref="IDatabaseManager.ConnectionChanged" />
-        new event EventHandler<DatabaseConnectionChangedEventArgs<TConnection>> ConnectionChanged;
-
-        /// <inheritdoc cref="IDatabaseManager.ConnectionCreated" />
-        new event EventHandler<DatabaseConnectionCreatedEventArgs<TConnection>> ConnectionCreated;
-
         /// <inheritdoc cref="IDatabaseManager.CreateConnection" />
-        new TConnection CreateConnection (bool readOnly, bool track);
+        new TConnection CreateConnection (bool readOnly);
 
         /// <inheritdoc cref="IDatabaseManager.CreateProcessingStep" />
-        new IDatabaseProcessingStep<TConnection, TTransaction, TConnectionStringBuilder, TManager, TConfiguration> CreateProcessingStep ();
-
-        /// <inheritdoc cref="IDatabaseManager.GetTrackedConnections" />
-        new List<TConnection> GetTrackedConnections ();
+        new IDatabaseProcessingStep<TConnection, TTransaction, TManager> CreateProcessingStep ();
     }
 }

@@ -1,9 +1,11 @@
 ﻿using System;
 
+using RI.DatabaseManager.Manager;
 
 
 
-namespace RI.Framework.Data.Database.Upgrading
+
+namespace RI.DatabaseManager.Upgrading
 {
     /// <summary>
     ///     Implements a single SQL Server database upgrade step which upgrades from a source version to source version + 1.

@@ -4,7 +4,7 @@ using System.Runtime.Serialization;
 
 
 
-namespace RI.Framework.Data.Database
+namespace RI.DatabaseManager.Manager
 {
     /// <summary>
     ///     The <see cref="InvalidDatabaseConfigurationException" /> is thrown when the configuration of a <see cref="IDatabaseManager" /> is not valid.

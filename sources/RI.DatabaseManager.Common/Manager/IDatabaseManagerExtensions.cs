@@ -4,7 +4,7 @@ using System.Data.Common;
 
 
 
-namespace RI.Framework.Data.Database
+namespace RI.DatabaseManager.Manager
 {
     /// <summary>
     ///     Provides utility/extension methods for the <see cref="IDatabaseManager" /> type.

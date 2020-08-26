@@ -5,53 +5,41 @@ using System.Data.Common;
 using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 
-using RI.Framework.Data.Database.Backup;
-using RI.Framework.Data.Database.Cleanup;
-using RI.Framework.Data.Database.Scripts;
-using RI.Framework.Data.Database.Upgrading;
-using RI.Framework.Data.Database.Versioning;
+using RI.DatabaseManager.Backup;
+using RI.DatabaseManager.Cleanup;
+using RI.DatabaseManager.Scripts;
+using RI.DatabaseManager.Upgrading;
+using RI.DatabaseManager.Versioning;
 
 
 
 
-namespace RI.Framework.Data.Database
+namespace RI.DatabaseManager.Manager
 {
     /// <summary>
-    ///     Implements a base class for database managers.
+    ///     Boilerplate implementation of <see cref="IDatabaseManager"/> and <see cref="IDatabaseManager{TConnection,TTransaction,TManager}"/>.
     /// </summary>
-    /// <typeparam name="TConnection"> The database connection type, subclass of <see cref="DbConnection" />. </typeparam>
-    /// <typeparam name="TTransaction"> The database transaction type, subclass of <see cref="DbTransaction" />. </typeparam>
-    /// <typeparam name="TConnectionStringBuilder"> The connection string builder type, subclass of <see cref="DbConnectionStringBuilder" />. </typeparam>
+    /// <typeparam name="TConnection"> The database connection type. </typeparam>
+    /// <typeparam name="TTransaction"> The database transaction type. </typeparam>
     /// <typeparam name="TManager"> The type of the database manager. </typeparam>
-    /// <typeparam name="TConfiguration"> The type of database configuration. </typeparam>
     /// <remarks>
-    ///     <para>
-    ///         It is recommended that database manager implementations use this base class as it already implements most of the logic which is database-independent.
-    ///     </para>
-    ///     <para>
-    ///         See <see cref="IDatabaseManager" /> for more details.
-    ///     </para>
+    ///     <note type="implement">
+    ///         It is recommended that database manager implementations use this base class as it already implements most of the database-independent logic defined by <see cref="IDatabaseManager"/> and <see cref="IDatabaseManager{TConnection,TTransaction,TManager}"/>.
+    ///     </note>
     /// </remarks>
     /// <threadsafety static="false" instance="false" />
-    public abstract class DatabaseManager <TConnection, TTransaction, TConnectionStringBuilder, TManager, TConfiguration> : IDatabaseManager<TConnection, TTransaction, TConnectionStringBuilder, TManager, TConfiguration>
+    public abstract class DatabaseManager <TConnection, TTransaction, TManager> : IDatabaseManager<TConnection, TTransaction, TManager>
         where TConnection : DbConnection
         where TTransaction : DbTransaction
-        where TConnectionStringBuilder : DbConnectionStringBuilder
-        where TManager : class, IDatabaseManager<TConnection, TTransaction, TConnectionStringBuilder, TManager, TConfiguration>
-        where TConfiguration : class, IDatabaseManagerConfiguration<TConnection, TTransaction, TConnectionStringBuilder, TManager, TConfiguration>, new()
+        where TManager : class, IDatabaseManager<TConnection, TTransaction, TManager>
     {
         #region Instance Constructor/Destructor
 
         /// <summary>
-        ///     Creates a new instance of <see cref="DatabaseManager{TConnection,TTransaction,TConnectionStringBuilder,TManager,TConfiguration}" />.
+        ///     Creates a new instance of <see cref="DatabaseManager{TConnection,TTransaction,TManager}" />.
         /// </summary>
         protected DatabaseManager ()
         {
-            this.Configuration = new TConfiguration();
-
-            this.TrackedConnections = new List<TConnection>();
-            this.ConnectionStateChangedHandler = this.ConnectionStateChangedMethod;
-
             this.InitialState = DatabaseState.Uninitialized;
             this.InitialVersion = -1;
 
@@ -62,41 +50,12 @@ namespace RI.Framework.Data.Database
         }
 
         /// <summary>
-        ///     Garbage collects this instance of <see cref="DatabaseManager{TConnection,TTransaction,TConnectionStringBuilder,TManager,TConfiguration}" />.
+        ///     Finalizes this instance of <see cref="DatabaseManager{TConnection,TTransaction,TManager}" />.
         /// </summary>
         ~DatabaseManager ()
         {
             this.Dispose(false);
         }
-
-        #endregion
-
-
-
-
-        #region Instance Properties/Indexer
-
-        /// <inheritdoc cref="IDatabaseManager.Configuration" />
-        public TConfiguration Configuration { get; }
-
-        private StateChangeEventHandler ConnectionStateChangedHandler { get; }
-
-        private List<TConnection> TrackedConnections { get; }
-
-        #endregion
-
-
-
-
-        #region Instance Events
-
-        private event EventHandler<DatabaseConnectionChangedEventArgs> ConnectionChangedInternal1;
-
-        private event EventHandler<DatabaseConnectionChangedEventArgs<TConnection>> ConnectionChangedInternal2;
-
-        private event EventHandler<DatabaseConnectionCreatedEventArgs> ConnectionCreatedInternal1;
-
-        private event EventHandler<DatabaseConnectionCreatedEventArgs<TConnection>> ConnectionCreatedInternal2;
 
         #endregion
 
@@ -184,26 +143,6 @@ namespace RI.Framework.Data.Database
             this.PrepareConfigurationImpl();
         }
 
-        private void ConnectionStateChangedMethod (object sender, StateChangeEventArgs e)
-        {
-            TConnection connection = sender as TConnection;
-            if (connection == null)
-            {
-                return;
-            }
-
-            if ((e.CurrentState == ConnectionState.Broken) || (e.CurrentState == ConnectionState.Closed))
-            {
-                connection.StateChange -= this.ConnectionStateChangedHandler;
-                this.TrackedConnections.Remove(connection);
-            }
-
-            if (e.OriginalState != e.CurrentState)
-            {
-                this.OnConnectionChanged(connection, e.OriginalState, e.CurrentState);
-            }
-        }
-
         private void SetStateAndVersion (DatabaseState state, int version)
         {
             DatabaseState oldState = this.State;
@@ -249,14 +188,6 @@ namespace RI.Framework.Data.Database
         protected abstract bool SupportsCleanupImpl { get; }
 
         /// <summary>
-        ///     Gets whether this database manager implementation supports connection tracking.
-        /// </summary>
-        /// <value>
-        ///     true if connection tracking is supported, false otherwise.
-        /// </value>
-        protected abstract bool SupportsConnectionTrackingImpl { get; }
-
-        /// <summary>
         ///     Gets whether this database manager implementation supports read-only connections.
         /// </summary>
         /// <value>
@@ -294,7 +225,7 @@ namespace RI.Framework.Data.Database
         /// <param name="readOnly"> Specifies whether the connection should be read-only. </param>
         /// <returns>
         ///     The newly created and already opened connection or null if the connection could not be created.
-        ///     Details can be obtained from the log.
+        ///     Details about failures should be written to logs.
         /// </returns>
         protected abstract TConnection CreateConnectionImpl (bool readOnly);
 
@@ -304,7 +235,7 @@ namespace RI.Framework.Data.Database
         /// <returns>
         ///     The newly created database processing step.
         /// </returns>
-        protected abstract IDatabaseProcessingStep<TConnection, TTransaction, TConnectionStringBuilder, TManager, TConfiguration> CreateProcessingStepImpl ();
+        protected abstract IDatabaseProcessingStep<TConnection, TTransaction, TManager> CreateProcessingStepImpl ();
 
         #endregion
 
@@ -312,14 +243,6 @@ namespace RI.Framework.Data.Database
 
 
         #region Virtuals
-
-        /// <summary>
-        ///     Gets a string which describes the current database manager instance and can be used for logging debugging details.
-        /// </summary>
-        /// <value>
-        ///     A string which describes the current database manager instance
-        /// </value>
-        protected virtual string DebugDetails => string.Format(CultureInfo.InvariantCulture, "{0}; State={1}; Version={2}; Connections={3}; ConnectionString=[{4}]", this.GetType().Name, this.State, this.Version, this.TrackedConnections.Count, this.Configuration.ConnectionString?.ConnectionString ?? "[null]");
 
         /// <summary>
         ///     Performs a backup.
@@ -565,21 +488,7 @@ namespace RI.Framework.Data.Database
         #region Overrides
 
         /// <inheritdoc />
-        [SuppressMessage("ReSharper", "BaseObjectEqualsIsObjectEquals")]
-        public sealed override bool Equals (object obj)
-        {
-            return base.Equals(obj);
-        }
-
-        /// <inheritdoc />
-        [SuppressMessage("ReSharper", "BaseObjectGetHashCodeCallInGetHashCode")]
-        public sealed override int GetHashCode ()
-        {
-            return base.GetHashCode();
-        }
-
-        /// <inheritdoc />
-        public sealed override string ToString () => this.DebugDetails;
+        public sealed override string ToString () => string.Format(CultureInfo.InvariantCulture, "{0}; State={1}; Version={2}; Connections={3}; ConnectionString=[{4}]", this.GetType().Name, this.State, this.Version, this.TrackedConnections.Count, this.Configuration.ConnectionString?.ConnectionString ?? "[null]");;
 
         #endregion
 
@@ -590,12 +499,6 @@ namespace RI.Framework.Data.Database
 
         /// <inheritdoc />
         public bool CanUpgrade => this.SupportsUpgrade && (this.IsReady || (this.State == DatabaseState.New)) && (this.Version >= 0) && (this.Version < this.MaxVersion);
-
-        /// <inheritdoc />
-        IDatabaseManagerConfiguration<TConnection, TTransaction, TConnectionStringBuilder, TManager, TConfiguration> IDatabaseManager<TConnection, TTransaction, TConnectionStringBuilder, TManager, TConfiguration>.Configuration => this.Configuration;
-
-        /// <inheritdoc />
-        IDatabaseManagerConfiguration IDatabaseManager.Configuration => this.Configuration;
 
         /// <inheritdoc />
         public DatabaseState InitialState { get; private set; }
@@ -622,9 +525,6 @@ namespace RI.Framework.Data.Database
         public bool SupportsCleanup => this.SupportsCleanupImpl && (this.Configuration.CleanupProcessor != null);
 
         /// <inheritdoc />
-        public bool SupportsConnectionTracking => this.SupportsConnectionTrackingImpl;
-
-        /// <inheritdoc />
         public bool SupportsReadOnly => this.SupportsReadOnlyImpl;
 
         /// <inheritdoc />
@@ -638,67 +538,6 @@ namespace RI.Framework.Data.Database
 
         /// <inheritdoc />
         public int Version { get; private set; }
-
-        /// <inheritdoc />
-        public event EventHandler<DatabaseConnectionChangedEventArgs<TConnection>> ConnectionChanged
-        {
-            add
-            {
-                this.ConnectionChangedInternal2 += value;
-            }
-            remove
-            {
-                this.ConnectionChangedInternal2 -= value;
-            }
-        }
-
-        /// <inheritdoc />
-        event EventHandler<DatabaseConnectionChangedEventArgs> IDatabaseManager.ConnectionChanged
-        {
-            add
-            {
-                this.ConnectionChangedInternal1 += value;
-            }
-            remove
-            {
-                this.ConnectionChangedInternal1 -= value;
-            }
-        }
-
-        /// <inheritdoc />
-        public event EventHandler<DatabaseConnectionCreatedEventArgs<TConnection>> ConnectionCreated
-        {
-            add
-            {
-                this.ConnectionCreatedInternal2 += value;
-            }
-            remove
-            {
-                this.ConnectionCreatedInternal2 -= value;
-            }
-        }
-
-        /// <inheritdoc />
-        event EventHandler<DatabaseConnectionCreatedEventArgs> IDatabaseManager.ConnectionCreated
-        {
-            add
-            {
-                this.ConnectionCreatedInternal1 += value;
-            }
-            remove
-            {
-                this.ConnectionCreatedInternal1 -= value;
-            }
-        }
-
-        /// <inheritdoc />
-        public event EventHandler<DatabaseScriptRetrievedEventArgs> ScriptRetrieved;
-
-        /// <inheritdoc />
-        public event EventHandler<DatabaseStateChangedEventArgs> StateChanged;
-
-        /// <inheritdoc />
-        public event EventHandler<DatabaseVersionChangedEventArgs> VersionChanged;
 
         /// <inheritdoc />
         public bool Backup (object backupTarget)
@@ -757,34 +596,10 @@ namespace RI.Framework.Data.Database
         }
 
         /// <inheritdoc />
-        public void CloseTrackedConnections ()
-        {
-            List<TConnection> connections = this.GetTrackedConnections() ?? new List<TConnection>();
-            connections.ForEach(x =>
-            {
-                try
-                {
-                    x.Close();
-                }
-                catch (ObjectDisposedException)
-                {
-                }
-                catch (Exception exception)
-                {
-                    //TODO: Log: this.Log(LogLevel.Warning, "Exception while closing tracked connection: {0}{1}{2}", this.DebugDetails, Environment.NewLine, exception.ToDetailedString());
-                }
-
-                x.StateChange -= this.ConnectionStateChangedHandler;
-            });
-
-            this.TrackedConnections?.Clear();
-        }
+        DbConnection IDatabaseManager.CreateConnection (bool readOnly) => this.CreateConnection(readOnly);
 
         /// <inheritdoc />
-        DbConnection IDatabaseManager.CreateConnection (bool readOnly, bool track) => this.CreateConnection(readOnly, track);
-
-        /// <inheritdoc />
-        public TConnection CreateConnection (bool readOnly, bool track)
+        public TConnection CreateConnection (bool readOnly)
         {
             if (!this.IsReady)
             {
@@ -820,7 +635,7 @@ namespace RI.Framework.Data.Database
         }
 
         /// <inheritdoc />
-        public IDatabaseProcessingStep<TConnection, TTransaction, TConnectionStringBuilder, TManager, TConfiguration> CreateProcessingStep ()
+        public IDatabaseProcessingStep<TConnection, TTransaction, TManager> CreateProcessingStep ()
         {
             this.PrepareConfiguration();
 
@@ -861,20 +676,6 @@ namespace RI.Framework.Data.Database
             }
 
             return result;
-        }
-
-        /// <inheritdoc />
-        List<DbConnection> IDatabaseManager.GetTrackedConnections () => new List<DbConnection>(this.GetTrackedConnections());
-
-        /// <inheritdoc />
-        public List<TConnection> GetTrackedConnections ()
-        {
-            if (!this.SupportsConnectionTracking)
-            {
-                return null;
-            }
-
-            return new List<TConnection>(this.TrackedConnections ?? new List<TConnection>());
         }
 
         /// <inheritdoc />
@@ -972,9 +773,6 @@ namespace RI.Framework.Data.Database
 
             return true;
         }
-
-        /// <inheritdoc />
-        public bool Upgrade () => this.Upgrade(this.MaxVersion);
 
         #endregion
     }

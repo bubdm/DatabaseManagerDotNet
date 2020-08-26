@@ -3,7 +3,7 @@
 
 
 
-namespace RI.Framework.Data.Database.Scripts
+namespace RI.DatabaseManager.Scripts
 {
 	/// <summary>
 	///     Contains database script locators.

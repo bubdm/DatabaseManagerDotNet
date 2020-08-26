@@ -4,10 +4,12 @@ using System.Data;
 using System.Data.SQLite;
 using System.Linq;
 
+using RI.DatabaseManager.Manager;
 
 
 
-namespace RI.Framework.Data.Database.Upgrading
+
+namespace RI.DatabaseManager.Upgrading
 {
     /// <summary>
     ///     Implements a database version upgrader for SQLite databases.

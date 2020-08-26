@@ -3,12 +3,13 @@ using System.Collections.Generic;
 using System.Data;
 using System.Data.SQLite;
 
-using RI.Framework.Data.Database.Scripts;
+using RI.DatabaseManager.Manager;
+using RI.DatabaseManager.Scripts;
 
 
 
 
-namespace RI.Framework.Data.Database.Cleanup
+namespace RI.DatabaseManager.Cleanup
 {
     /// <summary>
     ///     Implements a database cleanup processor for SQLite databases.
