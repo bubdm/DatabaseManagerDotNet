@@ -57,12 +57,10 @@ namespace RI.DatabaseManager.Versioning
     /// <typeparam name="TManager"> The type of the database manager. </typeparam>
     /// <typeparam name="TConfiguration"> The type of database configuration. </typeparam>
     /// <threadsafety static="false" instance="false" />
-    public interface IDatabaseVersionDetector <TConnection, TTransaction, TConnectionStringBuilder, in TManager, TConfiguration> : IDatabaseVersionDetector
+    public interface IDatabaseVersionDetector <TConnection, TTransaction, in TManager> : IDatabaseVersionDetector
         where TConnection : DbConnection
         where TTransaction : DbTransaction
-        where TConnectionStringBuilder : DbConnectionStringBuilder
-        where TManager : class, IDatabaseManager<TConnection, TTransaction, TConnectionStringBuilder, TManager, TConfiguration>
-        where TConfiguration : class, IDatabaseManagerConfiguration<TConnection, TTransaction, TConnectionStringBuilder, TManager, TConfiguration>, new()
+        where TManager : class, IDatabaseManager<TConnection, TTransaction, TManager>
     {
         /// <inheritdoc cref="IDatabaseVersionDetector.Detect" />
         bool Detect (TManager manager, out DatabaseState? state, out int version);

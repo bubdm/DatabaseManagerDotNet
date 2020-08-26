@@ -95,12 +95,10 @@ namespace RI.DatabaseManager.Upgrading
     /// <typeparam name="TConnectionStringBuilder"> The connection string builder type, subclass of <see cref="DbConnectionStringBuilder" />. </typeparam>
     /// <typeparam name="TManager"> The type of the database manager. </typeparam>
     /// <typeparam name="TConfiguration"> The type of database configuration. </typeparam>
-    public interface IDatabaseVersionUpgrader <TConnection, TTransaction, TConnectionStringBuilder, in TManager, TConfiguration> : IDatabaseVersionUpgrader
+    public interface IDatabaseVersionUpgrader <TConnection, TTransaction, in TManager> : IDatabaseVersionUpgrader
         where TConnection : DbConnection
         where TTransaction : DbTransaction
-        where TConnectionStringBuilder : DbConnectionStringBuilder
-        where TManager : class, IDatabaseManager<TConnection, TTransaction, TConnectionStringBuilder, TManager, TConfiguration>
-        where TConfiguration : class, IDatabaseManagerConfiguration<TConnection, TTransaction, TConnectionStringBuilder, TManager, TConfiguration>, new()
+        where TManager : class, IDatabaseManager<TConnection, TTransaction, TManager>
     {
         /// <inheritdoc cref="IDatabaseVersionUpgrader.GetMaxVersion" />
         int GetMaxVersion (TManager manager);

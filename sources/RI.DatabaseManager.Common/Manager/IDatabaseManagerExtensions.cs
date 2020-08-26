@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Data.Common;
 
+using RI.DatabaseManager.Upgrading;
+
 
 
 
@@ -50,6 +52,39 @@ namespace RI.DatabaseManager.Manager
                     step.Execute(manager, connection, transaction);
                 }
             }
+        }
+
+
+
+        /// <summary>
+        ///     Performs an upgrade to highest supported version using the configured <see cref="IDatabaseVersionUpgrader" />.
+        /// </summary>
+        /// <returns>
+        ///     true if the upgrade was successful, false otherwise.
+        ///     Details about failures should be written to logs.
+        /// </returns>
+        /// <remarks>
+        ///     <note type="implement">
+        ///         <see cref="IDatabaseManager.State" />, <see cref="IDatabaseManager.Version" />, <see cref="IDatabaseManager.IsReady"/>, <see cref="IDatabaseManager.CanUpgrade"/> are updated to reflect the current state and version of the database after upgrade.
+        ///     </note>
+        ///     <note type="implement">
+        ///         If <see cref="IDatabaseManager.MaxVersion" /> is the same as <see cref="IDatabaseManager.Version" />, nothing should be done.
+        ///     </note>
+        ///     <note type="implement">
+        ///         Upgrading is to be performed incrementally, upgrading from n to n+1 until the desired version, <see cref="IDatabaseManager.MaxVersion" />, is reached.
+        ///     </note>
+        /// </remarks>
+        /// <exception cref="ArgumentNullException"> <paramref name="manager" /> is null </exception>
+        /// <exception cref="InvalidOperationException"> The database is not in a ready or the new state. </exception>
+        /// <exception cref="NotSupportedException"> Upgrading is not supported by the database manager or no <see cref="IDatabaseVersionUpgrader" /> is configured. </exception>
+        public static bool Upgrade (this IDatabaseManager manager)
+        {
+            if (manager == null)
+            {
+                throw new ArgumentNullException(nameof(manager));
+            }
+
+            return manager.Upgrade(manager.MaxVersion);
         }
 
         #endregion

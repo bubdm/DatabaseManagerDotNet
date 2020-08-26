@@ -82,12 +82,10 @@ namespace RI.DatabaseManager.Backup
     /// <typeparam name="TManager"> The type of the database manager. </typeparam>
     /// <typeparam name="TConfiguration"> The type of database configuration. </typeparam>
     /// <threadsafety static="false" instance="false" />
-    public interface IDatabaseBackupCreator <TConnection, TTransaction, TConnectionStringBuilder, in TManager, TConfiguration> : IDatabaseBackupCreator
+    public interface IDatabaseBackupCreator <TConnection, TTransaction, in TManager> : IDatabaseBackupCreator
         where TConnection : DbConnection
         where TTransaction : DbTransaction
-        where TConnectionStringBuilder : DbConnectionStringBuilder
-        where TManager : class, IDatabaseManager<TConnection, TTransaction, TConnectionStringBuilder, TManager, TConfiguration>
-        where TConfiguration : class, IDatabaseManagerConfiguration<TConnection, TTransaction, TConnectionStringBuilder, TManager, TConfiguration>, new()
+        where TManager : class, IDatabaseManager<TConnection, TTransaction, TManager>
     {
         /// <inheritdoc cref="IDatabaseBackupCreator.Backup" />
         bool Backup (TManager manager, object backupTarget);

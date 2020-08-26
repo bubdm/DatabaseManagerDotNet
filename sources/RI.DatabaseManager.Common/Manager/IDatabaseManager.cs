@@ -26,7 +26,7 @@ namespace RI.DatabaseManager.Manager
     ///     <para>
     ///         The database cannot be used if it is in any other state than <see cref="DatabaseState.ReadyUnknown" />, <see cref="DatabaseState.ReadyNew" />, or <see cref="DatabaseState.ReadyOld" />.
     ///         However, there are three exceptions:
-    ///         Cleanups (<see cref="Cleanup"/>) and Upgrades (<see cref="Upgrade(int)" />, <see cref="Upgrade()" />) are also possible in the <see cref="DatabaseState.New" /> state.
+    ///         Cleanups (<see cref="Cleanup"/>) and Upgrades (<see cref="Upgrade(int)" />) are also possible in the <see cref="DatabaseState.New" /> state.
     ///         Backups (<see cref="Backup" />) and Restores (<see cref="Restore" />) are possible in any state except <see cref="DatabaseState.Uninitialized" />.
     ///     </para>
     ///     <para>
@@ -315,7 +315,7 @@ namespace RI.DatabaseManager.Manager
         void Initialize ();
 
         /// <summary>
-        ///     Performs a backup using the configured <see cref="IDatabaseBackupCreator" />.
+        ///     Performs a restore using the configured <see cref="IDatabaseBackupCreator" />.
         /// </summary>
         /// <param name="backupSource"> The backup creator specific object which abstracts the backup source. </param>
         /// <returns>
@@ -356,28 +356,6 @@ namespace RI.DatabaseManager.Manager
         /// <exception cref="NotSupportedException"> Upgrading is not supported by the database manager or no <see cref="IDatabaseVersionUpgrader" /> is configured. </exception>
         /// <exception cref="ArgumentOutOfRangeException"> <paramref name="version" /> is less than <see cref="MinVersion" />, greater than <see cref="MaxVersion" />, or less than <see cref="Version" />. </exception>
         bool Upgrade (int version);
-
-        /// <summary>
-        ///     Performs an upgrade to highest supported version using the configured <see cref="IDatabaseVersionUpgrader" />.
-        /// </summary>
-        /// <returns>
-        ///     true if the upgrade was successful, false otherwise.
-        ///     Details about failures should be written to logs.
-        /// </returns>
-        /// <remarks>
-        ///     <note type="implement">
-        ///         <see cref="State" />, <see cref="Version" />, <see cref="IsReady"/>, <see cref="CanUpgrade"/> are updated to reflect the current state and version of the database after upgrade.
-        ///     </note>
-        ///     <note type="implement">
-        ///         If <see cref="MaxVersion" /> is the same as <see cref="Version" />, nothing should be done.
-        ///     </note>
-        ///     <note type="implement">
-        ///         Upgrading is to be performed incrementally, upgrading from n to n+1 until the desired version, <see cref="MaxVersion" />, is reached.
-        ///     </note>
-        /// </remarks>
-        /// <exception cref="InvalidOperationException"> The database is not in a ready or the new state. </exception>
-        /// <exception cref="NotSupportedException"> Upgrading is not supported by the database manager or no <see cref="IDatabaseVersionUpgrader" /> is configured. </exception>
-        bool Upgrade ();
     }
 
     /// <inheritdoc cref="IDatabaseManager" />
