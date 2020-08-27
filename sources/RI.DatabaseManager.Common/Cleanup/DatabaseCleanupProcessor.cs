@@ -44,7 +44,7 @@ namespace RI.DatabaseManager.Cleanup
         public abstract bool Cleanup (TManager manager);
 
         /// <inheritdoc />
-        bool IDatabaseCleanupProcessor.Cleanup (IDatabaseManager manager)
+        bool IDatabaseCleanupProcessor.Cleanup (IDbManager manager)
         {
             return this.Cleanup((TManager)manager);
         }

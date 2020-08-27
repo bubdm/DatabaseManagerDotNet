@@ -6,10 +6,10 @@
 namespace RI.DatabaseManager.Manager
 {
 	/// <summary>
-	///     Describes the current state of a database managed by an <see cref="IDatabaseManager" />.
+	///     Describes the current state of a database managed by database manager.
 	/// </summary>
 	[Serializable]
-	public enum DatabaseState
+	public enum DbState
 	{
 		/// <summary>
 		///     The database is not initialized.

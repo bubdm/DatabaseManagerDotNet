@@ -24,16 +24,16 @@ namespace RI.DatabaseManager.Manager
     ///         The link from the database manager to higher-level functionality are the database connections which can be created using <see cref="CreateConnection" />.
     ///     </para>
     ///     <para>
-    ///         The database cannot be used if it is in any other state than <see cref="DatabaseState.ReadyUnknown" />, <see cref="DatabaseState.ReadyNew" />, or <see cref="DatabaseState.ReadyOld" />.
+    ///         The database cannot be used if it is in any other state than <see cref="DbState.ReadyUnknown" />, <see cref="DbState.ReadyNew" />, or <see cref="DbState.ReadyOld" />.
     ///         However, there are three exceptions:
-    ///         Cleanups (<see cref="Cleanup"/>) and Upgrades (<see cref="Upgrade(int)" />) are also possible in the <see cref="DatabaseState.New" /> state.
-    ///         Backups (<see cref="Backup" />) and Restores (<see cref="Restore" />) are possible in any state except <see cref="DatabaseState.Uninitialized" />.
+    ///         Cleanups (<see cref="Cleanup"/>) and Upgrades (<see cref="Upgrade(int)" />) are also possible in the <see cref="DbState.New" /> state.
+    ///         Backups (<see cref="Backup" />) and Restores (<see cref="Restore" />) are possible in any state except <see cref="DbState.Uninitialized" />.
     ///     </para>
     ///     <para>
-    ///         A database manager makes no assumptions or requirements regarding the used threading model. It passes through to the underlying database provider ina threading-agnostic way.
+    ///         A database manager, and all its dependencies, makes no assumptions or requirements regarding the used threading model. It passes through to the underlying database provider ina threading-agnostic way.
     ///     </para>
     /// </remarks>
-    public interface IDatabaseManager : IDisposable
+    public interface IDbManager : IDisposable
     {
         /// <summary>
         ///     Gets whether the database is in a state where it can be upgraded to a newer version.
@@ -54,7 +54,7 @@ namespace RI.DatabaseManager.Manager
         ///         This property is set during <see cref="Initialize" /> and reset during <see cref="Close" />.
         ///     </note>
         /// </remarks>
-        DatabaseState InitialState { get; }
+        DbState InitialState { get; }
 
         /// <summary>
         ///     Gets the version of the database after initialization.
@@ -73,7 +73,7 @@ namespace RI.DatabaseManager.Manager
         ///     Gets whether the database is ready for use and connections can be created and backups, restores, and cleanups can be performed (depending on what is actually supported).
         /// </summary>
         /// <value>
-        ///     true if the database is in <see cref="DatabaseState.ReadyUnknown" />, <see cref="DatabaseState.ReadyNew" />, or <see cref="DatabaseState.ReadyOld" /> state, false otherwise.
+        ///     true if the database is in <see cref="DbState.ReadyUnknown" />, <see cref="DbState.ReadyNew" />, or <see cref="DbState.ReadyOld" /> state, false otherwise.
         /// </value>
         bool IsReady { get; }
 
@@ -109,7 +109,7 @@ namespace RI.DatabaseManager.Manager
         /// <value>
         ///     The current state of the database.
         /// </value>
-        DatabaseState State { get; }
+        DbState State { get; }
 
         /// <summary>
         ///     Gets whether the database manager supports the backup functionality.
@@ -245,7 +245,7 @@ namespace RI.DatabaseManager.Manager
         /// </summary>
         /// <remarks>
         ///     <note type="implement">
-        ///         <see cref="State" /> and <see cref="InitialState" /> are set to <see cref="DatabaseState.Uninitialized" />, <see cref="Version" /> and <see cref="InitialVersion" /> are set to -1, <see cref="IsReady"/> and <see cref="CanUpgrade"/> are set to false.
+        ///         <see cref="State" /> and <see cref="InitialState" /> are set to <see cref="DbState.Uninitialized" />, <see cref="Version" /> and <see cref="InitialVersion" /> are set to -1, <see cref="IsReady"/> and <see cref="CanUpgrade"/> are set to false.
         ///     </note>
         ///     <note type="implement">
         ///         <see cref="Close"/> should be callable multiple times and independent of the current state and version.
@@ -276,7 +276,7 @@ namespace RI.DatabaseManager.Manager
         ///         <see cref="CreateProcessingStep"/> should be callable at any time as the created processing step is just created, not executed.
         ///     </note>
         /// </remarks>
-        IDatabaseProcessingStep CreateProcessingStep ();
+        IDbProcessingStep CreateProcessingStep ();
 
         /// <summary>
         ///     Retrieves a script batch using the configured <see cref="IDatabaseScriptLocator" />.
@@ -358,19 +358,19 @@ namespace RI.DatabaseManager.Manager
         bool Upgrade (int version);
     }
 
-    /// <inheritdoc cref="IDatabaseManager" />
+    /// <inheritdoc cref="IDbManager" />
     /// <typeparam name="TConnection"> The database connection type. </typeparam>
     /// <typeparam name="TTransaction"> The database transaction type. </typeparam>
     /// <typeparam name="TManager"> The type of the database manager. </typeparam>
-    public interface IDatabaseManager <TConnection, TTransaction, TManager> : IDatabaseManager
+    public interface IDbManager <TConnection, TTransaction, TManager> : IDbManager
         where TConnection : DbConnection
         where TTransaction : DbTransaction
-        where TManager : class, IDatabaseManager<TConnection, TTransaction, TManager>
+        where TManager : class, IDbManager<TConnection, TTransaction, TManager>
     {
-        /// <inheritdoc cref="IDatabaseManager.CreateConnection" />
+        /// <inheritdoc cref="IDbManager.CreateConnection" />
         new TConnection CreateConnection (bool readOnly);
 
-        /// <inheritdoc cref="IDatabaseManager.CreateProcessingStep" />
-        new IDatabaseProcessingStep<TConnection, TTransaction, TManager> CreateProcessingStep ();
+        /// <inheritdoc cref="IDbManager.CreateProcessingStep" />
+        new IDbProcessingStep<TConnection, TTransaction, TManager> CreateProcessingStep ();
     }
 }

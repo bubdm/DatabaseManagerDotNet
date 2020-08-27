@@ -10,7 +10,7 @@ namespace RI.DatabaseManager.Manager
     /// </summary>
     /// <remarks>
     ///     <para>
-    ///         See <see cref="IDatabaseManager" /> for more details.
+    ///         See <see cref="IDbManager" /> for more details.
     ///     </para>
     /// </remarks>
     /// <threadsafety static="false" instance="false" />
@@ -96,10 +96,10 @@ namespace RI.DatabaseManager.Manager
         protected override SQLiteConnection CreateConnectionImpl (bool readOnly) => this.CreateInternalConnection(null, readOnly);
 
         /// <inheritdoc />
-        protected override IDatabaseProcessingStep<SQLiteConnection, SQLiteTransaction, SQLiteConnectionStringBuilder, SQLiteDatabaseManager, SQLiteDatabaseManagerConfiguration> CreateProcessingStepImpl () => new SQLiteDatabaseProcessingStep();
+        protected override IDatabaseProcessingStep<SQLiteConnection, SQLiteTransaction, SQLiteConnectionStringBuilder, SQLiteDatabaseManager, SQLiteDatabaseManagerConfiguration> CreateProcessingStepImpl () => new SQLiteDbProcessingStep();
 
         /// <inheritdoc />
-        protected override bool DetectStateAndVersionImpl (out DatabaseState? state, out int version)
+        protected override bool DetectStateAndVersionImpl (out DbState? state, out int version)
         {
             if (!this.DatabaseFile.Exists)
             {

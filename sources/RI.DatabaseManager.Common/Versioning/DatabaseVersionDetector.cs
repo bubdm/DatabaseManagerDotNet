@@ -37,10 +37,10 @@ namespace RI.DatabaseManager.Versioning
         public abstract bool RequiresScriptLocator { get; }
 
         /// <inheritdoc />
-        public abstract bool Detect (TManager manager, out DatabaseState? state, out int version);
+        public abstract bool Detect (TManager manager, out DbState? state, out int version);
 
         /// <inheritdoc />
-        bool IDatabaseVersionDetector.Detect (IDatabaseManager manager, out DatabaseState? state, out int version)
+        bool IDatabaseVersionDetector.Detect (IDbManager manager, out DbState? state, out int version)
         {
             return this.Detect((TManager)manager, out state, out version);
         }

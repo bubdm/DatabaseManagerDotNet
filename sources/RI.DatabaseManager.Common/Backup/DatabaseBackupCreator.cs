@@ -40,7 +40,7 @@ namespace RI.DatabaseManager.Backup
         public abstract bool SupportsRestore { get; }
 
         /// <inheritdoc />
-        bool IDatabaseBackupCreator.Backup (IDatabaseManager manager, object backupTarget)
+        bool IDatabaseBackupCreator.Backup (IDbManager manager, object backupTarget)
         {
             return this.Backup((TManager)manager, backupTarget);
         }
@@ -49,7 +49,7 @@ namespace RI.DatabaseManager.Backup
         public abstract bool Backup (TManager manager, object backupTarget);
 
         /// <inheritdoc />
-        bool IDatabaseBackupCreator.Restore (IDatabaseManager manager, object backupSource)
+        bool IDatabaseBackupCreator.Restore (IDbManager manager, object backupSource)
         {
             return this.Restore((TManager)manager, backupSource);
         }

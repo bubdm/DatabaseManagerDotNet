@@ -70,14 +70,14 @@ namespace RI.DatabaseManager.Builder
             {
                 if (registration.Contract.IsGenericType)
                 {
-                    if (registration.Contract.GetGenericTypeDefinition() == typeof(IDatabaseManager<,,>))
+                    if (registration.Contract.GetGenericTypeDefinition() == typeof(IDbManager<,,>))
                     {
                         Type[] genericArguments = registration.Contract.GetGenericArguments();
 
                         Type connection = genericArguments[0];
                         Type transaction = genericArguments[1];
 
-                        Type manager = typeof(IDatabaseManager<,,>).MakeGenericType(genericArguments);
+                        Type manager = typeof(IDbManager<,,>).MakeGenericType(genericArguments);
                         Type versionDetector = typeof(IDatabaseVersionDetector<,,>).MakeGenericType(genericArguments);
 
                         Type backupCreator = typeof(IDatabaseBackupCreator<,,>).MakeGenericType(genericArguments);
@@ -103,7 +103,7 @@ namespace RI.DatabaseManager.Builder
         public sealed class NullInstance<TConnection, TTransaction, TManager> : IDatabaseBackupCreator<TConnection, TTransaction, TManager>, IDatabaseCleanupProcessor<TConnection, TTransaction, TManager>, IDatabaseVersionUpgrader<TConnection, TTransaction, TManager>, IDatabaseScriptLocator
             where TConnection : DbConnection
             where TTransaction : DbTransaction
-            where TManager : class, IDatabaseManager<TConnection, TTransaction, TManager>
+            where TManager : class, IDbManager<TConnection, TTransaction, TManager>
         {
             internal NullInstance () { }
 
@@ -114,25 +114,25 @@ namespace RI.DatabaseManager.Builder
             bool IDatabaseBackupCreator.RequiresScriptLocator => throw new NotImplementedException();
 
             /// <inheritdoc />
-            int IDatabaseVersionUpgrader.GetMaxVersion (IDatabaseManager manager) => throw new NotImplementedException();
+            int IDatabaseVersionUpgrader.GetMaxVersion (IDbManager manager) => throw new NotImplementedException();
 
             /// <inheritdoc />
-            int IDatabaseVersionUpgrader.GetMinVersion (IDatabaseManager manager) => throw new NotImplementedException();
+            int IDatabaseVersionUpgrader.GetMinVersion (IDbManager manager) => throw new NotImplementedException();
 
             /// <inheritdoc />
-            bool IDatabaseVersionUpgrader.Upgrade (IDatabaseManager manager, int sourceVersion) => throw new NotImplementedException();
+            bool IDatabaseVersionUpgrader.Upgrade (IDbManager manager, int sourceVersion) => throw new NotImplementedException();
 
             /// <inheritdoc />
-            bool IDatabaseCleanupProcessor.Cleanup (IDatabaseManager manager) => throw new NotImplementedException();
+            bool IDatabaseCleanupProcessor.Cleanup (IDbManager manager) => throw new NotImplementedException();
 
             /// <inheritdoc />
             bool IDatabaseBackupCreator.SupportsRestore => throw new NotImplementedException();
 
             /// <inheritdoc />
-            bool IDatabaseBackupCreator.Backup (IDatabaseManager manager, object backupTarget) => throw new NotImplementedException();
+            bool IDatabaseBackupCreator.Backup (IDbManager manager, object backupTarget) => throw new NotImplementedException();
 
             /// <inheritdoc />
-            bool IDatabaseBackupCreator.Restore (IDatabaseManager manager, object backupSource) => throw new NotImplementedException();
+            bool IDatabaseBackupCreator.Restore (IDbManager manager, object backupSource) => throw new NotImplementedException();
 
             /// <inheritdoc />
             bool IDatabaseCleanupProcessor.RequiresScriptLocator => throw new NotImplementedException();
@@ -148,7 +148,7 @@ namespace RI.DatabaseManager.Builder
             }
 
             /// <inheritdoc />
-            List<string> IDatabaseScriptLocator.GetScriptBatch (IDatabaseManager manager, string name, bool preprocess) => throw new NotImplementedException();
+            List<string> IDatabaseScriptLocator.GetScriptBatch (IDbManager manager, string name, bool preprocess) => throw new NotImplementedException();
 
             /// <inheritdoc />
             bool IDatabaseBackupCreator<TConnection, TTransaction, TManager>.Backup (TManager manager, object backupTarget) => throw new NotImplementedException();

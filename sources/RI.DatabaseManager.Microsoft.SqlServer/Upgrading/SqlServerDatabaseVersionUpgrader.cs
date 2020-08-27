@@ -36,14 +36,14 @@ namespace RI.DatabaseManager.Upgrading
         /// </remarks>
         /// <exception cref="ArgumentNullException"> <paramref name="upgradeSteps" /> is null. </exception>
         /// <exception cref="ArgumentException"> <paramref name="upgradeSteps" /> is an empty sequence or contains the same source version multiple times. </exception>
-        public SqlServerDatabaseVersionUpgrader (IEnumerable<SqlServerDatabaseVersionUpgradeStep> upgradeSteps)
+        public SqlServerDatabaseVersionUpgrader (IEnumerable<SqlServerDbVersionUpgradeStep> upgradeSteps)
         {
             if (upgradeSteps == null)
             {
                 throw new ArgumentNullException(nameof(upgradeSteps));
             }
 
-            this.UpgradeSteps = new List<SqlServerDatabaseVersionUpgradeStep>(upgradeSteps);
+            this.UpgradeSteps = new List<SqlServerDbVersionUpgradeStep>(upgradeSteps);
 
             if (this.UpgradeSteps.Count == 0)
             {
@@ -66,8 +66,8 @@ namespace RI.DatabaseManager.Upgrading
         /// <param name="upgradeSteps"> The array of upgrade steps supported by this version upgrader. </param>
         /// <exception cref="ArgumentNullException"> <paramref name="upgradeSteps" /> is null. </exception>
         /// <exception cref="ArgumentException"> <paramref name="upgradeSteps" /> is an empty array or contains the same source version multiple times. </exception>
-        public SqlServerDatabaseVersionUpgrader (params SqlServerDatabaseVersionUpgradeStep[] upgradeSteps)
-            : this((IEnumerable<SqlServerDatabaseVersionUpgradeStep>)upgradeSteps)
+        public SqlServerDatabaseVersionUpgrader (params SqlServerDbVersionUpgradeStep[] upgradeSteps)
+            : this((IEnumerable<SqlServerDbVersionUpgradeStep>)upgradeSteps)
         {
         }
 
@@ -78,7 +78,7 @@ namespace RI.DatabaseManager.Upgrading
 
         #region Instance Properties/Indexer
 
-        private List<SqlServerDatabaseVersionUpgradeStep> UpgradeSteps { get; }
+        private List<SqlServerDbVersionUpgradeStep> UpgradeSteps { get; }
 
         #endregion
 
@@ -94,7 +94,7 @@ namespace RI.DatabaseManager.Upgrading
         ///     The list of available upgrade steps.
         ///     The list is never empty.
         /// </returns>
-        public List<SqlServerDatabaseVersionUpgradeStep> GetUpgradeSteps () => new List<SqlServerDatabaseVersionUpgradeStep>(this.UpgradeSteps);
+        public List<SqlServerDbVersionUpgradeStep> GetUpgradeSteps () => new List<SqlServerDbVersionUpgradeStep>(this.UpgradeSteps);
 
         #endregion
 
@@ -129,7 +129,7 @@ namespace RI.DatabaseManager.Upgrading
             {
                 //TODO: Log: this.Log(LogLevel.Debug, "Beginning SQL Server database upgrade step: SourceVersion=[{0}]; Connection=[{1}]", sourceVersion, manager.Configuration.ConnectionString);
 
-                SqlServerDatabaseVersionUpgradeStep upgradeStep = this.UpgradeSteps.FirstOrDefault(x => x.SourceVersion == sourceVersion);
+                SqlServerDbVersionUpgradeStep upgradeStep = this.UpgradeSteps.FirstOrDefault(x => x.SourceVersion == sourceVersion);
                 if (upgradeStep == null)
                 {
                     throw new Exception("No upgrade step found for source version: " + sourceVersion);

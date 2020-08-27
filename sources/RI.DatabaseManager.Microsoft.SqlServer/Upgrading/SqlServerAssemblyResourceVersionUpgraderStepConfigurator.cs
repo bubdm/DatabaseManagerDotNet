@@ -11,7 +11,7 @@ namespace RI.DatabaseManager.Upgrading
     ///     Implements an assembly version upgrade step configurators for SQL Server databases.
     /// </summary>
     /// <threadsafety static="false" instance="false" />
-    public abstract class SqlServerAssemblyResourceVersionUpgraderStepConfigurator : AssemblyResourceVersionUpgraderStepConfigurator<SqlServerDatabaseVersionUpgradeStep, SqlConnection, SqlTransaction, SqlConnectionStringBuilder, SqlServerDatabaseManager, SqlServerDatabaseManagerConfiguration>
+    public abstract class SqlServerAssemblyResourceVersionUpgraderStepConfigurator : AssemblyResourceVersionUpgraderStepConfigurator<SqlServerDbVersionUpgradeStep, SqlConnection, SqlTransaction, SqlConnectionStringBuilder, SqlServerDatabaseManager, SqlServerDatabaseManagerConfiguration>
     {
     }
 }

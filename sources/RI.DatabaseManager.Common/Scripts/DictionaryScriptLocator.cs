@@ -69,7 +69,7 @@ namespace RI.DatabaseManager.Scripts
         #region Overrides
 
         /// <inheritdoc />
-        protected override string LocateAndReadScript (IDatabaseManager manager, string name)
+        protected override string LocateAndReadScript (IDbManager manager, string name)
         {
             if (!this.Scripts.ContainsKey(name))
             {

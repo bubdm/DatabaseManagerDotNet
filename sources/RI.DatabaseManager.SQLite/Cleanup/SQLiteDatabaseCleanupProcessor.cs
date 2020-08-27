@@ -59,7 +59,7 @@ namespace RI.DatabaseManager.Cleanup
         /// </summary>
         /// <param name="cleanupStep"> The custom processing step which performs the cleanup. </param>
         /// <exception cref="ArgumentNullException"> <paramref name="cleanupStep" /> is null. </exception>
-        public SQLiteDatabaseCleanupProcessor (SQLiteDatabaseProcessingStep cleanupStep)
+        public SQLiteDatabaseCleanupProcessor (SQLiteDbProcessingStep cleanupStep)
         {
             if (cleanupStep == null)
             {
@@ -87,7 +87,7 @@ namespace RI.DatabaseManager.Cleanup
                 throw new EmptyStringArgumentException(nameof(scriptName));
             }
 
-            SQLiteDatabaseProcessingStep step = new SQLiteDatabaseProcessingStep();
+            SQLiteDbProcessingStep step = new SQLiteDbProcessingStep();
             step.AddScript(scriptName);
             this.CleanupStep = step;
         }
@@ -105,7 +105,7 @@ namespace RI.DatabaseManager.Cleanup
         /// <value>
         ///     The custom processing step which performs the cleanup or null if the default cleanup script is used (<see cref="DefaultCleanupScript" />).
         /// </value>
-        public SQLiteDatabaseProcessingStep CleanupStep { get; }
+        public SQLiteDbProcessingStep CleanupStep { get; }
 
         #endregion
 
@@ -131,11 +131,11 @@ namespace RI.DatabaseManager.Cleanup
 
                 using (SQLiteConnection connection = manager.CreateInternalConnection(null, false))
                 {
-                    SQLiteDatabaseProcessingStep cleanupStep = this.CleanupStep;
+                    SQLiteDbProcessingStep cleanupStep = this.CleanupStep;
                     if (cleanupStep == null)
                     {
                         List<string> batches = DatabaseScriptLocator.SplitBatches(SQLiteDatabaseCleanupProcessor.DefaultCleanupScript, DatabaseScriptLocator.DefaultBatchSeparator);
-                        cleanupStep = new SQLiteDatabaseProcessingStep();
+                        cleanupStep = new SQLiteDbProcessingStep();
                         cleanupStep.AddBatches(batches);
                     }
 

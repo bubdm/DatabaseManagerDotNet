@@ -11,17 +11,17 @@ namespace RI.DatabaseManager.Upgrading
     ///     Implements an assembly version upgrade step extractor for SQLite databases.
     /// </summary>
     /// <threadsafety static="false" instance="false" />
-    public sealed class SQLiteAssemblyResourceVersionUpgraderUtility : AssemblyResourceVersionUpgraderUtility<SQLiteDatabaseVersionUpgradeStep, SQLiteConnection, SQLiteTransaction, SQLiteConnectionStringBuilder, SQLiteDatabaseManager, SQLiteDatabaseManagerConfiguration>
+    public sealed class SQLiteAssemblyResourceVersionUpgraderUtility : AssemblyResourceVersionUpgraderUtility<SQLiteDbVersionUpgradeStep, SQLiteConnection, SQLiteTransaction, SQLiteConnectionStringBuilder, SQLiteDatabaseManager, SQLiteDatabaseManagerConfiguration>
     {
         #region Overrides
 
         /// <inheritdoc />
-        protected override SQLiteDatabaseVersionUpgradeStep CreateProcessingStep (int sourceVersion, string resourceName)
+        protected override SQLiteDbVersionUpgradeStep CreateProcessingStep (int sourceVersion, string resourceName)
         {
-            SQLiteDatabaseVersionUpgradeStep upgradeStep = new SQLiteDatabaseVersionUpgradeStep(sourceVersion);
+            SQLiteDbVersionUpgradeStep upgradeStep = new SQLiteDbVersionUpgradeStep(sourceVersion);
             if (resourceName != null)
             {
-                upgradeStep.AddScript(resourceName, DatabaseProcessingStepTransactionRequirement.Required);
+                upgradeStep.AddScript(resourceName, DbProcessingStepTransactionRequirement.Required);
             }
             return upgradeStep;
         }

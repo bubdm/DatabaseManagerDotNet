@@ -202,7 +202,7 @@ namespace RI.DatabaseManager.Scripts
 		string IDatabaseScriptLocator.BatchSeparator { get; set; }
 
 		/// <inheritdoc />
-		public List<string> GetScriptBatch (IDatabaseManager manager, string name, bool preprocess)
+		public List<string> GetScriptBatch (IDbManager manager, string name, bool preprocess)
 		{
 			if (manager == null)
 			{

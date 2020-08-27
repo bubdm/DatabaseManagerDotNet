@@ -79,7 +79,7 @@ namespace RI.DatabaseManager.Versioning
         public override bool RequiresScriptLocator => true;
 
         /// <inheritdoc />
-        public override bool Detect (SQLiteDatabaseManager manager, out DatabaseState? state, out int version)
+        public override bool Detect (SQLiteDatabaseManager manager, out DbState? state, out int version)
         {
             if (manager == null)
             {

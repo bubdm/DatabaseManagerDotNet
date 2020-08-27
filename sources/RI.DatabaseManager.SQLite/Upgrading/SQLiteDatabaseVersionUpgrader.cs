@@ -35,14 +35,14 @@ namespace RI.DatabaseManager.Upgrading
         /// </remarks>
         /// <exception cref="ArgumentNullException"> <paramref name="upgradeSteps" /> is null. </exception>
         /// <exception cref="ArgumentException"> <paramref name="upgradeSteps" /> is an empty sequence or contains the same source version multiple times. </exception>
-        public SQLiteDatabaseVersionUpgrader (IEnumerable<SQLiteDatabaseVersionUpgradeStep> upgradeSteps)
+        public SQLiteDatabaseVersionUpgrader (IEnumerable<SQLiteDbVersionUpgradeStep> upgradeSteps)
         {
             if (upgradeSteps == null)
             {
                 throw new ArgumentNullException(nameof(upgradeSteps));
             }
 
-            this.UpgradeSteps = new List<SQLiteDatabaseVersionUpgradeStep>(upgradeSteps);
+            this.UpgradeSteps = new List<SQLiteDbVersionUpgradeStep>(upgradeSteps);
 
             if (this.UpgradeSteps.Count == 0)
             {
@@ -65,8 +65,8 @@ namespace RI.DatabaseManager.Upgrading
         /// <param name="upgradeSteps"> The array of upgrade steps supported by this version upgrader. </param>
         /// <exception cref="ArgumentNullException"> <paramref name="upgradeSteps" /> is null. </exception>
         /// <exception cref="ArgumentException"> <paramref name="upgradeSteps" /> is an empty array or contains the same source version multiple times. </exception>
-        public SQLiteDatabaseVersionUpgrader (params SQLiteDatabaseVersionUpgradeStep[] upgradeSteps)
-            : this((IEnumerable<SQLiteDatabaseVersionUpgradeStep>)upgradeSteps)
+        public SQLiteDatabaseVersionUpgrader (params SQLiteDbVersionUpgradeStep[] upgradeSteps)
+            : this((IEnumerable<SQLiteDbVersionUpgradeStep>)upgradeSteps)
         {
         }
 
@@ -77,7 +77,7 @@ namespace RI.DatabaseManager.Upgrading
 
         #region Instance Properties/Indexer
 
-        private List<SQLiteDatabaseVersionUpgradeStep> UpgradeSteps { get; }
+        private List<SQLiteDbVersionUpgradeStep> UpgradeSteps { get; }
 
         #endregion
 
@@ -93,7 +93,7 @@ namespace RI.DatabaseManager.Upgrading
         ///     The list of available upgrade steps.
         ///     The list is never empty.
         /// </returns>
-        public List<SQLiteDatabaseVersionUpgradeStep> GetUpgradeSteps () => new List<SQLiteDatabaseVersionUpgradeStep>(this.UpgradeSteps);
+        public List<SQLiteDbVersionUpgradeStep> GetUpgradeSteps () => new List<SQLiteDbVersionUpgradeStep>(this.UpgradeSteps);
 
         #endregion
 
@@ -128,7 +128,7 @@ namespace RI.DatabaseManager.Upgrading
             {
                 //TODO: Log: this.Log(LogLevel.Debug, "Beginning SQLite database upgrade step: SourceVersion=[{0}]; Connection=[{1}]", sourceVersion, manager.Configuration.ConnectionString);
 
-                SQLiteDatabaseVersionUpgradeStep upgradeStep = this.UpgradeSteps.FirstOrDefault(x => x.SourceVersion == sourceVersion);
+                SQLiteDbVersionUpgradeStep upgradeStep = this.UpgradeSteps.FirstOrDefault(x => x.SourceVersion == sourceVersion);
                 if (upgradeStep == null)
                 {
                     throw new Exception("No upgrade step found for source version: " + sourceVersion);

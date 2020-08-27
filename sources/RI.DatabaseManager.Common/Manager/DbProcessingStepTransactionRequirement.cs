@@ -9,7 +9,7 @@ namespace RI.DatabaseManager.Manager
 	///     Describes the transaction requirements of a processing sub-step.
 	/// </summary>
 	[Serializable]
-	public enum DatabaseProcessingStepTransactionRequirement
+	public enum DbProcessingStepTransactionRequirement
 	{
 		/// <summary>
 		///     The sub-step has no transaction requirement and can be used with or without a transaction.

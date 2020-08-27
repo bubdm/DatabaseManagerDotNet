@@ -60,7 +60,7 @@ namespace RI.DatabaseManager.Cleanup
         /// </summary>
         /// <param name="cleanupStep"> The custom processing step which performs the cleanup or null if the default cleanup script is used (<see cref="DefaultCleanupScript" />). </param>
         /// <exception cref="ArgumentNullException"> <paramref name="cleanupStep" /> is null. </exception>
-        public SqlServerDatabaseCleanupProcessor (SqlServerDatabaseProcessingStep cleanupStep)
+        public SqlServerDatabaseCleanupProcessor (SqlServerDbProcessingStep cleanupStep)
         {
             if (cleanupStep == null)
             {
@@ -88,7 +88,7 @@ namespace RI.DatabaseManager.Cleanup
                 throw new EmptyStringArgumentException(nameof(scriptName));
             }
 
-            SqlServerDatabaseProcessingStep step = new SqlServerDatabaseProcessingStep();
+            SqlServerDbProcessingStep step = new SqlServerDbProcessingStep();
             step.AddScript(scriptName);
             this.CleanupStep = step;
         }
@@ -106,7 +106,7 @@ namespace RI.DatabaseManager.Cleanup
         /// <value>
         ///     The custom processing step which performs the cleanup or null if the default cleanup script is used (<see cref="DefaultCleanupScript" />).
         /// </value>
-        public SqlServerDatabaseProcessingStep CleanupStep { get; }
+        public SqlServerDbProcessingStep CleanupStep { get; }
 
         #endregion
 
@@ -132,11 +132,11 @@ namespace RI.DatabaseManager.Cleanup
 
                 using (SqlConnection connection = manager.CreateInternalConnection(null))
                 {
-                    SqlServerDatabaseProcessingStep cleanupStep = this.CleanupStep;
+                    SqlServerDbProcessingStep cleanupStep = this.CleanupStep;
                     if (cleanupStep == null)
                     {
                         List<string> batches = DatabaseScriptLocator.SplitBatches(SqlServerDatabaseCleanupProcessor.DefaultCleanupScript, DatabaseScriptLocator.DefaultBatchSeparator);
-                        cleanupStep = new SqlServerDatabaseProcessingStep();
+                        cleanupStep = new SqlServerDbProcessingStep();
                         cleanupStep.AddBatches(batches);
                     }
 

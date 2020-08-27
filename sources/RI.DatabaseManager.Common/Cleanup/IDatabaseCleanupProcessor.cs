@@ -16,11 +16,11 @@ namespace RI.DatabaseManager.Cleanup
     ///         What the cleanup does in detail depends on the database type and the implementation of <see cref="IDatabaseCleanupProcessor" /> but is usually something like &quot;vacuum&quot;, recreate indices, etc.
     ///     </para>
     ///     <para>
-    ///         Database cleanup processors are used by database managers (<see cref="IDatabaseManager" /> implementations).
+    ///         Database cleanup processors are used by database managers (<see cref="IDbManager" /> implementations).
     ///         Do not use database cleanup processors directly but rather configure to use them through configuration (<see cref="IDatabaseManagerConfiguration.CleanupProcessor" />).
     ///     </para>
     ///     <para>
-    ///         Implementations of <see cref="IDatabaseCleanupProcessor" /> are always specific for a particular type of database (or particular implementation of <see cref="IDatabaseManager" /> respectively).
+    ///         Implementations of <see cref="IDatabaseCleanupProcessor" /> are always specific for a particular type of database (or particular implementation of <see cref="IDbManager" /> respectively).
     ///     </para>
     ///     <para>
     ///         Database cleanup processors are optional.
@@ -46,7 +46,7 @@ namespace RI.DatabaseManager.Cleanup
         ///     true if the cleanup was successful, false otherwise.
         ///     Details must be written to the log.
         /// </returns>
-        bool Cleanup (IDatabaseManager manager);
+        bool Cleanup (IDbManager manager);
     }
 
     /// <inheritdoc cref="IDatabaseCleanupProcessor" />
@@ -59,7 +59,7 @@ namespace RI.DatabaseManager.Cleanup
     public interface IDatabaseCleanupProcessor <TConnection, TTransaction, in TManager> : IDatabaseCleanupProcessor
         where TConnection : DbConnection
         where TTransaction : DbTransaction
-        where TManager : class, IDatabaseManager<TConnection, TTransaction, TManager>
+        where TManager : class, IDbManager<TConnection, TTransaction, TManager>
     {
         /// <inheritdoc cref="IDatabaseCleanupProcessor.Cleanup" />
         bool Cleanup (TManager manager);

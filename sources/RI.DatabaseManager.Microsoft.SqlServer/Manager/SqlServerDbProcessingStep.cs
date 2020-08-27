@@ -15,14 +15,14 @@ namespace RI.DatabaseManager.Manager
     /// </summary>
     /// <remarks>
     ///     <para>
-    ///         <see cref="SqlServerDatabaseProcessingStep" /> is used by <see cref="SqlServerDatabaseCleanupProcessor" /> and <see cref="SqlServerDatabaseVersionUpgrader" />.
+    ///         <see cref="SqlServerDbProcessingStep" /> is used by <see cref="SqlServerDatabaseCleanupProcessor" /> and <see cref="SqlServerDatabaseVersionUpgrader" />.
     ///     </para>
     ///     <para>
-    ///         See <see cref="DatabaseProcessingStep{TConnection,TTransaction,TConnectionStringBuilder,TManager,TConfiguration}" /> for more details.
+    ///         See <see cref="DbProcessingStep{TConnection,TTransaction,TManager}" /> for more details.
     ///     </para>
     /// </remarks>
     /// <threadsafety static="false" instance="false" />
-    public class SqlServerDatabaseProcessingStep : DatabaseProcessingStep<SqlConnection, SqlTransaction, SqlConnectionStringBuilder, SqlServerDatabaseManager, SqlServerDatabaseManagerConfiguration>
+    public class SqlServerDbProcessingStep : DbProcessingStep<,,>
     {
         #region Overrides
 

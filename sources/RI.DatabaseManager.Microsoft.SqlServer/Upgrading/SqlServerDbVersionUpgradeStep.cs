@@ -12,23 +12,23 @@ namespace RI.DatabaseManager.Upgrading
     /// </summary>
     /// <remarks>
     ///     <para>
-    ///         <see cref="SqlServerDatabaseVersionUpgradeStep" /> is used by <see cref="SqlServerDatabaseVersionUpgrader" />.
+    ///         <see cref="SqlServerDbVersionUpgradeStep" /> is used by <see cref="SqlServerDatabaseVersionUpgrader" />.
     ///     </para>
     ///     <para>
     ///         Each upgrade step is associated with a source version (<see cref="SourceVersion" />).
     ///     </para>
     /// </remarks>
     /// <threadsafety static="false" instance="false" />
-    public class SqlServerDatabaseVersionUpgradeStep : SqlServerDatabaseProcessingStep
+    public class SqlServerDbVersionUpgradeStep : SqlServerDbProcessingStep
     {
         #region Instance Constructor/Destructor
 
         /// <summary>
-        ///     Creates a new instance of <see cref="SqlServerDatabaseVersionUpgradeStep" />.
+        ///     Creates a new instance of <see cref="SqlServerDbVersionUpgradeStep" />.
         /// </summary>
         /// <param name="sourceVersion"> The source version this upgrade steps updates. </param>
         /// <exception cref="ArgumentOutOfRangeException"> <paramref name="sourceVersion" /> is less than zero. </exception>
-        public SqlServerDatabaseVersionUpgradeStep (int sourceVersion)
+        public SqlServerDbVersionUpgradeStep (int sourceVersion)
         {
             if (sourceVersion < 0)
             {

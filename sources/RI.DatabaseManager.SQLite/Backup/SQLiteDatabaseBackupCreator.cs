@@ -44,7 +44,7 @@ namespace RI.DatabaseManager.Backup
         ///     </para>
         /// </remarks>
         public SQLiteDatabaseBackupCreator ()
-            : this(null, (SQLiteDatabaseProcessingStep)null)
+            : this(null, (SQLiteDbProcessingStep)null)
         {
         }
 
@@ -53,7 +53,7 @@ namespace RI.DatabaseManager.Backup
         /// </summary>
         /// <param name="preprocessingStep"> The pre-processing step executed before the backup is created or null if no pre-processing step is used. </param>
         /// <param name="postprocessingStep"> The post-processing step executed after the backup was created or null if no post-processing step is used. </param>
-        public SQLiteDatabaseBackupCreator (SQLiteDatabaseProcessingStep preprocessingStep, SQLiteDatabaseProcessingStep postprocessingStep)
+        public SQLiteDatabaseBackupCreator (SQLiteDbProcessingStep preprocessingStep, SQLiteDbProcessingStep postprocessingStep)
         {
             this.PreprocessingStep = preprocessingStep;
             this.PostprocessingStep = postprocessingStep;
@@ -85,7 +85,7 @@ namespace RI.DatabaseManager.Backup
 
             if (preprocessingScriptName != null)
             {
-                SQLiteDatabaseProcessingStep step = new SQLiteDatabaseProcessingStep();
+                SQLiteDbProcessingStep step = new SQLiteDbProcessingStep();
                 step.AddScript(preprocessingScriptName);
                 this.PreprocessingStep = step;
             }
@@ -96,7 +96,7 @@ namespace RI.DatabaseManager.Backup
 
             if (postprocessingScriptName != null)
             {
-                SQLiteDatabaseProcessingStep step = new SQLiteDatabaseProcessingStep();
+                SQLiteDbProcessingStep step = new SQLiteDbProcessingStep();
                 step.AddScript(postprocessingScriptName);
                 this.PostprocessingStep = step;
             }
@@ -119,7 +119,7 @@ namespace RI.DatabaseManager.Backup
         /// <value>
         ///     The used post-processing step or null if no post-processing is used.
         /// </value>
-        public SQLiteDatabaseProcessingStep PostprocessingStep { get; }
+        public SQLiteDbProcessingStep PostprocessingStep { get; }
 
         /// <summary>
         ///     Gets the used pre-processing step.
@@ -127,7 +127,7 @@ namespace RI.DatabaseManager.Backup
         /// <value>
         ///     The used pre-processing step or null if no pre-processing is used.
         /// </value>
-        public SQLiteDatabaseProcessingStep PreprocessingStep { get; }
+        public SQLiteDbProcessingStep PreprocessingStep { get; }
 
         #endregion
 

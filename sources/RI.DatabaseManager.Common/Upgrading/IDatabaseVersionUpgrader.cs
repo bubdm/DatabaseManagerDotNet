@@ -16,11 +16,11 @@ namespace RI.DatabaseManager.Upgrading
     ///         What the upgrade does in detail depends on the database type and the implementation of <see cref="IDatabaseVersionUpgrader" />.
     ///     </para>
     ///     <para>
-    ///         Database version upgraders are used by database managers (<see cref="IDatabaseManager" /> implementations).
+    ///         Database version upgraders are used by database managers (<see cref="IDbManager" /> implementations).
     ///         Do not use database version upgraders directly but rather configure to use them through configuration (<see cref="IDatabaseManagerConfiguration.VersionUpgrader" />).
     ///     </para>
     ///     <para>
-    ///         Implementations of <see cref="IDatabaseVersionUpgrader" /> are always specific for a particular type of database (or particular implementation of <see cref="IDatabaseManager" /> respectively).
+    ///         Implementations of <see cref="IDatabaseVersionUpgrader" /> are always specific for a particular type of database (or particular implementation of <see cref="IDbManager" /> respectively).
     ///     </para>
     ///     <para>
     ///         Database version upgraders are optional.
@@ -29,7 +29,7 @@ namespace RI.DatabaseManager.Upgrading
     ///     <para>
     ///         <see cref="IDatabaseVersionUpgrader" /> performs upgrades incrementally through multiple calls to <see cref="Upgrade" />.
     ///         <see cref="Upgrade" /> is always called for the current/source version and then upgrades to the current/source version + 1.
-    ///         Therefore, <see cref="IDatabaseManager" /> implementations must call <see cref="Upgrade" /> as many times as necessary to upgrade incrementally from the current version to the desired version.
+    ///         Therefore, <see cref="IDbManager" /> implementations must call <see cref="Upgrade" /> as many times as necessary to upgrade incrementally from the current version to the desired version.
     ///     </para>
     /// </remarks>
     /// <threadsafety static="false" instance="false" />
@@ -55,7 +55,7 @@ namespace RI.DatabaseManager.Upgrading
         ///         <see cref="GetMaxVersion" /> always represents a target version, not a source version, meaning that <see cref="GetMaxVersion" /> is the highest version to which can be upgraded.
         ///     </note>
         /// </remarks>
-        int GetMaxVersion (IDatabaseManager manager);
+        int GetMaxVersion (IDbManager manager);
 
         /// <summary>
         ///     Gets the lowest supported/known version of this database version upgrader.
@@ -70,7 +70,7 @@ namespace RI.DatabaseManager.Upgrading
         ///         <see cref="GetMinVersion" /> always represents a source version, not a target version, meaning that <see cref="GetMinVersion" /> is the lowest version from which can be upgraded.
         ///     </note>
         /// </remarks>
-        int GetMinVersion (IDatabaseManager manager);
+        int GetMinVersion (IDbManager manager);
 
         /// <summary>
         ///     Upgrades a database version from a specified version to the next version.
@@ -86,7 +86,7 @@ namespace RI.DatabaseManager.Upgrading
         ///         The upgrade must be exactly from <paramref name="sourceVersion" /> to <paramref name="sourceVersion" /> + 1.
         ///     </note>
         /// </remarks>
-        bool Upgrade (IDatabaseManager manager, int sourceVersion);
+        bool Upgrade (IDbManager manager, int sourceVersion);
     }
 
     /// <inheritdoc cref="IDatabaseVersionUpgrader" />
@@ -98,7 +98,7 @@ namespace RI.DatabaseManager.Upgrading
     public interface IDatabaseVersionUpgrader <TConnection, TTransaction, in TManager> : IDatabaseVersionUpgrader
         where TConnection : DbConnection
         where TTransaction : DbTransaction
-        where TManager : class, IDatabaseManager<TConnection, TTransaction, TManager>
+        where TManager : class, IDbManager<TConnection, TTransaction, TManager>
     {
         /// <inheritdoc cref="IDatabaseVersionUpgrader.GetMaxVersion" />
         int GetMaxVersion (TManager manager);

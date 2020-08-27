@@ -16,14 +16,14 @@ namespace RI.DatabaseManager.Scripts
     ///         What the preprocessing does in detail depends on the implementation of <see cref="IDatabaseScriptLocator" /> but is usually something like replacing placeholders (e.g. current date and time), etc.
     ///     </para>
     ///     <para>
-    ///         Database script locators are used by database managers (<see cref="IDatabaseManager" /> implementations) and version detectors (<see cref="IDatabaseVersionDetector" />), version upgraders (<see cref="IDatabaseVersionUpgrader" />), backup creators (<see cref="IDatabaseBackupCreator" />), and cleanup processors (<see cref="IDatabaseCleanupProcessor" />), depending on their implementation and the used database type.
+    ///         Database script locators are used by database managers (<see cref="IDbManager" /> implementations) and version detectors (<see cref="IDatabaseVersionDetector" />), version upgraders (<see cref="IDatabaseVersionUpgrader" />), backup creators (<see cref="IDatabaseBackupCreator" />), and cleanup processors (<see cref="IDatabaseCleanupProcessor" />), depending on their implementation and the used database type.
     ///         Do not use database script locators directly but rather configure to use them through configuration (<see cref="IDatabaseManagerConfiguration.ScriptLocator" />).
     ///     </para>
     ///     <para>
-    ///         To retrieve individual scripts for use with connections created by a database manager, use <see cref="IDatabaseManager.GetScriptBatch" />.
+    ///         To retrieve individual scripts for use with connections created by a database manager, use <see cref="IDbManager.GetScriptBatch" />.
     ///     </para>
     ///     <para>
-    ///         Implementations of <see cref="IDatabaseScriptLocator" /> are independent of the type of database (or the particular implementation of <see cref="IDatabaseManager" /> respectively).
+    ///         Implementations of <see cref="IDatabaseScriptLocator" /> are independent of the type of database (or the particular implementation of <see cref="IDbManager" /> respectively).
     ///     </para>
     ///     <para>
     ///         Database script locators are optional.
@@ -54,6 +54,6 @@ namespace RI.DatabaseManager.Scripts
         ///     If the script could not be found, null is returned.
         ///     If <see cref="BatchSeparator" /> is null, the whole script is returned as a single item in the returned list.
         /// </returns>
-        List<string> GetScriptBatch (IDatabaseManager manager, string name, bool preprocess);
+        List<string> GetScriptBatch (IDbManager manager, string name, bool preprocess);
     }
 }

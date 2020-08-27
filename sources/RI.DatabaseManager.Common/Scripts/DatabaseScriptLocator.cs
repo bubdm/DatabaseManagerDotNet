@@ -177,7 +177,7 @@ namespace RI.DatabaseManager.Scripts
         /// <returns>
         ///     The script or null if the script could not be found.
         /// </returns>
-        protected abstract string LocateAndReadScript (IDatabaseManager manager, string name);
+        protected abstract string LocateAndReadScript (IDbManager manager, string name);
 
         #endregion
 
@@ -250,7 +250,7 @@ namespace RI.DatabaseManager.Scripts
         ///         <see cref="ReplacePlaceholders" /> is separately called for each individual batch.
         ///     </note>
         /// </remarks>
-        protected virtual string ReplacePlaceholders (IDatabaseManager manager, string batch, List<string> placeholders)
+        protected virtual string ReplacePlaceholders (IDbManager manager, string batch, List<string> placeholders)
         {
             string processed = batch;
 
@@ -280,10 +280,10 @@ namespace RI.DatabaseManager.Scripts
         ///         The default implementation uses <see cref="SplitBatches(string,string)" />.
         ///     </para>
         ///     <note type="note">
-        ///         <see cref="SplitBatches(IDatabaseManager,string,string)" /> is not called if <see cref="BatchSeparator" /> is null.
+        ///         <see cref="SplitBatches(IDbManager,string,string)" /> is not called if <see cref="BatchSeparator" /> is null.
         ///     </note>
         /// </remarks>
-        protected virtual List<string> SplitBatches (IDatabaseManager manager, string script, string separator)
+        protected virtual List<string> SplitBatches (IDbManager manager, string script, string separator)
         {
             return DatabaseScriptLocator.SplitBatches(script, separator);
         }
@@ -318,7 +318,7 @@ namespace RI.DatabaseManager.Scripts
 
 
         /// <inheritdoc />
-        public List<string> GetScriptBatch (IDatabaseManager manager, string name, bool preprocess)
+        public List<string> GetScriptBatch (IDbManager manager, string name, bool preprocess)
         {
             if (manager == null)
             {

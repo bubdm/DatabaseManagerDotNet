@@ -15,14 +15,14 @@ namespace RI.DatabaseManager.Manager
     /// </summary>
     /// <remarks>
     ///     <para>
-    ///         <see cref="SQLiteDatabaseProcessingStep" /> is used by <see cref="SQLiteDatabaseBackupCreator" />, <see cref="SQLiteDatabaseCleanupProcessor" />, and <see cref="SQLiteDatabaseVersionUpgrader" />.
+    ///         <see cref="SQLiteDbProcessingStep" /> is used by <see cref="SQLiteDatabaseBackupCreator" />, <see cref="SQLiteDatabaseCleanupProcessor" />, and <see cref="SQLiteDatabaseVersionUpgrader" />.
     ///     </para>
     ///     <para>
-    ///         See <see cref="DatabaseProcessingStep{TConnection,TTransaction,TConnectionStringBuilder,TManager,TConfiguration}" /> for more details.
+    ///         See <see cref="DbProcessingStep{TConnection,TTransaction,TManager}" /> for more details.
     ///     </para>
     /// </remarks>
     /// <threadsafety static="false" instance="false" />
-    public class SQLiteDatabaseProcessingStep : DatabaseProcessingStep<SQLiteConnection, SQLiteTransaction, SQLiteConnectionStringBuilder, SQLiteDatabaseManager, SQLiteDatabaseManagerConfiguration>
+    public class SQLiteDbProcessingStep : DbProcessingStep<,,>
     {
         #region Overrides
 

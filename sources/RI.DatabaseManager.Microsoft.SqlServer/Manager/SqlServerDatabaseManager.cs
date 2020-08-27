@@ -10,7 +10,7 @@ namespace RI.DatabaseManager.Manager
     /// </summary>
     /// <remarks>
     ///     <para>
-    ///         See <see cref="IDatabaseManager" /> for more details.
+    ///         See <see cref="IDbManager" /> for more details.
     ///     </para>
     /// </remarks>
     /// <threadsafety static="false" instance="false" />
@@ -60,7 +60,7 @@ namespace RI.DatabaseManager.Manager
         protected override SqlConnection CreateConnectionImpl (bool readOnly) => this.CreateInternalConnection(null);
 
         /// <inheritdoc />
-        protected override IDatabaseProcessingStep<SqlConnection, SqlTransaction, SqlConnectionStringBuilder, SqlServerDatabaseManager, SqlServerDatabaseManagerConfiguration> CreateProcessingStepImpl () => new SqlServerDatabaseProcessingStep();
+        protected override IDatabaseProcessingStep<SqlConnection, SqlTransaction, SqlConnectionStringBuilder, SqlServerDatabaseManager, SqlServerDatabaseManagerConfiguration> CreateProcessingStepImpl () => new SqlServerDbProcessingStep();
 
         #endregion
     }

@@ -36,7 +36,7 @@ namespace RI.DatabaseManager.Upgrading
         /// <inheritdoc />
         public abstract bool RequiresScriptLocator { get; }
 
-        int IDatabaseVersionUpgrader.GetMaxVersion (IDatabaseManager manager)
+        int IDatabaseVersionUpgrader.GetMaxVersion (IDbManager manager)
         {
             return this.GetMaxVersion((TManager)manager);
         }
@@ -44,7 +44,7 @@ namespace RI.DatabaseManager.Upgrading
         /// <inheritdoc />
         public abstract int GetMaxVersion (TManager manager);
 
-        int IDatabaseVersionUpgrader.GetMinVersion (IDatabaseManager manager)
+        int IDatabaseVersionUpgrader.GetMinVersion (IDbManager manager)
         {
             return this.GetMinVersion((TManager)manager);
         }
@@ -56,7 +56,7 @@ namespace RI.DatabaseManager.Upgrading
         public abstract bool Upgrade (TManager manager, int sourceVersion);
 
         /// <inheritdoc />
-        bool IDatabaseVersionUpgrader.Upgrade (IDatabaseManager manager, int sourceVersion)
+        bool IDatabaseVersionUpgrader.Upgrade (IDbManager manager, int sourceVersion)
         {
             return this.Upgrade((TManager)manager, sourceVersion);
         }

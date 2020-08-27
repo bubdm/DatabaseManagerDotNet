@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Data.Common;
 using System.Globalization;
 
+using RI.Abstractions.Logging;
 using RI.DatabaseManager.Backup;
 using RI.DatabaseManager.Builder;
 using RI.DatabaseManager.Cleanup;
@@ -16,23 +17,25 @@ using RI.DatabaseManager.Versioning;
 namespace RI.DatabaseManager.Manager
 {
     /// <summary>
-    ///     Boilerplate implementation of <see cref="IDatabaseManager"/> and <see cref="IDatabaseManager{TConnection,TTransaction,TManager}"/>.
+    ///     Boilerplate implementation of <see cref="IDbManager"/> and <see cref="IDbManager{TConnection,TTransaction,TManager}"/>.
     /// </summary>
     /// <typeparam name="TConnection"> The database connection type. </typeparam>
     /// <typeparam name="TTransaction"> The database transaction type. </typeparam>
     /// <typeparam name="TManager"> The type of the database manager. </typeparam>
     /// <remarks>
     ///     <note type="implement">
-    ///         It is recommended that database manager implementations use this base class as it already implements most of the database-independent logic defined by <see cref="IDatabaseManager"/> and <see cref="IDatabaseManager{TConnection,TTransaction,TManager}"/>.
+    ///         It is recommended that database manager implementations use this base class as it already implements most of the database-independent logic defined by <see cref="IDbManager"/> and <see cref="IDbManager{TConnection,TTransaction,TManager}"/>.
     ///     </note>
     /// </remarks>
     /// <threadsafety static="false" instance="false" />
-    public abstract class DatabaseManager <TConnection, TTransaction, TManager> : IDatabaseManager<TConnection, TTransaction, TManager>
+    public abstract class DbManager <TConnection, TTransaction, TManager> : IDbManager<TConnection, TTransaction, TManager>
         where TConnection : DbConnection
         where TTransaction : DbTransaction
-        where TManager : class, IDatabaseManager<TConnection, TTransaction, TManager>
+        where TManager : class, IDbManager<TConnection, TTransaction, TManager>
     {
         private IDatabaseVersionDetector<TConnection, TTransaction, TManager> VersionDetector { get; }
+
+        private ILogger Logger { get; }
 
         private IDatabaseBackupCreator<TConnection, TTransaction, TManager> BackupCreator { get; }
 
@@ -48,35 +51,54 @@ namespace RI.DatabaseManager.Manager
         #region Instance Constructor/Destructor
 
         /// <summary>
-        ///     Creates a new instance of <see cref="DatabaseManager{TConnection,TTransaction,TManager}" />.
+        /// Creates a new instance of <see cref="DbManager{TConnection,TTransaction,TManager}" />.
         /// </summary>
-        protected DatabaseManager (IDatabaseVersionDetector<TConnection, TTransaction, TManager> versionDetector, IDatabaseBackupCreator<TConnection, TTransaction, TManager> backupCreator, IDatabaseCleanupProcessor<TConnection, TTransaction, TManager> cleanupProcessor, IDatabaseVersionUpgrader<TConnection, TTransaction, TManager> versionUpgrader, IDatabaseScriptLocator scriptLocator)
+        /// <param name="versionDetector">The used version detector.</param>
+        /// <param name="backupCreator">The used backup creator, if any.</param>
+        /// <param name="cleanupProcessor">The used cleanup processor, if any.</param>
+        /// <param name="versionUpgrader">The used version upgrader, if any.</param>
+        /// <param name="scriptLocator">The used script locator, if any.</param>
+        /// <param name="logger">The used logger.</param>
+        /// <remarks>
+        /// <note type="important">
+        /// <paramref name="backupCreator"/>, <paramref name="backupCreator"/>, <paramref name="backupCreator"/>, <paramref name="backupCreator"/> can be null or <see cref="DbManagerBuilder.NullInstance{TConnection,TTransaction,TManager}"/>, depending on how the database manager was build and which (if any) dependency injection library is used.
+        /// Some dependency injection libraries are not properly able to provide null as a constructor-injected dependency for optional dependencies. In such cases, <see cref="DbManagerBuilder.NullInstance{TConnection,TTransaction,TManager}"/> is passed as parameter value.
+        /// </note>
+        /// </remarks>
+        /// <exception cref="ArgumentNullException"><paramref name="versionDetector"/> or <paramref name="logger"/> is null.</exception>
+        protected DbManager (IDatabaseVersionDetector<TConnection, TTransaction, TManager> versionDetector, IDatabaseBackupCreator<TConnection, TTransaction, TManager> backupCreator, IDatabaseCleanupProcessor<TConnection, TTransaction, TManager> cleanupProcessor, IDatabaseVersionUpgrader<TConnection, TTransaction, TManager> versionUpgrader, IDatabaseScriptLocator scriptLocator, ILogger logger)
         {
             if (versionDetector == null)
             {
                 throw new ArgumentNullException(nameof(versionDetector));
             }
 
+            if (logger == null)
+            {
+                throw new ArgumentNullException(nameof(logger));
+            }
+
             this.VersionDetector = versionDetector;
+            this.Logger = logger;
 
             this.BackupCreator = backupCreator == null ? null : (backupCreator is DbManagerBuilder.NullInstance<TConnection, TTransaction, TManager> ? null : backupCreator);
             this.CleanupProcessor = cleanupProcessor == null ? null : (cleanupProcessor is DbManagerBuilder.NullInstance<TConnection, TTransaction, TManager> ? null : cleanupProcessor);
             this.VersionUpgrader = versionUpgrader == null ? null : (versionUpgrader is DbManagerBuilder.NullInstance<TConnection, TTransaction, TManager> ? null : versionUpgrader);
             this.ScriptLocator = scriptLocator == null ? null : (scriptLocator is DbManagerBuilder.NullInstance<TConnection, TTransaction, TManager> ? null : scriptLocator);
 
-            this.InitialState = DatabaseState.Uninitialized;
+            this.InitialState = DbState.Uninitialized;
             this.InitialVersion = -1;
 
-            this.State = DatabaseState.Uninitialized;
+            this.State = DbState.Uninitialized;
             this.Version = -1;
 
-            this.SetStateAndVersion(DatabaseState.Uninitialized, -1);
+            this.SetStateAndVersion(DbState.Uninitialized, -1);
         }
 
         /// <summary>
-        ///     Finalizes this instance of <see cref="DatabaseManager{TConnection,TTransaction,TManager}" />.
+        ///     Finalizes this instance of <see cref="DbManager{TConnection,TTransaction,TManager}" />.
         /// </summary>
-        ~DatabaseManager ()
+        ~DbManager ()
         {
             this.Dispose(false);
         }
@@ -89,15 +111,32 @@ namespace RI.DatabaseManager.Manager
         #region Instance Methods
 
         /// <summary>
+        /// Writes a log message for this database manager.
+        /// </summary>
+        /// <param name="level"> The log level of the log message. </param>
+        /// <param name="format"> Log message (with optional string expansion arguments such as <c> {0} </c>, <c> {1} </c>, etc. which are expanded by <paramref name="args" />). </param>
+        /// <param name="args"> Optional message arguments expanded into <paramref name="format" />. </param>
+        protected void Log (LogLevel level, string format, params object[] args) => this.Logger.Log(level, this.ToString(), null, format, args);
+
+        /// <summary>
+        /// Writes a log message for this database manager.
+        /// </summary>
+        /// <param name="level"> The log level of the log message. </param>
+        /// <param name="exception"> Exception associated with the log message. </param>
+        /// <param name="format"> Optional log message (with optional string expansion arguments such as <c> {0} </c>, <c> {1} </c>, etc. which are expanded by <paramref name="args" />). </param>
+        /// <param name="args"> Optional message arguments expanded into <paramref name="format" />. </param>
+        protected void Log(LogLevel level, Exception exception, string format, params object[] args) => this.Logger.Log(level, this.ToString(), exception, format, args);
+
+        /// <summary>
         ///     Performs a database state and version detection and updates <see cref="State" />, <see cref="Version" />, <see cref="IsReady"/>, <see cref="CanUpgrade"/>.
         /// </summary>
         protected void DetectStateAndVersion ()
         {
-            bool valid = this.DetectStateAndVersionImpl(out DatabaseState? state, out int version);
+            bool valid = this.DetectStateAndVersionImpl(out DbState? state, out int version);
 
-            if ((!valid) || (version < 0) || (state.GetValueOrDefault(DatabaseState.Uninitialized) == DatabaseState.DamagedOrInvalid))
+            if ((!valid) || (version < 0) || (state.GetValueOrDefault(DbState.Uninitialized) == DbState.DamagedOrInvalid))
             {
-                state = DatabaseState.DamagedOrInvalid;
+                state = DbState.DamagedOrInvalid;
                 version = -1;
             }
             else if (!state.HasValue)
@@ -106,32 +145,32 @@ namespace RI.DatabaseManager.Manager
                 {
                     if (version == 0)
                     {
-                        state = DatabaseState.New;
+                        state = DbState.New;
                     }
                     else if (version < this.MinVersion)
                     {
-                        state = DatabaseState.TooOld;
+                        state = DbState.TooOld;
                     }
                     else if ((version >= this.MinVersion) && (version < this.MaxVersion))
                     {
-                        state = DatabaseState.ReadyOld;
+                        state = DbState.ReadyOld;
                     }
                     else if (version == this.MaxVersion)
                     {
-                        state = DatabaseState.ReadyNew;
+                        state = DbState.ReadyNew;
                     }
                     else if (version > this.MaxVersion)
                     {
-                        state = DatabaseState.TooNew;
+                        state = DbState.TooNew;
                     }
                     else
                     {
-                        state = DatabaseState.ReadyUnknown;
+                        state = DbState.ReadyUnknown;
                     }
                 }
                 else
                 {
-                    state = version == 0 ? DatabaseState.Unavailable : DatabaseState.ReadyUnknown;
+                    state = version == 0 ? DbState.Unavailable : DbState.ReadyUnknown;
                 }
             }
 
@@ -144,19 +183,19 @@ namespace RI.DatabaseManager.Manager
         /// <param name="disposing"> true if called from <see cref="IDisposable.Dispose" /> or <see cref="Close" />, false if called from the destructor. </param>
         protected void Dispose (bool disposing)
         {
-            //TODO: Log: this.Log(LogLevel.Debug, "Closing database: {0}", this.DebugDetails);
+            this.Log(LogLevel.Debug, "Closing database manager");
 
             this.DisposeImpl(disposing);
 
-            this.SetStateAndVersion(DatabaseState.Uninitialized, -1);
+            this.SetStateAndVersion(DbState.Uninitialized, -1);
 
-            this.InitialState = DatabaseState.Uninitialized;
+            this.InitialState = DbState.Uninitialized;
             this.InitialVersion = -1;
         }
 
-        private void SetStateAndVersion (DatabaseState state, int version)
+        private void SetStateAndVersion (DbState state, int version)
         {
-            DatabaseState oldState = this.State;
+            DbState oldState = this.State;
             int oldVersion = this.Version;
 
             this.State = state;
@@ -164,13 +203,13 @@ namespace RI.DatabaseManager.Manager
 
             if (oldState != state)
             {
-                //TODO: Log: this.Log(LogLevel.Debug, "Database state changed: {0} -> {1}: {2}", oldState, state, this.DebugDetails);
+                this.Log(LogLevel.Information, "Database state changed: {0} -> {1}", oldState, state);
                 this.OnStateChanged(oldState, state);
             }
 
             if (oldVersion != version)
             {
-                //TODO: Log: this.Log(LogLevel.Debug, "Database version changed: {0} -> {1}: {2}", oldVersion, version, this.DebugDetails);
+                this.Log(LogLevel.Information, "Database version changed: {0} -> {1}", oldVersion, version);
                 this.OnVersionChanged(oldVersion, version);
             }
         }
@@ -246,7 +285,7 @@ namespace RI.DatabaseManager.Manager
         /// <returns>
         ///     The newly created database processing step.
         /// </returns>
-        protected abstract IDatabaseProcessingStep<TConnection, TTransaction, TManager> CreateProcessingStepImpl ();
+        protected abstract IDbProcessingStep<TConnection, TTransaction, TManager> CreateProcessingStepImpl ();
 
         #endregion
 
@@ -270,7 +309,7 @@ namespace RI.DatabaseManager.Manager
         /// </remarks>
         protected virtual bool BackupImpl (object backupTarget)
         {
-            //TODO: Log: this.Log(LogLevel.Debug, "Performing database backup: [{0}]: {1}", backupTarget, this.DebugDetails);
+            this.Log(LogLevel.Debug, "Performing database backup; Target=[{0}][{1}]", backupTarget.GetType().Name, backupTarget);
             return this.BackupCreator.Backup(this, backupTarget);
         }
 
@@ -288,14 +327,14 @@ namespace RI.DatabaseManager.Manager
         /// </remarks>
         protected virtual bool CleanupImpl ()
         {
-            //TODO: Log: this.Log(LogLevel.Debug, "Performing database cleanup: {0}", this.DebugDetails);
+            this.Log(LogLevel.Information, "Performing database cleanup");
             return this.CleanupProcessor.Cleanup(this);
         }
 
         /// <summary>
         ///     Performs the actual state and version detection as required by this database manager implementation.
         /// </summary>
-        /// <param name="state"> Returns the state of the database. Can be null to perform state detection based on <paramref name="version" /> as implemented in <see cref="DatabaseManager{TConnection,TTransaction,TManager}" />. </param>
+        /// <param name="state"> Returns the state of the database. Can be null to perform state detection based on <paramref name="version" /> as implemented in <see cref="DbManager{TConnection,TTransaction,TManager}" />. </param>
         /// <param name="version"> Returns the version of the database. </param>
         /// <returns>
         ///     true if the state and version could be successfully determined, false if the database is damaged or in an invalid state.
@@ -306,7 +345,7 @@ namespace RI.DatabaseManager.Manager
         ///         The default implementation calls <see cref="IDatabaseVersionDetector.Detect" />.
         ///     </note>
         /// </remarks>
-        protected virtual bool DetectStateAndVersionImpl (out DatabaseState? state, out int version)
+        protected virtual bool DetectStateAndVersionImpl (out DbState? state, out int version)
         {
             return this.VersionDetector.Detect(this, out state, out version);
         }
@@ -394,7 +433,7 @@ namespace RI.DatabaseManager.Manager
         ///         The default implementation does nothing.
         ///     </note>
         /// </remarks>
-        protected virtual void OnStateChanged (DatabaseState oldState, DatabaseState newState)
+        protected virtual void OnStateChanged (DbState oldState, DbState newState)
         {
         }
 
@@ -427,7 +466,7 @@ namespace RI.DatabaseManager.Manager
         /// </remarks>
         protected virtual bool RestoreImpl (object backupSource)
         {
-            //TODO: Log: this.Log(LogLevel.Debug, "Performing database restore: [{0}]: {1}", backupSource, this.DebugDetails);
+            this.Log(LogLevel.Debug, "Performing database restore; Source=[{0}][{1}]", backupSource.GetType().Name, backupSource);
             return this.BackupCreator.Restore(this, backupSource);
         }
 
@@ -449,7 +488,7 @@ namespace RI.DatabaseManager.Manager
         /// </remarks>
         protected virtual bool UpgradeImpl (int sourceVersion)
         {
-            //TODO: Log: this.Log(LogLevel.Debug, "Performing database upgrade: {0} -> {1}: {2}", sourceVersion, sourceVersion + 1, this.DebugDetails);
+            this.Log(LogLevel.Information, "Performing database upgrade: {0} -> {1}", sourceVersion, sourceVersion + 1);
             return this.VersionUpgrader.Upgrade(this, sourceVersion);
         }
 
@@ -471,16 +510,16 @@ namespace RI.DatabaseManager.Manager
         #region Interface: IDatabaseManager<TConnection,TTransaction,TConnectionStringBuilder,TManager,TConfiguration>
 
         /// <inheritdoc />
-        public bool CanUpgrade => this.SupportsUpgrade && (this.IsReady || (this.State == DatabaseState.New)) && (this.Version >= 0) && (this.Version < this.MaxVersion);
+        public bool CanUpgrade => this.SupportsUpgrade && (this.IsReady || (this.State == DbState.New)) && (this.Version >= 0) && (this.Version < this.MaxVersion);
 
         /// <inheritdoc />
-        public DatabaseState InitialState { get; private set; }
+        public DbState InitialState { get; private set; }
 
         /// <inheritdoc />
         public int InitialVersion { get; private set; }
 
         /// <inheritdoc />
-        public bool IsReady => (this.State == DatabaseState.ReadyNew) || (this.State == DatabaseState.ReadyOld) || (this.State == DatabaseState.ReadyUnknown);
+        public bool IsReady => (this.State == DbState.ReadyNew) || (this.State == DbState.ReadyOld) || (this.State == DbState.ReadyUnknown);
         
         /// <inheritdoc />
         public int MaxVersion => this.SupportsUpgrade ? this.VersionUpgrader.GetMaxVersion(this) : -1;
@@ -489,7 +528,7 @@ namespace RI.DatabaseManager.Manager
         public int MinVersion => this.SupportsUpgrade ? this.VersionUpgrader.GetMinVersion(this) : -1;
 
         /// <inheritdoc />
-        public DatabaseState State { get; private set; }
+        public DbState State { get; private set; }
 
         /// <inheritdoc />
         public bool SupportsBackup => this.SupportsBackupImpl && (this.BackupCreator != null);
@@ -520,7 +559,7 @@ namespace RI.DatabaseManager.Manager
                 throw new ArgumentNullException(nameof(backupTarget));
             }
 
-            if (this.State == DatabaseState.Uninitialized)
+            if (this.State == DbState.Uninitialized)
             {
                 throw new InvalidOperationException(this.GetType().Name + " must be initialized to perform a backup; current state is " + this.State + ".");
             }
@@ -540,7 +579,7 @@ namespace RI.DatabaseManager.Manager
         /// <inheritdoc />
         public bool Cleanup ()
         {
-            if ((!this.IsReady) && (this.State != DatabaseState.New))
+            if ((!this.IsReady) && (this.State != DbState.New))
             {
                 throw new InvalidOperationException(this.GetType().Name + " must be in a ready state or the new state to perform a cleanup; current state is " + this.State + ".");
             }
@@ -565,7 +604,7 @@ namespace RI.DatabaseManager.Manager
         }
 
         /// <inheritdoc />
-        DbConnection IDatabaseManager.CreateConnection (bool readOnly) => this.CreateConnection(readOnly);
+        DbConnection IDbManager.CreateConnection (bool readOnly) => this.CreateConnection(readOnly);
 
         /// <inheritdoc />
         public TConnection CreateConnection (bool readOnly)
@@ -584,7 +623,6 @@ namespace RI.DatabaseManager.Manager
 
             if (connection != null)
             {
-
                 this.OnConnectionCreated(connection, readOnly);
             }
 
@@ -592,13 +630,13 @@ namespace RI.DatabaseManager.Manager
         }
 
         /// <inheritdoc />
-        public IDatabaseProcessingStep<TConnection, TTransaction, TManager> CreateProcessingStep ()
+        public IDbProcessingStep<TConnection, TTransaction, TManager> CreateProcessingStep ()
         {
             return this.CreateProcessingStepImpl();
         }
 
         /// <inheritdoc />
-        IDatabaseProcessingStep IDatabaseManager.CreateProcessingStep () => this.CreateProcessingStep();
+        IDbProcessingStep IDbManager.CreateProcessingStep () => this.CreateProcessingStep();
 
         /// <inheritdoc />
         void IDisposable.Dispose () => this.Close();
@@ -634,9 +672,9 @@ namespace RI.DatabaseManager.Manager
         /// <inheritdoc />
         public void Initialize ()
         {
-            //TODO: Log: this.Log(LogLevel.Debug, "Initializing database: {0}", this.DebugDetails);
+            this.Log(LogLevel.Debug, "Initializing database manager");
 
-            if (this.State != DatabaseState.Uninitialized)
+            if (this.State != DbState.Uninitialized)
             {
                 this.Close();
             }
@@ -659,7 +697,7 @@ namespace RI.DatabaseManager.Manager
                 throw new ArgumentNullException(nameof(backupSource));
             }
 
-            if (this.State == DatabaseState.Uninitialized)
+            if (this.State == DbState.Uninitialized)
             {
                 throw new InvalidOperationException(this.GetType().Name + " must be initialized to perform a restore; current state is " + this.State + ".");
             }
@@ -679,7 +717,7 @@ namespace RI.DatabaseManager.Manager
         /// <inheritdoc />
         public bool Upgrade (int version)
         {
-            if ((!this.IsReady) && (this.State != DatabaseState.New))
+            if ((!this.IsReady) && (this.State != DbState.New))
             {
                 throw new InvalidOperationException(this.GetType().Name + " must be in a ready state or the new state to perform an upgrade; current state is " + this.State + ".");
             }

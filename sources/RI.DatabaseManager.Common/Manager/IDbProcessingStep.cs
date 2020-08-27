@@ -8,18 +8,18 @@ using System.Data.Common;
 namespace RI.DatabaseManager.Manager
 {
     /// <summary>
-    ///     Defines the interface for a single database processing step.
+    ///     A single database processing step.
     /// </summary>
     /// <remarks>
     ///     <para>
-    ///         By adding sub-steps (<see cref="AddScript(string,DatabaseProcessingStepTransactionRequirement)" />, <see cref="AddBatch(string,DatabaseProcessingStepTransactionRequirement)" />, <see cref="AddBatches(IEnumerable{string},DatabaseProcessingStepTransactionRequirement)" />, <see cref="AddCode(DatabaseProcessingStepDelegate,DatabaseProcessingStepTransactionRequirement)" />), a processing step can be heavily customized by using both application code through delegates and/or database scripts.
+    ///         By adding sub-steps (any of the <c>Add...</c> methods), a processing step can be heavily customized by using both application code (using delegates) and/or database scripts.
     ///     </para>
     ///     <para>
     ///         The sub-steps are executed in the order they are added.
     ///     </para>
     /// </remarks>
     /// <threadsafety static="false" instance="false" />
-    public interface IDatabaseProcessingStep
+    public interface IDbProcessingStep
     {
         /// <summary>
         ///     Gets whether this processing step requires a script locator.
@@ -42,15 +42,15 @@ namespace RI.DatabaseManager.Manager
         /// </summary>
         /// <param name="batch"> The database script. </param>
         /// <remarks>
-        ///     <para>
+        ///     <note type="implement">
         ///         The database script is executed as passed by this method, without further processing, as a single command.
-        ///     </para>
-        ///     <para>
-        ///         <see cref="DatabaseProcessingStepTransactionRequirement.DontCare" /> is used as the transaction requirement.
-        ///     </para>
-        ///     <para>
+        ///     </note>
+        ///     <note type="implement">
+        ///         <see cref="DbProcessingStepTransactionRequirement.DontCare" /> is used as the transaction requirement.
+        ///     </note>
+        ///     <note type="implement">
         ///         If <paramref name="batch" /> is null or empty, no sub-step is added.
-        ///     </para>
+        ///     </note>
         /// </remarks>
         void AddBatch (string batch);
 
@@ -60,32 +60,35 @@ namespace RI.DatabaseManager.Manager
         /// <param name="batch"> The database script. </param>
         /// <param name="transactionRequirement"> The transaction requirement. </param>
         /// <remarks>
-        ///     <para>
+        ///     <note type="implement">
         ///         The database script is executed as passed by this method, without further processing, as a single command.
-        ///     </para>
-        ///     <para>
+        ///     </note>
+        ///     <note type="implement">
         ///         If <paramref name="batch" /> is null or empty, no sub-step is added.
-        ///     </para>
+        ///     </note>
         /// </remarks>
-        void AddBatch (string batch, DatabaseProcessingStepTransactionRequirement transactionRequirement);
+        void AddBatch (string batch, DbProcessingStepTransactionRequirement transactionRequirement);
 
         /// <summary>
         ///     Adds batches as database script code.
         /// </summary>
         /// <param name="batches"> The database scripts. </param>
         /// <remarks>
-        ///     <para>
+        ///     <note type="implement">
         ///         The database scripts are executed as passed by this method, without further processing, as a single command per batch.
-        ///     </para>
-        ///     <para>
-        ///         <see cref="DatabaseProcessingStepTransactionRequirement.DontCare" /> is used as the transaction requirement.
-        ///     </para>
-        ///     <para>
+        ///     </note>
+        ///     <note type="implement">
+        ///         <see cref="DbProcessingStepTransactionRequirement.DontCare" /> is used as the transaction requirement.
+        ///     </note>
+        ///     <note type="implement">
         ///         If <paramref name="batches" /> is null or empty, no sub-step is added.
-        ///     </para>
-        ///     <para>
+        ///     </note>
+        ///     <note type="implement">
+        ///         Null or empty strings in <paramref name="batches" /> are ignored.
+        ///     </note>
+        ///     <note type="implement">
         ///         <paramref name="batches" /> is enumerated only once.
-        ///     </para>
+        ///     </note>
         /// </remarks>
         void AddBatches (IEnumerable<string> batches);
 
@@ -95,29 +98,32 @@ namespace RI.DatabaseManager.Manager
         /// <param name="batches"> The database scripts. </param>
         /// <param name="transactionRequirement"> The transaction requirement. </param>
         /// <remarks>
-        ///     <para>
+        ///     <note type="implement">
         ///         The database scripts are executed as passed by this method, without further processing, as a single command per batch.
-        ///     </para>
-        ///     <para>
+        ///     </note>
+        ///     <note type="implement">
         ///         If <paramref name="batches" /> is null or empty, no sub-step is added.
-        ///     </para>
-        ///     <para>
+        ///     </note>
+        ///     <note type="implement">
+        ///         Null or empty strings in <paramref name="batches" /> are ignored.
+        ///     </note>
+        ///     <note type="implement">
         ///         <paramref name="batches" /> is enumerated only once.
-        ///     </para>
+        ///     </note>
         /// </remarks>
-        void AddBatches (IEnumerable<string> batches, DatabaseProcessingStepTransactionRequirement transactionRequirement);
+        void AddBatches (IEnumerable<string> batches, DbProcessingStepTransactionRequirement transactionRequirement);
 
         /// <summary>
         ///     Adds application code as a callback.
         /// </summary>
         /// <param name="callback"> The callback which is executed when the sub-step executes. </param>
         /// <remarks>
-        ///     <para>
-        ///         <see cref="DatabaseProcessingStepTransactionRequirement.DontCare" /> is used as the transaction requirement.
-        ///     </para>
+        ///     <note type="implement">
+        ///         <see cref="DbProcessingStepTransactionRequirement.DontCare" /> is used as the transaction requirement.
+        ///     </note>
         /// </remarks>
         /// <exception cref="ArgumentNullException"> <paramref name="callback" /> is null. </exception>
-        void AddCode (DatabaseProcessingStepDelegate callback);
+        void AddCode (DbProcessingStepDelegate callback);
 
         /// <summary>
         ///     Adds application code as a callback.
@@ -125,22 +131,22 @@ namespace RI.DatabaseManager.Manager
         /// <param name="callback"> The callback which is executed when the sub-step executes. </param>
         /// <param name="transactionRequirement"> The transaction requirement. </param>
         /// <exception cref="ArgumentNullException"> <paramref name="callback" /> is null. </exception>
-        void AddCode (DatabaseProcessingStepDelegate callback, DatabaseProcessingStepTransactionRequirement transactionRequirement);
+        void AddCode (DbProcessingStepDelegate callback, DbProcessingStepTransactionRequirement transactionRequirement);
 
         /// <summary>
         ///     Adds a script using its script name.
         /// </summary>
         /// <param name="scriptName"> The name of the script. </param>
         /// <remarks>
-        ///     <para>
-        ///         The script is resolved using the script locator provided by the database manager.
-        ///     </para>
-        ///     <para>
-        ///         <see cref="DatabaseProcessingStepTransactionRequirement.DontCare" /> is used as the transaction requirement.
-        ///     </para>
+        ///     <note type="implement">
+        ///         The script is resolved using the script locator provided by the executing database manager.
+        ///     </note>
+        ///     <note type="implement">
+        ///         <see cref="DbProcessingStepTransactionRequirement.DontCare" /> is used as the transaction requirement.
+        ///     </note>
         /// </remarks>
         /// <exception cref="ArgumentNullException"> <paramref name="scriptName" /> is null. </exception>
-        /// <exception cref="EmptyStringArgumentException"> <paramref name="scriptName" /> is an empty string. </exception>
+        /// <exception cref="ArgumentException"> <paramref name="scriptName" /> is an empty string. </exception>
         void AddScript (string scriptName);
 
         /// <summary>
@@ -149,13 +155,13 @@ namespace RI.DatabaseManager.Manager
         /// <param name="scriptName"> The name of the script. </param>
         /// <param name="transactionRequirement"> The transaction requirement. </param>
         /// <remarks>
-        ///     <para>
-        ///         The script is resolved using the script locator provided by the database manager.
-        ///     </para>
+        ///     <note type="implement">
+        ///         The script is resolved using the script locator provided by the executing database manager.
+        ///     </note>
         /// </remarks>
         /// <exception cref="ArgumentNullException"> <paramref name="scriptName" /> is null. </exception>
-        /// <exception cref="EmptyStringArgumentException"> <paramref name="scriptName" /> is an empty string. </exception>
-        void AddScript (string scriptName, DatabaseProcessingStepTransactionRequirement transactionRequirement);
+        /// <exception cref="ArgumentException"> <paramref name="scriptName" /> is an empty string. </exception>
+        void AddScript (string scriptName, DbProcessingStepTransactionRequirement transactionRequirement);
 
         /// <summary>
         ///     Executes the processing step and all its sub-steps.
@@ -164,48 +170,27 @@ namespace RI.DatabaseManager.Manager
         /// <param name="connection"> The used database connection. </param>
         /// <param name="transaction"> The used database transaction. Can be null if no transaction is used. </param>
         /// <exception cref="ArgumentNullException"> <paramref name="manager" /> or <paramref name="connection" /> is null. </exception>
-        void Execute (IDatabaseManager manager, DbConnection connection, DbTransaction transaction);
+        /// <exception cref="InvalidOperationException">Conflicting transaction settings are used.</exception>
+        void Execute (IDbManager manager, DbConnection connection, DbTransaction transaction);
     }
 
-    /// <inheritdoc cref="IDatabaseProcessingStep" />
-    /// <typeparam name="TConnection"> </typeparam>
-    /// <typeparam name="TTransaction"> </typeparam>
-    /// <typeparam name="TConnectionStringBuilder"> </typeparam>
-    /// <typeparam name="TManager"> </typeparam>
-    /// <typeparam name="TConfiguration"> </typeparam>
+    /// <inheritdoc cref="IDbProcessingStep" />
+    /// <typeparam name="TConnection"> The database connection type. </typeparam>
+    /// <typeparam name="TTransaction"> The database transaction type. </typeparam>
+    /// <typeparam name="TManager"> The type of the database manager. </typeparam>
     /// <threadsafety static="false" instance="false" />
-    public interface IDatabaseProcessingStep <TConnection, TTransaction, TManager> : IDatabaseProcessingStep
+    public interface IDbProcessingStep <TConnection, TTransaction, TManager> : IDbProcessingStep
         where TConnection : DbConnection
         where TTransaction : DbTransaction
-        where TManager : class, IDatabaseManager<TConnection, TTransaction, TManager>
+        where TManager : class, IDbManager<TConnection, TTransaction, TManager>
     {
-        /// <summary>
-        ///     Adds application code as a callback.
-        /// </summary>
-        /// <param name="callback"> The callback which is executed when the sub-step executes. </param>
-        /// <remarks>
-        ///     <para>
-        ///         <see cref="DatabaseProcessingStepTransactionRequirement.DontCare" /> is used as the transaction requirement.
-        ///     </para>
-        /// </remarks>
-        /// <exception cref="ArgumentNullException"> <paramref name="callback" /> is null. </exception>
-        void AddCode (DatabaseProcessingStepDelegate<TConnection, TTransaction, TManager> callback);
+        /// <inheritdoc cref="IDbProcessingStep.AddCode(DbProcessingStepDelegate)"/>
+        void AddCode (DbProcessingStepDelegate<TConnection, TTransaction, TManager> callback);
 
-        /// <summary>
-        ///     Adds application code as a callback.
-        /// </summary>
-        /// <param name="callback"> The callback which is executed when the sub-step executes. </param>
-        /// <param name="transactionRequirement"> The transaction requirement. </param>
-        /// <exception cref="ArgumentNullException"> <paramref name="callback" /> is null. </exception>
-        void AddCode (DatabaseProcessingStepDelegate<TConnection, TTransaction, TManager> callback, DatabaseProcessingStepTransactionRequirement transactionRequirement);
+        /// <inheritdoc cref="IDbProcessingStep.AddCode(DbProcessingStepDelegate,DbProcessingStepTransactionRequirement)"/>
+        void AddCode (DbProcessingStepDelegate<TConnection, TTransaction, TManager> callback, DbProcessingStepTransactionRequirement transactionRequirement);
 
-        /// <summary>
-        ///     Executes the processing step and all its sub-steps.
-        /// </summary>
-        /// <param name="manager"> The used database manager. </param>
-        /// <param name="connection"> The used database connection. </param>
-        /// <param name="transaction"> The used database transaction. Can be null if no transaction is used. </param>
-        /// <exception cref="ArgumentNullException"> <paramref name="manager" /> or <paramref name="connection" /> is null. </exception>
+        /// <inheritdoc cref="IDbProcessingStep.Execute"/>
         void Execute (TManager manager, TConnection connection, TTransaction transaction);
     }
 }
