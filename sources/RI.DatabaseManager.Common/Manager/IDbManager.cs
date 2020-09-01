@@ -279,7 +279,7 @@ namespace RI.DatabaseManager.Manager
         IDbProcessingStep CreateProcessingStep ();
 
         /// <summary>
-        ///     Retrieves a script and all its batches using the configured <see cref="IDatabaseScriptLocator" />.
+        ///     Retrieves a script and all its batches using the configured <see cref="IDbScriptLocator" />.
         /// </summary>
         /// <param name="name"> The name of the script. </param>
         /// <param name="batchSeparator"> The string which is used as the separator to separate individual batches in the script or null if the script locators default separator is to be used. </param>
@@ -296,7 +296,7 @@ namespace RI.DatabaseManager.Manager
         /// </remarks>
         /// <exception cref="ArgumentNullException"> <paramref name="name" /> is null. </exception>
         /// <exception cref="ArgumentException"> <paramref name="name" /> or <paramref name="batchSeparator"/> is an empty string. </exception>
-        /// <exception cref="NotSupportedException"> Retrieving scripts is not supported by the database manager or no <see cref="IDatabaseScriptLocator" /> is configured. </exception>
+        /// <exception cref="NotSupportedException"> Retrieving scripts is not supported by the database manager or no <see cref="IDbScriptLocator" /> is configured. </exception>
         List<string> GetScriptBatches (string name, string batchSeparator, bool preprocess);
 
         /// <summary>

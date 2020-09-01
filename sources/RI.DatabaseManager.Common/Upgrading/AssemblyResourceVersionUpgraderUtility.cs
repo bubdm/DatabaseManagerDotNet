@@ -36,7 +36,7 @@ namespace RI.DatabaseManager.Upgrading
     ///     </para>
     ///     <note type="note">
     ///         Implementations of <see cref="IAssemblyResourceVersionUpgraderStepConfigurator{TProcessingStep,TConnection,TTransaction,TConnectionStringBuilder,TManager,TConfiguration}" /> must have a parameterless constructor in order to be usable.
-    ///         A new instance is created for each call to <see cref="GetUpgradeStepsFromAssembly(Assembly,string,out List{TProcessingStep},out AssemblyRessourceScriptLocator)" /> or <see cref="GetUpgradeStepsFromAssembly(Assembly,Encoding,string,out List{TProcessingStep},out AssemblyRessourceScriptLocator)" />.
+    ///         A new instance is created for each call to <see cref="GetUpgradeStepsFromAssembly(Assembly,string,out List{TProcessingStep},out AssemblyRessourceDbScriptLocator)" /> or <see cref="GetUpgradeStepsFromAssembly(Assembly,Encoding,string,out List{TProcessingStep},out AssemblyRessourceDbScriptLocator)" />.
     ///     </note>
     /// </remarks>
     /// <threadsafety static="false" instance="false" />
@@ -62,7 +62,7 @@ namespace RI.DatabaseManager.Upgrading
         /// </returns>
         /// <remarks>
         ///     <para>
-        ///         The default encoding <see cref="AssemblyRessourceScriptLocator.DefaultEncoding" /> is used.
+        ///         The default encoding <see cref="AssemblyRessourceDbScriptLocator.DefaultEncoding" /> is used.
         ///     </para>
         ///     <para>
         ///         <paramref name="nameFormat" /> must be a format string, as used by <see cref="string.Format(IFormatProvider,string,object[])" />.
@@ -72,7 +72,7 @@ namespace RI.DatabaseManager.Upgrading
         /// <exception cref="ArgumentNullException"> <paramref name="assembly" /> or <paramref name="nameFormat" /> is null. </exception>
         /// <exception cref="EmptyStringArgumentException"> <paramref name="nameFormat" /> is an empty string. </exception>
         [SuppressMessage("ReSharper", "InvokeAsExtensionMethod")]
-        public bool GetUpgradeStepsFromAssembly (Assembly assembly, string nameFormat, out List<TProcessingStep> steps, out AssemblyRessourceScriptLocator scriptLocator)
+        public bool GetUpgradeStepsFromAssembly (Assembly assembly, string nameFormat, out List<TProcessingStep> steps, out AssemblyRessourceDbScriptLocator scriptLocator)
         {
             return this.GetUpgradeStepsFromAssembly(assembly, null, nameFormat, out steps, out scriptLocator);
         }
@@ -81,7 +81,7 @@ namespace RI.DatabaseManager.Upgrading
         ///     Extracts all version upgrade steps from an assembly.
         /// </summary>
         /// <param name="assembly"> The assembly. </param>
-        /// <param name="encoding"> The used encoding or null to use the default encoding <see cref="AssemblyRessourceScriptLocator.DefaultEncoding" />. </param>
+        /// <param name="encoding"> The used encoding or null to use the default encoding <see cref="AssemblyRessourceDbScriptLocator.DefaultEncoding" />. </param>
         /// <param name="nameFormat"> The common name format of the embedded script files. </param>
         /// <param name="steps"> Returns the list of upgrade steps. The returned list is empty if no configuration steps could be found. </param>
         /// <param name="scriptLocator"> Returns the script locator for the assembly or null if no script locator for the assembly is required. </param>
@@ -97,7 +97,7 @@ namespace RI.DatabaseManager.Upgrading
         /// <exception cref="ArgumentNullException"> <paramref name="assembly" /> or <paramref name="nameFormat" /> is null. </exception>
         /// <exception cref="EmptyStringArgumentException"> <paramref name="nameFormat" /> is an empty string. </exception>
         [SuppressMessage("ReSharper", "InvokeAsExtensionMethod")]
-        public bool GetUpgradeStepsFromAssembly (Assembly assembly, Encoding encoding, string nameFormat, out List<TProcessingStep> steps, out AssemblyRessourceScriptLocator scriptLocator)
+        public bool GetUpgradeStepsFromAssembly (Assembly assembly, Encoding encoding, string nameFormat, out List<TProcessingStep> steps, out AssemblyRessourceDbScriptLocator scriptLocator)
         {
             if (assembly == null)
             {
@@ -184,7 +184,7 @@ namespace RI.DatabaseManager.Upgrading
                 return false;
             }
 
-            scriptLocator = new AssemblyRessourceScriptLocator(assembly, encoding);
+            scriptLocator = new AssemblyRessourceDbScriptLocator(assembly, encoding);
             return true;
         }
 

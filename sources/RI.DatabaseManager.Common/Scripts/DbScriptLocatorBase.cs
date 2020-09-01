@@ -11,11 +11,11 @@ using RI.DatabaseManager.Manager;
 namespace RI.DatabaseManager.Scripts
 {
     /// <summary>
-    ///     Boilerplate implementation of <see cref="IDatabaseScriptLocator"/>.
+    ///     Boilerplate implementation of <see cref="IDbScriptLocator"/>.
     /// </summary>
     /// <remarks>
     ///     <note type="implement">
-    ///         It is recommended that script locator implementations use this base class as it already implements most of the database-independent logic defined by <see cref="IDatabaseScriptLocator"/>.
+    ///         It is recommended that script locator implementations use this base class as it already implements most of the database-independent logic defined by <see cref="IDbScriptLocator"/>.
     ///     </note>
     ///     <note type="implement">
     ///         This boilerplate implementation does the following preprocessing:
@@ -23,7 +23,7 @@ namespace RI.DatabaseManager.Scripts
     ///     </note>
     /// </remarks>
     /// <threadsafety static="false" instance="false" />
-    public abstract class DatabaseScriptLocator : IDatabaseScriptLocator
+    public abstract class DbScriptLocatorBase : IDbScriptLocator
     {
         #region Constants
 
@@ -92,11 +92,11 @@ namespace RI.DatabaseManager.Scripts
         #region Instance Constructor/Destructor
 
         /// <summary>
-        ///     Creates a new instance of <see cref="DatabaseScriptLocator" />.
+        ///     Creates a new instance of <see cref="DbScriptLocatorBase" />.
         /// </summary>
         /// <param name="logger">The used logger.</param>
         /// <exception cref="ArgumentNullException"><paramref name="logger"/> is null.</exception>
-        protected DatabaseScriptLocator (ILogger logger)
+        protected DbScriptLocatorBase (ILogger logger)
         {
             if (logger == null)
             {
@@ -106,7 +106,7 @@ namespace RI.DatabaseManager.Scripts
             this.Logger = logger;
 
             this.DefaultBatchSeparator = "GO";
-            this.Placeholders = new Dictionary<string, Func<string, string>>(DatabaseScriptLocator.PlaceholderNameComparer);
+            this.Placeholders = new Dictionary<string, Func<string, string>>(DbScriptLocatorBase.PlaceholderNameComparer);
         }
 
         #endregion
@@ -227,7 +227,7 @@ namespace RI.DatabaseManager.Scripts
         }
 
         /// <summary>
-        ///     Performs additional batch preprocessing, as required by the current <see cref="IDatabaseScriptLocator" /> implementation.
+        ///     Performs additional batch preprocessing, as required by the current <see cref="IDbScriptLocator" /> implementation.
         /// </summary>
         /// <param name="batches"> The batches to preprocess. </param>
         /// <remarks>
@@ -288,7 +288,7 @@ namespace RI.DatabaseManager.Scripts
         /// </remarks>
         protected virtual List<string> SplitBatches (string script, string separator)
         {
-            return DatabaseScriptLocator.SplitBatchesDefault(script, separator);
+            return DbScriptLocatorBase.SplitBatchesDefault(script, separator);
         }
 
         #endregion

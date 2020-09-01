@@ -21,26 +21,26 @@ namespace RI.DatabaseManager.Scripts
     ///     </para>
     /// </remarks>
     /// <threadsafety static="false" instance="false" />
-    public sealed class DictionaryScriptLocator : DatabaseScriptLocator
+    public sealed class DictionaryDbScriptLocator : DbScriptLocatorBase
     {
         #region Instance Constructor/Destructor
 
         /// <summary>
-        ///     Creates a new instance of <see cref="DictionaryScriptLocator" />.
+        ///     Creates a new instance of <see cref="DictionaryDbScriptLocator" />.
         /// </summary>
         /// <param name="logger">The used logger.</param>
         /// <exception cref="ArgumentNullException"><paramref name="logger"/> is null.</exception>
-        public DictionaryScriptLocator (ILogger logger) : this(logger, null)
+        public DictionaryDbScriptLocator (ILogger logger) : this(logger, null)
         {
         }
 
         /// <summary>
-        ///     Creates a new instance of <see cref="DictionaryScriptLocator" />.
+        ///     Creates a new instance of <see cref="DictionaryDbScriptLocator" />.
         /// </summary>
         /// <param name="logger">The used logger.</param>
         /// <param name="scripts">The used key/value pairs.</param>
         /// <exception cref="ArgumentNullException"><paramref name="logger"/> is null.</exception>
-        public DictionaryScriptLocator(ILogger logger, IDictionary<string, string> scripts) : base(logger)
+        public DictionaryDbScriptLocator(ILogger logger, IDictionary<string, string> scripts) : base(logger)
         {
             this.Scripts = new Dictionary<string, string>(StringComparer.InvariantCultureIgnoreCase);
 

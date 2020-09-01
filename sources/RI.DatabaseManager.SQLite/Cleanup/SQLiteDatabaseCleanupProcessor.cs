@@ -32,7 +32,7 @@ namespace RI.DatabaseManager.Cleanup
         ///         The default cleanup script uses <c> VACUUM </c>, <c> ANALYZE </c>, and <c> REINDEX </c>, each executed as a single command.
         ///     </para>
         /// </remarks>
-        public const string DefaultCleanupScript = "VACUUM;" + DatabaseScriptLocator.DefaultBatchSeparator + "ANALYZE;" + DatabaseScriptLocator.DefaultBatchSeparator + "REINDEX;" + DatabaseScriptLocator.DefaultBatchSeparator;
+        public const string DefaultCleanupScript = "VACUUM;" + DbScriptLocatorBase.DefaultBatchSeparator + "ANALYZE;" + DbScriptLocatorBase.DefaultBatchSeparator + "REINDEX;" + DbScriptLocatorBase.DefaultBatchSeparator;
 
         #endregion
 
@@ -134,7 +134,7 @@ namespace RI.DatabaseManager.Cleanup
                     SQLiteDbProcessingStep cleanupStep = this.CleanupStep;
                     if (cleanupStep == null)
                     {
-                        List<string> batches = DatabaseScriptLocator.SplitBatches(SQLiteDatabaseCleanupProcessor.DefaultCleanupScript, DatabaseScriptLocator.DefaultBatchSeparator);
+                        List<string> batches = DbScriptLocatorBase.SplitBatches(SQLiteDatabaseCleanupProcessor.DefaultCleanupScript, DbScriptLocatorBase.DefaultBatchSeparator);
                         cleanupStep = new SQLiteDbProcessingStep();
                         cleanupStep.AddBatches(batches);
                     }

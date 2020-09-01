@@ -77,7 +77,7 @@ namespace RI.DatabaseManager.Builder
                         Type cleanupProcessor = typeof(IDatabaseCleanupProcessor<,,>).MakeGenericType(genericArguments);
                         Type versionUpgrader = typeof(IDatabaseVersionUpgrader<,,>).MakeGenericType(genericArguments);
 
-                        Type scriptLocator = typeof(IDatabaseScriptLocator);
+                        Type scriptLocator = typeof(IDbScriptLocator);
 
                         return (connection, transaction, manager, versionDetector, backupCreator, cleanupProcessor, versionUpgrader, scriptLocator);
                     }
@@ -90,10 +90,10 @@ namespace RI.DatabaseManager.Builder
         private object CreateNullInstance (Type connection, Type transaction, Type manager) => Activator.CreateInstance(typeof(NullInstance<,,>).MakeGenericType(connection, transaction, manager), true);
 
         /// <summary>
-        /// Null object used if no registration for <see cref="IDatabaseBackupCreator{TConnection,TTransaction,TManager}"/>, <see cref="IDatabaseCleanupProcessor{TConnection,TTransaction,TManager}"/>, <see cref="IDatabaseVersionUpgrader{TConnection,TTransaction,TManager}"/>, or <see cref="IDatabaseScriptLocator"/> is provided.
+        /// Null object used if no registration for <see cref="IDatabaseBackupCreator{TConnection,TTransaction,TManager}"/>, <see cref="IDatabaseCleanupProcessor{TConnection,TTransaction,TManager}"/>, <see cref="IDatabaseVersionUpgrader{TConnection,TTransaction,TManager}"/>, or <see cref="IDbScriptLocator"/> is provided.
         /// </summary>
         /// <threadsafety static="false" instance="false" />
-        public sealed class NullInstance<TConnection, TTransaction, TManager> : IDatabaseBackupCreator<TConnection, TTransaction, TManager>, IDatabaseCleanupProcessor<TConnection, TTransaction, TManager>, IDatabaseVersionUpgrader<TConnection, TTransaction, TManager>, IDatabaseScriptLocator
+        public sealed class NullInstance<TConnection, TTransaction, TManager> : IDatabaseBackupCreator<TConnection, TTransaction, TManager>, IDatabaseCleanupProcessor<TConnection, TTransaction, TManager>, IDatabaseVersionUpgrader<TConnection, TTransaction, TManager>, IDbScriptLocator
             where TConnection : DbConnection
             where TTransaction : DbTransaction
             where TManager : class, IDbManager<TConnection, TTransaction, TManager>
@@ -134,14 +134,14 @@ namespace RI.DatabaseManager.Builder
             bool IDatabaseVersionUpgrader.RequiresScriptLocator => throw new NotImplementedException();
 
             /// <inheritdoc />
-            string IDatabaseScriptLocator.DefaultBatchSeparator
+            string IDbScriptLocator.DefaultBatchSeparator
             {
                 get => throw new NotImplementedException();
                 set => throw new NotImplementedException();
             }
 
             /// <inheritdoc />
-            List<string> IDatabaseScriptLocator.GetScriptBatches (IDbManager manager, string name, string batchSeparator, bool preprocess) => throw new NotImplementedException();
+            List<string> IDbScriptLocator.GetScriptBatches (IDbManager manager, string name, string batchSeparator, bool preprocess) => throw new NotImplementedException();
 
             /// <inheritdoc />
             bool IDatabaseBackupCreator<TConnection, TTransaction, TManager>.Backup (TManager manager, object backupTarget) => throw new NotImplementedException();

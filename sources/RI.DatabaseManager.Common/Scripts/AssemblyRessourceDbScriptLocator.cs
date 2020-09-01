@@ -22,22 +22,22 @@ namespace RI.DatabaseManager.Scripts
     /// <see cref="Encoding"/> is the used encoding for reading the scripts as strings from the assembly resources.
     /// </para>
     /// <threadsafety static="false" instance="false" />
-    public sealed class AssemblyRessourceScriptLocator : DatabaseScriptLocator
+    public sealed class AssemblyRessourceDbScriptLocator : DbScriptLocatorBase
     {
         #region Instance Constructor/Destructor
 
         /// <summary>
-        ///     Creates a new instance of <see cref="AssemblyRessourceScriptLocator" />.
+        ///     Creates a new instance of <see cref="AssemblyRessourceDbScriptLocator" />.
         /// </summary>
         /// <param name="logger">The used logger.</param>
         /// <exception cref="ArgumentNullException"><paramref name="logger"/> is null.</exception>
-        public AssemblyRessourceScriptLocator(ILogger logger)
+        public AssemblyRessourceDbScriptLocator(ILogger logger)
             : this(logger, (IEnumerable<Assembly>)null)
         {
         }
 
         /// <summary>
-        ///     Creates a new instance of <see cref="AssemblyRessourceScriptLocator" />.
+        ///     Creates a new instance of <see cref="AssemblyRessourceDbScriptLocator" />.
         /// </summary>
         /// <param name="logger">The used logger.</param>
         /// <param name="assemblies"> The sequence of assemblies. </param>
@@ -47,7 +47,7 @@ namespace RI.DatabaseManager.Scripts
         ///     </para>
         /// </remarks>
         /// <exception cref="ArgumentNullException"><paramref name="logger"/> is null.</exception>
-        public AssemblyRessourceScriptLocator(ILogger logger, IEnumerable<Assembly> assemblies) : base(logger)
+        public AssemblyRessourceDbScriptLocator(ILogger logger, IEnumerable<Assembly> assemblies) : base(logger)
         {
             this.Encoding = Encoding.UTF8;
             this.Assemblies = new List<Assembly>();
@@ -59,12 +59,12 @@ namespace RI.DatabaseManager.Scripts
         }
 
         /// <summary>
-        ///     Creates a new instance of <see cref="AssemblyRessourceScriptLocator" />.
+        ///     Creates a new instance of <see cref="AssemblyRessourceDbScriptLocator" />.
         /// </summary>
         /// <param name="logger">The used logger.</param>
         /// <param name="assemblies"> The array of assemblies. </param>
         /// <exception cref="ArgumentNullException"><paramref name="logger"/> is null.</exception>
-        public AssemblyRessourceScriptLocator(ILogger logger, params Assembly[] assemblies)
+        public AssemblyRessourceDbScriptLocator(ILogger logger, params Assembly[] assemblies)
             : this(logger, (IEnumerable<Assembly>)assemblies)
         {
         }

@@ -22,7 +22,7 @@ namespace RI.DatabaseManager.Manager
     ///     </note>
     /// </remarks>
     /// <threadsafety static="false" instance="false" />
-    public abstract class DbProcessingStep <TConnection, TTransaction, TManager> : IDbProcessingStep<TConnection, TTransaction, TManager>
+    public abstract class DbProcessingStepBase <TConnection, TTransaction, TManager> : IDbProcessingStep<TConnection, TTransaction, TManager>
         where TConnection : DbConnection
         where TTransaction : DbTransaction
         where TManager : class, IDbManager<TConnection, TTransaction, TManager>
@@ -32,11 +32,11 @@ namespace RI.DatabaseManager.Manager
         private ILogger Logger { get; }
 
         /// <summary>
-        ///     Creates a new instance of <see cref="DbProcessingStep{TConnection,TTransaction,TManager}" />
+        ///     Creates a new instance of <see cref="DbProcessingStepBase{TConnection,TTransaction,TManager}" />
         /// </summary>
         /// <param name="logger">The used logger.</param>
         /// <exception cref="ArgumentNullException"><paramref name="logger"/> is null.</exception>
-        protected DbProcessingStep (ILogger logger)
+        protected DbProcessingStepBase (ILogger logger)
         {
             if (logger == null)
             {
@@ -255,7 +255,7 @@ namespace RI.DatabaseManager.Manager
                 {
                     case SubStepType.Script:
                         string scriptName = (string)subStep.Item3;
-                        batches = manager.GetScriptBatch(scriptName, true);
+                        batches = manager.GetScriptBatches(scriptName, true);
                         if (batches == null)
                         {
                             throw new Exception("Batch retrieval failed for script: " + scriptName);

@@ -33,7 +33,7 @@ namespace RI.DatabaseManager.Cleanup
         ///         The default cleanup script uses <c> DBCC SHRINKDATABASE 0 </c>, executed as a single command.
         ///     </para>
         /// </remarks>
-        public const string DefaultCleanupScript = "DBCC SHRINKDATABASE (0);" + DatabaseScriptLocator.DefaultBatchSeparator;
+        public const string DefaultCleanupScript = "DBCC SHRINKDATABASE (0);" + DbScriptLocatorBase.DefaultBatchSeparator;
 
         #endregion
 
@@ -135,7 +135,7 @@ namespace RI.DatabaseManager.Cleanup
                     SqlServerDbProcessingStep cleanupStep = this.CleanupStep;
                     if (cleanupStep == null)
                     {
-                        List<string> batches = DatabaseScriptLocator.SplitBatches(SqlServerDatabaseCleanupProcessor.DefaultCleanupScript, DatabaseScriptLocator.DefaultBatchSeparator);
+                        List<string> batches = DbScriptLocatorBase.SplitBatches(SqlServerDatabaseCleanupProcessor.DefaultCleanupScript, DbScriptLocatorBase.DefaultBatchSeparator);
                         cleanupStep = new SqlServerDbProcessingStep();
                         cleanupStep.AddBatches(batches);
                     }

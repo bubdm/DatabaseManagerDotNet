@@ -87,7 +87,7 @@ namespace RI.DatabaseManager.Manager
         }
 
         /// <summary>
-        ///     Retrieves a script and all its batches using the configured <see cref="IDatabaseScriptLocator" />, using its default batch separator.
+        ///     Retrieves a script and all its batches using the configured <see cref="IDbScriptLocator" />, using its default batch separator.
         /// </summary>
         /// <param name="manager"> The used database manager. </param>
         /// <param name="name"> The name of the script. </param>
@@ -104,12 +104,12 @@ namespace RI.DatabaseManager.Manager
         /// </remarks>
         /// <remarks>
         ///<para>
-        /// The configured <see cref="IDatabaseScriptLocator" />s <see cref="IDatabaseScriptLocator.DefaultBatchSeparator"/> is used as the batch separator string.
+        /// The configured <see cref="IDbScriptLocator" />s <see cref="IDbScriptLocator.DefaultBatchSeparator"/> is used as the batch separator string.
         /// </para>
         /// </remarks>
         /// <exception cref="ArgumentNullException"> <paramref name="name" /> is null. </exception>
         /// <exception cref="ArgumentException"> <paramref name="name" /> is an empty string. </exception>
-        /// <exception cref="NotSupportedException"> Retrieving scripts is not supported by the database manager or no <see cref="IDatabaseScriptLocator" /> is configured. </exception>
+        /// <exception cref="NotSupportedException"> Retrieving scripts is not supported by the database manager or no <see cref="IDbScriptLocator" /> is configured. </exception>
         public static List<string> GetScriptBatches (this IDbManager manager, string name, bool preprocess)
         {
             if (manager == null)

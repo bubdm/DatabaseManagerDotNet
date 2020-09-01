@@ -18,11 +18,11 @@ namespace RI.DatabaseManager.Manager
     ///         <see cref="SQLiteDbProcessingStep" /> is used by <see cref="SQLiteDatabaseBackupCreator" />, <see cref="SQLiteDatabaseCleanupProcessor" />, and <see cref="SQLiteDatabaseVersionUpgrader" />.
     ///     </para>
     ///     <para>
-    ///         See <see cref="DbProcessingStep{TConnection,TTransaction,TManager}" /> for more details.
+    ///         See <see cref="DbProcessingStepBase{TConnection,TTransaction,TManager}" /> for more details.
     ///     </para>
     /// </remarks>
     /// <threadsafety static="false" instance="false" />
-    public class SQLiteDbProcessingStep : DbProcessingStep<,,>
+    public class SQLiteDbProcessingStep : DbProcessingStepBase<,,>
     {
         #region Overrides
 

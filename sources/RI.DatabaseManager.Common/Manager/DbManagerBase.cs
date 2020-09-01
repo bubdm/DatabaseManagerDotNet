@@ -28,7 +28,7 @@ namespace RI.DatabaseManager.Manager
     ///     </note>
     /// </remarks>
     /// <threadsafety static="false" instance="false" />
-    public abstract class DbManager <TConnection, TTransaction, TManager> : IDbManager<TConnection, TTransaction, TManager>
+    public abstract class DbManagerBase <TConnection, TTransaction, TManager> : IDbManager<TConnection, TTransaction, TManager>
         where TConnection : DbConnection
         where TTransaction : DbTransaction
         where TManager : class, IDbManager<TConnection, TTransaction, TManager>
@@ -43,7 +43,7 @@ namespace RI.DatabaseManager.Manager
 
         private IDatabaseVersionUpgrader<TConnection, TTransaction, TManager> VersionUpgrader { get; }
 
-        private IDatabaseScriptLocator ScriptLocator { get; }
+        private IDbScriptLocator ScriptLocator { get; }
 
 
 
@@ -51,7 +51,7 @@ namespace RI.DatabaseManager.Manager
         #region Instance Constructor/Destructor
 
         /// <summary>
-        /// Creates a new instance of <see cref="DbManager{TConnection,TTransaction,TManager}" />.
+        /// Creates a new instance of <see cref="DbManagerBase{TConnection,TTransaction,TManager}" />.
         /// </summary>
         /// <param name="versionDetector">The used version detector.</param>
         /// <param name="backupCreator">The used backup creator, if any.</param>
@@ -66,7 +66,7 @@ namespace RI.DatabaseManager.Manager
         /// </note>
         /// </remarks>
         /// <exception cref="ArgumentNullException"><paramref name="versionDetector"/> or <paramref name="logger"/> is null.</exception>
-        protected DbManager (IDatabaseVersionDetector<TConnection, TTransaction, TManager> versionDetector, IDatabaseBackupCreator<TConnection, TTransaction, TManager> backupCreator, IDatabaseCleanupProcessor<TConnection, TTransaction, TManager> cleanupProcessor, IDatabaseVersionUpgrader<TConnection, TTransaction, TManager> versionUpgrader, IDatabaseScriptLocator scriptLocator, ILogger logger)
+        protected DbManagerBase (IDatabaseVersionDetector<TConnection, TTransaction, TManager> versionDetector, IDatabaseBackupCreator<TConnection, TTransaction, TManager> backupCreator, IDatabaseCleanupProcessor<TConnection, TTransaction, TManager> cleanupProcessor, IDatabaseVersionUpgrader<TConnection, TTransaction, TManager> versionUpgrader, IDbScriptLocator scriptLocator, ILogger logger)
         {
             if (versionDetector == null)
             {
@@ -96,9 +96,9 @@ namespace RI.DatabaseManager.Manager
         }
 
         /// <summary>
-        ///     Finalizes this instance of <see cref="DbManager{TConnection,TTransaction,TManager}" />.
+        ///     Finalizes this instance of <see cref="DbManagerBase{TConnection,TTransaction,TManager}" />.
         /// </summary>
-        ~DbManager ()
+        ~DbManagerBase ()
         {
             this.Dispose(false);
         }
@@ -334,7 +334,7 @@ namespace RI.DatabaseManager.Manager
         /// <summary>
         ///     Performs the actual state and version detection as required by this database manager implementation.
         /// </summary>
-        /// <param name="state"> Returns the state of the database. Can be null to perform state detection based on <paramref name="version" /> as implemented in <see cref="DbManager{TConnection,TTransaction,TManager}" />. </param>
+        /// <param name="state"> Returns the state of the database. Can be null to perform state detection based on <paramref name="version" /> as implemented in <see cref="DbManagerBase{TConnection,TTransaction,TManager}" />. </param>
         /// <param name="version"> Returns the version of the database. </param>
         /// <returns>
         ///     true if the state and version could be successfully determined, false if the database is damaged or in an invalid state.
@@ -375,7 +375,7 @@ namespace RI.DatabaseManager.Manager
         /// </returns>
         /// <remarks>
         ///     <para>
-        ///         The default implementation calls <see cref="IDatabaseScriptLocator.GetScriptBatches" />.
+        ///         The default implementation calls <see cref="IDbScriptLocator.GetScriptBatches" />.
         ///     </para>
         /// </remarks>
         protected virtual List<string> GetScriptBatchesImpl (string name, string batchSeparator, bool preprocess)

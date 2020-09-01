@@ -41,7 +41,7 @@ namespace RI.DatabaseManager.Builder
                 };
             }
 
-            builder.AddSingleton(typeof(IDatabaseScriptLocator), sp => new AssemblyRessourceScriptLocator((ILogger)sp.GetService(typeof(ILogger)), assemblies));
+            builder.AddSingleton(typeof(IDbScriptLocator), sp => new AssemblyRessourceDbScriptLocator((ILogger)sp.GetService(typeof(ILogger)), assemblies));
 
             return builder;
         }
@@ -65,7 +65,7 @@ namespace RI.DatabaseManager.Builder
                 throw new ArgumentNullException(nameof(scripts));
             }
 
-            builder.AddSingleton(typeof(IDatabaseScriptLocator), sp => new DictionaryScriptLocator((ILogger)sp.GetService(typeof(ILogger)), scripts));
+            builder.AddSingleton(typeof(IDbScriptLocator), sp => new DictionaryDbScriptLocator((ILogger)sp.GetService(typeof(ILogger)), scripts));
 
             return builder;
         }
@@ -77,16 +77,16 @@ namespace RI.DatabaseManager.Builder
         /// <param name="scriptLocators"> The array of database script locators. </param>
         /// <returns> The builder being configured. </returns>
         /// <exception cref="ArgumentNullException"> <paramref name="builder" /> or <paramref name="scriptLocators"/> is null. </exception>
-        public static DbManagerBuilder UseScripts (this DbManagerBuilder builder, params IDatabaseScriptLocator[] scriptLocators)
+        public static DbManagerBuilder UseScripts (this DbManagerBuilder builder, params IDbScriptLocator[] scriptLocators)
         {
             if (builder == null)
             {
                 throw new ArgumentNullException(nameof(builder));
             }
 
-            scriptLocators ??= new IDatabaseScriptLocator[0];
+            scriptLocators ??= new IDbScriptLocator[0];
 
-            builder.AddSingleton(typeof(IDatabaseScriptLocator), _ => new AggregateScriptLocator(scriptLocators));
+            builder.AddSingleton(typeof(IDbScriptLocator), _ => new AggregateDbScriptLocator(scriptLocators));
 
             return builder;
         }

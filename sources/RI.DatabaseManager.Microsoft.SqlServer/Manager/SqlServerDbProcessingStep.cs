@@ -18,11 +18,11 @@ namespace RI.DatabaseManager.Manager
     ///         <see cref="SqlServerDbProcessingStep" /> is used by <see cref="SqlServerDatabaseCleanupProcessor" /> and <see cref="SqlServerDatabaseVersionUpgrader" />.
     ///     </para>
     ///     <para>
-    ///         See <see cref="DbProcessingStep{TConnection,TTransaction,TManager}" /> for more details.
+    ///         See <see cref="DbProcessingStepBase{TConnection,TTransaction,TManager}" /> for more details.
     ///     </para>
     /// </remarks>
     /// <threadsafety static="false" instance="false" />
-    public class SqlServerDbProcessingStep : DbProcessingStep<,,>
+    public class SqlServerDbProcessingStep : DbProcessingStepBase<,,>
     {
         #region Overrides
 

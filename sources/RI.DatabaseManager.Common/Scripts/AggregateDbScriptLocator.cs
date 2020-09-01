@@ -14,28 +14,28 @@ namespace RI.DatabaseManager.Scripts
     /// </summary>
     /// <remarks>
     ///     <note type="important">
-    ///         If <see cref="IDatabaseScriptLocator.DefaultBatchSeparator" /> of this script locator is not null, that value will always be used if the <c>batchSeparator</c> parameter of <see cref="GetScriptBatches"/> is null and therefore will override the values of the individual script locators.
+    ///         If <see cref="IDbScriptLocator.DefaultBatchSeparator" /> of this script locator is not null, that value will always be used if the <c>batchSeparator</c> parameter of <see cref="GetScriptBatches"/> is null and therefore will override the values of the individual script locators.
     ///     </note>
     ///     <para>
-    ///         <see cref="AggregateScriptLocator"/> is both a <see cref="IDatabaseScriptLocator"/> and <see cref="IList{T}"/> implementation.
+    ///         <see cref="AggregateDbScriptLocator"/> is both a <see cref="IDbScriptLocator"/> and <see cref="IList{T}"/> implementation.
     /// It can dynamically combine multiple script locators and present it as one, doing lookup of scripts in the order of the list.
     ///     </para>
     /// </remarks>
     /// <threadsafety static="false" instance="false" />
-    public sealed class AggregateScriptLocator : IDatabaseScriptLocator, IList<IDatabaseScriptLocator>, ICollection<IDatabaseScriptLocator>
+    public sealed class AggregateDbScriptLocator : IDbScriptLocator, IList<IDbScriptLocator>, ICollection<IDbScriptLocator>
     {
         #region Instance Constructor/Destructor
 
         /// <summary>
-        ///     Creates a new instance of <see cref="AggregateScriptLocator" />.
+        ///     Creates a new instance of <see cref="AggregateDbScriptLocator" />.
         /// </summary>
-        public AggregateScriptLocator ()
-            : this((IEnumerable<IDatabaseScriptLocator>)null)
+        public AggregateDbScriptLocator ()
+            : this((IEnumerable<IDbScriptLocator>)null)
         {
         }
 
         /// <summary>
-        ///     Creates a new instance of <see cref="AggregateScriptLocator" />.
+        ///     Creates a new instance of <see cref="AggregateDbScriptLocator" />.
         /// </summary>
         /// <param name="scriptLocators"> The sequence of script locators which are aggregated. </param>
         /// <remarks>
@@ -43,14 +43,14 @@ namespace RI.DatabaseManager.Scripts
         ///         <paramref name="scriptLocators" /> is enumerated only once.
         ///     </para>
         /// </remarks>
-        public AggregateScriptLocator (IEnumerable<IDatabaseScriptLocator> scriptLocators)
+        public AggregateDbScriptLocator (IEnumerable<IDbScriptLocator> scriptLocators)
         {
             this.DefaultBatchSeparator = null;
-            this.ScriptLocators = new List<IDatabaseScriptLocator>();
+            this.ScriptLocators = new List<IDbScriptLocator>();
 
             if (scriptLocators != null)
             {
-                foreach (IDatabaseScriptLocator scriptLocator in scriptLocators)
+                foreach (IDbScriptLocator scriptLocator in scriptLocators)
                 {
                     this.Add(scriptLocator);
                 }
@@ -58,11 +58,11 @@ namespace RI.DatabaseManager.Scripts
         }
 
         /// <summary>
-        ///     Creates a new instance of <see cref="AggregateScriptLocator" />.
+        ///     Creates a new instance of <see cref="AggregateDbScriptLocator" />.
         /// </summary>
         /// <param name="scriptLocators"> The array of script locators which are aggregated. </param>
-        public AggregateScriptLocator (params IDatabaseScriptLocator[] scriptLocators)
-            : this((IEnumerable<IDatabaseScriptLocator>)scriptLocators)
+        public AggregateDbScriptLocator (params IDbScriptLocator[] scriptLocators)
+            : this((IEnumerable<IDbScriptLocator>)scriptLocators)
         {
         }
 
@@ -73,7 +73,7 @@ namespace RI.DatabaseManager.Scripts
 
         #region Instance Properties/Indexer
 
-        private List<IDatabaseScriptLocator> ScriptLocators { get; }
+        private List<IDbScriptLocator> ScriptLocators { get; }
 
         #endregion
 
@@ -86,10 +86,10 @@ namespace RI.DatabaseManager.Scripts
         public int Count => this.ScriptLocators.Count;
 
         /// <inheritdoc />
-        bool ICollection<IDatabaseScriptLocator>.IsReadOnly => false;
+        bool ICollection<IDbScriptLocator>.IsReadOnly => false;
 
         /// <inheritdoc />
-        public void Add (IDatabaseScriptLocator item)
+        public void Add (IDbScriptLocator item)
         {
             if (item == null)
             {
@@ -103,19 +103,19 @@ namespace RI.DatabaseManager.Scripts
         public void Clear () => this.ScriptLocators.Clear();
 
         /// <inheritdoc />
-        public bool Contains (IDatabaseScriptLocator item) => this.ScriptLocators.Contains(item);
+        public bool Contains (IDbScriptLocator item) => this.ScriptLocators.Contains(item);
 
         /// <inheritdoc />
-        void ICollection<IDatabaseScriptLocator>.CopyTo (IDatabaseScriptLocator[] array, int arrayIndex) => this.ScriptLocators.CopyTo(array, arrayIndex);
+        void ICollection<IDbScriptLocator>.CopyTo (IDbScriptLocator[] array, int arrayIndex) => this.ScriptLocators.CopyTo(array, arrayIndex);
 
         /// <inheritdoc />
         IEnumerator IEnumerable.GetEnumerator () => this.GetEnumerator();
 
         /// <inheritdoc />
-        public IEnumerator<IDatabaseScriptLocator> GetEnumerator () => this.ScriptLocators.GetEnumerator();
+        public IEnumerator<IDbScriptLocator> GetEnumerator () => this.ScriptLocators.GetEnumerator();
 
         /// <inheritdoc />
-        public bool Remove (IDatabaseScriptLocator item) => this.ScriptLocators.Remove(item);
+        public bool Remove (IDbScriptLocator item) => this.ScriptLocators.Remove(item);
 
         #endregion
 
@@ -173,7 +173,7 @@ namespace RI.DatabaseManager.Scripts
                 }
             }
 
-            foreach (IDatabaseScriptLocator scriptLocator in this.ScriptLocators)
+            foreach (IDbScriptLocator scriptLocator in this.ScriptLocators)
             {
                 List<string> batches = scriptLocator.GetScriptBatches(manager, name, batchSeparator ?? this.DefaultBatchSeparator, preprocess);
 
@@ -192,10 +192,10 @@ namespace RI.DatabaseManager.Scripts
 
 
         /// <inheritdoc />
-        public int IndexOf (IDatabaseScriptLocator item) => this.ScriptLocators.IndexOf(item);
+        public int IndexOf (IDbScriptLocator item) => this.ScriptLocators.IndexOf(item);
 
         /// <inheritdoc />
-        public void Insert (int index, IDatabaseScriptLocator item)
+        public void Insert (int index, IDbScriptLocator item)
         {
             if (item == null)
             {
@@ -209,7 +209,7 @@ namespace RI.DatabaseManager.Scripts
         public void RemoveAt (int index) => this.ScriptLocators.RemoveAt(index);
 
         /// <inheritdoc />
-        public IDatabaseScriptLocator this [int index]
+        public IDbScriptLocator this [int index]
         {
             get => this.ScriptLocators[index];
             set

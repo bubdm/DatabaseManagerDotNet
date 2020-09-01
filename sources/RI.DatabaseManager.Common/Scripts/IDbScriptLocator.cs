@@ -9,12 +9,12 @@ using RI.DatabaseManager.Manager;
 namespace RI.DatabaseManager.Scripts
 {
     /// <summary>
-    ///     Script locator to locate database scripts.
+    ///     Script locator to locate and retrieve database scripts.
     /// </summary>
     /// <remarks>
     ///     <para>
     ///         Database script locators are used to locate, retrieve, and preprocess database scripts.
-    ///         What the preprocessing does in detail depends on the implementation of <see cref="IDatabaseScriptLocator" /> but is usually something like replacing placeholders (e.g. current date and time), etc.
+    ///         What the preprocessing does in detail depends on the implementation of <see cref="IDbScriptLocator" /> but is usually something like replacing placeholders (e.g. current date and time), etc.
     ///     </para>
     ///     <para>
     ///         Database script locators might also be used by database managers, version detectors, version upgraders, backup creators, and cleanup processors, depending on their implementation and the used database type.
@@ -24,15 +24,16 @@ namespace RI.DatabaseManager.Scripts
     /// </para>
     ///     <note type="note">
     ///         Database script locators are optional.
-    ///         However, be aware that some implementations and/or configurations of version detectors, version upgraders, backup creators, and cleanup processors require a script locator.
+    ///         However, be aware that some implementations and/or configurations of version detectors, version upgraders, backup creators, and cleanup processors require a script locator to be configured.
     /// See their respective documentation for more information.
     ///     </note>
     ///     <note type="note">
-    ///         Do not use <see cref="IDatabaseScriptLocator"/> implementations directly.
+    /// <see cref="IDbScriptLocator"/> implementations are used by database managers.
+    ///         Do not use <see cref="IDbScriptLocator"/> implementations directly.
     /// Use <see cref="IDbManager.GetScriptBatches"/> instead.
     ///     </note>
     /// </remarks>
-    public interface IDatabaseScriptLocator
+    public interface IDbScriptLocator
     {
         /// <summary>
         ///     Gets or sets the string which is used as the default separator to separate individual batches in a single script.
