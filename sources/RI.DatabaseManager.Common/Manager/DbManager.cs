@@ -363,9 +363,10 @@ namespace RI.DatabaseManager.Manager
         }
 
         /// <summary>
-        ///     Retrieves a script batch.
+        ///     Retrieves a script and all its batches.
         /// </summary>
         /// <param name="name"> The name of the script. </param>
+        /// <param name="batchSeparator"> The string which is used as the separator to separate individual batches in the script or null if the script locators default separator is to be used. </param>
         /// <param name="preprocess"> Specifies whether the script is to be preprocessed, if applicable. </param>
         /// <returns>
         ///     The batch in the script (list of independently executed commands).
@@ -374,12 +375,12 @@ namespace RI.DatabaseManager.Manager
         /// </returns>
         /// <remarks>
         ///     <para>
-        ///         The default implementation calls <see cref="IDatabaseScriptLocator.GetScriptBatch" />.
+        ///         The default implementation calls <see cref="IDatabaseScriptLocator.GetScriptBatches" />.
         ///     </para>
         /// </remarks>
-        protected virtual List<string> GetScriptBatchImpl (string name, bool preprocess)
+        protected virtual List<string> GetScriptBatchesImpl (string name, string batchSeparator, bool preprocess)
         {
-            return this.ScriptLocator.GetScriptBatch(this, name, preprocess);
+            return this.ScriptLocator.GetScriptBatches(this, name, batchSeparator, preprocess);
         }
 
         /// <summary>
@@ -642,7 +643,7 @@ namespace RI.DatabaseManager.Manager
         void IDisposable.Dispose () => this.Close();
 
         /// <inheritdoc />
-        public List<string> GetScriptBatch (string name, bool preprocess)
+        public List<string> GetScriptBatches (string name, string batchSeparator, bool preprocess)
         {
             if (name == null)
             {
@@ -654,12 +655,20 @@ namespace RI.DatabaseManager.Manager
                 throw new ArgumentException("Argument is an empty string.", nameof(name));
             }
 
+            if (batchSeparator != null)
+            {
+                if (string.IsNullOrWhiteSpace(batchSeparator))
+                {
+                    throw new ArgumentException("Argument is an empty string.", nameof(batchSeparator));
+                }
+            }
+
             if (!this.SupportsScripts)
             {
                 throw new NotSupportedException(this.GetType().Name + " does not support script retrieval.");
             }
 
-            List<string> result = this.GetScriptBatchImpl(name, preprocess);
+            List<string> result = this.GetScriptBatchesImpl(name, batchSeparator, preprocess);
 
             if (result != null)
             {

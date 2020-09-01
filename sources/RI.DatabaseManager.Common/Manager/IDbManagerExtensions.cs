@@ -1,6 +1,8 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Data.Common;
 
+using RI.DatabaseManager.Scripts;
 using RI.DatabaseManager.Upgrading;
 
 
@@ -59,6 +61,7 @@ namespace RI.DatabaseManager.Manager
         ///     true if the upgrade was successful, false otherwise.
         ///     Details about failures should be written to logs.
         /// </returns>
+        /// <param name="manager"> The used database manager. </param>
         /// <remarks>
         ///     <note type="implement">
         ///         <see cref="IDbManager.State" />, <see cref="IDbManager.Version" />, <see cref="IDbManager.IsReady"/>, <see cref="IDbManager.CanUpgrade"/> are updated to reflect the current state and version of the database after upgrade.
@@ -81,6 +84,40 @@ namespace RI.DatabaseManager.Manager
             }
 
             return manager.Upgrade(manager.MaxVersion);
+        }
+
+        /// <summary>
+        ///     Retrieves a script and all its batches using the configured <see cref="IDatabaseScriptLocator" />, using its default batch separator.
+        /// </summary>
+        /// <param name="manager"> The used database manager. </param>
+        /// <param name="name"> The name of the script. </param>
+        /// <param name="preprocess"> Specifies whether the script is to be preprocessed, if applicable. </param>
+        /// <returns>
+        ///     The batches in the script (list of independently executed commands).
+        ///     If the script is empty or does not contain any commands respectively, an empty list is returned.
+        ///     If the script could not be found, null is returned.
+        /// </returns>
+        /// <remarks>
+        ///     <note type="implement">
+        ///         <see cref="GetScriptBatches"/> should be callable at any time as the retrieved script is just retrieved, not executed.
+        ///     </note>
+        /// </remarks>
+        /// <remarks>
+        ///<para>
+        /// The configured <see cref="IDatabaseScriptLocator" />s <see cref="IDatabaseScriptLocator.DefaultBatchSeparator"/> is used as the batch separator string.
+        /// </para>
+        /// </remarks>
+        /// <exception cref="ArgumentNullException"> <paramref name="name" /> is null. </exception>
+        /// <exception cref="ArgumentException"> <paramref name="name" /> is an empty string. </exception>
+        /// <exception cref="NotSupportedException"> Retrieving scripts is not supported by the database manager or no <see cref="IDatabaseScriptLocator" /> is configured. </exception>
+        public static List<string> GetScriptBatches (this IDbManager manager, string name, bool preprocess)
+        {
+            if (manager == null)
+            {
+                throw new ArgumentNullException(nameof(manager));
+            }
+
+            return manager.GetScriptBatches(name, null, preprocess);
         }
 
         #endregion

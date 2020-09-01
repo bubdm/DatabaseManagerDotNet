@@ -1,8 +1,10 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Reflection;
 using System.Text;
 
+using RI.Abstractions.Logging;
 using RI.DatabaseManager.Manager;
 
 
@@ -11,60 +13,60 @@ using RI.DatabaseManager.Manager;
 namespace RI.DatabaseManager.Scripts
 {
     /// <summary>
-    ///     Implements a database script locator which uses assembly resources to locate scripts.
+    ///     Script locator implementation which gets scripts from assembly resources.
     /// </summary>
+    /// <para>
+    /// <see cref="Assemblies"/> is the list of assemblies used to lookup scripts.
+    /// </para>
+    /// <para>
+    /// <see cref="Encoding"/> is the used encoding for reading the scripts as strings from the assembly resources.
+    /// </para>
     /// <threadsafety static="false" instance="false" />
     public sealed class AssemblyRessourceScriptLocator : DatabaseScriptLocator
     {
-        #region Constants
-
-        /// <summary>
-        ///     Thedefault encoding used to read assembly resources.
-        /// </summary>
-        /// <remarks>
-        ///     <para>
-        ///         The default encoding is UTF-8.
-        ///     </para>
-        /// </remarks>
-        public static readonly Encoding DefaultEncoding = Encoding.UTF8;
-
-        #endregion
-
-
-
-
         #region Instance Constructor/Destructor
 
         /// <summary>
         ///     Creates a new instance of <see cref="AssemblyRessourceScriptLocator" />.
         /// </summary>
-        /// <param name="assembly"> The used assembly. </param>
-        /// <remarks>
-        ///     <para>
-        ///         The default encoding <see cref="DefaultEncoding" /> is used.
-        ///     </para>
-        /// </remarks>
-        /// <exception cref="ArgumentNullException"> <paramref name="assembly" /> is null. </exception>
-        public AssemblyRessourceScriptLocator (Assembly assembly)
-            : this(assembly, null)
+        /// <param name="logger">The used logger.</param>
+        /// <exception cref="ArgumentNullException"><paramref name="logger"/> is null.</exception>
+        public AssemblyRessourceScriptLocator(ILogger logger)
+            : this(logger, (IEnumerable<Assembly>)null)
         {
         }
 
         /// <summary>
         ///     Creates a new instance of <see cref="AssemblyRessourceScriptLocator" />.
         /// </summary>
-        /// <param name="assembly"> The used assembly. </param>
-        /// <param name="encoding"> The used encoding or null to use the default encoding <see cref="DefaultEncoding" />. </param>
-        /// <exception cref="ArgumentNullException"> <paramref name="assembly" /> is null. </exception>
-        public AssemblyRessourceScriptLocator (Assembly assembly, Encoding encoding)
+        /// <param name="logger">The used logger.</param>
+        /// <param name="assemblies"> The sequence of assemblies. </param>
+        /// <remarks>
+        ///     <para>
+        ///         <paramref name="assemblies" /> is enumerated only once.
+        ///     </para>
+        /// </remarks>
+        /// <exception cref="ArgumentNullException"><paramref name="logger"/> is null.</exception>
+        public AssemblyRessourceScriptLocator(ILogger logger, IEnumerable<Assembly> assemblies) : base(logger)
         {
-            if (assembly == null)
-            {
-                throw new ArgumentNullException(nameof(assembly));
-            }
+            this.Encoding = Encoding.UTF8;
+            this.Assemblies = new List<Assembly>();
 
-            this.Assembly = assembly;
-            this.Encoding = encoding ?? AssemblyRessourceScriptLocator.DefaultEncoding;
+            if (assemblies != null)
+            {
+                this.Assemblies.AddRange(assemblies);
+            }
+        }
+
+        /// <summary>
+        ///     Creates a new instance of <see cref="AssemblyRessourceScriptLocator" />.
+        /// </summary>
+        /// <param name="logger">The used logger.</param>
+        /// <param name="assemblies"> The array of assemblies. </param>
+        /// <exception cref="ArgumentNullException"><paramref name="logger"/> is null.</exception>
+        public AssemblyRessourceScriptLocator(ILogger logger, params Assembly[] assemblies)
+            : this(logger, (IEnumerable<Assembly>)assemblies)
+        {
         }
 
         #endregion
@@ -75,20 +77,28 @@ namespace RI.DatabaseManager.Scripts
         #region Instance Properties/Indexer
 
         /// <summary>
-        ///     Gets the used assembly.
+        ///     Gets the list of used assemblies to lookup scripts.
         /// </summary>
         /// <value>
-        ///     The used assembly.
+        ///     The list of used assemblies to lookup scripts.
         /// </value>
-        public Assembly Assembly { get; }
+        public List<Assembly> Assemblies { get; }
 
         /// <summary>
-        ///     Gets the used encoding.
+        ///     Gets the used encoding for reading the scripts as strings from the assembly resources.
         /// </summary>
         /// <value>
-        ///     The used encoding.
+        ///     The used encoding for reading the scripts as strings from the assembly resources.
         /// </value>
-        public Encoding Encoding { get; }
+        /// <remarks>
+        /// <para>
+        ///If <see cref="Encoding"/> is null, <see cref="System.Text.Encoding.UTF8"/> is used.
+        /// </para>
+        /// <note type="implement">
+        /// The default value is <see cref="System.Text.Encoding.UTF8"/>.
+        /// </note>
+        /// </remarks>
+        public Encoding Encoding { get; set; }
 
         #endregion
 
@@ -100,18 +110,24 @@ namespace RI.DatabaseManager.Scripts
         /// <inheritdoc />
         protected override string LocateAndReadScript (IDbManager manager, string name)
         {
-            using (Stream stream = this.Assembly.GetManifestResourceStream(name))
+            //TODO: #9: Use more advanced resource lookup (+ document in class remarks)
+            foreach (Assembly assembly in this.Assemblies)
             {
-                if (stream == null)
+                using (Stream stream = assembly.GetManifestResourceStream(name))
                 {
-                    return null;
-                }
+                    if (stream == null)
+                    {
+                        continue;
+                    }
 
-                using (StreamReader sr = new StreamReader(stream, this.Encoding))
-                {
-                    return sr.ReadToEnd();
+                    using (StreamReader sr = new StreamReader(stream, this.Encoding ?? Encoding.UTF8))
+                    {
+                        return sr.ReadToEnd();
+                    }
                 }
             }
+
+            return null;
         }
 
         #endregion

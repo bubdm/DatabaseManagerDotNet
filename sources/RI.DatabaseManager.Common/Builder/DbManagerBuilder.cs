@@ -38,30 +38,23 @@ namespace RI.DatabaseManager.Builder
             this.ThrowIfNotExactContractCount(manager, 1);
             this.ThrowIfNotExactContractCount(versionDetector, 1);
 
+            this.ThrowIfTemporary(manager);
+            this.ThrowIfTemporary(versionDetector);
+
             this.ThrowIfNotMaxContractCount(backupCreator, 1);
             this.ThrowIfNotMaxContractCount(cleanupProcessor, 1);
             this.ThrowIfNotMaxContractCount(versionUpgrader, 1);
             this.ThrowIfNotMaxContractCount(scriptLocator, 1);
 
-            if (this.CountContracts(backupCreator) == 0)
-            {
-                this.AddSingleton(backupCreator, this.CreateNullInstance(connection, transaction, manager));
-            }
+            this.AddDefaultSingleton(backupCreator, this.CreateNullInstance(connection, transaction, manager));
+            this.AddDefaultSingleton(cleanupProcessor, this.CreateNullInstance(connection, transaction, manager));
+            this.AddDefaultSingleton(versionUpgrader, this.CreateNullInstance(connection, transaction, manager));
+            this.AddDefaultSingleton(scriptLocator, this.CreateNullInstance(connection, transaction, manager));
 
-            if (this.CountContracts(cleanupProcessor) == 0)
-            {
-                this.AddSingleton(cleanupProcessor, this.CreateNullInstance(connection, transaction, manager));
-            }
-
-            if (this.CountContracts(versionUpgrader) == 0)
-            {
-                this.AddSingleton(versionUpgrader, this.CreateNullInstance(connection, transaction, manager));
-            }
-
-            if (this.CountContracts(scriptLocator) == 0)
-            {
-                this.AddSingleton(scriptLocator, this.CreateNullInstance(connection, transaction, manager));
-            }
+            this.ThrowIfTemporary(backupCreator);
+            this.ThrowIfTemporary(cleanupProcessor);
+            this.ThrowIfTemporary(versionUpgrader);
+            this.ThrowIfTemporary(scriptLocator);
         }
 
         private (Type Connection, Type Transaction, Type Manager, Type VersionDetector, Type BackupCreator, Type CleanupProcessor, Type VersionUpgrader, Type ScriptLocator) DetectDbManagerTypes ()
@@ -141,14 +134,14 @@ namespace RI.DatabaseManager.Builder
             bool IDatabaseVersionUpgrader.RequiresScriptLocator => throw new NotImplementedException();
 
             /// <inheritdoc />
-            string IDatabaseScriptLocator.BatchSeparator
+            string IDatabaseScriptLocator.DefaultBatchSeparator
             {
                 get => throw new NotImplementedException();
                 set => throw new NotImplementedException();
             }
 
             /// <inheritdoc />
-            List<string> IDatabaseScriptLocator.GetScriptBatch (IDbManager manager, string name, bool preprocess) => throw new NotImplementedException();
+            List<string> IDatabaseScriptLocator.GetScriptBatches (IDbManager manager, string name, string batchSeparator, bool preprocess) => throw new NotImplementedException();
 
             /// <inheritdoc />
             bool IDatabaseBackupCreator<TConnection, TTransaction, TManager>.Backup (TManager manager, object backupTarget) => throw new NotImplementedException();

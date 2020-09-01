@@ -279,24 +279,25 @@ namespace RI.DatabaseManager.Manager
         IDbProcessingStep CreateProcessingStep ();
 
         /// <summary>
-        ///     Retrieves a script batch using the configured <see cref="IDatabaseScriptLocator" />.
+        ///     Retrieves a script and all its batches using the configured <see cref="IDatabaseScriptLocator" />.
         /// </summary>
         /// <param name="name"> The name of the script. </param>
+        /// <param name="batchSeparator"> The string which is used as the separator to separate individual batches in the script or null if the script locators default separator is to be used. </param>
         /// <param name="preprocess"> Specifies whether the script is to be preprocessed, if applicable. </param>
         /// <returns>
-        ///     The batch in the script (list of independently executed commands).
+        ///     The batches in the script (list of independently executed commands).
         ///     If the script is empty or does not contain any commands respectively, an empty list is returned.
         ///     If the script could not be found, null is returned.
         /// </returns>
         /// <remarks>
         ///     <note type="implement">
-        ///         <see cref="GetScriptBatch"/> should be callable at any time as the retrieved script is just retrieved, not executed.
+        ///         <see cref="GetScriptBatches"/> should be callable at any time as the retrieved script is just retrieved, not executed.
         ///     </note>
         /// </remarks>
         /// <exception cref="ArgumentNullException"> <paramref name="name" /> is null. </exception>
-        /// <exception cref="ArgumentException"> <paramref name="name" /> is an empty string. </exception>
+        /// <exception cref="ArgumentException"> <paramref name="name" /> or <paramref name="batchSeparator"/> is an empty string. </exception>
         /// <exception cref="NotSupportedException"> Retrieving scripts is not supported by the database manager or no <see cref="IDatabaseScriptLocator" /> is configured. </exception>
-        List<string> GetScriptBatch (string name, bool preprocess);
+        List<string> GetScriptBatches (string name, string batchSeparator, bool preprocess);
 
         /// <summary>
         ///     Initializes the database manager.

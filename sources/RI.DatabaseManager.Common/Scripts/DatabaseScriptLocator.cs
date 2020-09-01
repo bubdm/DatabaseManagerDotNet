@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 
+using RI.Abstractions.Logging;
 using RI.DatabaseManager.Manager;
 
 
@@ -10,19 +11,16 @@ using RI.DatabaseManager.Manager;
 namespace RI.DatabaseManager.Scripts
 {
     /// <summary>
-    ///     Implements a base class for database script locators.
+    ///     Boilerplate implementation of <see cref="IDatabaseScriptLocator"/>.
     /// </summary>
     /// <remarks>
-    ///     <para>
-    ///         It is recommended that database script locator implementations use this base class as it already implements most of the logic which is common to script locators.
-    ///     </para>
-    ///     <para>
-    ///         See <see cref="IDatabaseScriptLocator" /> for more details.
-    ///     </para>
-    ///     <para>
-    ///         The default implementation does the following preprocessing:
+    ///     <note type="implement">
+    ///         It is recommended that script locator implementations use this base class as it already implements most of the database-independent logic defined by <see cref="IDatabaseScriptLocator"/>.
+    ///     </note>
+    ///     <note type="implement">
+    ///         This boilerplate implementation does the following preprocessing:
     ///         Trim all batches, remove empty batches, replace placeholder values.
-    ///     </para>
+    ///     </note>
     /// </remarks>
     /// <threadsafety static="false" instance="false" />
     public abstract class DatabaseScriptLocator : IDatabaseScriptLocator
@@ -30,21 +28,16 @@ namespace RI.DatabaseManager.Scripts
         #region Constants
 
         /// <summary>
-        ///     The default batch separator.
-        /// </summary>
-        /// <remarks>
-        ///     <para>
-        ///         The default value is <c> GO </c>.
-        ///     </para>
-        /// </remarks>
-        public const string DefaultBatchSeparator = "\r\nGO\r\n";
-
-        /// <summary>
         ///     Gets the used string comparer used to compare placeholder names for equality.
         /// </summary>
         /// <value>
         ///     The used string comparer used to compare placeholder names for equality.
         /// </value>
+        /// <remarks>
+        ///<para>
+        ///<see cref="StringComparer.OrdinalIgnoreCase"/> is used.
+        /// </para>
+        /// </remarks>
         public static readonly StringComparer PlaceholderNameComparer = StringComparer.OrdinalIgnoreCase;
 
         #endregion
@@ -64,30 +57,34 @@ namespace RI.DatabaseManager.Scripts
         ///     Empty batches are removed and an empty list is returned if no non-empty batches are remaining.
         ///     <paramref name="script"/> is returned as the single item if <paramref name="separator"/> is null, an empty string, or only consists of whitespace.
         /// </returns>
-        public static List<string> SplitBatches (string script, string separator)
+        public static List<string> SplitBatchesDefault(string script, string separator)
         {
-            script = script?.NormalizeLineBreaks();
-            separator = separator?.NormalizeLineBreaks();
+            script = script?.Replace("\r", "")
+                           .Replace("\n", Environment.NewLine);
+            separator = separator?.Replace("\r", "")
+                                 .Replace("\n", Environment.NewLine);
 
-            if (script.IsNullOrEmptyOrWhitespace())
+            if (string.IsNullOrWhiteSpace(script))
             {
                 return new List<string>();
             }
 
-            if (separator.IsNullOrEmptyOrWhitespace())
+            if (string.IsNullOrWhiteSpace(separator))
             {
                 List<string> singleBatch = new List<string>();
                 singleBatch.Add(script);
                 return singleBatch;
             }
 
-            string[] pieces = script.Split(StringSplitOptions.None, separator);
+            string[] pieces = script.Split(new []{ separator }, StringSplitOptions.None);
             List<string> batches = new List<string>(pieces);
-            batches.RemoveAll(x => x.IsNullOrEmptyOrWhitespace());
+            batches.RemoveAll(string.IsNullOrWhiteSpace);
             return batches;
         }
 
         #endregion
+
+        private ILogger Logger { get; }
 
 
 
@@ -97,9 +94,18 @@ namespace RI.DatabaseManager.Scripts
         /// <summary>
         ///     Creates a new instance of <see cref="DatabaseScriptLocator" />.
         /// </summary>
-        protected DatabaseScriptLocator ()
+        /// <param name="logger">The used logger.</param>
+        /// <exception cref="ArgumentNullException"><paramref name="logger"/> is null.</exception>
+        protected DatabaseScriptLocator (ILogger logger)
         {
-            this.BatchSeparator = DatabaseScriptLocator.DefaultBatchSeparator;
+            if (logger == null)
+            {
+                throw new ArgumentNullException(nameof(logger));
+            }
+
+            this.Logger = logger;
+
+            this.DefaultBatchSeparator = "GO";
             this.Placeholders = new Dictionary<string, Func<string, string>>(DatabaseScriptLocator.PlaceholderNameComparer);
         }
 
@@ -110,7 +116,7 @@ namespace RI.DatabaseManager.Scripts
 
         #region Instance Fields
 
-        private string _batchSeparator;
+        private string _defaultBatchSeparator;
 
         #endregion
 
@@ -139,7 +145,7 @@ namespace RI.DatabaseManager.Scripts
         ///     </para>
         /// </remarks>
         /// <exception cref="ArgumentNullException"> <paramref name="name" /> is null. </exception>
-        /// <exception cref="EmptyStringArgumentException"> <paramref name="name" /> is an empty string. </exception>
+        /// <exception cref="ArgumentException"> <paramref name="name" /> is an empty string. </exception>
         public void SetPlaceholderResolver (string name, Func<string, string> resolver)
         {
             if (name == null)
@@ -147,9 +153,9 @@ namespace RI.DatabaseManager.Scripts
                 throw new ArgumentNullException(nameof(name));
             }
 
-            if (name.IsNullOrEmptyOrWhitespace())
+            if (string.IsNullOrWhiteSpace(name))
             {
-                throw new EmptyStringArgumentException(nameof(name));
+                throw new ArgumentException("Argument is an empty string.", nameof(name));
             }
 
             this.Placeholders.Remove(name);
@@ -172,7 +178,7 @@ namespace RI.DatabaseManager.Scripts
         /// <summary>
         ///     Called to locate and read the script with a specified name into a string.
         /// </summary>
-        /// <param name="manager"> The used database manager representing the database. </param>
+        /// <param name="manager"> The used database manager. </param>
         /// <param name="name"> The name of the script. </param>
         /// <returns>
         ///     The script or null if the script could not be found.
@@ -187,19 +193,19 @@ namespace RI.DatabaseManager.Scripts
         #region Virtuals
 
         /// <summary>
-        ///     Gets the value for a placeholder.
+        ///     Gets the value for a single placeholder.
         /// </summary>
         /// <param name="name"> The name of the placeholder. </param>
         /// <returns>
         ///     The value of the placeholder or null if the value is not found or the placeholder is not defined.
         /// </returns>
         /// <remarks>
-        ///     <para>
+        ///     <note type="implement">
         ///         The default implementation uses the resolvers set through <see cref="SetPlaceholderResolver" />.
-        ///     </para>
+        ///     </note>
         /// </remarks>
         /// <exception cref="ArgumentNullException"> <paramref name="name" /> is null. </exception>
-        /// <exception cref="EmptyStringArgumentException"> <paramref name="name" /> is an empty string. </exception>
+        /// <exception cref="ArgumentException"> <paramref name="name" /> is an empty string. </exception>
         public virtual string GetPlaceholderValue (string name)
         {
             if (name == null)
@@ -207,9 +213,9 @@ namespace RI.DatabaseManager.Scripts
                 throw new ArgumentNullException(nameof(name));
             }
 
-            if (name.IsNullOrEmptyOrWhitespace())
+            if (string.IsNullOrWhiteSpace(name))
             {
-                throw new EmptyStringArgumentException(nameof(name));
+                throw new ArgumentException("Argument is an empty string.", nameof(name));
             }
 
             if (!this.Placeholders.ContainsKey(name))
@@ -225,9 +231,9 @@ namespace RI.DatabaseManager.Scripts
         /// </summary>
         /// <param name="batches"> The batches to preprocess. </param>
         /// <remarks>
-        ///     <para>
+        ///     <note type="implement">
         ///         The default implementation does nothing.
-        ///     </para>
+        ///     </note>
         /// </remarks>
         protected virtual void AdditionalPreprocessing (List<string> batches)
         {
@@ -236,25 +242,23 @@ namespace RI.DatabaseManager.Scripts
         /// <summary>
         ///     Replaces placeholders in a batch.
         /// </summary>
-        /// <param name="manager"> The used database manager representing the database. </param>
         /// <param name="batch"> The current batch in which the placeholders are to be replaced. </param>
-        /// <param name="placeholders"> The list of defined placeholder names as set by <see cref="SetPlaceholderResolver" />. </param>
         /// <returns>
         ///     The batch with its placeholders replaced or null if the placeholder replacing failed.
         /// </returns>
         /// <remarks>
-        ///     <para>
-        ///         The default implementation uses <see cref="GetPlaceholderValue" /> to retrieve the values and then performs a simple search-and-replace on <paramref name="batch" />.
-        ///     </para>
         ///     <note type="note">
         ///         <see cref="ReplacePlaceholders" /> is separately called for each individual batch.
         ///     </note>
+        ///     <note type="implement">
+        ///         The default implementation uses <see cref="GetPlaceholderValue" /> to retrieve the values for placeholders defined by <see cref="SetPlaceholderResolver"/> and then performs a simple search-and-replace on <paramref name="batch" />.
+        ///     </note>
         /// </remarks>
-        protected virtual string ReplacePlaceholders (IDbManager manager, string batch, List<string> placeholders)
+        protected virtual string ReplacePlaceholders (string batch)
         {
             string processed = batch;
 
-            foreach (string placeholder in placeholders)
+            foreach (string placeholder in this.Placeholders.Keys)
             {
                 string value = this.GetPlaceholderValue(placeholder);
                 if (value != null)
@@ -269,23 +273,22 @@ namespace RI.DatabaseManager.Scripts
         /// <summary>
         ///     Splits a script into individual batches.
         /// </summary>
-        /// <param name="manager"> The used database manager representing the database. </param>
         /// <param name="script"> The script to split into individual batches. </param>
-        /// <param name="separator"> The used batch separator, same value as <see cref="BatchSeparator" />. </param>
+        /// <param name="separator"> The used batch separator. </param>
         /// <returns>
         ///     The list of batches or null if the splitting failed.
         /// </returns>
         /// <remarks>
-        ///     <para>
-        ///         The default implementation uses <see cref="SplitBatches(string,string)" />.
-        ///     </para>
         ///     <note type="note">
-        ///         <see cref="SplitBatches(IDbManager,string,string)" /> is not called if <see cref="BatchSeparator" /> is null.
+        ///         <see cref="SplitBatches(string,string)" /> is not called if the used batch separator string is null.
+        ///     </note>
+        ///     <note type="implement">
+        ///         The default implementation uses <see cref="SplitBatchesDefault(string,string)" />.
         ///     </note>
         /// </remarks>
-        protected virtual List<string> SplitBatches (IDbManager manager, string script, string separator)
+        protected virtual List<string> SplitBatches (string script, string separator)
         {
-            return DatabaseScriptLocator.SplitBatches(script, separator);
+            return DatabaseScriptLocator.SplitBatchesDefault(script, separator);
         }
 
         #endregion
@@ -295,30 +298,38 @@ namespace RI.DatabaseManager.Scripts
 
         #region Interface: IDatabaseScriptLocator
 
+        /// <summary>
+        /// Writes a log message for this script locator.
+        /// </summary>
+        /// <param name="level"> The log level of the log message. </param>
+        /// <param name="format"> Log message (with optional string expansion arguments such as <c> {0} </c>, <c> {1} </c>, etc. which are expanded by <paramref name="args" />). </param>
+        /// <param name="args"> Optional message arguments expanded into <paramref name="format" />. </param>
+        protected void Log(LogLevel level, string format, params object[] args) => this.Logger.Log(level, this.ToString(), null, format, args);
+
         /// <inheritdoc />
-        public string BatchSeparator
+        public string DefaultBatchSeparator
         {
             get
             {
-                return this._batchSeparator;
+                return this._defaultBatchSeparator;
             }
             set
             {
                 if (value != null)
                 {
-                    if (value.IsNullOrEmptyOrWhitespace())
+                    if (string.IsNullOrWhiteSpace(value))
                     {
-                        throw new EmptyStringArgumentException(nameof(value));
+                        throw new ArgumentException("Argument is an empty string.", nameof(value));
                     }
                 }
 
-                this._batchSeparator = value;
+                this._defaultBatchSeparator = value;
             }
         }
 
 
         /// <inheritdoc />
-        public List<string> GetScriptBatch (IDbManager manager, string name, bool preprocess)
+        public List<string> GetScriptBatches (IDbManager manager, string name, string batchSeparator, bool preprocess)
         {
             if (manager == null)
             {
@@ -330,44 +341,56 @@ namespace RI.DatabaseManager.Scripts
                 throw new ArgumentNullException(nameof(name));
             }
 
-            if (name.IsNullOrEmptyOrWhitespace())
+            if (string.IsNullOrWhiteSpace(name))
             {
-                throw new EmptyStringArgumentException(nameof(name));
+                throw new ArgumentException("Argument is an empty string.", nameof(name));
+            }
+
+            if (batchSeparator != null)
+            {
+                if (string.IsNullOrWhiteSpace(batchSeparator))
+                {
+                    throw new ArgumentException("Argument is an empty string.", nameof(batchSeparator));
+                }
             }
 
             string script = this.LocateAndReadScript(manager, name);
+
             if (script == null)
             {
-                //TODO: Log: this.Log(LogLevel.Warning, "Script not found: {0}" + name);
+                this.Log(LogLevel.Warning, "Script not found: {0}" + name);
                 return null;
             }
 
+            batchSeparator ??= this.DefaultBatchSeparator;
+
             List<string> batches;
-            if (this.BatchSeparator == null)
+
+            if (batchSeparator == null)
             {
                 batches = new List<string>();
                 batches.Add(script);
             }
             else
             {
-                batches = this.SplitBatches(manager, script, this.BatchSeparator);
+                batches = this.SplitBatches(script, batchSeparator);
                 if (batches == null)
                 {
-                    //TODO: Log: this.Log(LogLevel.Warning, "Script is invalid (splitting batches failed): {0}" + name);
+                    this.Log(LogLevel.Warning, "Script is invalid (splitting batches failed): {0}" + name);
                     return null;
                 }
             }
 
             if (preprocess)
             {
-                batches = new List<string>(batches.Where(x => !x.IsNullOrEmptyOrWhitespace()).Select(x => x.Trim()).Where(x => !x.IsNullOrEmptyOrWhitespace()));
+                batches = new List<string>(batches.Where(x => !string.IsNullOrWhiteSpace(x)).Select(x => x.Trim()).Where(x => !string.IsNullOrWhiteSpace(x)));
 
                 for (int i1 = 0; i1 < batches.Count; i1++)
                 {
-                    string replaced = this.ReplacePlaceholders(manager, batches[i1], this.Placeholders.Keys.ToList());
+                    string replaced = this.ReplacePlaceholders(batches[i1]);
                     if (replaced == null)
                     {
-                        //TODO: Log: this.Log(LogLevel.Warning, "Script is invalid (replacing placeholders failed): {0}" + name);
+                        this.Log(LogLevel.Warning, "Script is invalid (replacing placeholders failed): {0}" + name);
                         return null;
                     }
                     batches[i1] = replaced;
@@ -375,7 +398,7 @@ namespace RI.DatabaseManager.Scripts
 
                 this.AdditionalPreprocessing(batches);
 
-                batches = new List<string>(batches.Where(x => !x.IsNullOrEmptyOrWhitespace()).Select(x => x.Trim()).Where(x => !x.IsNullOrEmptyOrWhitespace()));
+                batches = new List<string>(batches.Where(x => !string.IsNullOrWhiteSpace(x)).Select(x => x.Trim()).Where(x => !string.IsNullOrWhiteSpace(x)));
             }
 
             return batches;

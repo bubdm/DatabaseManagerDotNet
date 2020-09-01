@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 
+using RI.Abstractions.Logging;
 using RI.DatabaseManager.Manager;
 
 
@@ -9,11 +10,14 @@ using RI.DatabaseManager.Manager;
 namespace RI.DatabaseManager.Scripts
 {
     /// <summary>
-    ///     Implements a database script locator which uses name-script-pairs.
+    ///     Script locator implementation using a simple dictionary.
     /// </summary>
     /// <remarks>
+    /// <para>
+    /// <see cref="Scripts"/> is the dictionary where the keys are used as script names and the values are the actual script contents.
+    /// </para>
     ///     <para>
-    ///         <see cref="StringComparerEx.InvariantCultureIgnoreCase" /> is used to compare names of the name-script-pairs.
+    ///         <see cref="StringComparer.InvariantCultureIgnoreCase" /> is used to compare the keys / script names in <see cref="Scripts"/>.
     ///     </para>
     /// </remarks>
     /// <threadsafety static="false" instance="false" />
@@ -24,16 +28,19 @@ namespace RI.DatabaseManager.Scripts
         /// <summary>
         ///     Creates a new instance of <see cref="DictionaryScriptLocator" />.
         /// </summary>
-        public DictionaryScriptLocator ()
-            : this(null)
+        /// <param name="logger">The used logger.</param>
+        /// <exception cref="ArgumentNullException"><paramref name="logger"/> is null.</exception>
+        public DictionaryScriptLocator (ILogger logger) : this(logger, null)
         {
         }
 
         /// <summary>
         ///     Creates a new instance of <see cref="DictionaryScriptLocator" />.
         /// </summary>
-        /// <param name="scripts"> A dictionary with predefined name-script-pairs. </param>
-        public DictionaryScriptLocator (IDictionary<string, string> scripts)
+        /// <param name="logger">The used logger.</param>
+        /// <param name="scripts">The used key/value pairs.</param>
+        /// <exception cref="ArgumentNullException"><paramref name="logger"/> is null.</exception>
+        public DictionaryScriptLocator(ILogger logger, IDictionary<string, string> scripts) : base(logger)
         {
             this.Scripts = new Dictionary<string, string>(StringComparer.InvariantCultureIgnoreCase);
 
@@ -54,10 +61,10 @@ namespace RI.DatabaseManager.Scripts
         #region Instance Properties/Indexer
 
         /// <summary>
-        ///     Gets the dictionary with the used name-script-pairs.
+        ///     Gets the dictionary with the used key/value pairs or name/script pairs respectively.
         /// </summary>
         /// <value>
-        ///     The dictionary with the used name-script-pairs.
+        ///     The dictionary with the used key/value pairs or name/script pairs respectively.
         /// </value>
         public Dictionary<string, string> Scripts { get; }
 

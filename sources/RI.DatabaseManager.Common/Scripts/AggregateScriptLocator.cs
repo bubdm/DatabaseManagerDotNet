@@ -9,235 +9,218 @@ using RI.DatabaseManager.Manager;
 
 namespace RI.DatabaseManager.Scripts
 {
-	/// <summary>
-	///     Implements a database script locator which combines multiple script locators.
-	/// </summary>
-	/// <remarks>
-	///     <para>
-	///         See <see cref="IDatabaseScriptLocator" /> for more details.
-	///     </para>
-	///     <note type="note">
-	///         <see cref="IDatabaseScriptLocator.BatchSeparator" /> is ignored as the values of the individual script locators are used.
-	///     </note>
-	/// </remarks>
-	/// <threadsafety static="true" instance="true" />
-	public sealed class AggregateScriptLocator : IDatabaseScriptLocator, ICollection<IDatabaseScriptLocator>, ICollection
-	{
-		#region Instance Constructor/Destructor
+    /// <summary>
+    ///     Script locator implementation which combines multiple script locators.
+    /// </summary>
+    /// <remarks>
+    ///     <note type="important">
+    ///         If <see cref="IDatabaseScriptLocator.DefaultBatchSeparator" /> of this script locator is not null, that value will always be used if the <c>batchSeparator</c> parameter of <see cref="GetScriptBatches"/> is null and therefore will override the values of the individual script locators.
+    ///     </note>
+    ///     <para>
+    ///         <see cref="AggregateScriptLocator"/> is both a <see cref="IDatabaseScriptLocator"/> and <see cref="IList{T}"/> implementation.
+    /// It can dynamically combine multiple script locators and present it as one, doing lookup of scripts in the order of the list.
+    ///     </para>
+    /// </remarks>
+    /// <threadsafety static="false" instance="false" />
+    public sealed class AggregateScriptLocator : IDatabaseScriptLocator, IList<IDatabaseScriptLocator>, ICollection<IDatabaseScriptLocator>
+    {
+        #region Instance Constructor/Destructor
 
-		/// <summary>
-		///     Creates a new instance of <see cref="AggregateScriptLocator" />.
-		/// </summary>
-		public AggregateScriptLocator ()
-			: this((IEnumerable<IDatabaseScriptLocator>)null)
-		{
-		}
+        /// <summary>
+        ///     Creates a new instance of <see cref="AggregateScriptLocator" />.
+        /// </summary>
+        public AggregateScriptLocator ()
+            : this((IEnumerable<IDatabaseScriptLocator>)null)
+        {
+        }
 
-		/// <summary>
-		///     Creates a new instance of <see cref="AggregateScriptLocator" />.
-		/// </summary>
-		/// <param name="scriptLocators"> The sequence of script locators which are aggregated. </param>
-		/// <remarks>
-		///     <para>
-		///         <paramref name="scriptLocators" /> is enumerated only once.
-		///     </para>
-		/// </remarks>
-		public AggregateScriptLocator (IEnumerable<IDatabaseScriptLocator> scriptLocators)
-		{
-			this.SyncRoot = new object();
+        /// <summary>
+        ///     Creates a new instance of <see cref="AggregateScriptLocator" />.
+        /// </summary>
+        /// <param name="scriptLocators"> The sequence of script locators which are aggregated. </param>
+        /// <remarks>
+        ///     <para>
+        ///         <paramref name="scriptLocators" /> is enumerated only once.
+        ///     </para>
+        /// </remarks>
+        public AggregateScriptLocator (IEnumerable<IDatabaseScriptLocator> scriptLocators)
+        {
+            this.DefaultBatchSeparator = null;
+            this.ScriptLocators = new List<IDatabaseScriptLocator>();
 
-			this.ScriptLocators = new HashSet<IDatabaseScriptLocator>();
+            if (scriptLocators != null)
+            {
+                foreach (IDatabaseScriptLocator scriptLocator in scriptLocators)
+                {
+                    this.Add(scriptLocator);
+                }
+            }
+        }
 
-			if (scriptLocators != null)
-			{
-				foreach (IDatabaseScriptLocator scriptLocator in scriptLocators)
-				{
-					this.Add(scriptLocator);
-				}
-			}
-		}
+        /// <summary>
+        ///     Creates a new instance of <see cref="AggregateScriptLocator" />.
+        /// </summary>
+        /// <param name="scriptLocators"> The array of script locators which are aggregated. </param>
+        public AggregateScriptLocator (params IDatabaseScriptLocator[] scriptLocators)
+            : this((IEnumerable<IDatabaseScriptLocator>)scriptLocators)
+        {
+        }
 
-		/// <summary>
-		///     Creates a new instance of <see cref="AggregateScriptLocator" />.
-		/// </summary>
-		/// <param name="scriptLocators"> The array of script locators which are aggregated. </param>
-		public AggregateScriptLocator (params IDatabaseScriptLocator[] scriptLocators)
-			: this((IEnumerable<IDatabaseScriptLocator>)scriptLocators)
-		{
-		}
-
-		#endregion
-
-
-
-
-		#region Instance Properties/Indexer
-
-		private HashSet<IDatabaseScriptLocator> ScriptLocators { get; }
-
-		#endregion
+        #endregion
 
 
 
 
-		#region Interface: ICollection
+        #region Instance Properties/Indexer
 
-		/// <inheritdoc />
-		bool ICollection.IsSynchronized => ((ISynchronizable)this).IsSynchronized;
+        private List<IDatabaseScriptLocator> ScriptLocators { get; }
 
-		/// <inheritdoc />
-		void ICollection.CopyTo (Array array, int index)
-		{
-			lock (this.SyncRoot)
-			{
-				int i1 = 0;
-				foreach (IDatabaseScriptLocator item in this)
-				{
-					array.SetValue(item, index + i1);
-					i1++;
-				}
-			}
-		}
-
-		#endregion
+        #endregion
 
 
 
 
-		#region Interface: ICollection<IDatabaseScriptLocator>
+        #region Interface: ICollection<IDatabaseScriptLocator>
 
-		/// <inheritdoc />
-		public int Count
-		{
-			get
-			{
-				lock (this.SyncRoot)
-				{
-					return this.ScriptLocators.Count;
-				}
-			}
-		}
+        /// <inheritdoc />
+        public int Count => this.ScriptLocators.Count;
 
-		/// <inheritdoc />
-		bool ICollection<IDatabaseScriptLocator>.IsReadOnly => false;
+        /// <inheritdoc />
+        bool ICollection<IDatabaseScriptLocator>.IsReadOnly => false;
 
-		/// <inheritdoc />
-		public void Add (IDatabaseScriptLocator item)
-		{
-			if (item == null)
-			{
-				throw new ArgumentNullException(nameof(item));
-			}
+        /// <inheritdoc />
+        public void Add (IDatabaseScriptLocator item)
+        {
+            if (item == null)
+            {
+                throw new ArgumentNullException(nameof(item));
+            }
 
-			lock (this.SyncRoot)
-			{
-				this.ScriptLocators.Add(item);
-			}
-		}
+            this.ScriptLocators.Add(item);
+        }
 
-		/// <inheritdoc />
-		public void Clear ()
-		{
-			lock (this.SyncRoot)
-			{
-				this.ScriptLocators.Clear();
-			}
-		}
+        /// <inheritdoc />
+        public void Clear () => this.ScriptLocators.Clear();
 
-		/// <inheritdoc />
-		public bool Contains (IDatabaseScriptLocator item)
-		{
-			lock (this.SyncRoot)
-			{
-				return this.ScriptLocators.Contains(item);
-			}
-		}
+        /// <inheritdoc />
+        public bool Contains (IDatabaseScriptLocator item) => this.ScriptLocators.Contains(item);
 
-		/// <inheritdoc />
-		void ICollection<IDatabaseScriptLocator>.CopyTo (IDatabaseScriptLocator[] array, int arrayIndex)
-		{
-			lock (this.SyncRoot)
-			{
-				this.ScriptLocators.CopyTo(array, arrayIndex);
-			}
-		}
+        /// <inheritdoc />
+        void ICollection<IDatabaseScriptLocator>.CopyTo (IDatabaseScriptLocator[] array, int arrayIndex) => this.ScriptLocators.CopyTo(array, arrayIndex);
 
-		/// <inheritdoc />
-		IEnumerator IEnumerable.GetEnumerator ()
-		{
-			return this.GetEnumerator();
-		}
+        /// <inheritdoc />
+        IEnumerator IEnumerable.GetEnumerator () => this.GetEnumerator();
 
-		/// <inheritdoc />
-		public IEnumerator<IDatabaseScriptLocator> GetEnumerator ()
-		{
-			lock (this.SyncRoot)
-			{
-				return this.ScriptLocators.GetEnumerator();
-			}
-		}
+        /// <inheritdoc />
+        public IEnumerator<IDatabaseScriptLocator> GetEnumerator () => this.ScriptLocators.GetEnumerator();
 
-		/// <inheritdoc />
-		public bool Remove (IDatabaseScriptLocator item)
-		{
-			if (item == null)
-			{
-				throw new ArgumentNullException(nameof(item));
-			}
+        /// <inheritdoc />
+        public bool Remove (IDatabaseScriptLocator item) => this.ScriptLocators.Remove(item);
 
-			lock (this.SyncRoot)
-			{
-				return this.ScriptLocators.Remove(item);
-			}
-		}
-
-		#endregion
+        #endregion
 
 
 
 
-		#region Interface: IDatabaseScriptLocator
+        #region Interface: IDatabaseScriptLocator
 
-		/// <inheritdoc />
-		string IDatabaseScriptLocator.BatchSeparator { get; set; }
+        private string _defaultBatchSeparator;
 
-		/// <inheritdoc />
-		public List<string> GetScriptBatch (IDbManager manager, string name, bool preprocess)
-		{
-			if (manager == null)
-			{
-				throw new ArgumentNullException(nameof(manager));
-			}
+        /// <inheritdoc />
+        public string DefaultBatchSeparator
+        {
+            get
+            {
+                return this._defaultBatchSeparator;
+            }
+            set
+            {
+                if (value != null)
+                {
+                    if (string.IsNullOrWhiteSpace(value))
+                    {
+                        throw new ArgumentException("Argument is an empty string.", nameof(value));
+                    }
+                }
 
-			if (name == null)
-			{
-				throw new ArgumentNullException(nameof(name));
-			}
+                this._defaultBatchSeparator = value;
+            }
+        }
 
-			if (name.IsNullOrEmptyOrWhitespace())
-			{
-				throw new EmptyStringArgumentException(nameof(name));
-			}
+        /// <inheritdoc />
+        public List<string> GetScriptBatches (IDbManager manager, string name, string batchSeparator, bool preprocess)
+        {
+            if (manager == null)
+            {
+                throw new ArgumentNullException(nameof(manager));
+            }
 
-			lock (this.SyncRoot)
-			{
-				List<string> batches = new List<string>();
+            if (name == null)
+            {
+                throw new ArgumentNullException(nameof(name));
+            }
 
-				foreach (IDatabaseScriptLocator scriptLocator in this.ScriptLocators)
-				{
-					List<string> currentBatches = scriptLocator.GetScriptBatch(manager, name, preprocess);
-					if (currentBatches == null)
-					{
-						return null;
-					}
+            if (string.IsNullOrWhiteSpace(name))
+            {
+                throw new ArgumentException("Argument is an empty string.", nameof(name));
+            }
 
-					batches.AddRange(currentBatches);
-				}
+            if (batchSeparator != null)
+            {
+                if (string.IsNullOrWhiteSpace(batchSeparator))
+                {
+                    throw new ArgumentException("Argument is an empty string.", nameof(batchSeparator));
+                }
+            }
 
-				return batches;
-			}
-		}
+            foreach (IDatabaseScriptLocator scriptLocator in this.ScriptLocators)
+            {
+                List<string> batches = scriptLocator.GetScriptBatches(manager, name, batchSeparator ?? this.DefaultBatchSeparator, preprocess);
 
-		#endregion
-	}
+                if (batches != null)
+                {
+                    return batches;
+                }
+            }
+
+            return null;
+        }
+
+        #endregion
+
+
+
+
+        /// <inheritdoc />
+        public int IndexOf (IDatabaseScriptLocator item) => this.ScriptLocators.IndexOf(item);
+
+        /// <inheritdoc />
+        public void Insert (int index, IDatabaseScriptLocator item)
+        {
+            if (item == null)
+            {
+                throw new ArgumentNullException(nameof(item));
+            }
+
+            this.ScriptLocators.Insert(index, item);
+        }
+
+        /// <inheritdoc />
+        public void RemoveAt (int index) => this.ScriptLocators.RemoveAt(index);
+
+        /// <inheritdoc />
+        public IDatabaseScriptLocator this [int index]
+        {
+            get => this.ScriptLocators[index];
+            set
+            {
+                if (value == null)
+                {
+                    throw new ArgumentNullException(nameof(value));
+                }
+
+                this.ScriptLocators[index] = value;
+            }
+        }
+    }
 }

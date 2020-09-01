@@ -18,7 +18,6 @@ namespace RI.DatabaseManager.Manager
     ///         The sub-steps are executed in the order they are added.
     ///     </para>
     /// </remarks>
-    /// <threadsafety static="false" instance="false" />
     public interface IDbProcessingStep
     {
         /// <summary>
