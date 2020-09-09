@@ -98,18 +98,17 @@ namespace RI.DatabaseManager.Upgrading
     /// <typeparam name="TConnection"> The database connection type. </typeparam>
     /// <typeparam name="TTransaction"> The database transaction type. </typeparam>
     /// <typeparam name="TManager"> The type of the database manager. </typeparam>
-    public interface IDatabaseVersionUpgrader <TConnection, TTransaction, in TManager> : IDatabaseVersionUpgrader
+    public interface IDatabaseVersionUpgrader <TConnection, TTransaction> : IDatabaseVersionUpgrader
         where TConnection : DbConnection
         where TTransaction : DbTransaction
-        where TManager : class, IDbManager<TConnection, TTransaction, TManager>
     {
         /// <inheritdoc cref="IDatabaseVersionUpgrader.GetMaxVersion" />
-        int GetMaxVersion (TManager manager);
+        int GetMaxVersion (IDbManager<TConnection, TTransaction> manager);
 
         /// <inheritdoc cref="IDatabaseVersionUpgrader.GetMinVersion" />
-        int GetMinVersion (TManager manager);
+        int GetMinVersion (IDbManager<TConnection, TTransaction> manager);
 
         /// <inheritdoc cref="IDatabaseVersionUpgrader.Upgrade" />
-        bool Upgrade (TManager manager, int sourceVersion);
+        bool Upgrade (IDbManager<TConnection, TTransaction> manager, int sourceVersion);
     }
 }

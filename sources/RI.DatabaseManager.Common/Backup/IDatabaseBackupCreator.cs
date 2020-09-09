@@ -51,6 +51,14 @@ namespace RI.DatabaseManager.Backup
         bool SupportsRestore { get; }
 
         /// <summary>
+        ///     Gets whether this database backup creator supports backup.
+        /// </summary>
+        /// <value>
+        ///     true if backup is supported, false otherwise.
+        /// </value>
+        bool SupportsBackup { get; }
+
+        /// <summary>
         ///     Creates a backup of a database to a specific file.
         /// </summary>
         /// <param name="manager"> The used database manager representing the database. </param>
@@ -82,15 +90,14 @@ namespace RI.DatabaseManager.Backup
     /// <typeparam name="TManager"> The type of the database manager. </typeparam>
     /// <typeparam name="TConfiguration"> The type of database configuration. </typeparam>
     /// <threadsafety static="false" instance="false" />
-    public interface IDatabaseBackupCreator <TConnection, TTransaction, in TManager> : IDatabaseBackupCreator
+    public interface IDatabaseBackupCreator <TConnection, TTransaction> : IDatabaseBackupCreator
         where TConnection : DbConnection
         where TTransaction : DbTransaction
-        where TManager : class, IDbManager<TConnection, TTransaction, TManager>
     {
         /// <inheritdoc cref="IDatabaseBackupCreator.Backup" />
-        bool Backup (TManager manager, object backupTarget);
+        bool Backup (IDbManager<TConnection, TTransaction> manager, object backupTarget);
 
         /// <inheritdoc cref="IDatabaseBackupCreator.Restore" />
-        bool Restore (TManager manager, object backupTarget);
+        bool Restore (IDbManager<TConnection, TTransaction> manager, object backupTarget);
     }
 }

@@ -56,12 +56,11 @@ namespace RI.DatabaseManager.Cleanup
     /// <typeparam name="TManager"> The type of the database manager. </typeparam>
     /// <typeparam name="TConfiguration"> The type of database configuration. </typeparam>
     /// <threadsafety static="false" instance="false" />
-    public interface IDatabaseCleanupProcessor <TConnection, TTransaction, in TManager> : IDatabaseCleanupProcessor
+    public interface IDatabaseCleanupProcessor <TConnection, TTransaction> : IDatabaseCleanupProcessor
         where TConnection : DbConnection
         where TTransaction : DbTransaction
-        where TManager : class, IDbManager<TConnection, TTransaction, TManager>
     {
         /// <inheritdoc cref="IDatabaseCleanupProcessor.Cleanup" />
-        bool Cleanup (TManager manager);
+        bool Cleanup (IDbManager<TConnection, TTransaction> manager);
     }
 }

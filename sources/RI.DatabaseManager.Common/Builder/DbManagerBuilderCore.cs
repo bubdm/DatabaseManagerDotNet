@@ -1,15 +1,7 @@
 ﻿using System;
-using System.Collections.Generic;
 
 using RI.Abstractions.Builder;
-using RI.Abstractions.Composition;
 using RI.Abstractions.Logging;
-using RI.DatabaseManager.Backup;
-using RI.DatabaseManager.Cleanup;
-using RI.DatabaseManager.Manager;
-using RI.DatabaseManager.Scripts;
-using RI.DatabaseManager.Upgrading;
-using RI.DatabaseManager.Versioning;
 
 
 
@@ -20,9 +12,9 @@ namespace RI.DatabaseManager.Builder
     {
         #region Instance Methods
 
-        private object CreateNullInstance (Type connection, Type transaction, Type manager)
+        private object CreateNullInstance (Type connection, Type transaction)
         {
-            return Activator.CreateInstance(typeof(DbManagerBuilder.NullInstance<,,>).MakeGenericType(connection, transaction, manager), true);
+            return Activator.CreateInstance(typeof(DbManagerBuilder.NullInstance<,>).MakeGenericType(connection, transaction), true);
         }
 
         #endregion
@@ -49,10 +41,10 @@ namespace RI.DatabaseManager.Builder
             this.ThrowIfNotMaxContractCount(versionUpgrader, 1);
             this.ThrowIfNotMaxContractCount(scriptLocator, 1);
 
-            this.AddDefaultSingleton(backupCreator, this.CreateNullInstance(connection, transaction, manager));
-            this.AddDefaultSingleton(cleanupProcessor, this.CreateNullInstance(connection, transaction, manager));
-            this.AddDefaultSingleton(versionUpgrader, this.CreateNullInstance(connection, transaction, manager));
-            this.AddDefaultSingleton(scriptLocator, this.CreateNullInstance(connection, transaction, manager));
+            this.AddDefaultSingleton(backupCreator, this.CreateNullInstance(connection, transaction));
+            this.AddDefaultSingleton(cleanupProcessor, this.CreateNullInstance(connection, transaction));
+            this.AddDefaultSingleton(versionUpgrader, this.CreateNullInstance(connection, transaction));
+            this.AddDefaultSingleton(scriptLocator, this.CreateNullInstance(connection, transaction));
 
             this.ThrowIfTemporary(backupCreator);
             this.ThrowIfTemporary(cleanupProcessor);

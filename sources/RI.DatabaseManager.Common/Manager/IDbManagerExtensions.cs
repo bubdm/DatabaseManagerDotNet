@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Data.Common;
 
-using RI.DatabaseManager.Scripts;
+using RI.DatabaseManager.Batches;
 using RI.DatabaseManager.Upgrading;
 
 
@@ -11,7 +11,7 @@ using RI.DatabaseManager.Upgrading;
 namespace RI.DatabaseManager.Manager
 {
     /// <summary>
-    ///     Provides utility/extension methods for the <see cref="IDbManager" /> type.
+    ///     Provides utility/extension methods for the <see cref="IDbManager" /> and <see cref="IDbManager{TConnection,TTransaction}" /> type.
     /// </summary>
     /// <threadsafety static="false" instance="false" />
     public static class IDbManagerExtensions
@@ -19,40 +19,271 @@ namespace RI.DatabaseManager.Manager
         #region Static Methods
 
         /// <summary>
-        ///     Executes an arbitrary database processing step.
+        ///     Gets whether the database is in a state where it can be upgraded to a newer version.
         /// </summary>
-        /// <typeparam name="TConnection"> The database connection type, subclass of <see cref="DbConnection" />. </typeparam>
-        /// <typeparam name="TTransaction"> The database transaction type, subclass of <see cref="DbTransaction" />. </typeparam>
-        /// <typeparam name="TManager"> The type of the database manager. </typeparam>
         /// <param name="manager"> The used database manager. </param>
-        /// <param name="step"> The database processing step to execute. </param>
-        /// <param name="readOnly"> Specifies whether the connection, used to process the step, should be read-only. </param>
-        /// <exception cref="ArgumentNullException"> <paramref name="manager" /> or <paramref name="step" /> is null </exception>
-        public static void ExecuteProcessingStep <TConnection, TTransaction, TManager> (this TManager manager, IDbProcessingStep<TConnection, TTransaction, TManager> step, bool readOnly)
-            where TConnection : DbConnection
-            where TTransaction : DbTransaction
-            where TManager : class, IDbManager<TConnection, TTransaction, TManager>
+        /// <returns>
+        ///     true if the database supports upgrading, is in a ready or the new state, and the current version is less than the maximum supported version, false otherwise.
+        /// </returns>
+        /// <exception cref="ArgumentNullException"> <paramref name="manager" /> is null </exception>
+        public static bool CanUpgrade (this IDbManager manager)
         {
             if (manager == null)
             {
                 throw new ArgumentNullException(nameof(manager));
             }
 
-            if (step == null)
-            {
-                throw new ArgumentNullException(nameof(step));
-            }
-
-            using (TConnection connection = manager.CreateConnection(readOnly))
-            {
-                using (TTransaction transaction = step.RequiresTransaction ? (TTransaction)connection.BeginTransaction() : null)
-                {
-                    step.Execute(manager, connection, transaction);
-                }
-            }
+            return manager.SupportsUpgrade && (manager.IsReady() || (manager.State == DbState.New)) && (manager.Version >= 0) && (manager.Version < manager.MaxVersion);
         }
 
 
+        /// <summary>
+        ///     Creates a new connection which can be used to work with the database.
+        /// </summary>
+        /// <param name="manager"> The used database manager. </param>
+        /// <returns>
+        ///     The newly created and already opened connection or null if the connection could not be created.
+        ///     Details about failures should be written to logs.
+        /// </returns>
+        /// <remarks>
+        ///     <para>
+        ///         The connection is not read-only.
+        ///     </para>
+        /// </remarks>
+        /// <exception cref="ArgumentNullException"> <paramref name="manager" /> is null </exception>
+        /// <exception cref="InvalidOperationException"> The database is not in a ready state. </exception>
+        public static DbConnection CreateConnection (this IDbManager manager)
+        {
+            if (manager == null)
+            {
+                throw new ArgumentNullException(nameof(manager));
+            }
+
+            return manager.CreateConnection(false);
+        }
+
+        /// <inheritdoc cref="CreateConnection(IDbManager)" />
+        public static TConnection CreateConnection <TConnection, TTransaction> (this IDbManager<TConnection, TTransaction> manager)
+            where TConnection : DbConnection
+            where TTransaction : DbTransaction
+        {
+            if (manager == null)
+            {
+                throw new ArgumentNullException(nameof(manager));
+            }
+
+            return manager.CreateConnection(false);
+        }
+
+        /// <summary>
+        ///     Creates a new transaction which can be used to work with the database.
+        /// </summary>
+        /// <param name="manager"> The used database manager. </param>
+        /// <returns>
+        ///     The newly created transaction with its underlying connection already opened or null if the transaction or connection could not be created.
+        ///     Details about failures should be written to logs.
+        /// </returns>
+        /// <remarks>
+        ///     <para>
+        ///         The underlying connection of the transaction is not read-only.
+        ///     </para>
+        /// </remarks>
+        /// <exception cref="ArgumentNullException"> <paramref name="manager" /> is null </exception>
+        /// <exception cref="InvalidOperationException"> The database is not in a ready state. </exception>
+        public static DbTransaction CreateTransaction (this IDbManager manager)
+        {
+            if (manager == null)
+            {
+                throw new ArgumentNullException(nameof(manager));
+            }
+
+            return manager.CreateTransaction(false);
+        }
+
+        /// <inheritdoc cref="CreateTransaction(IDbManager)" />
+        public static TTransaction CreateTransaction <TConnection, TTransaction> (this IDbManager<TConnection, TTransaction> manager)
+            where TConnection : DbConnection
+            where TTransaction : DbTransaction
+        {
+            if (manager == null)
+            {
+                throw new ArgumentNullException(nameof(manager));
+            }
+
+            return manager.CreateTransaction(false);
+        }
+
+        /// <summary>
+        ///     Executes a batch.
+        /// </summary>
+        /// <param name="manager"> The used database manager. </param>
+        /// <param name="batch"> The batch to execute. </param>
+        /// <returns>
+        ///     true if the batch was executed successfully, false otherwise.
+        ///     Details about failures should be written to logs and/or into properties of the executed batch.
+        /// </returns>
+        /// <remarks>
+        ///     <para>
+        ///         The used connection to execute the batch is not read-only.
+        ///     </para>
+        ///     <para>
+        ///         The database version and state are not re-detected after the batch has been executed.
+        ///     </para>
+        /// </remarks>
+        /// <exception cref="ArgumentNullException"> <paramref name="manager" /> or <paramref name="batch" /> is null </exception>
+        /// <exception cref="InvalidOperationException"> The database is not in a ready state. </exception>
+        public static bool ExecuteBatch (this IDbManager manager, IDbBatch batch)
+        {
+            if (manager == null)
+            {
+                throw new ArgumentNullException(nameof(manager));
+            }
+
+            return manager.ExecuteBatch(batch, false, false);
+        }
+
+        /// <inheritdoc cref="ExecuteBatch(IDbManager,IDbBatch)" />
+        public static bool ExecuteBatch <TConnection, TTransaction> (this IDbManager<TConnection, TTransaction> manager, IDbBatch<TConnection, TTransaction> batch)
+            where TConnection : DbConnection
+            where TTransaction : DbTransaction
+        {
+            if (manager == null)
+            {
+                throw new ArgumentNullException(nameof(manager));
+            }
+
+            return manager.ExecuteBatch(batch, false, false);
+        }
+
+        /// <summary>
+        ///     Gets a batch (for later execution) of a specified name using the configured <see cref="IDbBatchLocator" />.
+        /// </summary>
+        /// <param name="manager"> The used database manager. </param>
+        /// <param name="name"> The name of the batch. </param>
+        /// <returns>
+        ///     The batch or null if the batch of the specified name could not be found.
+        ///     Details about failures should be written to logs.
+        /// </returns>
+        /// <remarks>
+        ///     <para>
+        ///         The batch locators default command separator is used and the batch is preprocessed if applicable.
+        ///     </para>
+        /// </remarks>
+        /// <exception cref="ArgumentNullException"> <paramref name="manager" /> or <paramref name="name" /> is null. </exception>
+        /// <exception cref="ArgumentException"> <paramref name="name" /> is an empty string. </exception>
+        public static IDbBatch GetBatch (this IDbManager manager, string name)
+        {
+            if (manager == null)
+            {
+                throw new ArgumentNullException(nameof(manager));
+            }
+
+            return manager.GetBatch(name, null, true);
+        }
+
+        /// <inheritdoc cref="GetBatch(IDbManager,string)" />
+        public static IDbBatch<TConnection, TTransaction> GetBatch <TConnection, TTransaction> (this IDbManager<TConnection, TTransaction> manager, string name)
+            where TConnection : DbConnection
+            where TTransaction : DbTransaction
+        {
+            if (manager == null)
+            {
+                throw new ArgumentNullException(nameof(manager));
+            }
+
+            return manager.GetBatch(name, null, true);
+        }
+
+        /// <summary>
+        ///     Gets all available batches using the configured <see cref="IDbBatchLocator" />.
+        /// </summary>
+        /// <param name="manager"> The used database manager. </param>
+        /// <param name="commandSeparator"> The string which is used as the separator to separate commands within the batch or null if the batch locators default separators are to be used. </param>
+        /// <param name="preprocess"> Specifies whether the batch is to be preprocessed, if applicable. </param>
+        /// <returns> </returns>
+        /// <exception cref="ArgumentException"> <paramref name="commandSeparator" /> is an empty string. </exception>
+        public static IDictionary<string, IDbBatch> GetBatches (this IDbManager manager, string commandSeparator = null, bool preprocess = true)
+        {
+            if (manager == null)
+            {
+                throw new ArgumentNullException(nameof(manager));
+            }
+
+            if (commandSeparator != null)
+            {
+                if (string.IsNullOrWhiteSpace(commandSeparator))
+                {
+                    throw new ArgumentException("The command separator is empty or consists only of whitespaces.", nameof(commandSeparator));
+                }
+            }
+
+            ISet<string> names = manager.GetBatchNames();
+            Dictionary<string, IDbBatch> batches = new Dictionary<string, IDbBatch>();
+
+            foreach (string name in names)
+            {
+                IDbBatch batch = manager.GetBatch(name, commandSeparator, preprocess);
+
+                if (batch != null)
+                {
+                    batches.Add(name, batch);
+                }
+            }
+
+            return batches;
+        }
+
+        /// <inheritdoc cref="GetBatches(IDbManager,string,bool)" />
+        public static IDictionary<string, IDbBatch<TConnection, TTransaction>> GetBatches <TConnection, TTransaction> (this IDbManager<TConnection, TTransaction> manager, string commandSeparator = null, bool preprocess = true)
+            where TConnection : DbConnection
+            where TTransaction : DbTransaction
+        {
+            if (manager == null)
+            {
+                throw new ArgumentNullException(nameof(manager));
+            }
+
+            if (commandSeparator != null)
+            {
+                if (string.IsNullOrWhiteSpace(commandSeparator))
+                {
+                    throw new ArgumentException("The command separator is empty or consists only of whitespaces.", nameof(commandSeparator));
+                }
+            }
+
+            ISet<string> names = manager.GetBatchNames();
+            Dictionary<string, IDbBatch<TConnection, TTransaction>> batches = new Dictionary<string, IDbBatch<TConnection, TTransaction>>();
+
+            foreach (string name in names)
+            {
+                IDbBatch<TConnection, TTransaction> batch = manager.GetBatch(name, commandSeparator, preprocess);
+
+                if (batch != null)
+                {
+                    batches.Add(name, batch);
+                }
+            }
+
+            return batches;
+        }
+
+        /// <summary>
+        ///     Gets whether the database is ready for use and connections and transactions can be created.
+        /// </summary>
+        /// <param name="manager"> The used database manager. </param>
+        /// <returns>
+        ///     true if the database is in <see cref="DbState.ReadyUnknown" />, <see cref="DbState.ReadyNew" />, or <see cref="DbState.ReadyOld" /> state, false otherwise.
+        /// </returns>
+        /// <exception cref="ArgumentNullException"> <paramref name="manager" /> is null </exception>
+        public static bool IsReady (this IDbManager manager)
+        {
+            if (manager == null)
+            {
+                throw new ArgumentNullException(nameof(manager));
+            }
+
+            return (manager.State == DbState.ReadyNew) || (manager.State == DbState.ReadyOld) || (manager.State == DbState.ReadyUnknown);
+        }
 
         /// <summary>
         ///     Performs an upgrade to highest supported version using the configured <see cref="IDatabaseVersionUpgrader" />.
@@ -64,13 +295,13 @@ namespace RI.DatabaseManager.Manager
         /// <param name="manager"> The used database manager. </param>
         /// <remarks>
         ///     <note type="implement">
-        ///         <see cref="IDbManager.State" />, <see cref="IDbManager.Version" />, <see cref="IDbManager.IsReady"/>, <see cref="IDbManager.CanUpgrade"/> are updated to reflect the current state and version of the database after upgrade.
+        ///         <see cref="IDbManager.State" /> and <see cref="IDbManager.Version" /> are updated to reflect the state and version of the database after upgrade.
         ///     </note>
         ///     <note type="implement">
-        ///         If <see cref="IDbManager.MaxVersion" /> is the same as <see cref="IDbManager.Version" />, nothing should be done.
+        ///         If <see cref="IDbManager.MaxVersion" /> is the same as <see cref="Version" />, nothing should be done.
         ///     </note>
         ///     <note type="implement">
-        ///         Upgrading is to be performed incrementally, upgrading from n to n+1 until the desired version, <see cref="IDbManager.MaxVersion" />, is reached.
+        ///         Upgrading is to be performed incrementally, upgrading from n to n+1 until the desired target version, as specified by <see cref="IDbManager.MaxVersion" />, is reached.
         ///     </note>
         /// </remarks>
         /// <exception cref="ArgumentNullException"> <paramref name="manager" /> is null </exception>
@@ -84,40 +315,6 @@ namespace RI.DatabaseManager.Manager
             }
 
             return manager.Upgrade(manager.MaxVersion);
-        }
-
-        /// <summary>
-        ///     Retrieves a script and all its batches using the configured <see cref="IDbScriptLocator" />, using its default batch separator.
-        /// </summary>
-        /// <param name="manager"> The used database manager. </param>
-        /// <param name="name"> The name of the script. </param>
-        /// <param name="preprocess"> Specifies whether the script is to be preprocessed, if applicable. </param>
-        /// <returns>
-        ///     The batches in the script (list of independently executed commands).
-        ///     If the script is empty or does not contain any commands respectively, an empty list is returned.
-        ///     If the script could not be found, null is returned.
-        /// </returns>
-        /// <remarks>
-        ///     <note type="implement">
-        ///         <see cref="GetScriptBatches"/> should be callable at any time as the retrieved script is just retrieved, not executed.
-        ///     </note>
-        /// </remarks>
-        /// <remarks>
-        ///<para>
-        /// The configured <see cref="IDbScriptLocator" />s <see cref="IDbScriptLocator.DefaultBatchSeparator"/> is used as the batch separator string.
-        /// </para>
-        /// </remarks>
-        /// <exception cref="ArgumentNullException"> <paramref name="name" /> is null. </exception>
-        /// <exception cref="ArgumentException"> <paramref name="name" /> is an empty string. </exception>
-        /// <exception cref="NotSupportedException"> Retrieving scripts is not supported by the database manager or no <see cref="IDbScriptLocator" /> is configured. </exception>
-        public static List<string> GetScriptBatches (this IDbManager manager, string name, bool preprocess)
-        {
-            if (manager == null)
-            {
-                throw new ArgumentNullException(nameof(manager));
-            }
-
-            return manager.GetScriptBatches(name, null, preprocess);
         }
 
         #endregion

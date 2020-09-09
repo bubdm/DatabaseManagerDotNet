@@ -11,9 +11,7 @@ namespace RI.DatabaseManager.Builder
     /// <summary>
     ///     Database manager builder used to configure and build database managers.
     /// </summary>
-    public interface IDbManagerBuilder : IBuilder
-    {
-    }
+    public interface IDbManagerBuilder : IBuilder { }
 
     /// <inheritdoc cref="IDbManagerBuilder" />
     /// <typeparam name="TConnection"> The database connection type. </typeparam>
@@ -22,5 +20,5 @@ namespace RI.DatabaseManager.Builder
     public interface IDbManagerBuilder <TConnection, TTransaction, TManager> : IDbManagerBuilder
         where TConnection : DbConnection
         where TTransaction : DbTransaction
-        where TManager : class, IDbManager<TConnection, TTransaction, TManager> { }
+        where TManager : class, IDbManager<TConnection, TTransaction> { }
 }
