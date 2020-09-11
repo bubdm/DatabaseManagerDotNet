@@ -306,7 +306,21 @@ namespace RI.DatabaseManager.Scripts
         /// <param name="args"> Optional message arguments expanded into <paramref name="format" />. </param>
         protected void Log(LogLevel level, string format, params object[] args) => this.Logger.Log(level, this.ToString(), null, format, args);
 
-        /// <inheritdoc />
+        /// <summary>
+        ///     Gets or sets the string which is used as the default separator to separate individual commands in a single batch.
+        /// </summary>
+        /// <value>
+        ///     The string which is used as the default separator to separate individual commands in a single batch or null if the batch is not to be separated into individual commands.
+        /// </value>
+        /// <remarks>
+        ///     <note type="note">
+        ///         Not all command types (<see cref="IDbBatchCommand" /> implementations) can use separators, it applies primarily for scripts (e.g. SQL script files).
+        ///     </note>
+        ///     <note type="implement">
+        ///         The default value of this property is expected to be <c> GO </c>.
+        ///     </note>
+        /// </remarks>
+        /// <exception cref="ArgumentException"> <paramref name="value" /> is an empty string. </exception>
         public string DefaultBatchSeparator
         {
             get

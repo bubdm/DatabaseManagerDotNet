@@ -14,11 +14,11 @@ namespace RI.DatabaseManager.Scripts
     /// </summary>
     /// <remarks>
     ///     <note type="important">
-    ///         If <see cref="IDbScriptLocator.DefaultBatchSeparator" /> of this script locator is not null, that value will always be used if the <c>batchSeparator</c> parameter of <see cref="GetScriptBatches"/> is null and therefore will override the values of the individual script locators.
+    ///         If <see cref="IDbScriptLocator.DefaultBatchSeparator" /> of this script locator is not null, that value will always be used if the <c> batchSeparator </c> parameter of <see cref="GetScriptBatches" /> is null and therefore will override the values of the individual script locators.
     ///     </note>
     ///     <para>
-    ///         <see cref="AggregateDbScriptLocator"/> is both a <see cref="IDbScriptLocator"/> and <see cref="IList{T}"/> implementation.
-    /// It can dynamically combine multiple script locators and present it as one, doing lookup of scripts in the order of the list.
+    ///         <see cref="AggregateDbScriptLocator" /> is both a <see cref="IDbScriptLocator" /> and <see cref="IList{T}" /> implementation.
+    ///         It can dynamically combine multiple script locators and present it as one, doing lookup of scripts in the order of the list.
     ///     </para>
     /// </remarks>
     /// <threadsafety static="false" instance="false" />
@@ -30,9 +30,7 @@ namespace RI.DatabaseManager.Scripts
         ///     Creates a new instance of <see cref="AggregateDbScriptLocator" />.
         /// </summary>
         public AggregateDbScriptLocator ()
-            : this((IEnumerable<IDbScriptLocator>)null)
-        {
-        }
+            : this((IEnumerable<IDbScriptLocator>)null) { }
 
         /// <summary>
         ///     Creates a new instance of <see cref="AggregateDbScriptLocator" />.
@@ -62,9 +60,16 @@ namespace RI.DatabaseManager.Scripts
         /// </summary>
         /// <param name="scriptLocators"> The array of script locators which are aggregated. </param>
         public AggregateDbScriptLocator (params IDbScriptLocator[] scriptLocators)
-            : this((IEnumerable<IDbScriptLocator>)scriptLocators)
-        {
-        }
+            : this((IEnumerable<IDbScriptLocator>)scriptLocators) { }
+
+        #endregion
+
+
+
+
+        #region Instance Fields
+
+        private string _defaultBatchSeparator;
 
         #endregion
 
@@ -80,59 +85,12 @@ namespace RI.DatabaseManager.Scripts
 
 
 
-        #region Interface: ICollection<IDatabaseScriptLocator>
-
-        /// <inheritdoc />
-        public int Count => this.ScriptLocators.Count;
-
-        /// <inheritdoc />
-        bool ICollection<IDbScriptLocator>.IsReadOnly => false;
-
-        /// <inheritdoc />
-        public void Add (IDbScriptLocator item)
-        {
-            if (item == null)
-            {
-                throw new ArgumentNullException(nameof(item));
-            }
-
-            this.ScriptLocators.Add(item);
-        }
-
-        /// <inheritdoc />
-        public void Clear () => this.ScriptLocators.Clear();
-
-        /// <inheritdoc />
-        public bool Contains (IDbScriptLocator item) => this.ScriptLocators.Contains(item);
-
-        /// <inheritdoc />
-        void ICollection<IDbScriptLocator>.CopyTo (IDbScriptLocator[] array, int arrayIndex) => this.ScriptLocators.CopyTo(array, arrayIndex);
-
-        /// <inheritdoc />
-        IEnumerator IEnumerable.GetEnumerator () => this.GetEnumerator();
-
-        /// <inheritdoc />
-        public IEnumerator<IDbScriptLocator> GetEnumerator () => this.ScriptLocators.GetEnumerator();
-
-        /// <inheritdoc />
-        public bool Remove (IDbScriptLocator item) => this.ScriptLocators.Remove(item);
-
-        #endregion
-
-
-
-
-        #region Interface: IDatabaseScriptLocator
-
-        private string _defaultBatchSeparator;
+        #region Interface: IDbScriptLocator
 
         /// <inheritdoc />
         public string DefaultBatchSeparator
         {
-            get
-            {
-                return this._defaultBatchSeparator;
-            }
+            get => this._defaultBatchSeparator;
             set
             {
                 if (value != null)
@@ -191,22 +149,13 @@ namespace RI.DatabaseManager.Scripts
 
 
 
-        /// <inheritdoc />
-        public int IndexOf (IDbScriptLocator item) => this.ScriptLocators.IndexOf(item);
+        #region Interface: IList<IDbScriptLocator>
 
         /// <inheritdoc />
-        public void Insert (int index, IDbScriptLocator item)
-        {
-            if (item == null)
-            {
-                throw new ArgumentNullException(nameof(item));
-            }
-
-            this.ScriptLocators.Insert(index, item);
-        }
+        public int Count => this.ScriptLocators.Count;
 
         /// <inheritdoc />
-        public void RemoveAt (int index) => this.ScriptLocators.RemoveAt(index);
+        bool ICollection<IDbScriptLocator>.IsReadOnly => false;
 
         /// <inheritdoc />
         public IDbScriptLocator this [int index]
@@ -222,5 +171,78 @@ namespace RI.DatabaseManager.Scripts
                 this.ScriptLocators[index] = value;
             }
         }
+
+        /// <inheritdoc />
+        public void Add (IDbScriptLocator item)
+        {
+            if (item == null)
+            {
+                throw new ArgumentNullException(nameof(item));
+            }
+
+            this.ScriptLocators.Add(item);
+        }
+
+        /// <inheritdoc />
+        public void Clear ()
+        {
+            this.ScriptLocators.Clear();
+        }
+
+        /// <inheritdoc />
+        public bool Contains (IDbScriptLocator item)
+        {
+            return this.ScriptLocators.Contains(item);
+        }
+
+        /// <inheritdoc />
+        void ICollection<IDbScriptLocator>.CopyTo (IDbScriptLocator[] array, int arrayIndex)
+        {
+            this.ScriptLocators.CopyTo(array, arrayIndex);
+        }
+
+        /// <inheritdoc />
+        IEnumerator IEnumerable.GetEnumerator ()
+        {
+            return this.GetEnumerator();
+        }
+
+        /// <inheritdoc />
+        public IEnumerator<IDbScriptLocator> GetEnumerator ()
+        {
+            return this.ScriptLocators.GetEnumerator();
+        }
+
+
+        /// <inheritdoc />
+        public int IndexOf (IDbScriptLocator item)
+        {
+            return this.ScriptLocators.IndexOf(item);
+        }
+
+        /// <inheritdoc />
+        public void Insert (int index, IDbScriptLocator item)
+        {
+            if (item == null)
+            {
+                throw new ArgumentNullException(nameof(item));
+            }
+
+            this.ScriptLocators.Insert(index, item);
+        }
+
+        /// <inheritdoc />
+        public bool Remove (IDbScriptLocator item)
+        {
+            return this.ScriptLocators.Remove(item);
+        }
+
+        /// <inheritdoc />
+        public void RemoveAt (int index)
+        {
+            this.ScriptLocators.RemoveAt(index);
+        }
+
+        #endregion
     }
 }

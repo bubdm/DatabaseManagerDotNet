@@ -1,7 +1,4 @@
 ﻿namespace RI.DatabaseManager.Batches
 {
-    public class DbBatchLocatorBase
-    {
-        
-    }
+    public class DbBatchLocatorBase { }
 }

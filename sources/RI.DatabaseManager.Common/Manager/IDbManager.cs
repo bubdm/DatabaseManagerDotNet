@@ -24,7 +24,7 @@ namespace RI.DatabaseManager.Manager
     ///         The link from the database manager to higher-level functionality are the database connections and/or transactions which can be created using <see cref="CreateConnection" /> and <see cref="CreateTransaction" />.
     ///     </para>
     ///     <para>
-    ///         Batches (<see cref="IDbBatch{TConnection,TTransaction}" />) can be used to group multiple commands into one unit.
+    ///         Batches (<see cref="IDbBatch" />) can be used to group multiple commands (<see cref="IDbBatchCommand" />) into one unit.
     ///         Some dependencies (e.g. version detectors) might use batches to retrieve the commands required to execute their functionality.
     ///     </para>
     ///     <para>
@@ -280,7 +280,7 @@ namespace RI.DatabaseManager.Manager
         ///     Details about failures should be written to logs and/or into properties of the executed batch.
         /// </returns>
         /// <exception cref="ArgumentNullException"> <paramref name="batch" /> is null </exception>
-        /// <exception cref="InvalidOperationException"> The database is not in a ready state. </exception>
+        /// <exception cref="InvalidOperationException"> The database is not in a ready state or the batch has conflicting transaction requirements (e.g. one command uses <see cref="DbBatchTransactionRequirement.Required" /> while another uses <see cref="DbBatchTransactionRequirement.Disallowed" />). </exception>
         /// <exception cref="NotSupportedException"> <paramref name="readOnly" /> is true but read-only connections are not supported. </exception>
         bool ExecuteBatch (IDbBatch batch, bool readOnly, bool detectVersionAndStateAfterExecution);
 
@@ -386,19 +386,10 @@ namespace RI.DatabaseManager.Manager
         where TConnection : DbConnection
         where TTransaction : DbTransaction
     {
-        /// <inheritdoc cref="IDbManager.CreateBatch" />
-        new IDbBatch<TConnection, TTransaction> CreateBatch ();
-
         /// <inheritdoc cref="IDbManager.CreateConnection" />
         new TConnection CreateConnection (bool readOnly);
 
         /// <inheritdoc cref="IDbManager.CreateTransaction" />
         new TTransaction CreateTransaction (bool readOnly);
-
-        /// <inheritdoc cref="IDbManager.ExecuteBatch" />
-        bool ExecuteBatch (IDbBatch<TConnection, TTransaction> batch, bool readOnly, bool detectVersionAndStateAfterExecution);
-
-        /// <inheritdoc cref="IDbManager.GetBatch" />
-        new IDbBatch<TConnection, TTransaction> GetBatch (string name, string commandSeparator, bool preprocess);
     }
 }

@@ -16,10 +16,10 @@ namespace RI.DatabaseManager.Scripts
     ///     Script locator implementation which gets scripts from assembly resources.
     /// </summary>
     /// <para>
-    /// <see cref="Assemblies"/> is the list of assemblies used to lookup scripts.
+    ///     <see cref="Assemblies" /> is the list of assemblies used to lookup scripts.
     /// </para>
     /// <para>
-    /// <see cref="Encoding"/> is the used encoding for reading the scripts as strings from the assembly resources.
+    ///     <see cref="Encoding" /> is the used encoding for reading the scripts as strings from the assembly resources.
     /// </para>
     /// <threadsafety static="false" instance="false" />
     public sealed class AssemblyRessourceDbScriptLocator : DbScriptLocatorBase
@@ -29,25 +29,23 @@ namespace RI.DatabaseManager.Scripts
         /// <summary>
         ///     Creates a new instance of <see cref="AssemblyRessourceDbScriptLocator" />.
         /// </summary>
-        /// <param name="logger">The used logger.</param>
-        /// <exception cref="ArgumentNullException"><paramref name="logger"/> is null.</exception>
-        public AssemblyRessourceDbScriptLocator(ILogger logger)
-            : this(logger, (IEnumerable<Assembly>)null)
-        {
-        }
+        /// <param name="logger"> The used logger. </param>
+        /// <exception cref="ArgumentNullException"> <paramref name="logger" /> is null. </exception>
+        public AssemblyRessourceDbScriptLocator (ILogger logger)
+            : this(logger, (IEnumerable<Assembly>)null) { }
 
         /// <summary>
         ///     Creates a new instance of <see cref="AssemblyRessourceDbScriptLocator" />.
         /// </summary>
-        /// <param name="logger">The used logger.</param>
+        /// <param name="logger"> The used logger. </param>
         /// <param name="assemblies"> The sequence of assemblies. </param>
         /// <remarks>
         ///     <para>
         ///         <paramref name="assemblies" /> is enumerated only once.
         ///     </para>
         /// </remarks>
-        /// <exception cref="ArgumentNullException"><paramref name="logger"/> is null.</exception>
-        public AssemblyRessourceDbScriptLocator(ILogger logger, IEnumerable<Assembly> assemblies) : base(logger)
+        /// <exception cref="ArgumentNullException"> <paramref name="logger" /> is null. </exception>
+        public AssemblyRessourceDbScriptLocator (ILogger logger, IEnumerable<Assembly> assemblies) : base(logger)
         {
             this.Encoding = Encoding.UTF8;
             this.Assemblies = new List<Assembly>();
@@ -61,13 +59,11 @@ namespace RI.DatabaseManager.Scripts
         /// <summary>
         ///     Creates a new instance of <see cref="AssemblyRessourceDbScriptLocator" />.
         /// </summary>
-        /// <param name="logger">The used logger.</param>
+        /// <param name="logger"> The used logger. </param>
         /// <param name="assemblies"> The array of assemblies. </param>
-        /// <exception cref="ArgumentNullException"><paramref name="logger"/> is null.</exception>
-        public AssemblyRessourceDbScriptLocator(ILogger logger, params Assembly[] assemblies)
-            : this(logger, (IEnumerable<Assembly>)assemblies)
-        {
-        }
+        /// <exception cref="ArgumentNullException"> <paramref name="logger" /> is null. </exception>
+        public AssemblyRessourceDbScriptLocator (ILogger logger, params Assembly[] assemblies)
+            : this(logger, (IEnumerable<Assembly>)assemblies) { }
 
         #endregion
 
@@ -91,12 +87,12 @@ namespace RI.DatabaseManager.Scripts
         ///     The used encoding for reading the scripts as strings from the assembly resources.
         /// </value>
         /// <remarks>
-        /// <para>
-        ///If <see cref="Encoding"/> is null, <see cref="System.Text.Encoding.UTF8"/> is used.
-        /// </para>
-        /// <note type="implement">
-        /// The default value is <see cref="System.Text.Encoding.UTF8"/>.
-        /// </note>
+        ///     <para>
+        ///         If <see cref="Encoding" /> is null, <see cref="System.Text.Encoding.UTF8" /> is used.
+        ///     </para>
+        ///     <note type="implement">
+        ///         The default value is <see cref="System.Text.Encoding.UTF8" />.
+        ///     </note>
         /// </remarks>
         public Encoding Encoding { get; set; }
 

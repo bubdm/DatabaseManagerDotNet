@@ -1,4 +1,4 @@
-﻿using System.Data.Common;
+﻿using System.Collections.Generic;
 
 
 
@@ -6,23 +6,24 @@
 namespace RI.DatabaseManager.Batches
 {
     /// <summary>
-    /// 
+    ///     A single database batch which groups multiple commands into one unit.
     /// </summary>
-    /// <remarks>
-    ///     <para>
-    ///         Batches (<see cref="IDbBatch{TConnection,TTransaction}" />) can be used to group multiple commands into one unit.
-    ///         Some dependencies (e.g. version detectors) might use batches to retrieve the commands required to execute their functionality.
-    ///     </para>
-    /// </remarks>
     public interface IDbBatch
     {
-        
-    }
-
-    public interface IDbBatch<TConnection, TTransaction> : IDbBatch
-        where TConnection : DbConnection
-        where TTransaction : DbTransaction
-    {
-
+        /// <summary>
+        ///     Gets the list of all commands of this batch.
+        /// </summary>
+        /// <value>
+        ///     The list of all commands of this batch.
+        /// </value>
+        /// <remarks>
+        ///     <note type="important">
+        ///         The order of the commands in the list is the order the commands are supposed to be used.
+        ///     </note>
+        ///     <note type="implement">
+        ///         This property should never be null.
+        ///     </note>
+        /// </remarks>
+        List<IDbBatchCommand> Commands { get; }
     }
 }

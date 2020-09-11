@@ -13,11 +13,11 @@ namespace RI.DatabaseManager.Scripts
     ///     Script locator implementation using a simple dictionary.
     /// </summary>
     /// <remarks>
-    /// <para>
-    /// <see cref="Scripts"/> is the dictionary where the keys are used as script names and the values are the actual script contents.
-    /// </para>
     ///     <para>
-    ///         <see cref="StringComparer.InvariantCultureIgnoreCase" /> is used to compare the keys / script names in <see cref="Scripts"/>.
+    ///         <see cref="Scripts" /> is the dictionary where the keys are used as script names and the values are the actual script contents.
+    ///     </para>
+    ///     <para>
+    ///         <see cref="StringComparer.InvariantCultureIgnoreCase" /> is used to compare the keys / script names in <see cref="Scripts" />.
     ///     </para>
     /// </remarks>
     /// <threadsafety static="false" instance="false" />
@@ -28,19 +28,17 @@ namespace RI.DatabaseManager.Scripts
         /// <summary>
         ///     Creates a new instance of <see cref="DictionaryDbScriptLocator" />.
         /// </summary>
-        /// <param name="logger">The used logger.</param>
-        /// <exception cref="ArgumentNullException"><paramref name="logger"/> is null.</exception>
-        public DictionaryDbScriptLocator (ILogger logger) : this(logger, null)
-        {
-        }
+        /// <param name="logger"> The used logger. </param>
+        /// <exception cref="ArgumentNullException"> <paramref name="logger" /> is null. </exception>
+        public DictionaryDbScriptLocator (ILogger logger) : this(logger, null) { }
 
         /// <summary>
         ///     Creates a new instance of <see cref="DictionaryDbScriptLocator" />.
         /// </summary>
-        /// <param name="logger">The used logger.</param>
-        /// <param name="scripts">The used key/value pairs.</param>
-        /// <exception cref="ArgumentNullException"><paramref name="logger"/> is null.</exception>
-        public DictionaryDbScriptLocator(ILogger logger, IDictionary<string, string> scripts) : base(logger)
+        /// <param name="logger"> The used logger. </param>
+        /// <param name="scripts"> The used key/value pairs. </param>
+        /// <exception cref="ArgumentNullException"> <paramref name="logger" /> is null. </exception>
+        public DictionaryDbScriptLocator (ILogger logger, IDictionary<string, string> scripts) : base(logger)
         {
             this.Scripts = new Dictionary<string, string>(StringComparer.InvariantCultureIgnoreCase);
 

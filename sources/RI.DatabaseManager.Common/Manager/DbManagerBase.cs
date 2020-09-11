@@ -296,17 +296,16 @@ namespace RI.DatabaseManager.Manager
         /// </returns>
         protected abstract TTransaction CreateTransactionImpl (bool readOnly);
 
-
         /// <summary>
-        ///     Executes a batch according to this database manager implementation.
+        ///     Executes database script code of a single batch command.
         /// </summary>
-        /// <param name="batch"> The batch to execute. </param>
-        /// <param name="readOnly"> Specifies whether the connection, used to execute the batch, should be read-only. </param>
+        /// <param name="connection"> The used database connection. </param>
+        /// <param name="transaction"> The used database transaction or null if no transaction is used. </param>
+        /// <param name="script"> The database script to execute. </param>
         /// <returns>
-        ///     true if the batch was executed successfully, false otherwise.
-        ///     Details about failures should be written to logs and/or into properties of the executed batch.
+        ///     The result of the code callback.
         /// </returns>
-        protected abstract bool ExecuteBatchImpl (IDbBatch<TConnection, TTransaction> batch, bool readOnly);
+        protected abstract object ExecuteCommandScriptImpl (TConnection connection, TTransaction transaction, string script);
 
         #endregion
 
@@ -362,12 +361,12 @@ namespace RI.DatabaseManager.Manager
         /// </returns>
         /// <remarks>
         ///     <note type="implement">
-        ///         The default implementation creates and returns a new instance of <see cref="DbBatch{TConnection,TTransaction}" />.
+        ///         The default implementation creates and returns a new instance of <see cref="DbBatch" />.
         ///     </note>
         /// </remarks>
-        protected virtual IDbBatch<TConnection, TTransaction> CreateBatchImpl ()
+        protected virtual IDbBatch CreateBatchImpl ()
         {
-            return new DbBatch<TConnection, TTransaction>();
+            return new DbBatch();
         }
 
         /// <summary>
@@ -400,6 +399,118 @@ namespace RI.DatabaseManager.Manager
         protected virtual void DisposeImpl (bool disposing) { }
 
         /// <summary>
+        ///     Executes a batch according to this database manager implementation.
+        /// </summary>
+        /// <param name="batch"> The batch to execute. </param>
+        /// <param name="readOnly"> Specifies whether the connection, used to execute the batch, should be read-only. </param>
+        /// <returns>
+        ///     true if the batch was executed successfully, false otherwise.
+        ///     Details about failures should be written to logs and/or into properties of the executed batch.
+        /// </returns>
+        /// <remarks>
+        ///     <note type="implement">
+        ///         The default implementation first resets all commands and then executes <see cref="ExecuteCommandScriptImpl" /> or <see cref="ExecuteCommandCodeImpl" /> for each command of the batch.
+        ///     </note>
+        /// </remarks>
+        protected virtual bool ExecuteBatchImpl (IDbBatch batch, bool readOnly)
+        {
+            batch.Reset();
+
+            TConnection connection;
+            TTransaction transaction;
+
+            if (batch.RequiresTransaction())
+            {
+                transaction = this.CreateTransaction();
+
+                if (transaction == null)
+                {
+                    return false;
+                }
+
+                connection = (TConnection)transaction.Connection;
+            }
+            else
+            {
+                connection = this.CreateConnection(readOnly);
+
+                if (connection == null)
+                {
+                    return false;
+                }
+
+                transaction = null;
+            }
+
+            foreach (IDbBatchCommand command in batch.Commands)
+            {
+                if (command == null)
+                {
+                    continue;
+                }
+
+                object result;
+
+                if ((command.Script != null) && (command.Code == null))
+                {
+                    try
+                    {
+                        result = this.ExecuteCommandScriptImpl(connection, transaction, command.Script);
+                    }
+                    catch (Exception exception)
+                    {
+                        this.Log(LogLevel.Error, exception, "Execution of database batch script failed.");
+                        return false;
+                    }
+                }
+                else if ((command.Script == null) && (command.Code != null))
+                {
+                    try
+                    {
+                        result = this.ExecuteCommandCodeImpl(connection, transaction, command.Code);
+                    }
+                    catch (Exception exception)
+                    {
+                        this.Log(LogLevel.Error, exception, "Execution of database batch script failed.");
+                        return false;
+                    }
+                }
+                else if ((command.Script != null) && (command.Code != null))
+                {
+                    throw new NotSupportedException($"The provided batch command is invalid (contains both script and code): {command.GetType().Name}.");
+                }
+                else
+                {
+                    throw new NotSupportedException($"The provided batch command is invalid (contains neither script nor code): {command.GetType().Name}.");
+                }
+
+                command.Result = result;
+                command.WasExecuted = true;
+            }
+
+            return true;
+        }
+
+        /// <summary>
+        ///     Executes a code callback of a single batch command.
+        /// </summary>
+        /// <param name="connection"> The used database connection. </param>
+        /// <param name="transaction"> The used database transaction or null if no transaction is used. </param>
+        /// <param name="code"> The callback to execute. </param>
+        /// <returns>
+        ///     The result of the code callback.
+        /// </returns>
+        /// <remarks>
+        ///     <note type="implement">
+        ///         The default implementation calls <paramref name="code" /> with <paramref name="connection" /> and <paramref name="transaction" /> as parameters.
+        ///     </note>
+        /// </remarks>
+        protected virtual object ExecuteCommandCodeImpl (TConnection connection, TTransaction transaction, Func<DbConnection, DbTransaction, object> code)
+        {
+            return code(connection, transaction);
+        }
+
+        /// <summary>
         ///     Gets a batch of a specified name.
         /// </summary>
         /// <param name="name"> The name of the batch. </param>
@@ -411,12 +522,12 @@ namespace RI.DatabaseManager.Manager
         /// </returns>
         /// <remarks>
         ///     <note type="implement">
-        ///         The default implementation calls <see cref="IDbBatchLocator.GetBatch{TConnection,TTransaction}" />.
+        ///         The default implementation calls <see cref="IDbBatchLocator.GetBatch" />.
         ///     </note>
         /// </remarks>
-        protected virtual IDbBatch<TConnection, TTransaction> GetBatchImpl (string name, string commandSeparator, bool preprocess)
+        protected virtual IDbBatch GetBatchImpl (string name, string commandSeparator, bool preprocess)
         {
-            return this.BatchLocator.GetBatch<TConnection, TTransaction>(name, commandSeparator, preprocess);
+            return this.BatchLocator.GetBatch(name, commandSeparator, preprocess);
         }
 
         /// <summary>
@@ -454,7 +565,7 @@ namespace RI.DatabaseManager.Manager
         ///         The default implementation does nothing.
         ///     </note>
         /// </remarks>
-        protected virtual void OnBatchCreated (IDbBatch<TConnection, TTransaction> batch) { }
+        protected virtual void OnBatchCreated (IDbBatch batch) { }
 
         /// <summary>
         ///     Called when a batch has been retrieved.
@@ -467,7 +578,7 @@ namespace RI.DatabaseManager.Manager
         ///         The default implementation does nothing.
         ///     </note>
         /// </remarks>
-        protected virtual void OnBatchRetrieved (IDbBatch<TConnection, TTransaction> batch, string name, bool preprocess) { }
+        protected virtual void OnBatchRetrieved (IDbBatch batch, string name, bool preprocess) { }
 
         /// <summary>
         ///     Called when a connection has been created.
@@ -671,15 +782,13 @@ namespace RI.DatabaseManager.Manager
         }
 
         /// <inheritdoc />
-        IDbBatch IDbManager.CreateBatch ()
+        public IDbBatch CreateBatch ()
         {
-            return this.CreateBatch();
-        }
+            IDbBatch batch = this.CreateBatchImpl();
 
-        /// <inheritdoc />
-        public IDbBatch<TConnection, TTransaction> CreateBatch ()
-        {
-            return this.CreateBatchImpl();
+            this.OnBatchCreated(batch);
+
+            return batch;
         }
 
         /// <inheritdoc />
@@ -703,7 +812,17 @@ namespace RI.DatabaseManager.Manager
                                                     .Name + " does not support read-only connections.");
             }
 
-            TConnection connection = this.CreateConnectionImpl(readOnly);
+            TConnection connection;
+
+            try
+            {
+                connection = this.CreateConnectionImpl(readOnly);
+            }
+            catch (Exception exception)
+            {
+                this.Log(LogLevel.Error, exception, "Creation of database connection failed.");
+                return null;
+            }
 
             if (connection != null)
             {
@@ -734,7 +853,17 @@ namespace RI.DatabaseManager.Manager
                                                     .Name + " does not support read-only connections.");
             }
 
-            TTransaction transaction = this.CreateTransactionImpl(readOnly);
+            TTransaction transaction;
+
+            try
+            {
+                transaction = this.CreateTransactionImpl(readOnly);
+            }
+            catch (Exception exception)
+            {
+                this.Log(LogLevel.Error, exception, "Creation of database transaction failed.");
+                return null;
+            }
 
             if (transaction != null)
             {
@@ -751,13 +880,7 @@ namespace RI.DatabaseManager.Manager
         }
 
         /// <inheritdoc />
-        bool IDbManager.ExecuteBatch (IDbBatch batch, bool readOnly, bool detectVersionAndStateAfterExecution)
-        {
-            return this.ExecuteBatch((IDbBatch<TConnection, TTransaction>)batch, readOnly, detectVersionAndStateAfterExecution);
-        }
-
-        /// <inheritdoc />
-        public bool ExecuteBatch (IDbBatch<TConnection, TTransaction> batch, bool readOnly, bool detectVersionAndStateAfterExecution)
+        public bool ExecuteBatch (IDbBatch batch, bool readOnly, bool detectVersionAndStateAfterExecution)
         {
             if (batch == null)
             {
@@ -787,13 +910,7 @@ namespace RI.DatabaseManager.Manager
         }
 
         /// <inheritdoc />
-        IDbBatch IDbManager.GetBatch (string name, string commandSeparator, bool preprocess)
-        {
-            return this.GetBatch(name, commandSeparator, preprocess);
-        }
-
-        /// <inheritdoc />
-        public IDbBatch<TConnection, TTransaction> GetBatch (string name, string commandSeparator, bool preprocess)
+        public IDbBatch GetBatch (string name, string commandSeparator, bool preprocess)
         {
             if (name == null)
             {
@@ -813,7 +930,7 @@ namespace RI.DatabaseManager.Manager
                 }
             }
 
-            IDbBatch<TConnection, TTransaction> batch = this.GetBatchImpl(name, commandSeparator, preprocess);
+            IDbBatch batch = this.GetBatchImpl(name, commandSeparator, preprocess);
 
             if (batch != null)
             {
