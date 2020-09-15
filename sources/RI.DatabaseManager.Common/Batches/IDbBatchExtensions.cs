@@ -41,7 +41,7 @@ namespace RI.DatabaseManager.Batches
                 throw new ArgumentNullException(nameof(batch));
             }
 
-            batch.Commands.Add(callback == null ? null : new CallbackDbBatchCommand<TConnection, TTransaction>(callback, transactionRequirement));
+            batch.Commands.Add(callback == null ? null : new CallbackBatchCommand<TConnection, TTransaction>(callback, transactionRequirement));
             return batch.Commands.Count - 1;
         }
 
@@ -67,7 +67,7 @@ namespace RI.DatabaseManager.Batches
                 throw new ArgumentNullException(nameof(batch));
             }
 
-            batch.Commands.Add(callback == null ? null : new CallbackDbBatchCommand(callback, transactionRequirement));
+            batch.Commands.Add(callback == null ? null : new CallbackBatchCommand(callback, transactionRequirement));
             return batch.Commands.Count - 1;
         }
 
@@ -93,7 +93,7 @@ namespace RI.DatabaseManager.Batches
                 throw new ArgumentNullException(nameof(batch));
             }
 
-            batch.Commands.Add(script == null ? null : new ScriptDbBatchCommand(script, transactionRequirement));
+            batch.Commands.Add(script == null ? null : new ScriptBatchCommand(script, transactionRequirement));
             return batch.Commands.Count - 1;
         }
 

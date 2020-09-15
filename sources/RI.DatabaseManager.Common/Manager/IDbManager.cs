@@ -289,7 +289,6 @@ namespace RI.DatabaseManager.Manager
         /// </summary>
         /// <param name="name"> The name of the batch. </param>
         /// <param name="commandSeparator"> The string which is used as the separator to separate commands within the batch or null if the batch locators default separators are to be used. </param>
-        /// <param name="preprocess"> Specifies whether the batch is to be preprocessed, if applicable. </param>
         /// <returns>
         ///     The batch or null if the batch of the specified name could not be found.
         ///     Details about failures should be written to logs.
@@ -301,7 +300,7 @@ namespace RI.DatabaseManager.Manager
         /// </remarks>
         /// <exception cref="ArgumentNullException"> <paramref name="name" /> is null. </exception>
         /// <exception cref="ArgumentException"> <paramref name="name" /> or <paramref name="commandSeparator" /> is an empty string. </exception>
-        IDbBatch GetBatch (string name, string commandSeparator, bool preprocess);
+        IDbBatch GetBatch (string name, string commandSeparator);
 
         /// <summary>
         ///     Gets the names of all available batches using the configured <see cref="IDbBatchLocator" />.

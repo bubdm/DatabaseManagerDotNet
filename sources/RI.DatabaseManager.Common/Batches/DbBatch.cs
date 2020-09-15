@@ -1,4 +1,17 @@
-﻿namespace RI.DatabaseManager.Batches
+﻿using System.Collections.Generic;
+
+
+
+
+namespace RI.DatabaseManager.Batches
 {
-    public class DbBatch : IDbBatch { }
+    /// <summary>
+    ///     Default implementation of <see cref="IDbBatch" /> suitable for most scenarios.
+    /// </summary>
+    /// <threadsafety static="false" instance="false" />
+    public sealed class DbBatch : IDbBatch
+    {
+        /// <inheritdoc />
+        public List<IDbBatchCommand> Commands { get; } = new List<IDbBatchCommand>();
+    }
 }

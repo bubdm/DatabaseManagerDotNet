@@ -10,16 +10,16 @@ namespace RI.DatabaseManager.Batches.Commands
     ///     A batch command which provides a script to be executed.
     /// </summary>
     /// <threadsafety static="false" instance="false" />
-    public sealed class ScriptDbBatchCommand : IDbBatchCommand
+    public sealed class ScriptBatchCommand : IDbBatchCommand
     {
         #region Instance Constructor/Destructor
 
         /// <summary>
-        ///     Creates a new instance of <see cref="CallbackDbBatchCommand{TConnection,TTransaction}" />.
+        ///     Creates a new instance of <see cref="CallbackBatchCommand{TConnection,TTransaction}" />.
         /// </summary>
         /// <param name="script"> The database script. </param>
         /// <param name="transactionRequirement"> The optional transaction requirement specification. Default values is <see cref="DbBatchTransactionRequirement.DontCare" />. </param>
-        public ScriptDbBatchCommand (string script, DbBatchTransactionRequirement transactionRequirement = DbBatchTransactionRequirement.DontCare)
+        public ScriptBatchCommand (string script, DbBatchTransactionRequirement transactionRequirement = DbBatchTransactionRequirement.DontCare)
         {
             this.Script = string.IsNullOrWhiteSpace(script) ? null : script;
             this.TransactionRequirement = transactionRequirement;

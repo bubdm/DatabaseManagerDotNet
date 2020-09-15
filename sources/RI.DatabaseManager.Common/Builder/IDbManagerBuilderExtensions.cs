@@ -155,6 +155,8 @@ namespace RI.DatabaseManager.Builder
             return builder;
         }
 
+        //TODO: Add batch locator using extensions (using aggregated locator if necessary)
+
         internal static (Type Connection, Type Transaction, Type Manager, Type VersionDetector, Type BackupCreator, Type CleanupProcessor, Type VersionUpgrader, Type ScriptLocator) DetectDbManagerTypes (this IDbManagerBuilder builder)
         {
             if (builder == null)

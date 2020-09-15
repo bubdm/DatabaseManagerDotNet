@@ -10,17 +10,17 @@ namespace RI.DatabaseManager.Batches.Commands
     ///     A batch command which provides a delegate to be called when executed.
     /// </summary>
     /// <threadsafety static="false" instance="false" />
-    public sealed class CallbackDbBatchCommand : IDbBatchCommand
+    public sealed class CallbackBatchCommand : IDbBatchCommand
     {
         #region Instance Constructor/Destructor
 
         /// <summary>
-        ///     Creates a new instance of <see cref="CallbackDbBatchCommand{TConnection,TTransaction}" />.
+        ///     Creates a new instance of <see cref="CallbackBatchCommand{TConnection,TTransaction}" />.
         /// </summary>
         /// <param name="callback"> The delegate to the callback which is called when the command is executed. </param>
         /// <param name="transactionRequirement"> The optional transaction requirement specification. Default values is <see cref="DbBatchTransactionRequirement.DontCare" />. </param>
         /// <exception cref="ArgumentNullException"> <paramref name="callback" /> is null. </exception>
-        public CallbackDbBatchCommand (Func<DbConnection, DbTransaction, object> callback, DbBatchTransactionRequirement transactionRequirement = DbBatchTransactionRequirement.DontCare)
+        public CallbackBatchCommand (Func<DbConnection, DbTransaction, object> callback, DbBatchTransactionRequirement transactionRequirement = DbBatchTransactionRequirement.DontCare)
         {
             if (callback == null)
             {
@@ -62,19 +62,19 @@ namespace RI.DatabaseManager.Batches.Commands
     /// <typeparam name="TConnection"> The database connection type. </typeparam>
     /// <typeparam name="TTransaction"> The database transaction type. </typeparam>
     /// <threadsafety static="false" instance="false" />
-    public sealed class CallbackDbBatchCommand <TConnection, TTransaction> : IDbBatchCommand
+    public sealed class CallbackBatchCommand <TConnection, TTransaction> : IDbBatchCommand
         where TConnection : DbConnection
         where TTransaction : DbTransaction
     {
         #region Instance Constructor/Destructor
 
         /// <summary>
-        ///     Creates a new instance of <see cref="CallbackDbBatchCommand{TConnection,TTransaction}" />.
+        ///     Creates a new instance of <see cref="CallbackBatchCommand{TConnection,TTransaction}" />.
         /// </summary>
         /// <param name="callback"> The delegate to the callback which is called when the command is executed. </param>
         /// <param name="transactionRequirement"> The optional transaction requirement specification. Default values is <see cref="DbBatchTransactionRequirement.DontCare" />. </param>
         /// <exception cref="ArgumentNullException"> <paramref name="callback" /> is null. </exception>
-        public CallbackDbBatchCommand (Func<TConnection, TTransaction, object> callback, DbBatchTransactionRequirement transactionRequirement = DbBatchTransactionRequirement.DontCare)
+        public CallbackBatchCommand (Func<TConnection, TTransaction, object> callback, DbBatchTransactionRequirement transactionRequirement = DbBatchTransactionRequirement.DontCare)
         {
             if (callback == null)
             {

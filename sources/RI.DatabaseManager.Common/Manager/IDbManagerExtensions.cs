@@ -165,7 +165,7 @@ namespace RI.DatabaseManager.Manager
                 throw new ArgumentNullException(nameof(manager));
             }
 
-            return manager.GetBatch(name, null, true);
+            return manager.GetBatch(name, null);
         }
 
         /// <summary>
@@ -173,10 +173,9 @@ namespace RI.DatabaseManager.Manager
         /// </summary>
         /// <param name="manager"> The used database manager. </param>
         /// <param name="commandSeparator"> The string which is used as the separator to separate commands within the batch or null if the batch locators default separators are to be used. </param>
-        /// <param name="preprocess"> Specifies whether the batch is to be preprocessed, if applicable. </param>
         /// <returns> </returns>
         /// <exception cref="ArgumentException"> <paramref name="commandSeparator" /> is an empty string. </exception>
-        public static IDictionary<string, IDbBatch> GetBatches (this IDbManager manager, string commandSeparator = null, bool preprocess = true)
+        public static IDictionary<string, IDbBatch> GetBatches (this IDbManager manager, string commandSeparator = null)
         {
             if (manager == null)
             {
@@ -196,7 +195,7 @@ namespace RI.DatabaseManager.Manager
 
             foreach (string name in names)
             {
-                IDbBatch batch = manager.GetBatch(name, commandSeparator, preprocess);
+                IDbBatch batch = manager.GetBatch(name, commandSeparator);
 
                 if (batch != null)
                 {

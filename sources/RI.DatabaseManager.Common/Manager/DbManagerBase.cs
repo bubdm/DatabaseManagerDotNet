@@ -451,6 +451,8 @@ namespace RI.DatabaseManager.Manager
 
                 object result;
 
+                //TODO: Handle parameters
+
                 if ((command.Script != null) && (command.Code == null))
                 {
                     try
@@ -515,7 +517,6 @@ namespace RI.DatabaseManager.Manager
         /// </summary>
         /// <param name="name"> The name of the batch. </param>
         /// <param name="commandSeparator"> The string which is used as the separator to separate commands within the batch or null if the batch locators default separators are to be used. </param>
-        /// <param name="preprocess"> Specifies whether the batch is to be preprocessed, if applicable. </param>
         /// <returns>
         ///     The batch or null if the batch of the specified name could not be found.
         ///     Details about failures should be written to logs.
@@ -525,9 +526,9 @@ namespace RI.DatabaseManager.Manager
         ///         The default implementation calls <see cref="IDbBatchLocator.GetBatch" />.
         ///     </note>
         /// </remarks>
-        protected virtual IDbBatch GetBatchImpl (string name, string commandSeparator, bool preprocess)
+        protected virtual IDbBatch GetBatchImpl (string name, string commandSeparator)
         {
-            return this.BatchLocator.GetBatch(name, commandSeparator, preprocess);
+            return this.BatchLocator.GetBatch(name, commandSeparator);
         }
 
         /// <summary>
@@ -572,13 +573,12 @@ namespace RI.DatabaseManager.Manager
         /// </summary>
         /// <param name="batch"> The retrieved batch. </param>
         /// <param name="name"> The name of the retrieved batch. </param>
-        /// <param name="preprocess"> Specifies whether the batch is to be preprocessed. </param>
         /// <remarks>
         ///     <note type="implement">
         ///         The default implementation does nothing.
         ///     </note>
         /// </remarks>
-        protected virtual void OnBatchRetrieved (IDbBatch batch, string name, bool preprocess) { }
+        protected virtual void OnBatchRetrieved (IDbBatch batch, string name) { }
 
         /// <summary>
         ///     Called when a connection has been created.
@@ -910,7 +910,7 @@ namespace RI.DatabaseManager.Manager
         }
 
         /// <inheritdoc />
-        public IDbBatch GetBatch (string name, string commandSeparator, bool preprocess)
+        public IDbBatch GetBatch (string name, string commandSeparator)
         {
             if (name == null)
             {
@@ -930,11 +930,11 @@ namespace RI.DatabaseManager.Manager
                 }
             }
 
-            IDbBatch batch = this.GetBatchImpl(name, commandSeparator, preprocess);
+            IDbBatch batch = this.GetBatchImpl(name, commandSeparator);
 
             if (batch != null)
             {
-                this.OnBatchRetrieved(batch, name, preprocess);
+                this.OnBatchRetrieved(batch, name);
             }
 
             return batch;
