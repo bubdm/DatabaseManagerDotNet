@@ -919,14 +919,14 @@ namespace RI.DatabaseManager.Manager
 
             if (string.IsNullOrWhiteSpace(name))
             {
-                throw new ArgumentException("Argument is an empty string.", nameof(name));
+                throw new ArgumentException("The string argument is empty.", nameof(name));
             }
 
             if (commandSeparator != null)
             {
                 if (string.IsNullOrWhiteSpace(commandSeparator))
                 {
-                    throw new ArgumentException("Argument is an empty string.", nameof(commandSeparator));
+                    throw new ArgumentException("The string argument is empty.", nameof(commandSeparator));
                 }
             }
 

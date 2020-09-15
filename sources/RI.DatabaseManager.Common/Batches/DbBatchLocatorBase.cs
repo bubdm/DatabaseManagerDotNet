@@ -53,14 +53,14 @@ namespace RI.DatabaseManager.Batches
 
             if (string.IsNullOrWhiteSpace(name))
             {
-                throw new ArgumentException("Argument is an empty string.", nameof(name));
+                throw new ArgumentException("The string argument is empty.", nameof(name));
             }
 
             if (commandSeparator != null)
             {
                 if (string.IsNullOrWhiteSpace(commandSeparator))
                 {
-                    throw new ArgumentException("Argument is an empty string.", nameof(commandSeparator));
+                    throw new ArgumentException("The string argument is empty.", nameof(commandSeparator));
                 }
             }
 
@@ -112,10 +112,10 @@ namespace RI.DatabaseManager.Batches
         /// </value>
         /// <remarks>
         ///<note type="implement">
-        /// The default implementation returns <c>GO</c>.
+        /// The default implementation returns <c>{Environment.NewLine}GO{Environment.NewLine}</c>.
         /// </note>
         /// </remarks>
-        protected virtual string DefaultCommandSeparator => "GO";
+        protected virtual string DefaultCommandSeparator => $"{Environment.NewLine}GO{Environment.NewLine}";
 
         /// <summary>
         /// Gets the string comparer used for comparing batch names.
@@ -133,10 +133,38 @@ namespace RI.DatabaseManager.Batches
         /// </remarks>
         protected virtual StringComparer DefaultNameComparer => StringComparer.InvariantCultureIgnoreCase;
 
+        /// <summary>
+        /// Splits a script into individual commands using a specified command separator.
+        /// </summary>
+        /// <param name="script">The script to split into individual commands.</param>
+        /// <param name="commandSeparator"> The string which is used as the separator to separate commands within the batch. </param>
+        /// <returns>
+        /// A list of commands from the script.
+        /// If the script is empty, an empty list will be returned.
+        /// If the command separator is null, a list with a single item, the original script, will be returned.
+        /// </returns>
         protected virtual List<string> SeparateScriptCommands (string script, string commandSeparator)
         {
-            //TODO: separation
-            throw new NotImplementedException();
+            script = script?.Replace("\r", "")
+                           .Replace("\n", Environment.NewLine);
+
+            commandSeparator = commandSeparator?.Replace("\r", "")
+                                               .Replace("\n", Environment.NewLine);
+
+            if (string.IsNullOrWhiteSpace(script))
+            {
+                return new List<string>();
+            }
+
+            if (string.IsNullOrWhiteSpace(commandSeparator))
+            {
+                List<string> singleCommand = new List<string>();
+                singleCommand.Add(script);
+                return singleCommand;
+            }
+
+            List<string> pieces = script.Split(new[] { commandSeparator }, StringSplitOptions.None).Select(x => x.Trim()).Where(x => !string.IsNullOrWhiteSpace(x)).ToList();
+            return pieces;
         }
     }
 }

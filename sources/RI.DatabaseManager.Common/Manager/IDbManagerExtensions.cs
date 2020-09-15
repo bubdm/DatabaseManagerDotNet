@@ -186,7 +186,7 @@ namespace RI.DatabaseManager.Manager
             {
                 if (string.IsNullOrWhiteSpace(commandSeparator))
                 {
-                    throw new ArgumentException("The command separator is empty or consists only of whitespaces.", nameof(commandSeparator));
+                    throw new ArgumentException("The string argument is empty.", nameof(commandSeparator));
                 }
             }
 

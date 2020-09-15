@@ -125,7 +125,7 @@ namespace RI.DatabaseManager.Builder
                 };
             }
 
-            builder.AddSingleton(typeof(IDbScriptLocator), sp => new AssemblyRessourceDbScriptLocator((ILogger)sp.GetService(typeof(ILogger)), assemblies));
+            builder.AddSingleton(typeof(IDbScriptLocator), sp => new AssemblyScriptBatchLocator((ILogger)sp.GetService(typeof(ILogger)), assemblies));
 
             return builder;
         }

@@ -333,7 +333,7 @@ namespace RI.DatabaseManager.Scripts
                 {
                     if (string.IsNullOrWhiteSpace(value))
                     {
-                        throw new ArgumentException("Argument is an empty string.", nameof(value));
+                        throw new ArgumentException("The string argument is empty.", nameof(value));
                     }
                 }
 

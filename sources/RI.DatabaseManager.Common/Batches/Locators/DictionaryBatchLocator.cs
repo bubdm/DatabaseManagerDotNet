@@ -94,10 +94,19 @@ namespace RI.DatabaseManager.Batches.Locators
         {
             DbBatchTransactionRequirement transactionRequirement = this.TransactionRequirements.ContainsKey(name) ? this.TransactionRequirements[name] : DbBatchTransactionRequirement.DontCare;
 
+            bool found = false;
+
+            if (this.Callbacks.ContainsKey(name))
+            {
+                Func<DbConnection, DbTransaction, object> callback = this.Callbacks[name];
+                batch.AddCode(callback, transactionRequirement);
+                found = true;
+            }
+
             if (this.Scripts.ContainsKey(name))
             {
                 string script = this.Scripts[name];
-                var commands = this.SeparateScriptCommands(script, commandSeparator);
+                List<string> commands = this.SeparateScriptCommands(script, commandSeparator);
 
                 foreach (string command in commands)
                 {
@@ -107,17 +116,10 @@ namespace RI.DatabaseManager.Batches.Locators
                     }
                 }
 
-                return true;
+                found = true;
             }
 
-            if (this.Callbacks.ContainsKey(name))
-            {
-                Func<DbConnection, DbTransaction, object> callback = this.Callbacks[name];
-                batch.AddCode(callback, transactionRequirement);
-                return true;
-            }
-
-            return false;
+            return found;
         }
     }
 }

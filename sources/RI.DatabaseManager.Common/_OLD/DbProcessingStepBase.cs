@@ -202,7 +202,7 @@ namespace RI.DatabaseManager.Manager
 
             if (string.IsNullOrWhiteSpace(scriptName))
             {
-                throw new ArgumentException("The script name is empty.", nameof(scriptName));
+                throw new ArgumentException("The string argument is empty.", nameof(scriptName));
             }
 
             this.SubSteps.Add(new Tuple<SubStepType, DbProcessingStepTransactionRequirement, object>(SubStepType.Script, transactionRequirement, scriptName));
