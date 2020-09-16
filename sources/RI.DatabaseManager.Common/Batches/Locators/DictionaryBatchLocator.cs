@@ -26,6 +26,15 @@ namespace RI.DatabaseManager.Batches.Locators
     /// The keys are the batch name, the value is one of the <see cref="DbBatchTransactionRequirement"/> values.
     /// If no value is set for a given batch name, <see cref="DbBatchTransactionRequirement.DontCare"/> is used.
     ///     </para>
+    /// <para>
+    /// Currently, the following options are supported which are extracted from the scripts (see <see cref="DbBatchLocatorBase.OptionsFormat"/> for more details):
+    /// </para>
+    /// <list type="bullet">
+    ///   <item><c>TransactionRequirement</c> [optional] One of the <see cref="DbBatchTransactionRequirement"/> values (as string), e.g. <c>/* DBMANAGER:TransactionRequirement=Disallowed */</c></item>
+    /// </list>
+    /// <note type="note">
+    /// If the <c>TransactionRequirement</c> option is not specified, the value from <see cref="TransactionRequirements"/> is used. If that is also not available, <see cref="DbBatchTransactionRequirement.DontCare"/> is used.
+    /// </note>
     /// </remarks>
     /// <threadsafety static="false" instance="false" />
     public sealed class DictionaryBatchLocator : DbBatchLocatorBase
@@ -112,6 +121,13 @@ namespace RI.DatabaseManager.Batches.Locators
                 {
                     if (!string.IsNullOrWhiteSpace(command))
                     {
+                        DbBatchTransactionRequirement commandSpecifiedTransactionRequirement = this.GetTransactionRequirementFromCommandOptions(command);
+
+                        if (commandSpecifiedTransactionRequirement != DbBatchTransactionRequirement.DontCare)
+                        {
+                            //TODO
+                        }
+
                         batch.AddScript(command, transactionRequirement);
                     }
                 }

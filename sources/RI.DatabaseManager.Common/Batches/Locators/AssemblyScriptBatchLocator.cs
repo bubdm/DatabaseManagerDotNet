@@ -18,23 +18,27 @@ namespace RI.DatabaseManager.Batches.Locators
     /// <note type="important">
     /// See <see cref="NameFormat"/> for details about how script resources are searched in assemblies.
     /// </note>
-    /// <note type="important">
-    /// See <see cref="OptionsFormat"/> for details about how additional script options are extracted from the scripts.
-    /// </note>
     /// <para>
     ///     <see cref="Assemblies" /> is the list of assemblies used to lookup scripts.
     /// </para>
     /// <para>
     ///     <see cref="Encoding" /> is the used encoding for reading the scripts as strings from the assembly resources.
     /// </para>
+    /// <para>
+    /// Currently, the following options are supported which are extracted from the scripts (see <see cref="DbBatchLocatorBase.OptionsFormat"/> for more details):
+    /// </para>
+    /// <list type="bullet">
+    ///   <item><c>TransactionRequirement</c> [optional] One of the <see cref="DbBatchTransactionRequirement"/> values (as string), e.g. <c>/* DBMANAGER:TransactionRequirement=Disallowed */</c></item>
+    /// </list>
+    /// <note type="note">
+    /// If the <c>TransactionRequirement</c> option is not specified, <see cref="DbBatchTransactionRequirement.DontCare"/> is used.
+    /// </note>
     /// <threadsafety static="false" instance="false" />
     public sealed class AssemblyScriptBatchLocator : DbBatchLocatorBase
     {
         private Encoding _encoding;
 
         private string _nameFormat;
-
-        private string _optionsFormat;
 
 
 
@@ -63,7 +67,6 @@ namespace RI.DatabaseManager.Batches.Locators
         public AssemblyScriptBatchLocator (ILogger logger, IEnumerable<Assembly> assemblies) : base(logger)
         {
             this.NameFormat = @"(?<name>^.+?)([\.]+[^.]*)(sql$)";
-            this.OptionsFormat = @"(/\*\s*DBMANAGER:)(?<key>.+?)(=)(?<value>.+?)(\s*\*/)";
             this.Encoding = Encoding.UTF8;
             this.Assemblies = new List<Assembly>();
 
@@ -140,6 +143,7 @@ namespace RI.DatabaseManager.Batches.Locators
         /// </note>
         /// </remarks>
         /// <exception cref="ArgumentNullException"><paramref name="value"/> is null.</exception>
+        /// <exception cref="ArgumentException"><paramref name="value"/> is an empty string.</exception>
         public string NameFormat
         {
             get => this._nameFormat;
@@ -156,50 +160,6 @@ namespace RI.DatabaseManager.Batches.Locators
                 }
 
                 this._nameFormat = value;
-            }
-        }
-
-        /// <summary>
-        ///     Gets or sets the used options format as a regular expression (RegEx) used to extract additional script options from the script itself.
-        /// </summary>
-        /// <value>
-        ///     The used options format as a regular expression (RegEx) used to extract additional script options from the script itself.
-        /// </value>
-        /// <remarks>
-        ///     <note type="implement">
-        ///         The default value is <c>(/\*\s*DBMANAGER:)(?&lt;key&gt;.+?)(=)(?&lt;value&gt;.+?)(\s*\*/)</c>.
-        ///     </note>
-        /// <note type="important">
-        /// The options format must be a regular expression which provides two named captures: <c>key</c> and <c>value</c>. Those captures are used to extract key/value pairs from the script itself.
-        /// Using the default value, <c>/* DBMANAGER:MyValue=123</c> would provide a key <c>MyValue</c> with the value <c>123</c>.
-        /// </note>
-        /// <para>
-        /// Currently, the following options are supported:
-        /// </para>
-        /// <list type="bullet">
-        ///   <item><c>TransactionRequirement</c> [optional] One of the <see cref="DbBatchTransactionRequirement"/> values (as string), e.g. <c>/* DBMANAGER:TransactionRequirement=Disallowed */</c></item>
-        /// </list>
-        /// <note type="note">
-        /// If the <c>TransactionRequirement</c> option is not specified, <see cref="DbBatchTransactionRequirement.DontCare"/> is used.
-        /// </note>
-        /// </remarks>
-        /// <exception cref="ArgumentNullException"><paramref name="value"/> is null.</exception>
-        public string OptionsFormat
-        {
-            get => this._optionsFormat;
-            set
-            {
-                if (value == null)
-                {
-                    throw new ArgumentNullException(nameof(value));
-                }
-
-                if (string.IsNullOrWhiteSpace(value))
-                {
-                    throw new ArgumentException("The string argument is empty.", nameof(value));
-                }
-
-                this._optionsFormat = value;
             }
         }
 
@@ -268,7 +228,7 @@ namespace RI.DatabaseManager.Batches.Locators
                         {
                             if (!string.IsNullOrWhiteSpace(command))
                             {
-                                DbBatchTransactionRequirement transactionRequirement = this.GetTransactionRequirementFromCommand(command);
+                                DbBatchTransactionRequirement transactionRequirement = this.GetTransactionRequirementFromCommandOptions(command);
                                 batch.AddScript(command, transactionRequirement);
                             }
                         }
@@ -294,51 +254,6 @@ namespace RI.DatabaseManager.Batches.Locators
                                ?.Value;
 
             return string.IsNullOrWhiteSpace(name) ? null : name;
-        }
-
-        private Dictionary<string, string> GetScriptOptionsFromCommand (string command)
-        {
-            Dictionary<string, string> keyValuePairs = new Dictionary<string, string>(this.DefaultNameComparer);
-            MatchCollection matches = Regex.Matches(command, this.OptionsFormat, RegexOptions.CultureInvariant | RegexOptions.IgnoreCase);
-
-            foreach (Match match in matches)
-            {
-                string key = match.Groups["key"]
-                                  ?.Value;
-
-                string value = match.Groups["value"]
-                                    ?.Value;
-
-                if (string.IsNullOrWhiteSpace(key) || string.IsNullOrWhiteSpace(value))
-                {
-                    continue;
-                }
-
-                keyValuePairs.Add(key, value);
-            }
-
-            return keyValuePairs;
-        }
-
-        private DbBatchTransactionRequirement GetTransactionRequirementFromCommand (string command)
-        {
-            Dictionary<string, string> keyValuePairs = this.GetScriptOptionsFromCommand(command);
-
-            const string key = "TransactionRequirement";
-
-            if (keyValuePairs.ContainsKey(key))
-            {
-                string value = keyValuePairs[key];
-
-                if (Enum.TryParse(value, true, out DbBatchTransactionRequirement tr))
-                {
-                    return tr;
-                }
-
-                this.Logger.LogWarning(this.GetType().Name, null, $"Invalid value for TransactionRequirement script option: {value}");
-            }
-
-            return DbBatchTransactionRequirement.DontCare;
         }
     }
 }

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text.RegularExpressions;
 
 using RI.Abstractions.Logging;
 
@@ -16,6 +17,9 @@ namespace RI.DatabaseManager.Batches
     ///     <note type="implement">
     ///         It is recommended that database batch locator implementations use this base class as it already implements already some boilerplate code.
     ///     </note>
+    /// <note type="important">
+    /// See <see cref="OptionsFormat"/> for details about how additional script options can be extracted from scripts.
+    /// </note>
     /// </remarks>
     /// <threadsafety static="false" instance="false" />
     public abstract class DbBatchLocatorBase : IDbBatchLocator
@@ -33,6 +37,8 @@ namespace RI.DatabaseManager.Batches
             }
 
             this.Logger = logger;
+
+            this.OptionsFormat = @"(/\*\s*DBMANAGER:)(?<key>.+?)(=)(?<value>.+?)(\s*\*/)";
         }
 
         /// <summary>
@@ -140,8 +146,8 @@ namespace RI.DatabaseManager.Batches
         /// <param name="commandSeparator"> The string which is used as the separator to separate commands within the batch. </param>
         /// <returns>
         /// A list of commands from the script.
-        /// If the script is empty, an empty list will be returned.
-        /// If the command separator is null, a list with a single item, the original script, will be returned.
+        /// If the script is null or empty, an empty list will be returned.
+        /// If the command separator is null or empty, a list with a single item, the original script, will be returned.
         /// </returns>
         protected virtual List<string> SeparateScriptCommands (string script, string commandSeparator)
         {
@@ -165,6 +171,143 @@ namespace RI.DatabaseManager.Batches
 
             List<string> pieces = script.Split(new[] { commandSeparator }, StringSplitOptions.None).Select(x => x.Trim()).Where(x => !string.IsNullOrWhiteSpace(x)).ToList();
             return pieces;
+        }
+
+        private string _optionsFormat;
+
+        /// <summary>
+        ///     Gets or sets the used options format as a regular expression (RegEx) used to extract additional script options from a script.
+        /// </summary>
+        /// <value>
+        ///     The used options format as a regular expression (RegEx) used to extract additional script options from a script.
+        /// </value>
+        /// <remarks>
+        ///     <note type="implement">
+        ///         The default value is <c>(/\*\s*DBMANAGER:)(?&lt;key&gt;.+?)(=)(?&lt;value&gt;.+?)(\s*\*/)</c>.
+        ///     </note>
+        /// <note type="important">
+        /// The options format must be a regular expression which provides two named captures: <c>key</c> and <c>value</c>. Those captures are used to extract key/value pairs from the script itself (e.g. SQL code).
+        /// Using the default value, <c>/* DBMANAGER:MyValue=123</c> would provide a key <c>MyValue</c> with the value <c>123</c>.
+        /// </note>
+        /// </remarks>
+        /// <para>
+        /// Each database batch locator implementation defines which options to support.
+        /// <see cref="OptionsFormat"/> and <see cref="GetOptionsFromCommand"/>, <see cref="GetTransactionRequirementFromCommandOptions(string)"/>, and <see cref="GetTransactionRequirementFromCommandOptions(IDictionary{string,string})"/> support as boilerplate implementation which must be explicitly used by database batch locator implementations.
+        /// </para>
+        /// <exception cref="ArgumentNullException"><paramref name="value"/> is null.</exception>
+        /// <exception cref="ArgumentException"><paramref name="value"/> is an empty string.</exception>
+        public string OptionsFormat
+        {
+            get => this._optionsFormat;
+            set
+            {
+                if (value == null)
+                {
+                    throw new ArgumentNullException(nameof(value));
+                }
+
+                if (string.IsNullOrWhiteSpace(value))
+                {
+                    throw new ArgumentException("The string argument is empty.", nameof(value));
+                }
+
+                this._optionsFormat = value;
+            }
+        }
+
+        /// <summary>
+        /// Gets the options defined in a command.
+        /// </summary>
+        /// <param name="command">The command.</param>
+        /// <returns>
+        /// The dictionary which contains the options as key/value pairs.
+        /// If the command is null or empty, an empty dictionary will be returned.
+        /// </returns>
+        /// <remarks>
+        ///<note type="note">
+        /// See <see cref="OptionsFormat"/> for more information.
+        /// </note>
+        /// </remarks>
+        protected virtual Dictionary<string, string> GetOptionsFromCommand(string command)
+        {
+            Dictionary<string, string> keyValuePairs = new Dictionary<string, string>(this.DefaultNameComparer);
+
+            if (string.IsNullOrWhiteSpace(command))
+            {
+                return keyValuePairs;
+            }
+
+            MatchCollection matches = Regex.Matches(command, this.OptionsFormat, RegexOptions.CultureInvariant | RegexOptions.IgnoreCase);
+
+            foreach (Match match in matches)
+            {
+                string key = match.Groups["key"]
+                                  ?.Value;
+
+                string value = match.Groups["value"]
+                                    ?.Value;
+
+                if (string.IsNullOrWhiteSpace(key) || string.IsNullOrWhiteSpace(value))
+                {
+                    continue;
+                }
+
+                keyValuePairs.Add(key, value);
+            }
+
+            return keyValuePairs;
+        }
+
+        /// <summary>
+        /// Gets the transaction requirement of a command based on its options.
+        /// </summary>
+        /// <param name="command">The command.</param>
+        /// <returns>
+        /// One of the <see cref="DbBatchTransactionRequirement"/> values if the option <c>TransactionRequirement</c> was specified and has a valid value, <see cref="DbBatchTransactionRequirement.DontCare"/> otherwise.
+        /// If command is null or empty, <see cref="DbBatchTransactionRequirement.DontCare"/> is returned.
+        /// </returns>
+        protected virtual DbBatchTransactionRequirement GetTransactionRequirementFromCommandOptions (string command)
+        {
+            if (string.IsNullOrWhiteSpace(command))
+            {
+                return DbBatchTransactionRequirement.DontCare;
+            }
+
+            Dictionary<string, string> options = this.GetOptionsFromCommand(command);
+
+            return this.GetTransactionRequirementFromCommandOptions(options);
+        }
+
+        /// <summary>
+        /// Gets the transaction requirement of a command based on its options.
+        /// </summary>
+        /// <param name="options"> The already extracted command options (e.g. by <see cref="GetOptionsFromCommand"/>).</param>
+        /// <returns>
+        /// One of the <see cref="DbBatchTransactionRequirement"/> values if the option <c>TransactionRequirement</c> was specified and has a valid value, <see cref="DbBatchTransactionRequirement.DontCare"/> otherwise.
+        /// If command is null or empty, <see cref="DbBatchTransactionRequirement.DontCare"/> is returned.
+        /// </returns>
+        protected virtual DbBatchTransactionRequirement GetTransactionRequirementFromCommandOptions (IDictionary<string, string> options)
+        {
+            if (options == null)
+            {
+                return DbBatchTransactionRequirement.DontCare;
+            }
+            
+            const string key = "TransactionRequirement";
+
+            if (options.ContainsKey(key))
+            {
+                string value = options[key];
+
+                if (Enum.TryParse(value, true, out DbBatchTransactionRequirement tr))
+                {
+                    return tr;
+                }
+
+                this.Logger.LogWarning(this.GetType().Name, null, $"Invalid value for TransactionRequirement script option: {value}");
+            }
+
+            return DbBatchTransactionRequirement.DontCare;
         }
     }
 }
