@@ -15,26 +15,26 @@ namespace RI.DatabaseManager.Batches.Locators
     /// <remarks>
     ///     <para>
     ///         <see cref="Scripts" /> holds named scripts as strings.
-    /// The keys are the batch name, the value is the script.
+    ///         The keys are the batch name, the value is the script.
     ///     </para>
     ///     <para>
     ///         <see cref="Callbacks" /> holds named callbacks as delegates.
-    /// The keys are the batch name, the value is the callback.
+    ///         The keys are the batch name, the value is the callback.
     ///     </para>
     ///     <para>
     ///         <see cref="TransactionRequirements" /> holds information about transaction requirements for scripts or callbacks.
-    /// The keys are the batch name, the value is one of the <see cref="DbBatchTransactionRequirement"/> values.
-    /// If no value is set for a given batch name, <see cref="DbBatchTransactionRequirement.DontCare"/> is used.
+    ///         The keys are the batch name, the value is one of the <see cref="DbBatchTransactionRequirement" /> values.
+    ///         If no value is set for a given batch name, <see cref="DbBatchTransactionRequirement.DontCare" /> is used.
     ///     </para>
-    /// <para>
-    /// Currently, the following options are supported which are extracted from the scripts (see <see cref="DbBatchLocatorBase.OptionsFormat"/> for more details):
-    /// </para>
-    /// <list type="bullet">
-    ///   <item><c>TransactionRequirement</c> [optional] One of the <see cref="DbBatchTransactionRequirement"/> values (as string), e.g. <c>/* DBMANAGER:TransactionRequirement=Disallowed */</c></item>
-    /// </list>
-    /// <note type="note">
-    /// If the <c>TransactionRequirement</c> option is not specified, the value from <see cref="TransactionRequirements"/> is used. If that is also not available, <see cref="DbBatchTransactionRequirement.DontCare"/> is used.
-    /// </note>
+    ///     <para>
+    ///         Currently, the following options are supported which are extracted from the scripts (see <see cref="DbBatchLocatorBase.OptionsFormat" /> for more details):
+    ///     </para>
+    ///     <list type="bullet">
+    ///         <item> <c> TransactionRequirement </c> [optional] One of the <see cref="DbBatchTransactionRequirement" /> values (as string), e.g. <c> /* DBMANAGER:TransactionRequirement=Disallowed */ </c> </item>
+    ///     </list>
+    ///     <note type="note">
+    ///         If the <c> TransactionRequirement </c> option is not specified, the value from <see cref="TransactionRequirements" /> is used. If that is also not available, <see cref="DbBatchTransactionRequirement.DontCare" /> is used.
+    ///     </note>
     /// </remarks>
     /// <threadsafety static="false" instance="false" />
     public sealed class DictionaryBatchLocator : DbBatchLocatorBase
@@ -45,7 +45,7 @@ namespace RI.DatabaseManager.Batches.Locators
         ///     Creates a new instance of <see cref="DictionaryBatchLocator" />.
         /// </summary>
         /// <param name="logger"> The used logger. </param>
-        /// <exception cref="ArgumentNullException"><paramref name="logger"/> is null.</exception>
+        /// <exception cref="ArgumentNullException"> <paramref name="logger" /> is null. </exception>
         public DictionaryBatchLocator (ILogger logger) : base(logger)
         {
             this.Scripts = new Dictionary<string, string>(this.DefaultNameComparer);
@@ -61,20 +61,20 @@ namespace RI.DatabaseManager.Batches.Locators
         #region Instance Properties/Indexer
 
         /// <summary>
-        ///     Gets the dictionary with scripts as batches.
-        /// </summary>
-        /// <value>
-        ///     The dictionary with scripts.
-        /// </value>
-        public Dictionary<string, string> Scripts { get; }
-
-        /// <summary>
         ///     Gets the dictionary with callbacks as batches.
         /// </summary>
         /// <value>
         ///     The dictionary with callbacks.
         /// </value>
         public Dictionary<string, Func<DbConnection, DbTransaction, object>> Callbacks { get; }
+
+        /// <summary>
+        ///     Gets the dictionary with scripts as batches.
+        /// </summary>
+        /// <value>
+        ///     The dictionary with scripts.
+        /// </value>
+        public Dictionary<string, string> Scripts { get; }
 
         /// <summary>
         ///     Gets the dictionary with transaction requirements.
@@ -89,14 +89,7 @@ namespace RI.DatabaseManager.Batches.Locators
 
 
 
-        /// <inheritdoc />
-        protected override IEnumerable<string> GetNames ()
-        {
-            List<string> names = new List<string>();
-            names.AddRange(this.Scripts.Keys);
-            names.AddRange(this.Callbacks.Keys);
-            return names;
-        }
+        #region Overrides
 
         /// <inheritdoc />
         protected override bool FillBatch (IDbBatch batch, string name, string commandSeparator)
@@ -123,9 +116,17 @@ namespace RI.DatabaseManager.Batches.Locators
                     {
                         DbBatchTransactionRequirement commandSpecifiedTransactionRequirement = this.GetTransactionRequirementFromCommandOptions(command);
 
+                        if ((commandSpecifiedTransactionRequirement != DbBatchTransactionRequirement.DontCare) && (transactionRequirement != DbBatchTransactionRequirement.DontCare))
+                        {
+                            if (commandSpecifiedTransactionRequirement != transactionRequirement)
+                            {
+                                throw new InvalidOperationException("Conflicting transaction requirements.");
+                            }
+                        }
+
                         if (commandSpecifiedTransactionRequirement != DbBatchTransactionRequirement.DontCare)
                         {
-                            //TODO
+                            transactionRequirement = commandSpecifiedTransactionRequirement;
                         }
 
                         batch.AddScript(command, transactionRequirement);
@@ -137,5 +138,17 @@ namespace RI.DatabaseManager.Batches.Locators
 
             return found;
         }
+
+
+        /// <inheritdoc />
+        protected override IEnumerable<string> GetNames ()
+        {
+            List<string> names = new List<string>();
+            names.AddRange(this.Scripts.Keys);
+            names.AddRange(this.Callbacks.Keys);
+            return names;
+        }
+
+        #endregion
     }
 }

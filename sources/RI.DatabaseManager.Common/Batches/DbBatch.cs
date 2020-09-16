@@ -11,7 +11,11 @@ namespace RI.DatabaseManager.Batches
     /// <threadsafety static="false" instance="false" />
     public sealed class DbBatch : IDbBatch
     {
+        #region Interface: IDbBatch
+
         /// <inheritdoc />
         public List<IDbBatchCommand> Commands { get; } = new List<IDbBatchCommand>();
+
+        #endregion
     }
 }

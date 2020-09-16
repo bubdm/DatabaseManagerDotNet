@@ -14,7 +14,7 @@ namespace RI.DatabaseManager.Batches.Locators
     /// </summary>
     /// <remarks>
     ///     <para>
-    ///         <see cref="AggregateBatchLocator" /> is both a <see cref="IDbBatchLocator" /> and <see cref="IList{IDbBatchLocator}" /> implementation.
+    ///         <see cref="AggregateBatchLocator" /> is both a <see cref="IDbBatchLocator" /> and <see cref="IList{T}" /> implementation.
     ///         It can dynamically combine multiple script locators and present it as one, doing lookup of scripts in the order of the list.
     ///     </para>
     /// </remarks>
@@ -27,8 +27,8 @@ namespace RI.DatabaseManager.Batches.Locators
         ///     Creates a new instance of <see cref="AggregateBatchLocator" />.
         /// </summary>
         /// <param name="logger"> The used logger. </param>
-        /// <exception cref="ArgumentNullException"><paramref name="logger"/> is null.</exception>
-        public AggregateBatchLocator(ILogger logger)
+        /// <exception cref="ArgumentNullException"> <paramref name="logger" /> is null. </exception>
+        public AggregateBatchLocator (ILogger logger)
             : this(logger, (IEnumerable<IDbBatchLocator>)null) { }
 
         /// <summary>
@@ -41,9 +41,9 @@ namespace RI.DatabaseManager.Batches.Locators
         ///         <paramref name="batchLocators" /> is enumerated only once.
         ///     </para>
         /// </remarks>
-        /// <exception cref="ArgumentNullException"><paramref name="logger"/> is null.</exception>
-        public AggregateBatchLocator(ILogger logger, IEnumerable<IDbBatchLocator> batchLocators)
-        : base(logger)
+        /// <exception cref="ArgumentNullException"> <paramref name="logger" /> is null. </exception>
+        public AggregateBatchLocator (ILogger logger, IEnumerable<IDbBatchLocator> batchLocators)
+            : base(logger)
         {
             this.BatchLocators = new List<IDbBatchLocator>();
 
@@ -61,8 +61,8 @@ namespace RI.DatabaseManager.Batches.Locators
         /// </summary>
         /// <param name="logger"> The used logger. </param>
         /// <param name="batchLocators"> The array of batch locators which are aggregated. </param>
-        /// <exception cref="ArgumentNullException"><paramref name="logger"/> is null.</exception>
-        public AggregateBatchLocator(ILogger logger, params IDbBatchLocator[] batchLocators)
+        /// <exception cref="ArgumentNullException"> <paramref name="logger" /> is null. </exception>
+        public AggregateBatchLocator (ILogger logger, params IDbBatchLocator[] batchLocators)
             : this(logger, (IEnumerable<IDbBatchLocator>)batchLocators) { }
 
         #endregion
@@ -79,25 +79,10 @@ namespace RI.DatabaseManager.Batches.Locators
 
 
 
-        #region Interface: IDbScriptLocator
+        #region Overrides
 
         /// <inheritdoc />
-        protected override IEnumerable<string> GetNames ()
-        {
-            List<string> names = new List<string>();
-
-            foreach (IDbBatchLocator batchLocator in this.BatchLocators)
-            {
-                ISet<string> currentNames = batchLocator.GetNames();
-
-                if (currentNames != null)
-                {
-                    names.AddRange(currentNames);
-                }
-            }
-
-            return names;
-        }
+        protected override string DefaultCommandSeparator => null;
 
         /// <inheritdoc />
         protected override bool FillBatch (IDbBatch batch, string name, string commandSeparator)
@@ -120,14 +105,29 @@ namespace RI.DatabaseManager.Batches.Locators
         }
 
         /// <inheritdoc />
-        protected override string DefaultCommandSeparator => null;
+        protected override IEnumerable<string> GetNames ()
+        {
+            List<string> names = new List<string>();
+
+            foreach (IDbBatchLocator batchLocator in this.BatchLocators)
+            {
+                ISet<string> currentNames = batchLocator.GetNames();
+
+                if (currentNames != null)
+                {
+                    names.AddRange(currentNames);
+                }
+            }
+
+            return names;
+        }
 
         #endregion
 
 
 
 
-        #region Interface: IList<IDbScriptLocator>
+        #region Interface: IList<IDbBatchLocator>
 
         /// <inheritdoc />
         public int Count => this.BatchLocators.Count;
