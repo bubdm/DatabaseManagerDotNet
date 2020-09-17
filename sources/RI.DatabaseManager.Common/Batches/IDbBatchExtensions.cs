@@ -1,6 +1,9 @@
 ﻿using System;
 using System.Data.Common;
+using System.IO;
 using System.Linq;
+using System.Reflection;
+using System.Text;
 
 using RI.DatabaseManager.Batches.Commands;
 
@@ -97,10 +100,30 @@ namespace RI.DatabaseManager.Batches
             return batch.Commands.Count - 1;
         }
 
-        //TODO: AddScriptFromReader
-        //TODO: AddScriptFromStream
-        //TODO: AddScriptFromFile
-        //TODO: AddScriptFromAssembly
+        public static int AddScriptFromReader (this IDbBatch batch, TextReader reader, DbBatchTransactionRequirement transactionRequirement = DbBatchTransactionRequirement.DontCare)
+        {
+            //TODO: Implement
+        }
+
+        public static int AddScriptFromStream (this IDbBatch batch, Stream stream, Encoding encoding = null, DbBatchTransactionRequirement transactionRequirement = DbBatchTransactionRequirement.DontCare)
+        {
+            //TODO: Implement
+        }
+
+        public static int AddScriptFromFile (this IDbBatch batch, string file, Encoding encoding = null, DbBatchTransactionRequirement transactionRequirement = DbBatchTransactionRequirement.DontCare)
+        {
+            //TODO: Implement
+        }
+
+        public static int AddScriptFromAssemblyResource (this IDbBatch batch, Assembly assembly, Encoding encoding = null, DbBatchTransactionRequirement transactionRequirement = DbBatchTransactionRequirement.DontCare)
+        {
+            //TODO: Implement
+        }
+
+        public static int AddCode (this IDbBatch batch, Type callbackImplementation, DbBatchTransactionRequirement transactionRequirement = DbBatchTransactionRequirement.DontCare)
+        {
+            //TODO: Implement
+        }
 
         /// <summary>
         ///     Gets the result of the last executed command from the last execution of this batch.

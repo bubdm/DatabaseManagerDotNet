@@ -5,11 +5,9 @@
 
 namespace RI.DatabaseManager.Backup
 {
-	/// <summary>
-	///     Contains database backup creators.
-	/// </summary>
-	[CompilerGenerated]
-	public sealed class NamespaceDoc
-	{
-	}
+    /// <summary>
+    ///     Contains database backup creators.
+    /// </summary>
+    [CompilerGenerated,]
+    public sealed class NamespaceDoc { }
 }

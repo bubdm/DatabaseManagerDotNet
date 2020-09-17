@@ -182,7 +182,7 @@ namespace RI.DatabaseManager.Manager
         int Version { get; }
 
         /// <summary>
-        ///     Performs a backup using the configured <see cref="IDatabaseBackupCreator" />.
+        ///     Performs a backup using the configured <see cref="IDbBackupCreator" />.
         /// </summary>
         /// <param name="backupTarget"> The backup creator specific object which abstracts the backup target (e.g. a stream or a path to a file). </param>
         /// <returns>
@@ -195,13 +195,13 @@ namespace RI.DatabaseManager.Manager
         ///     </note>
         /// </remarks>
         /// <exception cref="ArgumentNullException"> <paramref name="backupTarget" /> is null. </exception>
-        /// <exception cref="ArgumentException"> <paramref name="backupTarget" /> is of a type which is not supported by the configured <see cref="IDatabaseBackupCreator" />. </exception>
+        /// <exception cref="ArgumentException"> <paramref name="backupTarget" /> is of a type which is not supported by the configured <see cref="IDbBackupCreator" />. </exception>
         /// <exception cref="InvalidOperationException"> The database is not initialized. </exception>
-        /// <exception cref="NotSupportedException"> Backup is not supported by the database manager or no <see cref="IDatabaseBackupCreator" /> is configured. </exception>
+        /// <exception cref="NotSupportedException"> Backup is not supported by the database manager or no <see cref="IDbBackupCreator" /> is configured. </exception>
         bool Backup (object backupTarget);
 
         /// <summary>
-        ///     Performs a database cleanup using the configured <see cref="IDatabaseCleanupProcessor" />.
+        ///     Performs a database cleanup using the configured <see cref="IDbCleanupProcessor" />.
         /// </summary>
         /// <returns>
         ///     true if the cleanup was successful, false otherwise.
@@ -213,7 +213,7 @@ namespace RI.DatabaseManager.Manager
         ///     </note>
         /// </remarks>
         /// <exception cref="InvalidOperationException"> The database is not in a ready or the new state. </exception>
-        /// <exception cref="NotSupportedException"> Cleanup is not supported by the database manager or no <see cref="IDatabaseCleanupProcessor" /> is configured. </exception>
+        /// <exception cref="NotSupportedException"> Cleanup is not supported by the database manager or no <see cref="IDbCleanupProcessor" /> is configured. </exception>
         bool Cleanup ();
 
         /// <summary>
@@ -335,7 +335,7 @@ namespace RI.DatabaseManager.Manager
         void Initialize ();
 
         /// <summary>
-        ///     Performs a restore using the configured <see cref="IDatabaseBackupCreator" />.
+        ///     Performs a restore using the configured <see cref="IDbBackupCreator" />.
         /// </summary>
         /// <param name="backupSource"> The backup creator specific object which abstracts the backup source (e.g. a stream or a path to a file). </param>
         /// <returns>
@@ -348,13 +348,13 @@ namespace RI.DatabaseManager.Manager
         ///     </note>
         /// </remarks>
         /// <exception cref="ArgumentNullException"> <paramref name="backupSource" /> is null. </exception>
-        /// <exception cref="ArgumentException"> <paramref name="backupSource" /> is of a type which is not supported by the configured <see cref="IDatabaseBackupCreator" />. </exception>
+        /// <exception cref="ArgumentException"> <paramref name="backupSource" /> is of a type which is not supported by the configured <see cref="IDbBackupCreator" />. </exception>
         /// <exception cref="InvalidOperationException"> The database is not initialized. </exception>
-        /// <exception cref="NotSupportedException"> Restore is not supported by the database manager or no <see cref="IDatabaseBackupCreator" /> is configured. </exception>
+        /// <exception cref="NotSupportedException"> Restore is not supported by the database manager or no <see cref="IDbBackupCreator" /> is configured. </exception>
         bool Restore (object backupSource);
 
         /// <summary>
-        ///     Performs an upgrade to a specific database target version using the configured <see cref="IDatabaseVersionUpgrader" />.
+        ///     Performs an upgrade to a specific database target version using the configured <see cref="IDbVersionUpgrader" />.
         /// </summary>
         /// <param name="version"> The target version to upgrade the database to. </param>
         /// <returns>
@@ -374,7 +374,7 @@ namespace RI.DatabaseManager.Manager
         /// </remarks>
         /// <exception cref="ArgumentOutOfRangeException"> <paramref name="version" /> is less than <see cref="MinVersion" />, greater than <see cref="MaxVersion" />, or less than <see cref="Version" />. </exception>
         /// <exception cref="InvalidOperationException"> The database is not in a ready or the new state. </exception>
-        /// <exception cref="NotSupportedException"> Upgrading is not supported by the database manager or no <see cref="IDatabaseVersionUpgrader" /> is configured. </exception>
+        /// <exception cref="NotSupportedException"> Upgrading is not supported by the database manager or no <see cref="IDbVersionUpgrader" /> is configured. </exception>
         bool Upgrade (int version);
     }
 

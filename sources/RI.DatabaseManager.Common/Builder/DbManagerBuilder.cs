@@ -81,10 +81,10 @@ namespace RI.DatabaseManager.Builder
         #region Type: NullInstance
 
         /// <summary>
-        ///     Null object used if no registration for <see cref="IDatabaseBackupCreator{TConnection,TTransaction}" />, <see cref="IDatabaseCleanupProcessor{TConnection,TTransaction}" />, <see cref="IDatabaseVersionUpgrader{TConnection,TTransaction}" />, or <see cref="IDbScriptLocator" /> is provided.
+        ///     Null object used if no registration for <see cref="IDbBackupCreator{TConnection,TTransaction}" />, <see cref="IDbCleanupProcessor{TConnection,TTransaction}" />, <see cref="IDbVersionUpgrader{TConnection,TTransaction}" />, or <see cref="IDbScriptLocator" /> is provided.
         /// </summary>
         /// <threadsafety static="false" instance="false" />
-        public sealed class NullInstance <TConnection, TTransaction> : IDatabaseBackupCreator<TConnection, TTransaction>, IDatabaseCleanupProcessor<TConnection, TTransaction>, IDatabaseVersionUpgrader<TConnection, TTransaction>
+        public sealed class NullInstance <TConnection, TTransaction> : IDbBackupCreator<TConnection, TTransaction>, IDbCleanupProcessor<TConnection, TTransaction>, IDbVersionUpgrader<TConnection, TTransaction>
             where TConnection : DbConnection
             where TTransaction : DbTransaction
         {
@@ -97,37 +97,50 @@ namespace RI.DatabaseManager.Builder
 
 
 
-            #region Interface: IDatabaseBackupCreator<TConnection,TTransaction>
+            #region Instance Properties/Indexer
 
             /// <inheritdoc />
-            bool IDatabaseBackupCreator.RequiresScriptLocator => throw new NotImplementedException();
+            bool IDbBackupCreator.RequiresScriptLocator => throw new NotImplementedException();
 
             /// <inheritdoc />
-            bool IDatabaseBackupCreator.SupportsBackup => throw new NotImplementedException();
+            bool IDbCleanupProcessor.RequiresScriptLocator => throw new NotImplementedException();
 
             /// <inheritdoc />
-            bool IDatabaseBackupCreator.SupportsRestore => throw new NotImplementedException();
+            bool IDbVersionUpgrader.RequiresScriptLocator => throw new NotImplementedException();
+
+            #endregion
+
+
+
+
+            #region Interface: IDbBackupCreator<TConnection,TTransaction>
 
             /// <inheritdoc />
-            bool IDatabaseBackupCreator.Backup (IDbManager manager, object backupTarget)
+            bool IDbBackupCreator.SupportsBackup => throw new NotImplementedException();
+
+            /// <inheritdoc />
+            bool IDbBackupCreator.SupportsRestore => throw new NotImplementedException();
+
+            /// <inheritdoc />
+            bool IDbBackupCreator.Backup (IDbManager manager, object backupTarget)
             {
                 throw new NotImplementedException();
             }
 
             /// <inheritdoc />
-            bool IDatabaseBackupCreator<TConnection, TTransaction>.Backup (IDbManager<TConnection, TTransaction> manager, object backupTarget)
+            bool IDbBackupCreator<TConnection, TTransaction>.Backup (IDbManager<TConnection, TTransaction> manager, object backupTarget)
             {
                 throw new NotImplementedException();
             }
 
             /// <inheritdoc />
-            bool IDatabaseBackupCreator.Restore (IDbManager manager, object backupSource)
+            bool IDbBackupCreator.Restore (IDbManager manager, object backupSource)
             {
                 throw new NotImplementedException();
             }
 
             /// <inheritdoc />
-            bool IDatabaseBackupCreator<TConnection, TTransaction>.Restore (IDbManager<TConnection, TTransaction> manager, object backupTarget)
+            bool IDbBackupCreator<TConnection, TTransaction>.Restore (IDbManager<TConnection, TTransaction> manager, object backupTarget)
             {
                 throw new NotImplementedException();
             }
@@ -137,19 +150,16 @@ namespace RI.DatabaseManager.Builder
 
 
 
-            #region Interface: IDatabaseCleanupProcessor<TConnection,TTransaction>
+            #region Interface: IDbCleanupProcessor<TConnection,TTransaction>
 
             /// <inheritdoc />
-            bool IDatabaseCleanupProcessor.RequiresScriptLocator => throw new NotImplementedException();
-
-            /// <inheritdoc />
-            bool IDatabaseCleanupProcessor<TConnection, TTransaction>.Cleanup (IDbManager<TConnection, TTransaction> manager)
+            bool IDbCleanupProcessor<TConnection, TTransaction>.Cleanup (IDbManager<TConnection, TTransaction> manager)
             {
                 throw new NotImplementedException();
             }
 
             /// <inheritdoc />
-            bool IDatabaseCleanupProcessor.Cleanup (IDbManager manager)
+            bool IDbCleanupProcessor.Cleanup (IDbManager manager)
             {
                 throw new NotImplementedException();
             }
@@ -159,43 +169,40 @@ namespace RI.DatabaseManager.Builder
 
 
 
-            #region Interface: IDatabaseVersionUpgrader<TConnection,TTransaction>
+            #region Interface: IDbVersionUpgrader<TConnection,TTransaction>
 
             /// <inheritdoc />
-            bool IDatabaseVersionUpgrader.RequiresScriptLocator => throw new NotImplementedException();
-
-            /// <inheritdoc />
-            int IDatabaseVersionUpgrader.GetMaxVersion (IDbManager manager)
+            int IDbVersionUpgrader.GetMaxVersion (IDbManager manager)
             {
                 throw new NotImplementedException();
             }
 
             /// <inheritdoc />
-            int IDatabaseVersionUpgrader<TConnection, TTransaction>.GetMaxVersion (IDbManager<TConnection, TTransaction> manager)
+            int IDbVersionUpgrader<TConnection, TTransaction>.GetMaxVersion (IDbManager<TConnection, TTransaction> manager)
             {
                 throw new NotImplementedException();
             }
 
             /// <inheritdoc />
-            int IDatabaseVersionUpgrader.GetMinVersion (IDbManager manager)
+            int IDbVersionUpgrader.GetMinVersion (IDbManager manager)
             {
                 throw new NotImplementedException();
             }
 
             /// <inheritdoc />
-            int IDatabaseVersionUpgrader<TConnection, TTransaction>.GetMinVersion (IDbManager<TConnection, TTransaction> manager)
+            int IDbVersionUpgrader<TConnection, TTransaction>.GetMinVersion (IDbManager<TConnection, TTransaction> manager)
             {
                 throw new NotImplementedException();
             }
 
             /// <inheritdoc />
-            bool IDatabaseVersionUpgrader.Upgrade (IDbManager manager, int sourceVersion)
+            bool IDbVersionUpgrader.Upgrade (IDbManager manager, int sourceVersion)
             {
                 throw new NotImplementedException();
             }
 
             /// <inheritdoc />
-            bool IDatabaseVersionUpgrader<TConnection, TTransaction>.Upgrade (IDbManager<TConnection, TTransaction> manager, int sourceVersion)
+            bool IDbVersionUpgrader<TConnection, TTransaction>.Upgrade (IDbManager<TConnection, TTransaction> manager, int sourceVersion)
             {
                 throw new NotImplementedException();
             }

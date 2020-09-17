@@ -1,7 +1,5 @@
 ﻿using System.Data.Common;
 
-using RI.DatabaseManager.Manager;
-
 
 
 

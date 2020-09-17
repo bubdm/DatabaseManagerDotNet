@@ -225,7 +225,7 @@ namespace RI.DatabaseManager.Manager
         }
 
         /// <summary>
-        ///     Performs an upgrade to highest supported version using the configured <see cref="IDatabaseVersionUpgrader" />.
+        ///     Performs an upgrade to highest supported version using the configured <see cref="IDbVersionUpgrader" />.
         /// </summary>
         /// <returns>
         ///     true if the upgrade was successful, false otherwise.
@@ -245,7 +245,7 @@ namespace RI.DatabaseManager.Manager
         /// </remarks>
         /// <exception cref="ArgumentNullException"> <paramref name="manager" /> is null </exception>
         /// <exception cref="InvalidOperationException"> The database is not in a ready or the new state. </exception>
-        /// <exception cref="NotSupportedException"> Upgrading is not supported by the database manager or no <see cref="IDatabaseVersionUpgrader" /> is configured. </exception>
+        /// <exception cref="NotSupportedException"> Upgrading is not supported by the database manager or no <see cref="IDbVersionUpgrader" /> is configured. </exception>
         public static bool Upgrade (this IDbManager manager)
         {
             if (manager == null)

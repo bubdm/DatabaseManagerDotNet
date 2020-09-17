@@ -7,9 +7,6 @@ using System.Linq;
 using System.Reflection;
 using System.Text;
 
-using RI.DatabaseManager.Manager;
-using RI.DatabaseManager.Scripts;
-
 
 
 
@@ -71,7 +68,7 @@ namespace RI.DatabaseManager.Upgrading
         /// </remarks>
         /// <exception cref="ArgumentNullException"> <paramref name="assembly" /> or <paramref name="nameFormat" /> is null. </exception>
         /// <exception cref="EmptyStringArgumentException"> <paramref name="nameFormat" /> is an empty string. </exception>
-        [SuppressMessage("ReSharper", "InvokeAsExtensionMethod")]
+        [SuppressMessage("ReSharper", "InvokeAsExtensionMethod"),]
         public bool GetUpgradeStepsFromAssembly (Assembly assembly, string nameFormat, out List<TProcessingStep> steps, out AssemblyScriptBatchLocator scriptLocator)
         {
             return this.GetUpgradeStepsFromAssembly(assembly, null, nameFormat, out steps, out scriptLocator);
@@ -96,7 +93,7 @@ namespace RI.DatabaseManager.Upgrading
         /// </remarks>
         /// <exception cref="ArgumentNullException"> <paramref name="assembly" /> or <paramref name="nameFormat" /> is null. </exception>
         /// <exception cref="EmptyStringArgumentException"> <paramref name="nameFormat" /> is an empty string. </exception>
-        [SuppressMessage("ReSharper", "InvokeAsExtensionMethod")]
+        [SuppressMessage("ReSharper", "InvokeAsExtensionMethod"),]
         public bool GetUpgradeStepsFromAssembly (Assembly assembly, Encoding encoding, string nameFormat, out List<TProcessingStep> steps, out AssemblyScriptBatchLocator scriptLocator)
         {
             if (assembly == null)
@@ -116,9 +113,10 @@ namespace RI.DatabaseManager.Upgrading
 
             Dictionary<int, IAssemblyResourceVersionUpgraderStepConfigurator<TProcessingStep, TConnection, TTransaction, TConnectionStringBuilder, TManager, TConfiguration>> configurators = new Dictionary<int, IAssemblyResourceVersionUpgraderStepConfigurator<TProcessingStep, TConnection, TTransaction, TConnectionStringBuilder, TManager, TConfiguration>>();
             Type[] types = assembly.GetTypes();
+
             foreach (Type type in types)
             {
-                if ((!type.IsClass) || type.IsAbstract)
+                if (!type.IsClass || type.IsAbstract)
                 {
                     continue;
                 }
@@ -129,6 +127,7 @@ namespace RI.DatabaseManager.Upgrading
                 }
 
                 AssemblyResourceVersionUpgraderStepAttribute attribute = CustomAttributeExtensions.GetCustomAttribute<AssemblyResourceVersionUpgraderStepAttribute>(type);
+
                 if (attribute == null)
                 {
                     continue;
@@ -146,6 +145,7 @@ namespace RI.DatabaseManager.Upgrading
             string[] names = assembly.GetManifestResourceNames();
 
             steps = new List<TProcessingStep>();
+
             for (int i1 = 0; i1 < (names.Length + configurators.Count + 1); i1++)
             {
                 string script = string.Format(CultureInfo.InvariantCulture, nameFormat, i1);
@@ -154,7 +154,8 @@ namespace RI.DatabaseManager.Upgrading
                 bool hasScript = Enumerable.Contains(names, script, StringComparer.InvariantCultureIgnoreCase);
                 bool hasConfigurator = configurator != null;
 
-                TProcessingStep step = default(TProcessingStep);
+                TProcessingStep step = default;
+
                 if (hasScript && hasConfigurator)
                 {
                     step = this.CreateProcessingStep(i1, null);

@@ -31,7 +31,7 @@ namespace RI.DatabaseManager.Backup
     ///     </para>
     /// </remarks>
     /// <threadsafety static="false" instance="false" />
-    public sealed class SQLiteDatabaseBackupCreator : DatabaseBackupCreator<SQLiteConnection, SQLiteTransaction, SQLiteConnectionStringBuilder, SQLiteDatabaseManager, SQLiteDatabaseManagerConfiguration>
+    public sealed class SQLiteDatabaseBackupCreator : DbBackupCreatorBase<SQLiteConnection, SQLiteTransaction, SQLiteConnectionStringBuilder, SQLiteDatabaseManager, SQLiteDatabaseManagerConfiguration>
     {
         #region Instance Constructor/Destructor
 

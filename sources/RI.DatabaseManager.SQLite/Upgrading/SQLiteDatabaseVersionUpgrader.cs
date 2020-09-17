@@ -20,7 +20,7 @@ namespace RI.DatabaseManager.Upgrading
     ///     </para>
     /// </remarks>
     /// <threadsafety static="false" instance="false" />
-    public sealed class SQLiteDatabaseVersionUpgrader : DatabaseVersionUpgrader<SQLiteConnection, SQLiteTransaction, SQLiteConnectionStringBuilder, SQLiteDatabaseManager, SQLiteDatabaseManagerConfiguration>
+    public sealed class SQLiteDatabaseVersionUpgrader : DbVersionUpgraderBase<,,>
     {
         #region Instance Constructor/Destructor
 

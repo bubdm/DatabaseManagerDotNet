@@ -11,14 +11,14 @@ using RI.Abstractions.Logging;
 namespace RI.DatabaseManager.Manager
 {
     /// <summary>
-    ///     Boilerplate implementation of <see cref="IDbProcessingStep"/> and <see cref="IDbProcessingStep{TConnection,TTransaction,TManager}"/>.
+    ///     Boilerplate implementation of <see cref="IDbProcessingStep" /> and <see cref="IDbProcessingStep{TConnection,TTransaction,TManager}" />.
     /// </summary>
     /// <typeparam name="TConnection"> The database connection type. </typeparam>
     /// <typeparam name="TTransaction"> The database transaction type. </typeparam>
     /// <typeparam name="TManager"> The type of the database manager. </typeparam>
     /// <remarks>
     ///     <note type="implement">
-    ///         It is recommended that database processing step implementations use this base class as it already implements most of the database-independent logic defined by <see cref="IDbProcessingStep"/> and <see cref="IDbProcessingStep{TConnection,TTransaction,TManager}"/>.
+    ///         It is recommended that database processing step implementations use this base class as it already implements most of the database-independent logic defined by <see cref="IDbProcessingStep" /> and <see cref="IDbProcessingStep{TConnection,TTransaction,TManager}" />.
     ///     </note>
     /// </remarks>
     /// <threadsafety static="false" instance="false" />
@@ -29,13 +29,11 @@ namespace RI.DatabaseManager.Manager
     {
         #region Instance Constructor/Destructor
 
-        private ILogger Logger { get; }
-
         /// <summary>
         ///     Creates a new instance of <see cref="DbProcessingStepBase{TConnection,TTransaction,TManager}" />
         /// </summary>
-        /// <param name="logger">The used logger.</param>
-        /// <exception cref="ArgumentNullException"><paramref name="logger"/> is null.</exception>
+        /// <param name="logger"> The used logger. </param>
+        /// <exception cref="ArgumentNullException"> <paramref name="logger" /> is null. </exception>
         protected DbProcessingStepBase (ILogger logger)
         {
             if (logger == null)
@@ -52,6 +50,8 @@ namespace RI.DatabaseManager.Manager
 
 
         #region Instance Properties/Indexer
+
+        private ILogger Logger { get; }
 
         private List<Tuple<SubStepType, DbProcessingStepTransactionRequirement, object>> SubSteps { get; } = new List<Tuple<SubStepType, DbProcessingStepTransactionRequirement, object>>();
 
@@ -117,7 +117,7 @@ namespace RI.DatabaseManager.Manager
 
 
 
-        #region Interface: IDatabaseProcessingStep<TConnection,TTransaction,TConnectionStringBuilder,TManager,TConfiguration>
+        #region Interface: IDbProcessingStep<TConnection,TTransaction,TManager>
 
         /// <inheritdoc />
         public bool RequiresScriptLocator => this.SubSteps.Count == 0 ? false : this.SubSteps.Any(x => x.Item1 == SubStepType.Script);
@@ -126,7 +126,10 @@ namespace RI.DatabaseManager.Manager
         public bool RequiresTransaction => this.SubSteps.Count == 0 ? false : this.SubSteps.Any(x => x.Item2 == DbProcessingStepTransactionRequirement.Required);
 
         /// <inheritdoc />
-        public void AddBatch (string batch) => this.AddBatch(batch, DbProcessingStepTransactionRequirement.DontCare);
+        public void AddBatch (string batch)
+        {
+            this.AddBatch(batch, DbProcessingStepTransactionRequirement.DontCare);
+        }
 
         /// <inheritdoc />
         public void AddBatch (string batch, DbProcessingStepTransactionRequirement transactionRequirement)
@@ -140,7 +143,10 @@ namespace RI.DatabaseManager.Manager
         }
 
         /// <inheritdoc />
-        public void AddBatches (IEnumerable<string> batches) => this.AddBatches(batches, DbProcessingStepTransactionRequirement.DontCare);
+        public void AddBatches (IEnumerable<string> batches)
+        {
+            this.AddBatches(batches, DbProcessingStepTransactionRequirement.DontCare);
+        }
 
         /// <inheritdoc />
         public void AddBatches (IEnumerable<string> batches, DbProcessingStepTransactionRequirement transactionRequirement)
@@ -162,7 +168,10 @@ namespace RI.DatabaseManager.Manager
         }
 
         /// <inheritdoc />
-        public void AddCode (DbProcessingStepDelegate<TConnection, TTransaction, TManager> callback) => this.AddCode(callback, DbProcessingStepTransactionRequirement.DontCare);
+        public void AddCode (DbProcessingStepDelegate<TConnection, TTransaction, TManager> callback)
+        {
+            this.AddCode(callback, DbProcessingStepTransactionRequirement.DontCare);
+        }
 
         /// <inheritdoc />
         public void AddCode (DbProcessingStepDelegate<TConnection, TTransaction, TManager> callback, DbProcessingStepTransactionRequirement transactionRequirement)
@@ -176,7 +185,10 @@ namespace RI.DatabaseManager.Manager
         }
 
         /// <inheritdoc />
-        public void AddCode (DbProcessingStepDelegate callback) => this.AddCode(callback, DbProcessingStepTransactionRequirement.DontCare);
+        public void AddCode (DbProcessingStepDelegate callback)
+        {
+            this.AddCode(callback, DbProcessingStepTransactionRequirement.DontCare);
+        }
 
         /// <inheritdoc />
         public void AddCode (DbProcessingStepDelegate callback, DbProcessingStepTransactionRequirement transactionRequirement)
@@ -190,7 +202,10 @@ namespace RI.DatabaseManager.Manager
         }
 
         /// <inheritdoc />
-        public void AddScript (string scriptName) => this.AddScript(scriptName, DbProcessingStepTransactionRequirement.DontCare);
+        public void AddScript (string scriptName)
+        {
+            this.AddScript(scriptName, DbProcessingStepTransactionRequirement.DontCare);
+        }
 
         /// <inheritdoc />
         public void AddScript (string scriptName, DbProcessingStepTransactionRequirement transactionRequirement)
@@ -209,7 +224,10 @@ namespace RI.DatabaseManager.Manager
         }
 
         /// <inheritdoc />
-        void IDbProcessingStep.Execute (IDbManager manager, DbConnection connection, DbTransaction transaction) => this.Execute((TManager)manager, (TConnection)connection, (TTransaction)transaction);
+        void IDbProcessingStep.Execute (IDbManager manager, DbConnection connection, DbTransaction transaction)
+        {
+            this.Execute((TManager)manager, (TConnection)connection, (TTransaction)transaction);
+        }
 
         /// <inheritdoc />
         public void Execute (TManager manager, TConnection connection, TTransaction transaction)
@@ -245,6 +263,7 @@ namespace RI.DatabaseManager.Manager
             }
 
             List<object> subSteps = new List<object>();
+
             foreach (Tuple<SubStepType, DbProcessingStepTransactionRequirement, object> subStep in this.SubSteps)
             {
                 List<string> batches = null;
@@ -256,10 +275,12 @@ namespace RI.DatabaseManager.Manager
                     case SubStepType.Script:
                         string scriptName = (string)subStep.Item3;
                         batches = manager.GetScriptBatches(scriptName, true);
+
                         if (batches == null)
                         {
                             throw new Exception("Batch retrieval failed for script: " + scriptName);
                         }
+
                         break;
 
                     case SubStepType.Batch:

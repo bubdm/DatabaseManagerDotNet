@@ -15,7 +15,7 @@ namespace RI.DatabaseManager.Upgrading
     ///     </para>
     /// </remarks>
     /// <threadsafety static="false" instance="false" />
-    [AttributeUsage(AttributeTargets.Class, AllowMultiple = false, Inherited = false)]
+    [AttributeUsage(AttributeTargets.Class, Inherited = false),]
     public sealed class AssemblyResourceVersionUpgraderStepAttribute : Attribute
     {
         #region Instance Constructor/Destructor

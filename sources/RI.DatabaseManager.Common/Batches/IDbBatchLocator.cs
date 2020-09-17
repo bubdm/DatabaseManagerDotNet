@@ -10,10 +10,6 @@ namespace RI.DatabaseManager.Batches
     ///     Batch locator to locate and retrieve database batches and their commands.
     /// </summary>
     /// <remarks>
-    ///     <para>
-    ///         Database batch locators are used to locate, retrieve, and preprocess database batches.
-    ///         What the preprocessing does in detail depends on the implementation of <see cref="IDbBatchLocator" /> but is usually something like replacing placeholders (e.g. current date and time), etc.
-    ///     </para>
     ///     <note type="note">
     ///         <see cref="IDbBatchLocator" /> implementations are used by database managers.
     ///         Do not use <see cref="IDbBatchLocator" /> implementations directly.

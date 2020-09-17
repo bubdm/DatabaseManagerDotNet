@@ -12,7 +12,7 @@ namespace RI.DatabaseManager.Manager
     /// </summary>
     /// <remarks>
     ///     <para>
-    ///         By adding sub-steps (any of the <c>Add...</c> methods), a processing step can be heavily customized by using both application code (using delegates) and/or database scripts.
+    ///         By adding sub-steps (any of the <c> Add... </c> methods), a processing step can be heavily customized by using both application code (using delegates) and/or database scripts.
     ///     </para>
     ///     <para>
     ///         The sub-steps are executed in the order they are added.
@@ -169,7 +169,7 @@ namespace RI.DatabaseManager.Manager
         /// <param name="connection"> The used database connection. </param>
         /// <param name="transaction"> The used database transaction. Can be null if no transaction is used. </param>
         /// <exception cref="ArgumentNullException"> <paramref name="manager" /> or <paramref name="connection" /> is null. </exception>
-        /// <exception cref="InvalidOperationException">Conflicting transaction settings are used.</exception>
+        /// <exception cref="InvalidOperationException"> Conflicting transaction settings are used. </exception>
         void Execute (IDbManager manager, DbConnection connection, DbTransaction transaction);
     }
 
@@ -183,13 +183,13 @@ namespace RI.DatabaseManager.Manager
         where TTransaction : DbTransaction
         where TManager : class, IDbManager<TConnection, TTransaction, TManager>
     {
-        /// <inheritdoc cref="IDbProcessingStep.AddCode(DbProcessingStepDelegate)"/>
+        /// <inheritdoc cref="IDbProcessingStep.AddCode(DbProcessingStepDelegate)" />
         void AddCode (DbProcessingStepDelegate<TConnection, TTransaction, TManager> callback);
 
-        /// <inheritdoc cref="IDbProcessingStep.AddCode(DbProcessingStepDelegate,DbProcessingStepTransactionRequirement)"/>
+        /// <inheritdoc cref="IDbProcessingStep.AddCode(DbProcessingStepDelegate,DbProcessingStepTransactionRequirement)" />
         void AddCode (DbProcessingStepDelegate<TConnection, TTransaction, TManager> callback, DbProcessingStepTransactionRequirement transactionRequirement);
 
-        /// <inheritdoc cref="IDbProcessingStep.Execute"/>
+        /// <inheritdoc cref="IDbProcessingStep.Execute" />
         void Execute (TManager manager, TConnection connection, TTransaction transaction);
     }
 }

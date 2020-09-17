@@ -49,7 +49,7 @@ namespace RI.DatabaseManager.Manager
         ///     </note>
         /// </remarks>
         /// <exception cref="ArgumentNullException"> <paramref name="logger" />, <paramref name="batchLocator" />, or <paramref name="versionDetector" /> is null. </exception>
-        protected DbManagerBase (ILogger logger, IDbBatchLocator batchLocator, IDatabaseVersionDetector<TConnection, TTransaction> versionDetector, IDatabaseBackupCreator<TConnection, TTransaction> backupCreator, IDatabaseCleanupProcessor<TConnection, TTransaction> cleanupProcessor, IDatabaseVersionUpgrader<TConnection, TTransaction> versionUpgrader)
+        protected DbManagerBase (ILogger logger, IDbBatchLocator batchLocator, IDbVersionDetector<TConnection, TTransaction> versionDetector, IDbBackupCreator<TConnection, TTransaction> backupCreator, IDbCleanupProcessor<TConnection, TTransaction> cleanupProcessor, IDbVersionUpgrader<TConnection, TTransaction> versionUpgrader)
         {
             if (logger == null)
             {
@@ -98,17 +98,23 @@ namespace RI.DatabaseManager.Manager
 
         #region Instance Properties/Indexer
 
-        private IDatabaseBackupCreator<TConnection, TTransaction> BackupCreator { get; }
+        /// <summary>
+        ///     Gets the used logger.
+        /// </summary>
+        /// <value>
+        ///     The used logger.
+        /// </value>
+        protected ILogger Logger { get; }
+
+        private IDbBackupCreator<TConnection, TTransaction> BackupCreator { get; }
 
         private IDbBatchLocator BatchLocator { get; }
 
-        private IDatabaseCleanupProcessor<TConnection, TTransaction> CleanupProcessor { get; }
+        private IDbCleanupProcessor<TConnection, TTransaction> CleanupProcessor { get; }
 
-        private ILogger Logger { get; }
+        private IDbVersionDetector<TConnection, TTransaction> VersionDetector { get; }
 
-        private IDatabaseVersionDetector<TConnection, TTransaction> VersionDetector { get; }
-
-        private IDatabaseVersionUpgrader<TConnection, TTransaction> VersionUpgrader { get; }
+        private IDbVersionUpgrader<TConnection, TTransaction> VersionUpgrader { get; }
 
         #endregion
 
@@ -324,7 +330,7 @@ namespace RI.DatabaseManager.Manager
         /// </returns>
         /// <remarks>
         ///     <note type="implement">
-        ///         The default implementation calls <see cref="IDatabaseBackupCreator.Backup" />.
+        ///         The default implementation calls <see cref="IDbBackupCreator.Backup" />.
         ///     </note>
         /// </remarks>
         protected virtual bool BackupImpl (object backupTarget)
@@ -344,7 +350,7 @@ namespace RI.DatabaseManager.Manager
         /// </returns>
         /// <remarks>
         ///     <note type="implement">
-        ///         The default implementation calls <see cref="IDatabaseCleanupProcessor.Cleanup" />.
+        ///         The default implementation calls <see cref="IDbCleanupProcessor.Cleanup" />.
         ///     </note>
         /// </remarks>
         protected virtual bool CleanupImpl ()
@@ -380,7 +386,7 @@ namespace RI.DatabaseManager.Manager
         /// </returns>
         /// <remarks>
         ///     <note type="implement">
-        ///         The default implementation calls <see cref="IDatabaseVersionDetector.Detect" />.
+        ///         The default implementation calls <see cref="IDbVersionDetector.Detect" />.
         ///     </note>
         /// </remarks>
         protected virtual bool DetectStateAndVersionImpl (out DbState? state, out int version)
@@ -638,7 +644,7 @@ namespace RI.DatabaseManager.Manager
         /// </returns>
         /// <remarks>
         ///     <note type="implement">
-        ///         The default implementation calls <see cref="IDatabaseBackupCreator.Restore" />.
+        ///         The default implementation calls <see cref="IDbBackupCreator.Restore" />.
         ///     </note>
         /// </remarks>
         protected virtual bool RestoreImpl (object backupSource)
@@ -659,7 +665,7 @@ namespace RI.DatabaseManager.Manager
         /// </returns>
         /// <remarks>
         ///     <note type="implement">
-        ///         The default implementation calls <see cref="IDatabaseVersionUpgrader.Upgrade" />.
+        ///         The default implementation calls <see cref="IDbVersionUpgrader.Upgrade" />.
         ///     </note>
         ///     <note type="implement">
         ///         <see cref="UpgradeImpl" /> might be called multiple times for a single upgrade operation as the upgrading is performed incrementally, calling <see cref="UpgradeImpl" /> once for each version increment.

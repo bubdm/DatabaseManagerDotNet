@@ -194,11 +194,11 @@ namespace RI.DatabaseManager.Builder
             Type transaction = genericArguments[1];
 
             Type manager = typeof(IDbManager<,>).MakeGenericType(genericArguments);
-            Type versionDetector = typeof(IDatabaseVersionDetector<,>).MakeGenericType(genericArguments);
+            Type versionDetector = typeof(IDbVersionDetector<,>).MakeGenericType(genericArguments);
 
-            Type backupCreator = typeof(IDatabaseBackupCreator<,>).MakeGenericType(genericArguments);
-            Type cleanupProcessor = typeof(IDatabaseCleanupProcessor<,>).MakeGenericType(genericArguments);
-            Type versionUpgrader = typeof(IDatabaseVersionUpgrader<,>).MakeGenericType(genericArguments);
+            Type backupCreator = typeof(IDbBackupCreator<,>).MakeGenericType(genericArguments);
+            Type cleanupProcessor = typeof(IDbCleanupProcessor<,>).MakeGenericType(genericArguments);
+            Type versionUpgrader = typeof(IDbVersionUpgrader<,>).MakeGenericType(genericArguments);
 
             Type scriptLocator = typeof(IDbScriptLocator);
 

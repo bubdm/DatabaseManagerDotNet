@@ -21,7 +21,7 @@ namespace RI.DatabaseManager.Upgrading
     ///     </para>
     /// </remarks>
     /// <threadsafety static="false" instance="false" />
-    public sealed class SqlServerDatabaseVersionUpgrader : DatabaseVersionUpgrader<SqlConnection, SqlTransaction, SqlConnectionStringBuilder, SqlServerDatabaseManager, SqlServerDatabaseManagerConfiguration>
+    public sealed class SqlServerDatabaseVersionUpgrader : DbVersionUpgraderBase<,,>
     {
         #region Instance Constructor/Destructor
 

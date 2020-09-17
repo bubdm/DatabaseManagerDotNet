@@ -21,7 +21,7 @@ namespace RI.DatabaseManager.Cleanup
     ///     </para>
     /// </remarks>
     /// <threadsafety static="false" instance="false" />
-    public sealed class SqlServerDatabaseCleanupProcessor : DatabaseCleanupProcessor<SqlConnection, SqlTransaction, SqlConnectionStringBuilder, SqlServerDatabaseManager, SqlServerDatabaseManagerConfiguration>
+    public sealed class SqlServerDatabaseCleanupProcessor : DbCleanupProcessorBase<SqlConnection, SqlTransaction, SqlConnectionStringBuilder, SqlServerDatabaseManager, SqlServerDatabaseManagerConfiguration>
     {
         #region Constants
 
