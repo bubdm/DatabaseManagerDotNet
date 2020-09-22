@@ -1,8 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Data.Common;
-
-using RI.Abstractions.Logging;
+using System.IO;
+using System.Reflection;
+using System.Text;
 
 
 
@@ -44,9 +45,7 @@ namespace RI.DatabaseManager.Batches.Locators
         /// <summary>
         ///     Creates a new instance of <see cref="DictionaryBatchLocator" />.
         /// </summary>
-        /// <param name="logger"> The used logger. </param>
-        /// <exception cref="ArgumentNullException"> <paramref name="logger" /> is null. </exception>
-        public DictionaryBatchLocator (ILogger logger) : base(logger)
+        public DictionaryBatchLocator ()
         {
             this.Scripts = new Dictionary<string, string>(this.DefaultNameComparer);
             this.Callbacks = new Dictionary<string, Func<DbConnection, DbTransaction, object>>(this.DefaultNameComparer);
@@ -149,6 +148,238 @@ namespace RI.DatabaseManager.Batches.Locators
             return names;
         }
 
+        /// <inheritdoc />
+        public override bool SupportsScripts => true;
+
+        /// <inheritdoc />
+        public override bool SupportsCallbacks => true;
+
         #endregion
+
+        /// <summary>
+        ///     Adds a code callback as a single batch.
+        /// </summary>
+        /// <param name="batchName"> The name of the batch. </param>
+        /// <param name="callback"> The callback. </param>
+        /// <param name="transactionRequirement"> The optional transaction requirement specification. Default values is <see cref="DbBatchTransactionRequirement.DontCare" />. </param>
+        /// <exception cref="ArgumentNullException"> <paramref name="batchName" /> or <paramref name="callback"/> is null. </exception>
+        /// <exception cref="ArgumentException"> <paramref name="batchName" /> is an empty string. </exception>
+        public void AddCode<TConnection, TTransaction>(string batchName, Func<TConnection, TTransaction, object> callback, DbBatchTransactionRequirement transactionRequirement = DbBatchTransactionRequirement.DontCare)
+            where TConnection : DbConnection
+            where TTransaction : DbTransaction
+        {
+            if (batchName == null)
+            {
+                throw new ArgumentNullException(nameof(batchName));
+            }
+
+            if (string.IsNullOrWhiteSpace(batchName))
+            {
+                throw new ArgumentException("The string argument is empty.", nameof(batchName));
+            }
+
+            if (callback == null)
+            {
+                throw new ArgumentNullException(nameof(callback));
+            }
+
+            this.Callbacks.Add(batchName, (connection, transaction) => callback((TConnection)connection, (TTransaction)transaction));
+            this.TransactionRequirements.Add(batchName, transactionRequirement);
+        }
+
+        /// <summary>
+        ///     Adds a code callback as a single batch.
+        /// </summary>
+        /// <param name="batchName"> The name of the batch. </param>
+        /// <param name="callback"> The callback. </param>
+        /// <param name="transactionRequirement"> The optional transaction requirement specification. Default values is <see cref="DbBatchTransactionRequirement.DontCare" />. </param>
+        /// <exception cref="ArgumentNullException"> <paramref name="batchName" /> or <paramref name="callback"/> is null. </exception>
+        /// <exception cref="ArgumentException"> <paramref name="batchName" /> is an empty string. </exception>
+        public void AddCode(string batchName, Func<DbConnection, DbTransaction, object> callback, DbBatchTransactionRequirement transactionRequirement = DbBatchTransactionRequirement.DontCare)
+        {
+            if (batchName == null)
+            {
+                throw new ArgumentNullException(nameof(batchName));
+            }
+
+            if (string.IsNullOrWhiteSpace(batchName))
+            {
+                throw new ArgumentException("The string argument is empty.", nameof(batchName));
+            }
+
+            if (callback == null)
+            {
+                throw new ArgumentNullException(nameof(callback));
+            }
+
+            this.Callbacks.Add(batchName, callback);
+            this.TransactionRequirements.Add(batchName, transactionRequirement);
+        }
+
+        /// <summary>
+        ///     Adds a database script as a single batch.
+        /// </summary>
+        /// <param name="batchName"> The name of the batch. </param>
+        /// <param name="script"> The script. </param>
+        /// <param name="transactionRequirement"> The optional transaction requirement specification. Default values is <see cref="DbBatchTransactionRequirement.DontCare" />. </param>
+        /// <exception cref="ArgumentNullException"> <paramref name="batchName" /> is null. </exception>
+        /// <exception cref="ArgumentException"> <paramref name="batchName" /> is an empty string. </exception>
+        public void AddScript(string batchName, string script, DbBatchTransactionRequirement transactionRequirement = DbBatchTransactionRequirement.DontCare)
+        {
+            if (batchName == null)
+            {
+                throw new ArgumentNullException(nameof(batchName));
+            }
+
+            if (string.IsNullOrWhiteSpace(batchName))
+            {
+                throw new ArgumentException("The string argument is empty.", nameof(batchName));
+            }
+
+            script ??= string.Empty;
+
+            this.Scripts.Add(batchName, script);
+            this.TransactionRequirements.Add(batchName, transactionRequirement);
+        }
+
+        /// <summary>
+        /// Adds a database script as a single batch.
+        /// </summary>
+        /// <param name="batchName"> The name of the batch. </param>
+        /// <param name="reader"> The text reader from which the script is read. </param>
+        /// <param name="transactionRequirement"> The optional transaction requirement specification. Default values is <see cref="DbBatchTransactionRequirement.DontCare" />. </param>
+        /// <exception cref="ArgumentNullException"> <paramref name="batchName" /> or <paramref name="reader"/> is null. </exception>
+        /// <exception cref="ArgumentException"> <paramref name="batchName" /> is an empty string. </exception>
+        public void AddScriptFromReader(string batchName, TextReader reader, DbBatchTransactionRequirement transactionRequirement = DbBatchTransactionRequirement.DontCare)
+        {
+            if (batchName == null)
+            {
+                throw new ArgumentNullException(nameof(batchName));
+            }
+
+            if (string.IsNullOrWhiteSpace(batchName))
+            {
+                throw new ArgumentException("The string argument is empty.", nameof(batchName));
+            }
+
+            if (reader == null)
+            {
+                throw new ArgumentNullException(nameof(reader));
+            }
+
+            this.AddScript(batchName, reader.ReadToEnd(), transactionRequirement);
+        }
+
+        /// <summary>
+        /// Adds a database script as a single batch.
+        /// </summary>
+        /// <param name="batchName"> The name of the batch. </param>
+        /// <param name="stream"> The stream from which the script is read. </param>
+        /// <param name="encoding"> The optional encoding to read the script. Default value is null, using <see cref="Encoding.UTF8"/>. </param>
+        /// <param name="transactionRequirement"> The optional transaction requirement specification. Default values is <see cref="DbBatchTransactionRequirement.DontCare" />. </param>
+        /// <exception cref="ArgumentNullException"> <paramref name="batchName" /> or <paramref name="stream"/> is null. </exception>
+        /// <exception cref="ArgumentException"><paramref name="batchName" /> is an empty string or <paramref name="stream"/> is not readable.</exception>
+        public void AddScriptFromStream(string batchName, Stream stream, Encoding encoding = null, DbBatchTransactionRequirement transactionRequirement = DbBatchTransactionRequirement.DontCare)
+        {
+            if (batchName == null)
+            {
+                throw new ArgumentNullException(nameof(batchName));
+            }
+
+            if (string.IsNullOrWhiteSpace(batchName))
+            {
+                throw new ArgumentException("The string argument is empty.", nameof(batchName));
+            }
+
+            if (stream == null)
+            {
+                throw new ArgumentNullException(nameof(stream));
+            }
+
+            if (!stream.CanRead)
+            {
+                throw new ArgumentException("Stream to read script is not readable.", nameof(stream));
+            }
+
+            using (StreamReader sr = new StreamReader(stream, encoding ?? Encoding.UTF8))
+            {
+                this.AddScriptFromReader(batchName, sr, transactionRequirement);
+            }
+        }
+
+        /// <summary>
+        /// Adds a database script as a single batch.
+        /// </summary>
+        /// <param name="batchName"> The name of the batch. </param>
+        /// <param name="file"> The file from which the script is read. </param>
+        /// <param name="encoding"> The optional encoding to read the script. Default value is null, using <see cref="Encoding.UTF8"/>. </param>
+        /// <param name="transactionRequirement"> The optional transaction requirement specification. Default values is <see cref="DbBatchTransactionRequirement.DontCare" />. </param>
+        /// <exception cref="ArgumentNullException"> <paramref name="batchName" /> or <paramref name="file"/> is null. </exception>
+        /// <exception cref="ArgumentException"> <paramref name="batchName" /> is an empty string. </exception>
+        public void AddScriptFromFile(string batchName, string file, Encoding encoding = null, DbBatchTransactionRequirement transactionRequirement = DbBatchTransactionRequirement.DontCare)
+        {
+            if (batchName == null)
+            {
+                throw new ArgumentNullException(nameof(batchName));
+            }
+
+            if (string.IsNullOrWhiteSpace(batchName))
+            {
+                throw new ArgumentException("The string argument is empty.", nameof(batchName));
+            }
+
+            if (file == null)
+            {
+                throw new ArgumentNullException(nameof(file));
+            }
+
+            using (FileStream fs = new FileStream(file, FileMode.Open, FileAccess.Read, FileShare.Read))
+            {
+                this.AddScriptFromStream(batchName, fs, encoding, transactionRequirement);
+            }
+        }
+
+        /// <summary>
+        /// Adds a database script as a single batch.
+        /// </summary>
+        /// <param name="batchName"> The name of the batch. </param>
+        /// <param name="assembly"> The assembly which contains the resource named by <paramref name="name"/>. </param>
+        /// <param name="name"> The embedded assembly resource name of the script. </param>
+        /// <param name="encoding"> The optional encoding to read the script. Default value is null, using <see cref="Encoding.UTF8"/>. </param>
+        /// <param name="transactionRequirement"> The optional transaction requirement specification. Default values is <see cref="DbBatchTransactionRequirement.DontCare" />. </param>
+        /// <exception cref="ArgumentNullException"> <paramref name="batchName" />, <paramref name="assembly"/>, or <paramref name="name"/> is null. </exception>
+        /// <exception cref="ArgumentException"><paramref name="batchName"/> or <paramref name="name"/> is an empty string.</exception>
+        public void AddScriptFromAssemblyResource(string batchName, Assembly assembly, string name, Encoding encoding = null, DbBatchTransactionRequirement transactionRequirement = DbBatchTransactionRequirement.DontCare)
+        {
+            if (batchName == null)
+            {
+                throw new ArgumentNullException(nameof(batchName));
+            }
+
+            if (string.IsNullOrWhiteSpace(batchName))
+            {
+                throw new ArgumentException("The string argument is empty.", nameof(batchName));
+            }
+
+            if (assembly == null)
+            {
+                throw new ArgumentNullException(nameof(assembly));
+            }
+
+            if (name == null)
+            {
+                throw new ArgumentNullException(nameof(name));
+            }
+
+            if (string.IsNullOrWhiteSpace(name))
+            {
+                throw new ArgumentException("The string argument is empty.", nameof(name));
+            }
+
+            using (Stream stream = assembly.GetManifestResourceStream(name))
+            {
+                this.AddScriptFromStream(batchName, stream, encoding, transactionRequirement);
+            }
+        }
     }
 }

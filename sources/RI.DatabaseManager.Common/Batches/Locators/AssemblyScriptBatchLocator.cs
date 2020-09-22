@@ -5,8 +5,6 @@ using System.Reflection;
 using System.Text;
 using System.Text.RegularExpressions;
 
-using RI.Abstractions.Logging;
-
 
 
 
@@ -43,23 +41,19 @@ namespace RI.DatabaseManager.Batches.Locators
         /// <summary>
         ///     Creates a new instance of <see cref="AssemblyScriptBatchLocator" />.
         /// </summary>
-        /// <param name="logger"> The used logger. </param>
-        /// <exception cref="ArgumentNullException"> <paramref name="logger" /> is null. </exception>
-        public AssemblyScriptBatchLocator (ILogger logger)
-            : this(logger, (IEnumerable<Assembly>)null) { }
+        public AssemblyScriptBatchLocator ()
+            : this((IEnumerable<Assembly>)null) { }
 
         /// <summary>
         ///     Creates a new instance of <see cref="AssemblyScriptBatchLocator" />.
         /// </summary>
-        /// <param name="logger"> The used logger. </param>
         /// <param name="assemblies"> The sequence of assemblies. </param>
         /// <remarks>
         ///     <para>
         ///         <paramref name="assemblies" /> is enumerated only once.
         ///     </para>
         /// </remarks>
-        /// <exception cref="ArgumentNullException"> <paramref name="logger" /> is null. </exception>
-        public AssemblyScriptBatchLocator (ILogger logger, IEnumerable<Assembly> assemblies) : base(logger)
+        public AssemblyScriptBatchLocator (IEnumerable<Assembly> assemblies)
         {
             this.NameFormat = @"(?<name>^.+?)([\.]+[^.]*)(sql$)";
             this.Encoding = Encoding.UTF8;
@@ -74,11 +68,9 @@ namespace RI.DatabaseManager.Batches.Locators
         /// <summary>
         ///     Creates a new instance of <see cref="AssemblyScriptBatchLocator" />.
         /// </summary>
-        /// <param name="logger"> The used logger. </param>
         /// <param name="assemblies"> The array of assemblies. </param>
-        /// <exception cref="ArgumentNullException"> <paramref name="logger" /> is null. </exception>
-        public AssemblyScriptBatchLocator (ILogger logger, params Assembly[] assemblies)
-            : this(logger, (IEnumerable<Assembly>)assemblies) { }
+        public AssemblyScriptBatchLocator (params Assembly[] assemblies)
+            : this((IEnumerable<Assembly>)assemblies) { }
 
         #endregion
 
@@ -219,9 +211,6 @@ namespace RI.DatabaseManager.Batches.Locators
                         {
                             if (s == null)
                             {
-                                this.Logger.LogError(this.GetType()
-                                                         .Name, null, $"Failed to read batch \"{name}\" as resource \"{resource}\" from assembly: {assembly.FullName}");
-
                                 continue;
                             }
 
@@ -273,6 +262,12 @@ namespace RI.DatabaseManager.Batches.Locators
 
             return names;
         }
+
+        /// <inheritdoc />
+        public override bool SupportsScripts => true;
+
+        /// <inheritdoc />
+        public override bool SupportsCallbacks => false;
 
         #endregion
     }

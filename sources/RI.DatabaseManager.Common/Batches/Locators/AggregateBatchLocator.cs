@@ -2,8 +2,6 @@
 using System.Collections;
 using System.Collections.Generic;
 
-using RI.Abstractions.Logging;
-
 
 
 
@@ -26,24 +24,19 @@ namespace RI.DatabaseManager.Batches.Locators
         /// <summary>
         ///     Creates a new instance of <see cref="AggregateBatchLocator" />.
         /// </summary>
-        /// <param name="logger"> The used logger. </param>
-        /// <exception cref="ArgumentNullException"> <paramref name="logger" /> is null. </exception>
-        public AggregateBatchLocator (ILogger logger)
-            : this(logger, (IEnumerable<IDbBatchLocator>)null) { }
+        public AggregateBatchLocator ()
+            : this((IEnumerable<IDbBatchLocator>)null) { }
 
         /// <summary>
         ///     Creates a new instance of <see cref="AggregateBatchLocator" />.
         /// </summary>
-        /// <param name="logger"> The used logger. </param>
         /// <param name="batchLocators"> The sequence of batch locators which are aggregated. </param>
         /// <remarks>
         ///     <para>
         ///         <paramref name="batchLocators" /> is enumerated only once.
         ///     </para>
         /// </remarks>
-        /// <exception cref="ArgumentNullException"> <paramref name="logger" /> is null. </exception>
-        public AggregateBatchLocator (ILogger logger, IEnumerable<IDbBatchLocator> batchLocators)
-            : base(logger)
+        public AggregateBatchLocator (IEnumerable<IDbBatchLocator> batchLocators)
         {
             this.BatchLocators = new List<IDbBatchLocator>();
 
@@ -59,11 +52,9 @@ namespace RI.DatabaseManager.Batches.Locators
         /// <summary>
         ///     Creates a new instance of <see cref="AggregateBatchLocator" />.
         /// </summary>
-        /// <param name="logger"> The used logger. </param>
         /// <param name="batchLocators"> The array of batch locators which are aggregated. </param>
-        /// <exception cref="ArgumentNullException"> <paramref name="logger" /> is null. </exception>
-        public AggregateBatchLocator (ILogger logger, params IDbBatchLocator[] batchLocators)
-            : this(logger, (IEnumerable<IDbBatchLocator>)batchLocators) { }
+        public AggregateBatchLocator (params IDbBatchLocator[] batchLocators)
+            : this((IEnumerable<IDbBatchLocator>)batchLocators) { }
 
         #endregion
 
@@ -82,7 +73,10 @@ namespace RI.DatabaseManager.Batches.Locators
         #region Overrides
 
         /// <inheritdoc />
-        protected override string DefaultCommandSeparator => null;
+        public override bool SupportsScripts => false;
+
+        /// <inheritdoc />
+        public override bool SupportsCallbacks => false;
 
         /// <inheritdoc />
         protected override bool FillBatch (IDbBatch batch, string name, string commandSeparator)

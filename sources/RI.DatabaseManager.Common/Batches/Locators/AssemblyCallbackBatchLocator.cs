@@ -5,8 +5,6 @@ using System.Data.Common;
 using System.Linq;
 using System.Reflection;
 
-using RI.Abstractions.Logging;
-
 
 
 
@@ -36,23 +34,19 @@ namespace RI.DatabaseManager.Batches.Locators
         /// <summary>
         ///     Creates a new instance of <see cref="AssemblyCallbackBatchLocator" />.
         /// </summary>
-        /// <param name="logger"> The used logger. </param>
-        /// <exception cref="ArgumentNullException"> <paramref name="logger" /> is null. </exception>
-        public AssemblyCallbackBatchLocator (ILogger logger)
-            : this(logger, (IEnumerable<Assembly>)null) { }
+        public AssemblyCallbackBatchLocator ()
+            : this((IEnumerable<Assembly>)null) { }
 
         /// <summary>
         ///     Creates a new instance of <see cref="AssemblyCallbackBatchLocator" />.
         /// </summary>
-        /// <param name="logger"> The used logger. </param>
         /// <param name="assemblies"> The sequence of assemblies. </param>
         /// <remarks>
         ///     <para>
         ///         <paramref name="assemblies" /> is enumerated only once.
         ///     </para>
         /// </remarks>
-        /// <exception cref="ArgumentNullException"> <paramref name="logger" /> is null. </exception>
-        public AssemblyCallbackBatchLocator (ILogger logger, IEnumerable<Assembly> assemblies) : base(logger)
+        public AssemblyCallbackBatchLocator (IEnumerable<Assembly> assemblies)
         {
             this.Assemblies = new List<Assembly>();
 
@@ -65,11 +59,9 @@ namespace RI.DatabaseManager.Batches.Locators
         /// <summary>
         ///     Creates a new instance of <see cref="AssemblyCallbackBatchLocator" />.
         /// </summary>
-        /// <param name="logger"> The used logger. </param>
         /// <param name="assemblies"> The array of assemblies. </param>
-        /// <exception cref="ArgumentNullException"> <paramref name="logger" /> is null. </exception>
-        public AssemblyCallbackBatchLocator (ILogger logger, params Assembly[] assemblies)
-            : this(logger, (IEnumerable<Assembly>)assemblies) { }
+        public AssemblyCallbackBatchLocator (params Assembly[] assemblies)
+            : this((IEnumerable<Assembly>)assemblies) { }
 
         #endregion
 
@@ -157,6 +149,12 @@ namespace RI.DatabaseManager.Batches.Locators
 
             return callbackTypes.Select(x => x.Name);
         }
+
+        /// <inheritdoc />
+        public override bool SupportsScripts => false;
+
+        /// <inheritdoc />
+        public override bool SupportsCallbacks => true;
 
         #endregion
 

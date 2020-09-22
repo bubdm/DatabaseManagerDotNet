@@ -4,9 +4,9 @@ using System.Data.Common;
 
 using RI.Abstractions.Composition;
 using RI.DatabaseManager.Backup;
+using RI.DatabaseManager.Batches;
 using RI.DatabaseManager.Cleanup;
 using RI.DatabaseManager.Manager;
-using RI.DatabaseManager.Scripts;
 using RI.DatabaseManager.Upgrading;
 
 
@@ -81,32 +81,16 @@ namespace RI.DatabaseManager.Builder
         #region Type: NullInstance
 
         /// <summary>
-        ///     Null object used if no registration for <see cref="IDbBackupCreator{TConnection,TTransaction}" />, <see cref="IDbCleanupProcessor{TConnection,TTransaction}" />, <see cref="IDbVersionUpgrader{TConnection,TTransaction}" />, or <see cref="IDbScriptLocator" /> is provided.
+        ///     Null object used if no registration for <see cref="IDbBackupCreator{TConnection,TTransaction}" />, <see cref="IDbCleanupProcessor{TConnection,TTransaction}" />, <see cref="IDbVersionUpgrader{TConnection,TTransaction}" />, or <see cref="IDbBatchLocator" /> is provided.
         /// </summary>
         /// <threadsafety static="false" instance="false" />
-        public sealed class NullInstance <TConnection, TTransaction> : IDbBackupCreator<TConnection, TTransaction>, IDbCleanupProcessor<TConnection, TTransaction>, IDbVersionUpgrader<TConnection, TTransaction>
+        public sealed class NullInstance <TConnection, TTransaction> : IDbBackupCreator<TConnection, TTransaction>, IDbCleanupProcessor<TConnection, TTransaction>, IDbVersionUpgrader<TConnection, TTransaction>, IDbBatchLocator
             where TConnection : DbConnection
             where TTransaction : DbTransaction
         {
             #region Instance Constructor/Destructor
 
             internal NullInstance () { }
-
-            #endregion
-
-
-
-
-            #region Instance Properties/Indexer
-
-            /// <inheritdoc />
-            bool IDbBackupCreator.RequiresScriptLocator => throw new NotImplementedException();
-
-            /// <inheritdoc />
-            bool IDbCleanupProcessor.RequiresScriptLocator => throw new NotImplementedException();
-
-            /// <inheritdoc />
-            bool IDbVersionUpgrader.RequiresScriptLocator => throw new NotImplementedException();
 
             #endregion
 
@@ -208,6 +192,21 @@ namespace RI.DatabaseManager.Builder
             }
 
             #endregion
+
+
+
+
+            /// <inheritdoc />
+            IDbBatch IDbBatchLocator.GetBatch(string name, string commandSeparator)
+            {
+                throw new NotImplementedException();
+            }
+
+            /// <inheritdoc />
+            ISet<string> IDbBatchLocator.GetNames()
+            {
+                throw new NotImplementedException();
+            }
         }
 
         #endregion

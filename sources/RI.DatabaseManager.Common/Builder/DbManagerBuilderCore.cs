@@ -28,7 +28,9 @@ namespace RI.DatabaseManager.Builder
         {
             base.PrepareRegistrations(logger);
 
-            (Type connection, Type transaction, Type manager, Type versionDetector, Type backupCreator, Type cleanupProcessor, Type versionUpgrader, Type scriptLocator) = this.DetectDbManagerTypes();
+            this.MergeBatchLocators();
+
+            (Type connection, Type transaction, Type manager, Type versionDetector, Type backupCreator, Type cleanupProcessor, Type versionUpgrader, Type batchLocator) = this.DetectDbManagerTypes();
 
             this.ThrowIfNotExactContractCount(manager, 1);
             this.ThrowIfNotExactContractCount(versionDetector, 1);
@@ -39,17 +41,17 @@ namespace RI.DatabaseManager.Builder
             this.ThrowIfNotMaxContractCount(backupCreator, 1);
             this.ThrowIfNotMaxContractCount(cleanupProcessor, 1);
             this.ThrowIfNotMaxContractCount(versionUpgrader, 1);
-            this.ThrowIfNotMaxContractCount(scriptLocator, 1);
+            this.ThrowIfNotMaxContractCount(batchLocator, 1);
 
             this.AddDefaultSingleton(backupCreator, this.CreateNullInstance(connection, transaction));
             this.AddDefaultSingleton(cleanupProcessor, this.CreateNullInstance(connection, transaction));
             this.AddDefaultSingleton(versionUpgrader, this.CreateNullInstance(connection, transaction));
-            this.AddDefaultSingleton(scriptLocator, this.CreateNullInstance(connection, transaction));
+            this.AddDefaultSingleton(batchLocator, this.CreateNullInstance(connection, transaction));
 
             this.ThrowIfTemporary(backupCreator);
             this.ThrowIfTemporary(cleanupProcessor);
             this.ThrowIfTemporary(versionUpgrader);
-            this.ThrowIfTemporary(scriptLocator);
+            this.ThrowIfTemporary(batchLocator);
         }
 
         #endregion

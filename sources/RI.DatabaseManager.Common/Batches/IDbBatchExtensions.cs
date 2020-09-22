@@ -21,7 +21,7 @@ namespace RI.DatabaseManager.Batches
         #region Static Methods
 
         /// <summary>
-        ///     Adds a code callback to the batch.
+        ///     Adds a code callback to the batch as a single command.
         /// </summary>
         /// <param name="batch"> The batch. </param>
         /// <param name="callback"> The callback. </param>
@@ -49,7 +49,7 @@ namespace RI.DatabaseManager.Batches
         }
 
         /// <summary>
-        ///     Adds a code callback to the batch.
+        ///     Adds a code callback to the batch as a single command.
         /// </summary>
         /// <param name="batch"> The batch. </param>
         /// <param name="callback"> The callback. </param>
@@ -75,7 +75,7 @@ namespace RI.DatabaseManager.Batches
         }
 
         /// <summary>
-        ///     Adds a database script to the batch.
+        ///     Adds a database script to the batch as a single command.
         /// </summary>
         /// <param name="batch"> The batch. </param>
         /// <param name="script"> The script. </param>
@@ -100,29 +100,134 @@ namespace RI.DatabaseManager.Batches
             return batch.Commands.Count - 1;
         }
 
+        /// <summary>
+        /// Adds a database script to the batch as a single command.
+        /// </summary>
+        /// <param name="batch"> The batch. </param>
+        /// <param name="reader"> The text reader from which the script is read. </param>
+        /// <param name="transactionRequirement"> The optional transaction requirement specification. Default values is <see cref="DbBatchTransactionRequirement.DontCare" />. </param>
+        /// <returns>
+        ///     The index in the list of commands the script was added.
+        /// </returns>
+        /// <exception cref="ArgumentNullException"> <paramref name="batch" /> or <paramref name="reader"/> is null. </exception>
         public static int AddScriptFromReader (this IDbBatch batch, TextReader reader, DbBatchTransactionRequirement transactionRequirement = DbBatchTransactionRequirement.DontCare)
         {
-            //TODO: Implement
+            if (batch == null)
+            {
+                throw new ArgumentNullException(nameof(batch));
+            }
+
+            if (reader == null)
+            {
+                throw new ArgumentNullException(nameof(reader));
+            }
+
+            return batch.AddScript(reader.ReadToEnd(), transactionRequirement);
         }
 
+        /// <summary>
+        /// Adds a database script to the batch as a single command.
+        /// </summary>
+        /// <param name="batch"> The batch. </param>
+        /// <param name="stream"> The stream from which the script is read. </param>
+        /// <param name="encoding"> The optional encoding to read the script. Default value is null, using <see cref="Encoding.UTF8"/>. </param>
+        /// <param name="transactionRequirement"> The optional transaction requirement specification. Default values is <see cref="DbBatchTransactionRequirement.DontCare" />. </param>
+        /// <returns>
+        ///     The index in the list of commands the script was added.
+        /// </returns>
+        /// <exception cref="ArgumentNullException"> <paramref name="batch" /> or <paramref name="stream"/> is null. </exception>
+        /// <exception cref="ArgumentException"><paramref name="stream"/> is not readable.</exception>
         public static int AddScriptFromStream (this IDbBatch batch, Stream stream, Encoding encoding = null, DbBatchTransactionRequirement transactionRequirement = DbBatchTransactionRequirement.DontCare)
         {
-            //TODO: Implement
+            if (batch == null)
+            {
+                throw new ArgumentNullException(nameof(batch));
+            }
+
+            if (stream == null)
+            {
+                throw new ArgumentNullException(nameof(stream));
+            }
+
+            if (!stream.CanRead)
+            {
+                throw new ArgumentException("Stream to read script is not readable.", nameof(stream));
+            }
+
+            using (StreamReader sr = new StreamReader(stream, encoding ?? Encoding.UTF8))
+            {
+                return batch.AddScriptFromReader(sr, transactionRequirement);
+            }
         }
 
+        /// <summary>
+        /// Adds a database script to the batch as a single command.
+        /// </summary>
+        /// <param name="batch"> The batch. </param>
+        /// <param name="file"> The file from which the script is read. </param>
+        /// <param name="encoding"> The optional encoding to read the script. Default value is null, using <see cref="Encoding.UTF8"/>. </param>
+        /// <param name="transactionRequirement"> The optional transaction requirement specification. Default values is <see cref="DbBatchTransactionRequirement.DontCare" />. </param>
+        /// <returns>
+        ///     The index in the list of commands the script was added.
+        /// </returns>
+        /// <exception cref="ArgumentNullException"> <paramref name="batch" /> or <paramref name="file"/> is null. </exception>
         public static int AddScriptFromFile (this IDbBatch batch, string file, Encoding encoding = null, DbBatchTransactionRequirement transactionRequirement = DbBatchTransactionRequirement.DontCare)
         {
-            //TODO: Implement
+            if (batch == null)
+            {
+                throw new ArgumentNullException(nameof(batch));
+            }
+
+            if (file == null)
+            {
+                throw new ArgumentNullException(nameof(file));
+            }
+
+            using (FileStream fs = new FileStream(file, FileMode.Open, FileAccess.Read, FileShare.Read))
+            {
+                return batch.AddScriptFromStream(fs, encoding, transactionRequirement);
+            }
         }
 
-        public static int AddScriptFromAssemblyResource (this IDbBatch batch, Assembly assembly, Encoding encoding = null, DbBatchTransactionRequirement transactionRequirement = DbBatchTransactionRequirement.DontCare)
+        /// <summary>
+        /// Adds a database script to the batch as a single command.
+        /// </summary>
+        /// <param name="batch"> The batch. </param>
+        /// <param name="assembly"> The assembly which contains the resource named by <paramref name="name"/>. </param>
+        /// <param name="name"> The embedded assembly resource name of the script. </param>
+        /// <param name="encoding"> The optional encoding to read the script. Default value is null, using <see cref="Encoding.UTF8"/>. </param>
+        /// <param name="transactionRequirement"> The optional transaction requirement specification. Default values is <see cref="DbBatchTransactionRequirement.DontCare" />. </param>
+        /// <returns>
+        ///     The index in the list of commands the script was added.
+        /// </returns>
+        /// <exception cref="ArgumentNullException"> <paramref name="batch" />, <paramref name="assembly"/>, or <paramref name="name"/> is null. </exception>
+        /// <exception cref="ArgumentException"><paramref name="name"/> is an empty string.</exception>
+        public static int AddScriptFromAssemblyResource (this IDbBatch batch, Assembly assembly, string name, Encoding encoding = null, DbBatchTransactionRequirement transactionRequirement = DbBatchTransactionRequirement.DontCare)
         {
-            //TODO: Implement
-        }
+            if (batch == null)
+            {
+                throw new ArgumentNullException(nameof(batch));
+            }
 
-        public static int AddCode (this IDbBatch batch, Type callbackImplementation, DbBatchTransactionRequirement transactionRequirement = DbBatchTransactionRequirement.DontCare)
-        {
-            //TODO: Implement
+            if (assembly == null)
+            {
+                throw new ArgumentNullException(nameof(assembly));
+            }
+
+            if (name == null)
+            {
+                throw new ArgumentNullException(nameof(name));
+            }
+
+            if (string.IsNullOrWhiteSpace(name))
+            {
+                throw new ArgumentException("The string argument is empty.", nameof(name));
+            }
+
+            using (Stream stream = assembly.GetManifestResourceStream(name))
+            {
+                return batch.AddScriptFromStream(stream, encoding, transactionRequirement);
+            }
         }
 
         /// <summary>

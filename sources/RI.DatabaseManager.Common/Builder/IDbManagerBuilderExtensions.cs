@@ -1,12 +1,15 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Data.Common;
+using System.Linq;
 using System.Reflection;
+using System.Text;
 
 using RI.Abstractions.Builder;
 using RI.Abstractions.Composition;
-using RI.Abstractions.Logging;
 using RI.DatabaseManager.Backup;
+using RI.DatabaseManager.Batches;
+using RI.DatabaseManager.Batches.Locators;
 using RI.DatabaseManager.Cleanup;
 using RI.DatabaseManager.Manager;
 using RI.DatabaseManager.Scripts;
@@ -35,6 +38,7 @@ namespace RI.DatabaseManager.Builder
         /// <typeparam name="TManager"> The type of the database manager. </typeparam>
         /// <param name="builder"> The used database manager builder. </param>
         /// <returns> The built database manager instance. </returns>
+        /// <exception cref="ArgumentNullException"><paramref name="builder"/> is null.</exception>
         /// <exception cref="InvalidOperationException"> This builder has already been used to build the database manager. </exception>
         /// <exception cref="BuilderException"> Configuration or registration of objects/services failed. </exception>
         public static TManager BuildDbManager <TBuilder, TConnection, TTransaction, TManager> (this TBuilder builder)
@@ -79,36 +83,57 @@ namespace RI.DatabaseManager.Builder
         }
 
         /// <summary>
-        ///     Adds multiple database script locators.
+        /// Uses a specified batch locator to locate batches.
         /// </summary>
-        /// <param name="builder"> The builder being configured. </param>
-        /// <param name="scriptLocators"> The array of database script locators. </param>
-        /// <returns> The builder being configured. </returns>
-        /// <exception cref="ArgumentNullException"> <paramref name="builder" /> or <paramref name="scriptLocators" /> is null. </exception>
-        /// TODO: Remove/change
-        public static IDbManagerBuilder UseScripts (this IDbManagerBuilder builder, params IDbScriptLocator[] scriptLocators)
+        /// <typeparam name="TBuilder"> The type of the used database manager builder. </typeparam>
+        /// <param name="builder"> The used database manager builder. </param>
+        /// <param name="locator"></param>
+        /// <returns>
+        /// The used database manager builder.
+        /// </returns>
+        /// <exception cref="ArgumentNullException"><paramref name="builder"/> or <paramref name="locator"/> is null.</exception>
+        /// <exception cref="InvalidOperationException"> This builder has already been used to build the database manager. </exception>
+        public static TBuilder UseBatchLocator <TBuilder> (this TBuilder builder, IDbBatchLocator locator)
+            where TBuilder : IDbManagerBuilder
         {
             if (builder == null)
             {
                 throw new ArgumentNullException(nameof(builder));
             }
 
-            scriptLocators ??= new IDbScriptLocator[0];
+            if (locator == null)
+            {
+                throw new ArgumentNullException(nameof(locator));
+            }
 
-            builder.AddSingleton(typeof(IDbScriptLocator), _ => new AggregateDbScriptLocator(scriptLocators));
+            builder.ThrowIfAlreadyBuilt();
+
+            builder.AddTemporary(typeof(TemporaryBatchLocatorRegistration), new TemporaryBatchLocatorRegistration(locator));
 
             return builder;
         }
 
         /// <summary>
-        ///     Adds a database script locator which searches assemblies for scripts.
+        /// Uses scripts from assembly resources as batches.
         /// </summary>
-        /// <param name="builder"> The builder being configured. </param>
-        /// <param name="assemblies"> The array of searched assemblies or null or an empty array if only the calling assembly shall be searched. </param>
-        /// <returns> The builder being configured. </returns>
-        /// <exception cref="ArgumentNullException"> <paramref name="builder" /> is null. </exception>
-        /// TODO: Remove/change
-        public static IDbManagerBuilder UseScriptsFromAssembly (this IDbManagerBuilder builder, params Assembly[] assemblies)
+        /// <typeparam name="TBuilder"> The type of the used database manager builder. </typeparam>
+        /// <param name="builder"> The used database manager builder. </param>
+        /// <param name="nameFormat"> The optional name format used to search for script assembly resources or null to use the default value of <see cref="AssemblyScriptBatchLocator.NameFormat"/>. The default value of this parameter is null.</param>
+        /// <param name="encoding">The optional encoding used to read the assembly resources or null to use the default value of <see cref="AssemblyScriptBatchLocator.Encoding"/>. The default value of this parameter is null.</param>
+        /// <param name="commandSeparator">The optional command separator used to split scripts into commands or null to use the default value of <see cref="DbBatchLocatorBase.CommandSeparator"/>. The default value of this parameter is null.</param>
+        /// <param name="optionsFormat">The optional options format used to extract options from scripts or null to use the default value of <see cref="DbBatchLocatorBase.OptionsFormat"/>. The default value of this parameter is null.</param>
+        /// <param name="assemblies"> The used assemblies to locate script assembly resources or null or an empty array if the calling assembly should be used.</param>
+        /// <returns>
+        /// The used database manager builder.
+        /// </returns>
+        /// <remarks>
+        /// <note type="important">
+        /// <see cref="UseAssemblyScriptBatches{TBuilder}"/> creates an <see cref="AssemblyScriptBatchLocator"/>. See <see cref="AssemblyScriptBatchLocator"/> for more details.
+        /// </note>
+        /// </remarks>
+        /// <exception cref="ArgumentNullException"><paramref name="builder"/> is null.</exception>
+        public static TBuilder UseAssemblyScriptBatches<TBuilder>(this TBuilder builder, string nameFormat = null, Encoding encoding = null, string commandSeparator = null, string optionsFormat = null, params Assembly[] assemblies)
+            where TBuilder : IDbManagerBuilder
         {
             if (builder == null)
             {
@@ -119,43 +144,101 @@ namespace RI.DatabaseManager.Builder
 
             if (assemblies.Length == 0)
             {
-                assemblies = new[]
-                {
-                    Assembly.GetCallingAssembly(),
-                };
+                assemblies = new []{Assembly.GetCallingAssembly()};
             }
 
-            builder.AddSingleton(typeof(IDbScriptLocator), sp => new AssemblyScriptBatchLocator((ILogger)sp.GetService(typeof(ILogger)), assemblies));
+            AssemblyScriptBatchLocator locator = new AssemblyScriptBatchLocator(assemblies);
+
+            if (nameFormat != null)
+            {
+                locator.NameFormat = nameFormat;
+            }
+
+            if (encoding != null)
+            {
+                locator.Encoding = encoding;
+            }
+
+            if (commandSeparator != null)
+            {
+                locator.CommandSeparator = commandSeparator;
+            }
+            
+            if (optionsFormat != null)
+            {
+                locator.OptionsFormat = optionsFormat;
+            }
+
+            builder.UseBatchLocator(locator);
 
             return builder;
         }
 
         /// <summary>
-        ///     Adds a database script locator which stores the scripts in a dictionary.
+        /// Uses callback implementations from assemblies as batches.
         /// </summary>
-        /// <param name="builder"> The builder being configured. </param>
-        /// <param name="scripts"> The dictionary with key/value pairs or name/script pairs respectively. </param>
-        /// <returns> The builder being configured. </returns>
-        /// <exception cref="ArgumentNullException"> <paramref name="builder" /> or <paramref name="scripts" /> is null. </exception>
-        /// TODO: Remove/change
-        public static IDbManagerBuilder UseScriptsFromDictionary (this IDbManagerBuilder builder, IDictionary<string, string> scripts)
+        /// <typeparam name="TBuilder"> The type of the used database manager builder. </typeparam>
+        /// <param name="builder"> The used database manager builder. </param>
+        /// <param name="assemblies"> The used assemblies to locate callback implementations or null or an empty array if the calling assembly should be used.</param>
+        /// <returns>
+        /// The used database manager builder.
+        /// </returns>
+        /// <remarks>
+        /// <note type="important">
+        /// <see cref="UseAssemblyCallbackBatches{TBuilder}"/> creates an <see cref="AssemblyCallbackBatchLocator"/>. See <see cref="AssemblyCallbackBatchLocator"/> for more details.
+        /// </note>
+        /// </remarks>
+        /// <exception cref="ArgumentNullException"><paramref name="builder"/> is null.</exception>
+        public static TBuilder UseAssemblyCallbackBatches<TBuilder>(this TBuilder builder, params Assembly[] assemblies)
+            where TBuilder : IDbManagerBuilder
         {
             if (builder == null)
             {
                 throw new ArgumentNullException(nameof(builder));
             }
 
-            if (scripts == null)
+            assemblies ??= new Assembly[0];
+
+            if (assemblies.Length == 0)
             {
-                throw new ArgumentNullException(nameof(scripts));
+                assemblies = new[] { Assembly.GetCallingAssembly() };
             }
 
-            builder.AddSingleton(typeof(IDbScriptLocator), sp => new DictionaryDbScriptLocator((ILogger)sp.GetService(typeof(ILogger)), scripts));
+            AssemblyCallbackBatchLocator locator = new AssemblyCallbackBatchLocator(assemblies);
+            builder.UseBatchLocator(locator);
 
             return builder;
         }
 
-        //TODO: Add batch locator using extensions (using aggregated locator if necessary)
+        /// <summary>
+        /// Uses programmatically defined scripts and/or callbacks as batches.
+        /// </summary>
+        /// <typeparam name="TBuilder"> The type of the used database manager builder. </typeparam>
+        /// <param name="builder"> The used database manager builder. </param>
+        /// <param name="dictionary"> The callback used to configure and populate the dictionary (<see cref="DictionaryBatchLocator"/>) with scripts/callbacks.</param>
+        /// <returns>
+        /// The used database manager builder.
+        /// </returns>
+        /// <exception cref="ArgumentNullException"><paramref name="builder"/> or <paramref name="dictionary"/> is null.</exception>
+        public static TBuilder UseBatches<TBuilder>(this TBuilder builder, Action<DictionaryBatchLocator> dictionary)
+            where TBuilder : IDbManagerBuilder
+        {
+            if (builder == null)
+            {
+                throw new ArgumentNullException(nameof(builder));
+            }
+
+            if (dictionary == null)
+            {
+                throw new ArgumentNullException(nameof(dictionary));
+            }
+            
+            DictionaryBatchLocator locator = new DictionaryBatchLocator();
+            dictionary(locator);
+            builder.UseBatchLocator(locator);
+
+            return builder;
+        }
 
         internal static (Type Connection, Type Transaction, Type Manager, Type VersionDetector, Type BackupCreator, Type CleanupProcessor, Type VersionUpgrader, Type ScriptLocator) DetectDbManagerTypes (this IDbManagerBuilder builder)
         {
@@ -203,6 +286,35 @@ namespace RI.DatabaseManager.Builder
             Type scriptLocator = typeof(IDbScriptLocator);
 
             return (connection, transaction, manager, versionDetector, backupCreator, cleanupProcessor, versionUpgrader, scriptLocator);
+        }
+
+        internal static void MergeBatchLocators (this IDbManagerBuilder builder)
+        {
+            if (builder == null)
+            {
+                throw new ArgumentNullException(nameof(builder));
+            }
+
+            IList<CompositionRegistration> locators = builder.GetContracts(typeof(TemporaryBatchLocatorRegistration));
+            AggregateBatchLocator mergedLocator = new AggregateBatchLocator(locators.Select(x => ((TemporaryBatchLocatorRegistration)x.GetOrCreateInstance()).Instance));
+
+            builder.RemoveContracts(typeof(TemporaryBatchLocatorRegistration));
+            builder.AddSingleton(typeof(IDbBatchLocator), mergedLocator);
+        }
+
+        private sealed class TemporaryBatchLocatorRegistration
+        {
+            public TemporaryBatchLocatorRegistration (IDbBatchLocator instance)
+            {
+                if (instance == null)
+                {
+                    throw new ArgumentNullException(nameof(instance));
+                }
+
+                this.Instance = instance;
+            }
+
+            public IDbBatchLocator Instance { get; }
         }
 
         #endregion

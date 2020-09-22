@@ -3,9 +3,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text.RegularExpressions;
 
-using RI.Abstractions.Logging;
-
-
 
 
 namespace RI.DatabaseManager.Batches
@@ -29,18 +26,10 @@ namespace RI.DatabaseManager.Batches
         /// <summary>
         ///     Creates a new instance of <see cref="DbBatchLocatorBase" />.
         /// </summary>
-        /// <param name="logger"> The used logger. </param>
-        /// <exception cref="ArgumentNullException"> <paramref name="logger" /> is null. </exception>
-        protected DbBatchLocatorBase (ILogger logger)
+        protected DbBatchLocatorBase ()
         {
-            if (logger == null)
-            {
-                throw new ArgumentNullException(nameof(logger));
-            }
-
-            this.Logger = logger;
-
             this.OptionsFormat = @"(/\*\s*DBMANAGER:)(?<key>.+?)(=)(?<value>.+?)(\s*\*/)";
+            this.CommandSeparator = $"{Environment.NewLine}GO{Environment.NewLine}";
         }
 
         #endregion
@@ -51,6 +40,8 @@ namespace RI.DatabaseManager.Batches
         #region Instance Fields
 
         private string _optionsFormat;
+
+        private string _commandSeparator;
 
         #endregion
 
@@ -63,7 +54,7 @@ namespace RI.DatabaseManager.Batches
         ///     Gets or sets the used options format as a regular expression (RegEx) used to extract additional script options from a script.
         /// </summary>
         /// <value>
-        ///     The used options format as a regular expression (RegEx) used to extract additional script options from a script.
+        ///     The used options format as a regular expression (RegEx) used to extract additional script options from a script or null if this batch locator does not support scripts.
         /// </value>
         /// <remarks>
         ///     <note type="implement">
@@ -82,9 +73,22 @@ namespace RI.DatabaseManager.Batches
         /// <exception cref="ArgumentException"> <paramref name="value" /> is an empty string. </exception>
         public string OptionsFormat
         {
-            get => this._optionsFormat;
+            get
+            {
+                if (!this.SupportsScripts)
+                {
+                    return null;
+                }
+
+                return this._optionsFormat;
+            }
             set
             {
+                if (!this.SupportsScripts)
+                {
+                    throw new NotSupportedException($"The database batch locator {this.GetType().Name} does not support scripts.");
+                }
+
                 if (value == null)
                 {
                     throw new ArgumentNullException(nameof(value));
@@ -100,12 +104,49 @@ namespace RI.DatabaseManager.Batches
         }
 
         /// <summary>
-        ///     Gets the used logger.
+        /// Gets or sets the used command separator string used by this batch locator.
         /// </summary>
         /// <value>
-        ///     The used logger.
+        ///     The used command separator string used by this batch locator or null if this batch locator does not support scripts.
         /// </value>
-        protected ILogger Logger { get; }
+        /// <remarks>
+        ///     <note type="implement">
+        ///         The default implementation returns <c> {Environment.NewLine}GO{Environment.NewLine} </c>.
+        ///     </note>
+        /// </remarks>
+        /// <exception cref="ArgumentNullException"> <paramref name="value" /> is null. </exception>
+        /// <exception cref="ArgumentException"> <paramref name="value" /> is an empty string. </exception>
+        public string CommandSeparator
+        {
+            get
+            {
+                if (!this.SupportsScripts)
+                {
+                    return null;
+                }
+
+                return this._commandSeparator;
+            }
+            set
+            {
+                if (!this.SupportsScripts)
+                {
+                    throw new NotSupportedException($"The database batch locator {this.GetType().Name} does not support scripts.");
+                }
+
+                if (value == null)
+                {
+                    throw new ArgumentNullException(nameof(value));
+                }
+
+                if (string.IsNullOrWhiteSpace(value))
+                {
+                    throw new ArgumentException("The string argument is empty.", nameof(value));
+                }
+
+                this._commandSeparator = value;
+            }
+        }
 
         #endregion
 
@@ -119,7 +160,7 @@ namespace RI.DatabaseManager.Batches
         /// </summary>
         /// <param name="batch"> The prepared batch instance which is to be filled with code or scripts associated with the specified name. </param>
         /// <param name="name"> The name of the batch. </param>
-        /// <param name="commandSeparator"> The string which is used as the separator to separate commands within the batch or null if neither a specific command separator nor a value through <see cref="DefaultCommandSeparator" /> is provided. </param>
+        /// <param name="commandSeparator"> The string which is used as the separator to separate commands within the batch or null if neither a specific command separator nor a value through <see cref="CommandSeparator" /> is provided. </param>
         /// <returns>
         ///     true if the batch could be successfully retrieved, false otherwise.
         ///     Details about failures should be written to logs.
@@ -135,25 +176,28 @@ namespace RI.DatabaseManager.Batches
         /// </returns>
         protected abstract IEnumerable<string> GetNames ();
 
+        /// <summary>
+        /// Gets whether this database batch locator supports scripts.
+        /// </summary>
+        /// <value>
+        /// true if this database locator supports scripts, false otherwise.
+        /// </value>
+        public abstract bool SupportsScripts { get; }
+
+        /// <summary>
+        /// Gets whether this database batch locator supports callbacks.
+        /// </summary>
+        /// <value>
+        /// true if this database locator supports callbacks, false otherwise.
+        /// </value>
+        public abstract bool SupportsCallbacks { get; }
+
         #endregion
 
 
 
 
         #region Virtuals
-
-        /// <summary>
-        ///     Gets the default command separator string used by this batch locator.
-        /// </summary>
-        /// <value>
-        ///     The default command separator string used by this batch locator or null if this batch locator does not support command separators.
-        /// </value>
-        /// <remarks>
-        ///     <note type="implement">
-        ///         The default implementation returns <c> {Environment.NewLine}GO{Environment.NewLine} </c>.
-        ///     </note>
-        /// </remarks>
-        protected virtual string DefaultCommandSeparator => $"{Environment.NewLine}GO{Environment.NewLine}";
 
         /// <summary>
         ///     Gets the string comparer used for comparing batch names.
@@ -259,9 +303,6 @@ namespace RI.DatabaseManager.Batches
                 {
                     return tr;
                 }
-
-                this.Logger.LogWarning(this.GetType()
-                                           .Name, null, $"Invalid value for TransactionRequirement script option: {value}");
             }
 
             return DbBatchTransactionRequirement.DontCare;
@@ -336,7 +377,7 @@ namespace RI.DatabaseManager.Batches
                 }
             }
 
-            commandSeparator ??= this.DefaultCommandSeparator;
+            commandSeparator ??= this.CommandSeparator;
             commandSeparator = string.IsNullOrWhiteSpace(commandSeparator) ? null : commandSeparator;
 
             DbBatch batch = new DbBatch();
