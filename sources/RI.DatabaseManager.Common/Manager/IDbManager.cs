@@ -390,5 +390,14 @@ namespace RI.DatabaseManager.Manager
 
         /// <inheritdoc cref="IDbManager.CreateTransaction" />
         new TTransaction CreateTransaction (bool readOnly);
+
+        /// <inheritdoc cref="IDbManager.CreateBatch" />
+        new IDbBatch<TConnection, TTransaction> CreateBatch();
+
+        /// <inheritdoc cref="IDbManager.ExecuteBatch" />
+        bool ExecuteBatch(IDbBatch<TConnection, TTransaction> batch, bool readOnly, bool detectVersionAndStateAfterExecution);
+
+        /// <inheritdoc cref="IDbManager.GetBatch" />
+        new IDbBatch<TConnection, TTransaction> GetBatch(string name, string commandSeparator);
     }
 }

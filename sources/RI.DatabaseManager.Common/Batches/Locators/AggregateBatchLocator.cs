@@ -17,7 +17,7 @@ namespace RI.DatabaseManager.Batches.Locators
     ///     </para>
     /// </remarks>
     /// <threadsafety static="false" instance="false" />
-    public sealed class AggregateBatchLocator : DbBatchLocatorBase, IList<IDbBatchLocator>, ICollection<IDbBatchLocator>
+    public sealed class AggregateBatchLocator : IDbBatchLocator, IList<IDbBatchLocator>, ICollection<IDbBatchLocator>
     {
         #region Instance Constructor/Destructor
 
@@ -73,43 +73,63 @@ namespace RI.DatabaseManager.Batches.Locators
         #region Overrides
 
         /// <inheritdoc />
-        public override bool SupportsScripts => false;
-
-        /// <inheritdoc />
-        public override bool SupportsCallbacks => false;
-
-        /// <inheritdoc />
-        protected override bool FillBatch (IDbBatch batch, string name, string commandSeparator)
+        IDbBatch IDbBatchLocator.GetBatch(string name, string commandSeparator, Func<IDbBatch> batchCreator)
         {
-            foreach (IDbBatchLocator batchLocator in this.BatchLocators)
+            if (name == null)
             {
-                IDbBatch currentBatch = batchLocator.GetBatch(name, commandSeparator);
+                throw new ArgumentNullException(nameof(name));
+            }
 
-                if (currentBatch != null)
+            if (string.IsNullOrWhiteSpace(name))
+            {
+                throw new ArgumentException("The string argument is empty.", nameof(name));
+            }
+
+            if (commandSeparator != null)
+            {
+                if (string.IsNullOrWhiteSpace(commandSeparator))
                 {
-                    batch.Commands.AddRange(currentBatch.Commands);
-                }
-                else
-                {
-                    return false;
+                    throw new ArgumentException("The string argument is empty.", nameof(commandSeparator));
                 }
             }
 
-            return true;
+            if (batchCreator == null)
+            {
+                throw new ArgumentNullException(nameof(batchCreator));
+            }
+
+            foreach (IDbBatchLocator batchLocator in this.BatchLocators)
+            {
+                IDbBatch currentBatch = batchLocator.GetBatch(name, commandSeparator, batchCreator);
+
+                if (currentBatch != null)
+                {
+                    return currentBatch;
+                }
+            }
+
+            return null;
         }
 
         /// <inheritdoc />
-        protected override IEnumerable<string> GetNames ()
+        ISet<string> IDbBatchLocator.GetNames ()
         {
-            List<string> names = new List<string>();
+            ISet<string> names = null;
 
             foreach (IDbBatchLocator batchLocator in this.BatchLocators)
             {
                 ISet<string> currentNames = batchLocator.GetNames();
 
-                if (currentNames != null)
+                if (names == null)
                 {
-                    names.AddRange(currentNames);
+                    names = currentNames;
+                }
+                else
+                {
+                    foreach (string currentName in currentNames)
+                    {
+                        names.Add(currentName);
+                    }
                 }
             }
 

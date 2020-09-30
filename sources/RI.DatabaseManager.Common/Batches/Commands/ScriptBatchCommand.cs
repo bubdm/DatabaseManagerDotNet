@@ -10,7 +10,9 @@ namespace RI.DatabaseManager.Batches.Commands
     ///     A batch command which provides a script to be executed.
     /// </summary>
     /// <threadsafety static="false" instance="false" />
-    public sealed class ScriptBatchCommand : IDbBatchCommand
+    public sealed class ScriptBatchCommand<TConnection, TTransaction> : IDbBatchCommand<TConnection, TTransaction>
+        where TConnection : DbConnection
+        where TTransaction : DbTransaction
     {
         #region Instance Constructor/Destructor
 
@@ -34,6 +36,9 @@ namespace RI.DatabaseManager.Batches.Commands
 
         /// <inheritdoc />
         Func<DbConnection, DbTransaction, object> IDbBatchCommand.Code => null;
+
+        /// <inheritdoc />
+        Func<TConnection, TTransaction, object> IDbBatchCommand<TConnection, TTransaction>.Code => null;
 
         /// <inheritdoc />
         public object Result { get; set; }

@@ -9,6 +9,7 @@ namespace RI.DatabaseManager.Batches
     /// <summary>
     ///     A single database command which is part of a database batch.
     /// </summary>
+    /// TODO: Store errors/exceptions in property?
     public interface IDbBatchCommand
     {
         /// <summary>
@@ -50,5 +51,16 @@ namespace RI.DatabaseManager.Batches
         ///     true if the command was executed, false otherwise.
         /// </value>
         bool WasExecuted { get; set; }
+    }
+
+    /// <inheritdoc cref="IDbBatch" />
+    /// <typeparam name="TConnection"> The database connection type. </typeparam>
+    /// <typeparam name="TTransaction"> The database transaction type. </typeparam>
+    public interface IDbBatchCommand<TConnection, TTransaction> : IDbBatchCommand
+        where TConnection : DbConnection
+        where TTransaction : DbTransaction
+    {
+        /// <inheritdoc cref="IDbBatchCommand.Code" />
+        new Func<TConnection, TTransaction, object> Code { get; }
     }
 }

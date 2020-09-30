@@ -367,12 +367,12 @@ namespace RI.DatabaseManager.Manager
         /// </returns>
         /// <remarks>
         ///     <note type="implement">
-        ///         The default implementation creates and returns a new instance of <see cref="DbBatch" />.
+        ///         The default implementation creates and returns a new instance of <see cref="DbBatch{TConnection,TTransaction}" />.
         ///     </note>
         /// </remarks>
-        protected virtual IDbBatch CreateBatchImpl ()
+        protected virtual IDbBatch<TConnection, TTransaction> CreateBatchImpl ()
         {
-            return new DbBatch();
+            return new DbBatch<TConnection, TTransaction>();
         }
 
         /// <summary>
@@ -418,14 +418,12 @@ namespace RI.DatabaseManager.Manager
         ///         The default implementation first resets all commands and then executes <see cref="ExecuteCommandScriptImpl" /> or <see cref="ExecuteCommandCodeImpl" /> for each command of the batch.
         ///     </note>
         /// </remarks>
-        protected virtual bool ExecuteBatchImpl (IDbBatch batch, bool readOnly)
+        protected virtual bool ExecuteBatchImpl (IDbBatch<TConnection, TTransaction> batch, bool readOnly)
         {
-            batch.Reset();
-
             TConnection connection;
             TTransaction transaction;
 
-            if (batch.RequiresTransaction())
+            if (batch.RequiresTransaction() || (!batch.DisallowsTransaction()))
             {
                 transaction = this.CreateTransaction();
 
@@ -448,7 +446,7 @@ namespace RI.DatabaseManager.Manager
                 transaction = null;
             }
 
-            foreach (IDbBatchCommand command in batch.Commands)
+            foreach (IDbBatchCommand<TConnection, TTransaction> command in batch.Commands)
             {
                 if (command == null)
                 {
@@ -513,7 +511,7 @@ namespace RI.DatabaseManager.Manager
         ///         The default implementation calls <paramref name="code" /> with <paramref name="connection" /> and <paramref name="transaction" /> as parameters.
         ///     </note>
         /// </remarks>
-        protected virtual object ExecuteCommandCodeImpl (TConnection connection, TTransaction transaction, Func<DbConnection, DbTransaction, object> code)
+        protected virtual object ExecuteCommandCodeImpl (TConnection connection, TTransaction transaction, Func<TConnection, TTransaction, object> code)
         {
             return code(connection, transaction);
         }
@@ -523,6 +521,7 @@ namespace RI.DatabaseManager.Manager
         /// </summary>
         /// <param name="name"> The name of the batch. </param>
         /// <param name="commandSeparator"> The string which is used as the separator to separate commands within the batch or null if the batch locators default separators are to be used. </param>
+        /// <param name="batchCreator"> The batch creator provided by the used database manager which is used to create proper batch instances (implementations of <see cref="IDbBatch"/>). </param>
         /// <returns>
         ///     The batch or null if the batch of the specified name could not be found.
         ///     Details about failures should be written to logs.
@@ -532,9 +531,9 @@ namespace RI.DatabaseManager.Manager
         ///         The default implementation calls <see cref="IDbBatchLocator.GetBatch" />.
         ///     </note>
         /// </remarks>
-        protected virtual IDbBatch GetBatchImpl (string name, string commandSeparator)
+        protected virtual IDbBatch<TConnection, TTransaction> GetBatchImpl (string name, string commandSeparator, Func<IDbBatch<TConnection, TTransaction>> batchCreator)
         {
-            return this.BatchLocator.GetBatch(name, commandSeparator);
+            return (IDbBatch<TConnection, TTransaction>)this.BatchLocator.GetBatch(name, commandSeparator, batchCreator);
         }
 
         /// <summary>
@@ -572,7 +571,7 @@ namespace RI.DatabaseManager.Manager
         ///         The default implementation does nothing.
         ///     </note>
         /// </remarks>
-        protected virtual void OnBatchCreated (IDbBatch batch) { }
+        protected virtual void OnBatchCreated (IDbBatch<TConnection, TTransaction> batch) { }
 
         /// <summary>
         ///     Called when a batch has been retrieved.
@@ -584,7 +583,7 @@ namespace RI.DatabaseManager.Manager
         ///         The default implementation does nothing.
         ///     </note>
         /// </remarks>
-        protected virtual void OnBatchRetrieved (IDbBatch batch, string name) { }
+        protected virtual void OnBatchRetrieved (IDbBatch<TConnection, TTransaction> batch, string name) { }
 
         /// <summary>
         ///     Called when a connection has been created.
@@ -788,9 +787,15 @@ namespace RI.DatabaseManager.Manager
         }
 
         /// <inheritdoc />
-        public IDbBatch CreateBatch ()
+        IDbBatch IDbManager.CreateBatch ()
         {
-            IDbBatch batch = this.CreateBatchImpl();
+            return this.CreateBatch();
+        }
+
+        /// <inheritdoc />
+        public IDbBatch<TConnection, TTransaction> CreateBatch ()
+        {
+            IDbBatch<TConnection, TTransaction> batch = this.CreateBatchImpl();
 
             this.OnBatchCreated(batch);
 
@@ -845,6 +850,18 @@ namespace RI.DatabaseManager.Manager
         }
 
         /// <inheritdoc />
+        bool IDbManager.ExecuteBatch (IDbBatch batch, bool readOnly, bool detectVersionAndStateAfterExecution)
+        {
+            return this.ExecuteBatch((IDbBatch<TConnection, TTransaction>)batch, readOnly, detectVersionAndStateAfterExecution);
+        }
+
+        /// <inheritdoc />
+        IDbBatch IDbManager.GetBatch (string name, string commandSeparator)
+        {
+            return this.GetBatch(name, commandSeparator);
+        }
+
+        /// <inheritdoc />
         public TTransaction CreateTransaction (bool readOnly)
         {
             if (!this.IsReady())
@@ -886,7 +903,7 @@ namespace RI.DatabaseManager.Manager
         }
 
         /// <inheritdoc />
-        public bool ExecuteBatch (IDbBatch batch, bool readOnly, bool detectVersionAndStateAfterExecution)
+        public bool ExecuteBatch (IDbBatch<TConnection, TTransaction> batch, bool readOnly, bool detectVersionAndStateAfterExecution)
         {
             if (batch == null)
             {
@@ -905,6 +922,8 @@ namespace RI.DatabaseManager.Manager
                                                     .Name + " does not support read-only connections.");
             }
 
+            batch.Reset();
+
             bool result = this.ExecuteBatchImpl(batch, readOnly);
 
             if (detectVersionAndStateAfterExecution)
@@ -916,7 +935,7 @@ namespace RI.DatabaseManager.Manager
         }
 
         /// <inheritdoc />
-        public IDbBatch GetBatch (string name, string commandSeparator)
+        public IDbBatch<TConnection, TTransaction> GetBatch (string name, string commandSeparator)
         {
             if (name == null)
             {
@@ -936,7 +955,7 @@ namespace RI.DatabaseManager.Manager
                 }
             }
 
-            IDbBatch batch = this.GetBatchImpl(name, commandSeparator);
+            IDbBatch<TConnection, TTransaction> batch = this.GetBatchImpl(name, commandSeparator, this.CreateBatch);
 
             if (batch != null)
             {

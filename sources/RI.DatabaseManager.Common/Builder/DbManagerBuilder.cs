@@ -100,34 +100,22 @@ namespace RI.DatabaseManager.Builder
             #region Interface: IDbBackupCreator<TConnection,TTransaction>
 
             /// <inheritdoc />
-            bool IDbBackupCreator.SupportsBackup => throw new NotImplementedException();
+            bool IDbBackupCreator.SupportsBackup => false;
 
             /// <inheritdoc />
-            bool IDbBackupCreator.SupportsRestore => throw new NotImplementedException();
+            bool IDbBackupCreator.SupportsRestore => false;
 
             /// <inheritdoc />
-            bool IDbBackupCreator.Backup (IDbManager manager, object backupTarget)
-            {
-                throw new NotImplementedException();
-            }
+            bool IDbBackupCreator.Backup (IDbManager manager, object backupTarget) => false;
 
             /// <inheritdoc />
-            bool IDbBackupCreator<TConnection, TTransaction>.Backup (IDbManager<TConnection, TTransaction> manager, object backupTarget)
-            {
-                throw new NotImplementedException();
-            }
+            bool IDbBackupCreator<TConnection, TTransaction>.Backup (IDbManager<TConnection, TTransaction> manager, object backupTarget) => false;
 
             /// <inheritdoc />
-            bool IDbBackupCreator.Restore (IDbManager manager, object backupSource)
-            {
-                throw new NotImplementedException();
-            }
+            bool IDbBackupCreator.Restore (IDbManager manager, object backupSource) => false;
 
             /// <inheritdoc />
-            bool IDbBackupCreator<TConnection, TTransaction>.Restore (IDbManager<TConnection, TTransaction> manager, object backupTarget)
-            {
-                throw new NotImplementedException();
-            }
+            bool IDbBackupCreator<TConnection, TTransaction>.Restore (IDbManager<TConnection, TTransaction> manager, object backupTarget) => false;
 
             #endregion
 
@@ -137,16 +125,10 @@ namespace RI.DatabaseManager.Builder
             #region Interface: IDbCleanupProcessor<TConnection,TTransaction>
 
             /// <inheritdoc />
-            bool IDbCleanupProcessor<TConnection, TTransaction>.Cleanup (IDbManager<TConnection, TTransaction> manager)
-            {
-                throw new NotImplementedException();
-            }
+            bool IDbCleanupProcessor<TConnection, TTransaction>.Cleanup (IDbManager<TConnection, TTransaction> manager) => false;
 
             /// <inheritdoc />
-            bool IDbCleanupProcessor.Cleanup (IDbManager manager)
-            {
-                throw new NotImplementedException();
-            }
+            bool IDbCleanupProcessor.Cleanup (IDbManager manager) => false;
 
             #endregion
 
@@ -156,40 +138,22 @@ namespace RI.DatabaseManager.Builder
             #region Interface: IDbVersionUpgrader<TConnection,TTransaction>
 
             /// <inheritdoc />
-            int IDbVersionUpgrader.GetMaxVersion (IDbManager manager)
-            {
-                throw new NotImplementedException();
-            }
+            int IDbVersionUpgrader.GetMaxVersion (IDbManager manager) => -1;
 
             /// <inheritdoc />
-            int IDbVersionUpgrader<TConnection, TTransaction>.GetMaxVersion (IDbManager<TConnection, TTransaction> manager)
-            {
-                throw new NotImplementedException();
-            }
+            int IDbVersionUpgrader<TConnection, TTransaction>.GetMaxVersion (IDbManager<TConnection, TTransaction> manager) => -1;
 
             /// <inheritdoc />
-            int IDbVersionUpgrader.GetMinVersion (IDbManager manager)
-            {
-                throw new NotImplementedException();
-            }
+            int IDbVersionUpgrader.GetMinVersion (IDbManager manager) => -1;
 
             /// <inheritdoc />
-            int IDbVersionUpgrader<TConnection, TTransaction>.GetMinVersion (IDbManager<TConnection, TTransaction> manager)
-            {
-                throw new NotImplementedException();
-            }
+            int IDbVersionUpgrader<TConnection, TTransaction>.GetMinVersion (IDbManager<TConnection, TTransaction> manager) => -1;
 
             /// <inheritdoc />
-            bool IDbVersionUpgrader.Upgrade (IDbManager manager, int sourceVersion)
-            {
-                throw new NotImplementedException();
-            }
+            bool IDbVersionUpgrader.Upgrade (IDbManager manager, int sourceVersion) => false;
 
             /// <inheritdoc />
-            bool IDbVersionUpgrader<TConnection, TTransaction>.Upgrade (IDbManager<TConnection, TTransaction> manager, int sourceVersion)
-            {
-                throw new NotImplementedException();
-            }
+            bool IDbVersionUpgrader<TConnection, TTransaction>.Upgrade (IDbManager<TConnection, TTransaction> manager, int sourceVersion) => false;
 
             #endregion
 
@@ -197,16 +161,10 @@ namespace RI.DatabaseManager.Builder
 
 
             /// <inheritdoc />
-            IDbBatch IDbBatchLocator.GetBatch(string name, string commandSeparator)
-            {
-                throw new NotImplementedException();
-            }
+            public IDbBatch GetBatch (string name, string commandSeparator, Func<IDbBatch> batchCreator) => null;
 
             /// <inheritdoc />
-            ISet<string> IDbBatchLocator.GetNames()
-            {
-                throw new NotImplementedException();
-            }
+            ISet<string> IDbBatchLocator.GetNames () => null;
         }
 
         #endregion

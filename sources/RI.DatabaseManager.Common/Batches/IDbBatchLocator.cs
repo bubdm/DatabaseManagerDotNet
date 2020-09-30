@@ -22,13 +22,14 @@ namespace RI.DatabaseManager.Batches
         /// </summary>
         /// <param name="name"> The name of the batch. </param>
         /// <param name="commandSeparator"> The string which is used as the separator to separate commands within the batch or null if the batch locators default separators are to be used. </param>
+        /// <param name="batchCreator"> The batch creator provided by the used database manager which is used to create proper batch instances (implementations of <see cref="IDbBatch"/>). </param>
         /// <returns>
         ///     The batch or null if the batch of the specified name could not be found.
         ///     Details about failures should be written to logs.
         /// </returns>
-        /// <exception cref="ArgumentNullException"> <paramref name="name" /> is null. </exception>
+        /// <exception cref="ArgumentNullException"> <paramref name="name" /> or <paramref name="batchCreator"/> is null. </exception>
         /// <exception cref="ArgumentException"> <paramref name="name" /> or <paramref name="commandSeparator" /> is an empty string. </exception>
-        IDbBatch GetBatch (string name, string commandSeparator);
+        IDbBatch GetBatch (string name, string commandSeparator, Func<IDbBatch> batchCreator);
 
         /// <summary>
         ///     Gets the names of all available batches this batch locator can retrieve.

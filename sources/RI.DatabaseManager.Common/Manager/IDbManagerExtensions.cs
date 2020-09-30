@@ -35,8 +35,7 @@ namespace RI.DatabaseManager.Manager
 
             return manager.SupportsUpgrade && (manager.IsReady() || (manager.State == DbState.New)) && (manager.Version >= 0) && (manager.Version < manager.MaxVersion);
         }
-
-
+        
         /// <summary>
         ///     Creates a new connection which can be used to work with the database.
         /// </summary>
@@ -142,6 +141,19 @@ namespace RI.DatabaseManager.Manager
             return manager.ExecuteBatch(batch, false, false);
         }
 
+        /// <inheritdoc cref="ExecuteBatch(IDbManager,IDbBatch)" />
+        public static bool ExecuteBatch<TConnection, TTransaction>(this IDbManager<TConnection, TTransaction> manager, IDbBatch<TConnection, TTransaction> batch)
+            where TConnection : DbConnection
+            where TTransaction : DbTransaction
+        {
+            if (manager == null)
+            {
+                throw new ArgumentNullException(nameof(manager));
+            }
+
+            return manager.ExecuteBatch(batch, false, false);
+        }
+
         /// <summary>
         ///     Gets a batch (for later execution) of a specified name using the configured <see cref="IDbBatchLocator" />.
         /// </summary>
@@ -159,6 +171,19 @@ namespace RI.DatabaseManager.Manager
         /// <exception cref="ArgumentNullException"> <paramref name="manager" /> or <paramref name="name" /> is null. </exception>
         /// <exception cref="ArgumentException"> <paramref name="name" /> is an empty string. </exception>
         public static IDbBatch GetBatch (this IDbManager manager, string name)
+        {
+            if (manager == null)
+            {
+                throw new ArgumentNullException(nameof(manager));
+            }
+
+            return manager.GetBatch(name, null);
+        }
+
+        /// <inheritdoc cref="GetBatch(IDbManager,string)" />
+        public static IDbBatch<TConnection, TTransaction> GetBatch<TConnection, TTransaction>(this IDbManager<TConnection, TTransaction> manager, string name)
+            where TConnection : DbConnection
+            where TTransaction : DbTransaction
         {
             if (manager == null)
             {
@@ -196,6 +221,40 @@ namespace RI.DatabaseManager.Manager
             foreach (string name in names)
             {
                 IDbBatch batch = manager.GetBatch(name, commandSeparator);
+
+                if (batch != null)
+                {
+                    batches.Add(name, batch);
+                }
+            }
+
+            return batches;
+        }
+
+        /// <inheritdoc cref="GetBatches(IDbManager,string)" />
+        public static IDictionary<string, IDbBatch<TConnection, TTransaction>> GetBatches<TConnection, TTransaction>(this IDbManager<TConnection, TTransaction> manager, string commandSeparator = null)
+            where TConnection : DbConnection
+            where TTransaction : DbTransaction
+        {
+            if (manager == null)
+            {
+                throw new ArgumentNullException(nameof(manager));
+            }
+
+            if (commandSeparator != null)
+            {
+                if (string.IsNullOrWhiteSpace(commandSeparator))
+                {
+                    throw new ArgumentException("The string argument is empty.", nameof(commandSeparator));
+                }
+            }
+
+            ISet<string> names = manager.GetBatchNames();
+            Dictionary<string, IDbBatch<TConnection, TTransaction>> batches = new Dictionary<string, IDbBatch<TConnection, TTransaction>>();
+
+            foreach (string name in names)
+            {
+                IDbBatch<TConnection, TTransaction> batch = manager.GetBatch(name, commandSeparator);
 
                 if (batch != null)
                 {

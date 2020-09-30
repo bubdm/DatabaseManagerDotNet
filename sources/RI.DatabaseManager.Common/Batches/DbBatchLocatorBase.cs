@@ -357,7 +357,7 @@ namespace RI.DatabaseManager.Batches
         #region Interface: IDbBatchLocator
 
         /// <inheritdoc />
-        IDbBatch IDbBatchLocator.GetBatch (string name, string commandSeparator)
+        IDbBatch IDbBatchLocator.GetBatch (string name, string commandSeparator, Func<IDbBatch> batchCreator)
         {
             if (name == null)
             {
@@ -377,10 +377,15 @@ namespace RI.DatabaseManager.Batches
                 }
             }
 
+            if (batchCreator == null)
+            {
+                throw new ArgumentNullException(nameof(batchCreator));
+            }
+
             commandSeparator ??= this.CommandSeparator;
             commandSeparator = string.IsNullOrWhiteSpace(commandSeparator) ? null : commandSeparator;
 
-            DbBatch batch = new DbBatch();
+            IDbBatch batch = batchCreator();
 
             if (!this.FillBatch(batch, name, commandSeparator))
             {

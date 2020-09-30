@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Data.Common;
 
 
 
@@ -24,6 +25,17 @@ namespace RI.DatabaseManager.Batches
         ///         This property should never be null.
         ///     </note>
         /// </remarks>
-        List<IDbBatchCommand> Commands { get; }
+        IList<IDbBatchCommand> Commands { get; }
+    }
+
+    /// <inheritdoc cref="IDbBatch" />
+    /// <typeparam name="TConnection"> The database connection type. </typeparam>
+    /// <typeparam name="TTransaction"> The database transaction type. </typeparam>
+    public interface IDbBatch <TConnection, TTransaction> : IDbBatch
+        where TConnection : DbConnection
+        where TTransaction : DbTransaction
+    {
+        /// <inheritdoc cref="IDbBatch.Commands" />
+        new IList<IDbBatchCommand<TConnection, TTransaction>> Commands { get; }
     }
 }
