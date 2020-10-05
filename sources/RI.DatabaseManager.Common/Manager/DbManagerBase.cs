@@ -49,7 +49,7 @@ namespace RI.DatabaseManager.Manager
         ///     </note>
         /// </remarks>
         /// <exception cref="ArgumentNullException"> <paramref name="logger" />, <paramref name="batchLocator" />, or <paramref name="versionDetector" /> is null. </exception>
-        protected DbManagerBase (ILogger logger, IDbBatchLocator batchLocator, IDbVersionDetector<TConnection, TTransaction> versionDetector, IDbBackupCreator<TConnection, TTransaction> backupCreator, IDbCleanupProcessor<TConnection, TTransaction> cleanupProcessor, IDbVersionUpgrader<TConnection, TTransaction> versionUpgrader)
+        protected DbManagerBase (ILogger logger, IDbBatchLocator<TConnection, TTransaction> batchLocator, IDbVersionDetector<TConnection, TTransaction> versionDetector, IDbBackupCreator<TConnection, TTransaction> backupCreator, IDbCleanupProcessor<TConnection, TTransaction> cleanupProcessor, IDbVersionUpgrader<TConnection, TTransaction> versionUpgrader)
         {
             if (logger == null)
             {
@@ -108,7 +108,7 @@ namespace RI.DatabaseManager.Manager
 
         private IDbBackupCreator<TConnection, TTransaction> BackupCreator { get; }
 
-        private IDbBatchLocator BatchLocator { get; }
+        private IDbBatchLocator<TConnection, TTransaction> BatchLocator { get; }
 
         private IDbCleanupProcessor<TConnection, TTransaction> CleanupProcessor { get; }
 
@@ -533,7 +533,7 @@ namespace RI.DatabaseManager.Manager
         /// </remarks>
         protected virtual IDbBatch<TConnection, TTransaction> GetBatchImpl (string name, string commandSeparator, Func<IDbBatch<TConnection, TTransaction>> batchCreator)
         {
-            return (IDbBatch<TConnection, TTransaction>)this.BatchLocator.GetBatch(name, commandSeparator, batchCreator);
+            return this.BatchLocator.GetBatch(name, commandSeparator, batchCreator);
         }
 
         /// <summary>

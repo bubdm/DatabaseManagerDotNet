@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Data.Common;
 using System.IO;
 using System.Reflection;
 using System.Text;
@@ -13,6 +14,8 @@ namespace RI.DatabaseManager.Batches.Locators
     /// <summary>
     ///     Database batch locator implementation which searches assemblies for script resources.
     /// </summary>
+    /// <typeparam name="TConnection"> The database connection type. </typeparam>
+    /// <typeparam name="TTransaction"> The database transaction type. </typeparam>
     /// <remarks>
     ///     <note type="important">
     ///         See <see cref="NameFormat" /> for details about how script resources are searched in assemblies.
@@ -24,7 +27,7 @@ namespace RI.DatabaseManager.Batches.Locators
     ///         <see cref="Encoding" /> is the used encoding for reading the scripts as strings from the assembly resources.
     ///     </para>
     ///     <para>
-    ///         Currently, the following options are supported which are extracted from the scripts (see <see cref="DbBatchLocatorBase.OptionsFormat" /> for more details):
+    ///         Currently, the following options are supported which are extracted from the scripts (see <see cref="DbBatchLocatorBase{TConnection,TTransaction}.OptionsFormat" /> for more details):
     ///     </para>
     ///     <list type="bullet">
     ///         <item> <c> TransactionRequirement </c> [optional] One of the <see cref="DbBatchTransactionRequirement" /> values (as string), e.g. <c> /* DBMANAGER:TransactionRequirement=Disallowed */ </c> </item>
@@ -34,18 +37,20 @@ namespace RI.DatabaseManager.Batches.Locators
     ///     </note>
     /// </remarks>
     /// <threadsafety static="false" instance="false" />
-    public sealed class AssemblyScriptBatchLocator : DbBatchLocatorBase
+    public sealed class AssemblyScriptBatchLocator<TConnection, TTransaction> : DbBatchLocatorBase<TConnection, TTransaction>
+        where TConnection : DbConnection
+        where TTransaction : DbTransaction
     {
         #region Instance Constructor/Destructor
 
         /// <summary>
-        ///     Creates a new instance of <see cref="AssemblyScriptBatchLocator" />.
+        ///     Creates a new instance of <see cref="AssemblyScriptBatchLocator{TConnection,TTransaction}" />.
         /// </summary>
         public AssemblyScriptBatchLocator ()
             : this((IEnumerable<Assembly>)null) { }
 
         /// <summary>
-        ///     Creates a new instance of <see cref="AssemblyScriptBatchLocator" />.
+        ///     Creates a new instance of <see cref="AssemblyScriptBatchLocator{TConnection,TTransaction}" />.
         /// </summary>
         /// <param name="assemblies"> The sequence of assemblies. </param>
         /// <remarks>
@@ -66,7 +71,7 @@ namespace RI.DatabaseManager.Batches.Locators
         }
 
         /// <summary>
-        ///     Creates a new instance of <see cref="AssemblyScriptBatchLocator" />.
+        ///     Creates a new instance of <see cref="AssemblyScriptBatchLocator{TConnection,TTransaction}" />.
         /// </summary>
         /// <param name="assemblies"> The array of assemblies. </param>
         public AssemblyScriptBatchLocator (params Assembly[] assemblies)
@@ -191,7 +196,7 @@ namespace RI.DatabaseManager.Batches.Locators
         #region Overrides
 
         /// <inheritdoc />
-        protected override bool FillBatch (IDbBatch batch, string name, string commandSeparator)
+        protected override bool FillBatch (IDbBatch<TConnection, TTransaction> batch, string name, string commandSeparator)
         {
             bool found = false;
 

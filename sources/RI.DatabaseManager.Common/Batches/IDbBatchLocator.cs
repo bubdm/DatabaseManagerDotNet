@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Data.Common;
 
 
 
@@ -44,5 +45,16 @@ namespace RI.DatabaseManager.Batches
         ///     </note>
         /// </remarks>
         ISet<string> GetNames ();
+    }
+
+    /// <inheritdoc cref="IDbBatchLocator" />
+    /// <typeparam name="TConnection"> The database connection type. </typeparam>
+    /// <typeparam name="TTransaction"> The database transaction type. </typeparam>
+    public interface IDbBatchLocator<TConnection, TTransaction> : IDbBatchLocator
+        where TConnection : DbConnection
+        where TTransaction : DbTransaction
+    {
+        /// <inheritdoc cref="IDbBatchLocator.GetBatch" />
+        IDbBatch<TConnection, TTransaction> GetBatch(string name, string commandSeparator, Func<IDbBatch<TConnection, TTransaction>> batchCreator);
     }
 }

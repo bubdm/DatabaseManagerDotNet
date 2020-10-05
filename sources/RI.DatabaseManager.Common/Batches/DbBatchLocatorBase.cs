@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Data.Common;
 using System.Linq;
 using System.Text.RegularExpressions;
 
@@ -10,6 +11,8 @@ namespace RI.DatabaseManager.Batches
     /// <summary>
     ///     Boilerplate implementation of <see cref="IDbBatchLocator" />.
     /// </summary>
+    /// <typeparam name="TConnection"> The database connection type. </typeparam>
+    /// <typeparam name="TTransaction"> The database transaction type. </typeparam>
     /// <remarks>
     ///     <note type="implement">
     ///         It is recommended that database batch locator implementations use this base class as it already implements already some boilerplate code.
@@ -19,12 +22,14 @@ namespace RI.DatabaseManager.Batches
     ///     </note>
     /// </remarks>
     /// <threadsafety static="false" instance="false" />
-    public abstract class DbBatchLocatorBase : IDbBatchLocator
+    public abstract class DbBatchLocatorBase<TConnection, TTransaction> : IDbBatchLocator<TConnection, TTransaction>
+        where TConnection : DbConnection
+        where TTransaction : DbTransaction
     {
         #region Instance Constructor/Destructor
 
         /// <summary>
-        ///     Creates a new instance of <see cref="DbBatchLocatorBase" />.
+        ///     Creates a new instance of <see cref="DbBatchLocatorBase{TConnection,TTransaction}" />.
         /// </summary>
         protected DbBatchLocatorBase ()
         {
@@ -165,7 +170,7 @@ namespace RI.DatabaseManager.Batches
         ///     true if the batch could be successfully retrieved, false otherwise.
         ///     Details about failures should be written to logs.
         /// </returns>
-        protected abstract bool FillBatch (IDbBatch batch, string name, string commandSeparator);
+        protected abstract bool FillBatch (IDbBatch<TConnection, TTransaction> batch, string name, string commandSeparator);
 
         /// <summary>
         ///     Gets the names of all available batches this batch locator can retrieve.
@@ -357,7 +362,7 @@ namespace RI.DatabaseManager.Batches
         #region Interface: IDbBatchLocator
 
         /// <inheritdoc />
-        IDbBatch IDbBatchLocator.GetBatch (string name, string commandSeparator, Func<IDbBatch> batchCreator)
+        IDbBatch<TConnection, TTransaction> IDbBatchLocator<TConnection, TTransaction>.GetBatch (string name, string commandSeparator, Func<IDbBatch<TConnection, TTransaction>> batchCreator)
         {
             if (name == null)
             {
@@ -385,7 +390,7 @@ namespace RI.DatabaseManager.Batches
             commandSeparator ??= this.CommandSeparator;
             commandSeparator = string.IsNullOrWhiteSpace(commandSeparator) ? null : commandSeparator;
 
-            IDbBatch batch = batchCreator();
+            IDbBatch<TConnection, TTransaction> batch = batchCreator();
 
             if (!this.FillBatch(batch, name, commandSeparator))
             {
@@ -393,6 +398,12 @@ namespace RI.DatabaseManager.Batches
             }
 
             return batch;
+        }
+
+        /// <inheritdoc />
+        IDbBatch IDbBatchLocator.GetBatch (string name, string commandSeparator, Func<IDbBatch> batchCreator)
+        {
+            return ((IDbBatchLocator<TConnection, TTransaction>)this).GetBatch(name, commandSeparator, () => (IDbBatch<TConnection, TTransaction>)batchCreator());
         }
 
         /// <inheritdoc />

@@ -13,12 +13,14 @@ namespace RI.DatabaseManager.Batches.Locators
     /// <summary>
     ///     Database batch locator implementation which searches assemblies for callbacks.
     /// </summary>
+    /// <typeparam name="TConnection"> The database connection type. </typeparam>
+    /// <typeparam name="TTransaction"> The database transaction type. </typeparam>
     /// <remarks>
     ///     <para>
     ///         <see cref="Assemblies" /> is the list of assemblies used to lookup callbacks.
     ///     </para>
     ///     <para>
-    ///         <see cref="AssemblyCallbackBatchLocator" /> searches the assemblies for non-abstract class types which implement <see cref="ICallbackBatch" /> and which have a public parameterless constructor.
+    ///         <see cref="AssemblyCallbackBatchLocator{TConnection,TTransaction}" /> searches the assemblies for non-abstract class types which implement <see cref="ICallbackBatch" /> and which have a public parameterless constructor.
     ///         Each found type is considered an independent batch. Each type such a batch is executed, a new instance of the corresponding type is instantiated (using <see cref="Activator.CreateInstance(Type,bool)" />) and <see cref="ICallbackBatch.Execute" /> is called.
     ///     </para>
     ///     <para>
@@ -27,18 +29,20 @@ namespace RI.DatabaseManager.Batches.Locators
     ///     </para>
     /// </remarks>
     /// <threadsafety static="false" instance="false" />
-    public sealed class AssemblyCallbackBatchLocator : DbBatchLocatorBase
+    public sealed class AssemblyCallbackBatchLocator<TConnection, TTransaction> : DbBatchLocatorBase<TConnection, TTransaction>
+        where TConnection : DbConnection
+        where TTransaction : DbTransaction
     {
         #region Instance Constructor/Destructor
 
         /// <summary>
-        ///     Creates a new instance of <see cref="AssemblyCallbackBatchLocator" />.
+        ///     Creates a new instance of <see cref="AssemblyCallbackBatchLocator{TConnection,TTransaction}" />.
         /// </summary>
         public AssemblyCallbackBatchLocator ()
             : this((IEnumerable<Assembly>)null) { }
 
         /// <summary>
-        ///     Creates a new instance of <see cref="AssemblyCallbackBatchLocator" />.
+        ///     Creates a new instance of <see cref="AssemblyCallbackBatchLocator{TConnection,TTransaction}" />.
         /// </summary>
         /// <param name="assemblies"> The sequence of assemblies. </param>
         /// <remarks>
@@ -57,7 +61,7 @@ namespace RI.DatabaseManager.Batches.Locators
         }
 
         /// <summary>
-        ///     Creates a new instance of <see cref="AssemblyCallbackBatchLocator" />.
+        ///     Creates a new instance of <see cref="AssemblyCallbackBatchLocator{TConnection,TTransaction}" />.
         /// </summary>
         /// <param name="assemblies"> The array of assemblies. </param>
         public AssemblyCallbackBatchLocator (params Assembly[] assemblies)
@@ -126,7 +130,7 @@ namespace RI.DatabaseManager.Batches.Locators
         #region Overrides
 
         /// <inheritdoc />
-        protected override bool FillBatch (IDbBatch batch, string name, string commandSeparator)
+        protected override bool FillBatch (IDbBatch<TConnection, TTransaction> batch, string name, string commandSeparator)
         {
             CallbackTypeCollection callbackTypes = this.GetCallbackTypes();
 

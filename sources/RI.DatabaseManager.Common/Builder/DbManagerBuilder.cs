@@ -84,7 +84,7 @@ namespace RI.DatabaseManager.Builder
         ///     Null object used if no registration for <see cref="IDbBackupCreator{TConnection,TTransaction}" />, <see cref="IDbCleanupProcessor{TConnection,TTransaction}" />, <see cref="IDbVersionUpgrader{TConnection,TTransaction}" />, or <see cref="IDbBatchLocator" /> is provided.
         /// </summary>
         /// <threadsafety static="false" instance="false" />
-        public sealed class NullInstance <TConnection, TTransaction> : IDbBackupCreator<TConnection, TTransaction>, IDbCleanupProcessor<TConnection, TTransaction>, IDbVersionUpgrader<TConnection, TTransaction>, IDbBatchLocator
+        public sealed class NullInstance <TConnection, TTransaction> : IDbBackupCreator<TConnection, TTransaction>, IDbCleanupProcessor<TConnection, TTransaction>, IDbVersionUpgrader<TConnection, TTransaction>, IDbBatchLocator<TConnection, TTransaction>
             where TConnection : DbConnection
             where TTransaction : DbTransaction
         {
@@ -161,7 +161,10 @@ namespace RI.DatabaseManager.Builder
 
 
             /// <inheritdoc />
-            public IDbBatch GetBatch (string name, string commandSeparator, Func<IDbBatch> batchCreator) => null;
+            IDbBatch<TConnection, TTransaction> IDbBatchLocator<TConnection, TTransaction>.GetBatch (string name, string commandSeparator, Func<IDbBatch<TConnection, TTransaction>> batchCreator) => null;
+
+            /// <inheritdoc />
+            IDbBatch IDbBatchLocator.GetBatch(string name, string commandSeparator, Func<IDbBatch> batchCreator) => null;
 
             /// <inheritdoc />
             ISet<string> IDbBatchLocator.GetNames () => null;

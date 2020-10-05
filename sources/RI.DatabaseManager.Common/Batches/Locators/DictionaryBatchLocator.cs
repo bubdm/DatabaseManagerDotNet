@@ -13,6 +13,8 @@ namespace RI.DatabaseManager.Batches.Locators
     /// <summary>
     ///     Database batch locator implementation which uses a dictionary to hold scripts and/or code.
     /// </summary>
+    /// <typeparam name="TConnection"> The database connection type. </typeparam>
+    /// <typeparam name="TTransaction"> The database transaction type. </typeparam>
     /// <remarks>
     ///     <para>
     ///         <see cref="Scripts" /> holds named scripts as strings.
@@ -28,7 +30,7 @@ namespace RI.DatabaseManager.Batches.Locators
     ///         If no value is set for a given batch name, <see cref="DbBatchTransactionRequirement.DontCare" /> is used.
     ///     </para>
     ///     <para>
-    ///         Currently, the following options are supported which are extracted from the scripts (see <see cref="DbBatchLocatorBase.OptionsFormat" /> for more details):
+    ///         Currently, the following options are supported which are extracted from the scripts (see <see cref="DbBatchLocatorBase{TConnection,TTransaction}.OptionsFormat" /> for more details):
     ///     </para>
     ///     <list type="bullet">
     ///         <item> <c> TransactionRequirement </c> [optional] One of the <see cref="DbBatchTransactionRequirement" /> values (as string), e.g. <c> /* DBMANAGER:TransactionRequirement=Disallowed */ </c> </item>
@@ -38,17 +40,19 @@ namespace RI.DatabaseManager.Batches.Locators
     ///     </note>
     /// </remarks>
     /// <threadsafety static="false" instance="false" />
-    public sealed class DictionaryBatchLocator : DbBatchLocatorBase
+    public sealed class DictionaryBatchLocator<TConnection, TTransaction> : DbBatchLocatorBase<TConnection, TTransaction>
+        where TConnection : DbConnection
+        where TTransaction : DbTransaction
     {
         #region Instance Constructor/Destructor
 
         /// <summary>
-        ///     Creates a new instance of <see cref="DictionaryBatchLocator" />.
+        ///     Creates a new instance of <see cref="DictionaryBatchLocator{TConnection,TTransaction}" />.
         /// </summary>
         public DictionaryBatchLocator ()
         {
             this.Scripts = new Dictionary<string, string>(this.DefaultNameComparer);
-            this.Callbacks = new Dictionary<string, Func<DbConnection, DbTransaction, object>>(this.DefaultNameComparer);
+            this.Callbacks = new Dictionary<string, Func<TConnection, TTransaction, object>>(this.DefaultNameComparer);
             this.TransactionRequirements = new Dictionary<string, DbBatchTransactionRequirement>(this.DefaultNameComparer);
         }
 
@@ -65,7 +69,7 @@ namespace RI.DatabaseManager.Batches.Locators
         /// <value>
         ///     The dictionary with callbacks.
         /// </value>
-        public Dictionary<string, Func<DbConnection, DbTransaction, object>> Callbacks { get; }
+        public Dictionary<string, Func<TConnection, TTransaction, object>> Callbacks { get; }
 
         /// <summary>
         ///     Gets the dictionary with scripts as batches.
@@ -91,7 +95,7 @@ namespace RI.DatabaseManager.Batches.Locators
         #region Overrides
 
         /// <inheritdoc />
-        protected override bool FillBatch (IDbBatch batch, string name, string commandSeparator)
+        protected override bool FillBatch (IDbBatch<TConnection, TTransaction> batch, string name, string commandSeparator)
         {
             DbBatchTransactionRequirement transactionRequirement = this.TransactionRequirements.ContainsKey(name) ? this.TransactionRequirements[name] : DbBatchTransactionRequirement.DontCare;
 
@@ -99,7 +103,7 @@ namespace RI.DatabaseManager.Batches.Locators
 
             if (this.Callbacks.ContainsKey(name))
             {
-                Func<DbConnection, DbTransaction, object> callback = this.Callbacks[name];
+                Func<TConnection, TTransaction, object> callback = this.Callbacks[name];
                 batch.AddCode(callback, transactionRequirement);
                 found = true;
             }
@@ -138,7 +142,6 @@ namespace RI.DatabaseManager.Batches.Locators
             return found;
         }
 
-
         /// <inheritdoc />
         protected override IEnumerable<string> GetNames ()
         {
@@ -164,9 +167,7 @@ namespace RI.DatabaseManager.Batches.Locators
         /// <param name="transactionRequirement"> The optional transaction requirement specification. Default values is <see cref="DbBatchTransactionRequirement.DontCare" />. </param>
         /// <exception cref="ArgumentNullException"> <paramref name="batchName" /> or <paramref name="callback"/> is null. </exception>
         /// <exception cref="ArgumentException"> <paramref name="batchName" /> is an empty string. </exception>
-        public void AddCode<TConnection, TTransaction>(string batchName, Func<TConnection, TTransaction, object> callback, DbBatchTransactionRequirement transactionRequirement = DbBatchTransactionRequirement.DontCare)
-            where TConnection : DbConnection
-            where TTransaction : DbTransaction
+        public void AddCode(string batchName, Func<TConnection, TTransaction, object> callback, DbBatchTransactionRequirement transactionRequirement = DbBatchTransactionRequirement.DontCare)
         {
             if (batchName == null)
             {
@@ -183,7 +184,7 @@ namespace RI.DatabaseManager.Batches.Locators
                 throw new ArgumentNullException(nameof(callback));
             }
 
-            this.Callbacks.Add(batchName, (connection, transaction) => callback((TConnection)connection, (TTransaction)transaction));
+            this.Callbacks.Add(batchName, callback);
             this.TransactionRequirements.Add(batchName, transactionRequirement);
         }
 
