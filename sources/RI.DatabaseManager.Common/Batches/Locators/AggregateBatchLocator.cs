@@ -20,20 +20,20 @@ namespace RI.DatabaseManager.Batches.Locators
     ///     </para>
     /// </remarks>
     /// <threadsafety static="false" instance="false" />
-    public sealed class AggregateBatchLocator<TConnection, TTransaction> : IDbBatchLocator<TConnection, TTransaction>, IList<IDbBatchLocator>, ICollection<IDbBatchLocator>
+    public sealed class AggregateBatchLocator<TConnection, TTransaction> : IDbBatchLocator<TConnection, TTransaction>, IList<IDbBatchLocator<TConnection, TTransaction>>, ICollection<IDbBatchLocator<TConnection, TTransaction>>
         where TConnection : DbConnection
         where TTransaction : DbTransaction
     {
         #region Instance Constructor/Destructor
 
         /// <summary>
-        ///     Creates a new instance of <see cref="AggregateBatchLocator" />.
+        ///     Creates a new instance of <see cref="AggregateBatchLocator{TConnection,TTransaction}" />.
         /// </summary>
         public AggregateBatchLocator ()
-            : this((IEnumerable<IDbBatchLocator>)null) { }
+            : this((IEnumerable<IDbBatchLocator<TConnection, TTransaction>>)null) { }
 
         /// <summary>
-        ///     Creates a new instance of <see cref="AggregateBatchLocator" />.
+        ///     Creates a new instance of <see cref="AggregateBatchLocator{TConnection,TTransaction}" />.
         /// </summary>
         /// <param name="batchLocators"> The sequence of batch locators which are aggregated. </param>
         /// <remarks>
@@ -41,13 +41,13 @@ namespace RI.DatabaseManager.Batches.Locators
         ///         <paramref name="batchLocators" /> is enumerated only once.
         ///     </para>
         /// </remarks>
-        public AggregateBatchLocator (IEnumerable<IDbBatchLocator> batchLocators)
+        public AggregateBatchLocator (IEnumerable<IDbBatchLocator<TConnection, TTransaction>> batchLocators)
         {
-            this.BatchLocators = new List<IDbBatchLocator>();
+            this.BatchLocators = new List<IDbBatchLocator<TConnection, TTransaction>>();
 
             if (batchLocators != null)
             {
-                foreach (IDbBatchLocator batchLocator in batchLocators)
+                foreach (IDbBatchLocator<TConnection, TTransaction> batchLocator in batchLocators)
                 {
                     this.Add(batchLocator);
                 }
@@ -55,11 +55,11 @@ namespace RI.DatabaseManager.Batches.Locators
         }
 
         /// <summary>
-        ///     Creates a new instance of <see cref="AggregateBatchLocator" />.
+        ///     Creates a new instance of <see cref="AggregateBatchLocator{TConnection,TTransaction}" />.
         /// </summary>
         /// <param name="batchLocators"> The array of batch locators which are aggregated. </param>
-        public AggregateBatchLocator (params IDbBatchLocator[] batchLocators)
-            : this((IEnumerable<IDbBatchLocator>)batchLocators) { }
+        public AggregateBatchLocator (params IDbBatchLocator<TConnection, TTransaction>[] batchLocators)
+            : this((IEnumerable<IDbBatchLocator<TConnection, TTransaction>>)batchLocators) { }
 
         #endregion
 
@@ -68,7 +68,7 @@ namespace RI.DatabaseManager.Batches.Locators
 
         #region Instance Properties/Indexer
 
-        private List<IDbBatchLocator> BatchLocators { get; }
+        private List<IDbBatchLocator<TConnection, TTransaction>> BatchLocators { get; }
 
         #endregion
 
@@ -78,7 +78,7 @@ namespace RI.DatabaseManager.Batches.Locators
         #region Overrides
 
         /// <inheritdoc />
-        IDbBatch IDbBatchLocator.GetBatch(string name, string commandSeparator, Func<IDbBatch> batchCreator)
+        IDbBatch<TConnection, TTransaction> IDbBatchLocator<TConnection, TTransaction>.GetBatch (string name, string commandSeparator, Func<IDbBatch<TConnection, TTransaction>> batchCreator)
         {
             if (name == null)
             {
@@ -103,9 +103,9 @@ namespace RI.DatabaseManager.Batches.Locators
                 throw new ArgumentNullException(nameof(batchCreator));
             }
 
-            foreach (IDbBatchLocator batchLocator in this.BatchLocators)
+            foreach (IDbBatchLocator<TConnection, TTransaction> batchLocator in this.BatchLocators)
             {
-                IDbBatch currentBatch = batchLocator.GetBatch(name, commandSeparator, batchCreator);
+                IDbBatch<TConnection, TTransaction> currentBatch = batchLocator.GetBatch(name, commandSeparator, batchCreator);
 
                 if (currentBatch != null)
                 {
@@ -115,6 +115,9 @@ namespace RI.DatabaseManager.Batches.Locators
 
             return null;
         }
+
+        /// <inheritdoc />
+        IDbBatch IDbBatchLocator.GetBatch(string name, string commandSeparator, Func<IDbBatch> batchCreator) => ((IDbBatchLocator<TConnection, TTransaction>)this).GetBatch(name, commandSeparator, batchCreator);
 
         /// <inheritdoc />
         ISet<string> IDbBatchLocator.GetNames ()
@@ -146,16 +149,16 @@ namespace RI.DatabaseManager.Batches.Locators
 
 
 
-        #region Interface: IList<IDbBatchLocator>
+        #region Interface: IList<IDbBatchLocator<TConnection, TTransaction>>
 
         /// <inheritdoc />
         public int Count => this.BatchLocators.Count;
 
         /// <inheritdoc />
-        bool ICollection<IDbBatchLocator>.IsReadOnly => false;
+        bool ICollection<IDbBatchLocator<TConnection, TTransaction>>.IsReadOnly => false;
 
         /// <inheritdoc />
-        public IDbBatchLocator this [int index]
+        public IDbBatchLocator<TConnection, TTransaction> this [int index]
         {
             get => this.BatchLocators[index];
             set
@@ -170,7 +173,7 @@ namespace RI.DatabaseManager.Batches.Locators
         }
 
         /// <inheritdoc />
-        public void Add (IDbBatchLocator item)
+        public void Add (IDbBatchLocator<TConnection, TTransaction> item)
         {
             if (item == null)
             {
@@ -187,13 +190,13 @@ namespace RI.DatabaseManager.Batches.Locators
         }
 
         /// <inheritdoc />
-        public bool Contains (IDbBatchLocator item)
+        public bool Contains (IDbBatchLocator<TConnection, TTransaction> item)
         {
             return this.BatchLocators.Contains(item);
         }
 
         /// <inheritdoc />
-        void ICollection<IDbBatchLocator>.CopyTo (IDbBatchLocator[] array, int arrayIndex)
+        void ICollection<IDbBatchLocator<TConnection, TTransaction>>.CopyTo (IDbBatchLocator<TConnection, TTransaction>[] array, int arrayIndex)
         {
             this.BatchLocators.CopyTo(array, arrayIndex);
         }
@@ -205,20 +208,19 @@ namespace RI.DatabaseManager.Batches.Locators
         }
 
         /// <inheritdoc />
-        public IEnumerator<IDbBatchLocator> GetEnumerator ()
+        public IEnumerator<IDbBatchLocator<TConnection, TTransaction>> GetEnumerator ()
         {
             return this.BatchLocators.GetEnumerator();
         }
 
-
         /// <inheritdoc />
-        public int IndexOf (IDbBatchLocator item)
+        public int IndexOf (IDbBatchLocator<TConnection, TTransaction> item)
         {
             return this.BatchLocators.IndexOf(item);
         }
 
         /// <inheritdoc />
-        public void Insert (int index, IDbBatchLocator item)
+        public void Insert (int index, IDbBatchLocator<TConnection, TTransaction> item)
         {
             if (item == null)
             {
@@ -229,7 +231,7 @@ namespace RI.DatabaseManager.Batches.Locators
         }
 
         /// <inheritdoc />
-        public bool Remove (IDbBatchLocator item)
+        public bool Remove (IDbBatchLocator<TConnection, TTransaction> item)
         {
             return this.BatchLocators.Remove(item);
         }

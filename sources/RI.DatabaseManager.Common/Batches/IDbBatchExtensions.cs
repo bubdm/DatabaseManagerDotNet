@@ -17,6 +17,9 @@ namespace RI.DatabaseManager.Batches
     /// </summary>
     /// <threadsafety static="false" instance="false" />
     /// TODO: Change return values from int to command
+    /// TODO: AddCodeFromAssembly
+    /// TODO: AddScriptFromAssembly
+    /// TODO: Add non-generic Add methods
     public static class IDbBatchExtensions
     {
         #region Static Methods

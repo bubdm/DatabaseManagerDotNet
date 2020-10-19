@@ -10,9 +10,10 @@ namespace RI.DatabaseManager.Batches.Locators
     /// </summary>
     /// <remarks>
     ///     <para>
-    ///         See <see cref="AssemblyCallbackBatchLocator" /> for more details.
+    ///         See <see cref="AssemblyCallbackBatchLocator{TConnection,TTransaction}" /> for more details.
     ///     </para>
     /// </remarks>
+    /// TODO: Make generic
     public interface ICallbackBatch
     {
         /// <summary>

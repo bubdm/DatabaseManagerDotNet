@@ -28,7 +28,7 @@ namespace RI.DatabaseManager.Builder
         ///     </note>
         /// </remarks>
         /// <exception cref="ArgumentNullException"> <paramref name="services" /> is null. </exception>
-        public static DbManagerBuilder AddDbManager (this IServiceCollection services)
+        public static IDbManagerBuilder AddDbManager (this IServiceCollection services)
         {
             if (services == null)
             {

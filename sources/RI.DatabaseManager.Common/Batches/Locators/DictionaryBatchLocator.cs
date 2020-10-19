@@ -40,6 +40,9 @@ namespace RI.DatabaseManager.Batches.Locators
     ///     </note>
     /// </remarks>
     /// <threadsafety static="false" instance="false" />
+    /// TODO: Change return values from void to command
+    /// TODO: AddCodeFromAssembly
+    /// TODO: AddScriptFromAssembly
     public sealed class DictionaryBatchLocator<TConnection, TTransaction> : DbBatchLocatorBase<TConnection, TTransaction>
         where TConnection : DbConnection
         where TTransaction : DbTransaction
@@ -168,35 +171,6 @@ namespace RI.DatabaseManager.Batches.Locators
         /// <exception cref="ArgumentNullException"> <paramref name="batchName" /> or <paramref name="callback"/> is null. </exception>
         /// <exception cref="ArgumentException"> <paramref name="batchName" /> is an empty string. </exception>
         public void AddCode(string batchName, Func<TConnection, TTransaction, object> callback, DbBatchTransactionRequirement transactionRequirement = DbBatchTransactionRequirement.DontCare)
-        {
-            if (batchName == null)
-            {
-                throw new ArgumentNullException(nameof(batchName));
-            }
-
-            if (string.IsNullOrWhiteSpace(batchName))
-            {
-                throw new ArgumentException("The string argument is empty.", nameof(batchName));
-            }
-
-            if (callback == null)
-            {
-                throw new ArgumentNullException(nameof(callback));
-            }
-
-            this.Callbacks.Add(batchName, callback);
-            this.TransactionRequirements.Add(batchName, transactionRequirement);
-        }
-
-        /// <summary>
-        ///     Adds a code callback as a single batch.
-        /// </summary>
-        /// <param name="batchName"> The name of the batch. </param>
-        /// <param name="callback"> The callback. </param>
-        /// <param name="transactionRequirement"> The optional transaction requirement specification. Default values is <see cref="DbBatchTransactionRequirement.DontCare" />. </param>
-        /// <exception cref="ArgumentNullException"> <paramref name="batchName" /> or <paramref name="callback"/> is null. </exception>
-        /// <exception cref="ArgumentException"> <paramref name="batchName" /> is an empty string. </exception>
-        public void AddCode(string batchName, Func<DbConnection, DbTransaction, object> callback, DbBatchTransactionRequirement transactionRequirement = DbBatchTransactionRequirement.DontCare)
         {
             if (batchName == null)
             {
