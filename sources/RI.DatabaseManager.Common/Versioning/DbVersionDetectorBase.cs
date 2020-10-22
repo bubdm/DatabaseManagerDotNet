@@ -56,6 +56,31 @@ namespace RI.DatabaseManager.Versioning
         /// </value>
         protected ILogger Logger { get; }
 
+        /// <summary>
+        ///     Writes a log message.
+        /// </summary>
+        /// <param name="level"> The log level of the log message. </param>
+        /// <param name="format"> Log message (with optional string expansion arguments such as <c> {0} </c>, <c> {1} </c>, etc. which are expanded by <paramref name="args" />). </param>
+        /// <param name="args"> Optional message arguments expanded into <paramref name="format" />. </param>
+        protected void Log(LogLevel level, string format, params object[] args)
+        {
+            this.Logger.Log(level, this.GetType()
+                                       .Name, null, format, args);
+        }
+
+        /// <summary>
+        ///     Writes a log message.
+        /// </summary>
+        /// <param name="level"> The log level of the log message. </param>
+        /// <param name="exception"> Exception associated with the log message. </param>
+        /// <param name="format"> Optional log message (with optional string expansion arguments such as <c> {0} </c>, <c> {1} </c>, etc. which are expanded by <paramref name="args" />). </param>
+        /// <param name="args"> Optional message arguments expanded into <paramref name="format" />. </param>
+        protected void Log(LogLevel level, Exception exception, string format, params object[] args)
+        {
+            this.Logger.Log(level, this.GetType()
+                                       .Name, exception, format, args);
+        }
+
         #endregion
 
 

@@ -31,7 +31,7 @@ namespace RI.DatabaseManager.Backup
     ///     </para>
     /// </remarks>
     /// <threadsafety static="false" instance="false" />
-    public sealed class SQLiteDatabaseBackupCreator : DbBackupCreatorBase<SQLiteConnection, SQLiteTransaction, SQLiteConnectionStringBuilder, SQLiteDatabaseManager, SQLiteDatabaseManagerConfiguration>
+    public sealed class SQLiteDatabaseBackupCreator : DbBackupCreatorBase<SQLiteConnection, SQLiteTransaction, SQLiteConnectionStringBuilder, SQLiteDbManager, SQLiteDatabaseManagerConfiguration>
     {
         #region Instance Constructor/Destructor
 
@@ -143,7 +143,7 @@ namespace RI.DatabaseManager.Backup
         public override bool SupportsRestore => false;
 
         /// <inheritdoc />
-        public override bool Backup (SQLiteDatabaseManager manager, object backupTarget)
+        public override bool Backup (SQLiteDbManager manager, object backupTarget)
         {
             if (manager == null)
             {
@@ -251,7 +251,7 @@ namespace RI.DatabaseManager.Backup
         }
 
         /// <inheritdoc />
-        public override bool Restore (SQLiteDatabaseManager manager, object backupSource)
+        public override bool Restore (SQLiteDbManager manager, object backupSource)
         {
             throw new NotSupportedException(nameof(SQLiteDatabaseBackupCreator) + "does not support restore.");
         }

@@ -106,13 +106,13 @@ namespace RI.DatabaseManager.Upgrading
         public override bool RequiresScriptLocator => this.UpgradeSteps.Any(x => x.RequiresScriptLocator);
 
         /// <inheritdoc />
-        public override int GetMaxVersion (SQLiteDatabaseManager manager) => this.UpgradeSteps.Select(x => x.SourceVersion).Max() + 1;
+        public override int GetMaxVersion (SQLiteDbManager manager) => this.UpgradeSteps.Select(x => x.SourceVersion).Max() + 1;
 
         /// <inheritdoc />
-        public override int GetMinVersion (SQLiteDatabaseManager manager) => this.UpgradeSteps.Select(x => x.SourceVersion).Min();
+        public override int GetMinVersion (SQLiteDbManager manager) => this.UpgradeSteps.Select(x => x.SourceVersion).Min();
 
         /// <inheritdoc />
-        public override bool Upgrade (SQLiteDatabaseManager manager, int sourceVersion)
+        public override bool Upgrade (SQLiteDbManager manager, int sourceVersion)
         {
             if (manager == null)
             {

@@ -1,10 +1,10 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Data;
 using System.Data.SQLite;
 
+using RI.Abstractions.Logging;
+using RI.DatabaseManager.Batches;
+using RI.DatabaseManager.Builder;
 using RI.DatabaseManager.Manager;
-using RI.DatabaseManager.Scripts;
 
 
 
@@ -16,80 +16,31 @@ namespace RI.DatabaseManager.Cleanup
     /// </summary>
     /// <remarks>
     ///     <para>
-    ///         <see cref="SQLiteDatabaseCleanupProcessor" /> can be used with either a default SQLite cleanup script (<see cref="DefaultCleanupScript" />) or with a custom processing step.
+    ///         <see cref="SQLiteDatabaseCleanupProcessor" /> can be used with either a default SQLite cleanup script or with a custom batch.
+    /// See <see cref="SQLiteDbManagerOptions"/> for more information.
     ///     </para>
     /// </remarks>
     /// <threadsafety static="false" instance="false" />
-    public sealed class SQLiteDatabaseCleanupProcessor : DbCleanupProcessorBase<SQLiteConnection, SQLiteTransaction, SQLiteConnectionStringBuilder, SQLiteDatabaseManager, SQLiteDatabaseManagerConfiguration>
+    public sealed class SQLiteDatabaseCleanupProcessor : DbCleanupProcessorBase<SQLiteConnection, SQLiteTransaction>
     {
-        #region Constants
-
-        /// <summary>
-        ///     The default cleanup script used when no custom processing step is specified.
-        /// </summary>
-        /// <remarks>
-        ///     <para>
-        ///         The default cleanup script uses <c> VACUUM </c>, <c> ANALYZE </c>, and <c> REINDEX </c>, each executed as a single command.
-        ///     </para>
-        /// </remarks>
-        public const string DefaultCleanupScript = "VACUUM;" + DbScriptLocatorBase.DefaultBatchSeparator + "ANALYZE;" + DbScriptLocatorBase.DefaultBatchSeparator + "REINDEX;" + DbScriptLocatorBase.DefaultBatchSeparator;
-
-        #endregion
-
-
-
-
         #region Instance Constructor/Destructor
 
-        /// <summary>
-        ///     Creates a new instance of <see cref="SQLiteDatabaseCleanupProcessor" />.
-        /// </summary>
-        /// <remarks>
-        ///     <para>
-        ///         The default cleanup script is used (<see cref="DefaultCleanupScript" />).
-        ///     </para>
-        /// </remarks>
-        public SQLiteDatabaseCleanupProcessor ()
-        {
-            this.CleanupStep = null;
-        }
+        private SQLiteDbManagerOptions Options { get; }
 
         /// <summary>
         ///     Creates a new instance of <see cref="SQLiteDatabaseCleanupProcessor" />.
         /// </summary>
-        /// <param name="cleanupStep"> The custom processing step which performs the cleanup. </param>
-        /// <exception cref="ArgumentNullException"> <paramref name="cleanupStep" /> is null. </exception>
-        public SQLiteDatabaseCleanupProcessor (SQLiteDbProcessingStep cleanupStep)
+        /// <param name="options"> The used SQLite database manager options.</param>
+        /// <param name="logger"> The used logger. </param>
+        /// <exception cref="ArgumentNullException"> <paramref name="options" /> or <paramref name="logger" /> is null. </exception>
+        public SQLiteDatabaseCleanupProcessor(SQLiteDbManagerOptions options, ILogger logger) : base(logger)
         {
-            if (cleanupStep == null)
+            if (options == null)
             {
-                throw new ArgumentNullException(nameof(cleanupStep));
+                throw new ArgumentNullException(nameof(options));
             }
 
-            this.CleanupStep = cleanupStep;
-        }
-
-        /// <summary>
-        ///     Creates a new instance of <see cref="SQLiteDatabaseCleanupProcessor" />.
-        /// </summary>
-        /// <param name="scriptName"> The script name which is used to perform the cleanup. </param>
-        /// <exception cref="ArgumentNullException"> <paramref name="scriptName" /> is null. </exception>
-        /// <exception cref="EmptyStringArgumentException"> <paramref name="scriptName" /> is an empty string. </exception>
-        public SQLiteDatabaseCleanupProcessor (string scriptName)
-        {
-            if (scriptName == null)
-            {
-                throw new ArgumentNullException(nameof(scriptName));
-            }
-
-            if (scriptName.IsNullOrEmptyOrWhitespace())
-            {
-                throw new EmptyStringArgumentException(nameof(scriptName));
-            }
-
-            SQLiteDbProcessingStep step = new SQLiteDbProcessingStep();
-            step.AddScript(scriptName);
-            this.CleanupStep = step;
+            this.Options = options;
         }
 
         #endregion
@@ -97,28 +48,8 @@ namespace RI.DatabaseManager.Cleanup
 
 
 
-        #region Instance Properties/Indexer
-
-        /// <summary>
-        ///     Gets the custom processing step which performs the cleanup.
-        /// </summary>
-        /// <value>
-        ///     The custom processing step which performs the cleanup or null if the default cleanup script is used (<see cref="DefaultCleanupScript" />).
-        /// </value>
-        public SQLiteDbProcessingStep CleanupStep { get; }
-
-        #endregion
-
-
-
-
-        #region Overrides
-
         /// <inheritdoc />
-        public override bool RequiresScriptLocator => this.CleanupStep?.RequiresScriptLocator ?? false;
-
-        /// <inheritdoc />
-        public override bool Cleanup (SQLiteDatabaseManager manager)
+        public override bool Cleanup (IDbManager<SQLiteConnection, SQLiteTransaction> manager)
         {
             if (manager == null)
             {
@@ -127,36 +58,46 @@ namespace RI.DatabaseManager.Cleanup
 
             try
             {
-                //TODO: Log: this.Log(LogLevel.Debug, "Beginning SQLite database cleanup: Connection=[{0}]", manager.Configuration.ConnectionString);
+                this.Log(LogLevel.Information, "Beginning SQLite database cleanup");
 
-                using (SQLiteConnection connection = manager.CreateInternalConnection(null, false))
+                IDbBatch<SQLiteConnection, SQLiteTransaction> batch;
+
+                if (!this.Options.CustomCleanupBatch.IsEmpty())
                 {
-                    SQLiteDbProcessingStep cleanupStep = this.CleanupStep;
-                    if (cleanupStep == null)
-                    {
-                        List<string> batches = DbScriptLocatorBase.SplitBatches(SQLiteDatabaseCleanupProcessor.DefaultCleanupScript, DbScriptLocatorBase.DefaultBatchSeparator);
-                        cleanupStep = new SQLiteDbProcessingStep();
-                        cleanupStep.AddBatches(batches);
-                    }
+                    batch = this.Options.CustomCleanupBatch;
+                }
+                else if (!string.IsNullOrWhiteSpace(this.Options.CustomCleanupBatchName))
+                {
+                    batch = manager.GetBatch(this.Options.CustomCleanupBatchName);
+                }
+                else
+                {
+                    batch = new DbBatch<SQLiteConnection, SQLiteTransaction>();
 
-                    using (SQLiteTransaction transaction = cleanupStep.RequiresTransaction ? connection.BeginTransaction(IsolationLevel.Serializable) : null)
+                    foreach (string command in this.Options.DefaultCleanupScript)
                     {
-                        cleanupStep.Execute(manager, connection, transaction);
-                        transaction?.Commit();
+                        batch.AddScript(command, DbBatchTransactionRequirement.Disallowed);
                     }
                 }
 
-                //TODO: Log: this.Log(LogLevel.Debug, "Finished SQLite database cleanup: Connection=[{0}]", manager.Configuration.ConnectionString);
+                bool result = manager.ExecuteBatch(batch, false, true);
 
-                return true;
+                if (result)
+                {
+                    this.Log(LogLevel.Information, "Finished SQLite database cleanup");
+                }
+                else
+                {
+                    this.Log(LogLevel.Error, "SQLite database cleanup failed");
+                }
+
+                return result;
             }
             catch (Exception exception)
             {
-                //TODO: Log: this.Log(LogLevel.Error, "SQLite database cleanup failed:{0}{1}", Environment.NewLine, exception.ToDetailedString());
+                this.Log(LogLevel.Error, "SQLite database cleanup failed:{0}{1}", Environment.NewLine, exception.ToString());
                 return false;
             }
         }
-
-        #endregion
     }
 }

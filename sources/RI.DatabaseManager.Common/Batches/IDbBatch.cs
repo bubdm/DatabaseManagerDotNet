@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Data.Common;
 
 
@@ -9,7 +10,7 @@ namespace RI.DatabaseManager.Batches
     /// <summary>
     ///     A single database batch which groups multiple commands into one unit.
     /// </summary>
-    public interface IDbBatch
+    public interface IDbBatch : ICloneable
     {
         /// <summary>
         ///     Gets the list of all commands of this batch.

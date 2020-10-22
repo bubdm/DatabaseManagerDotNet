@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using System.Data;
 using System.Data.SQLite;
 
+using RI.Abstractions.Logging;
+using RI.DatabaseManager.Builder;
 using RI.DatabaseManager.Manager;
 
 
@@ -15,7 +17,8 @@ namespace RI.DatabaseManager.Versioning
     /// </summary>
     /// <remarks>
     ///     <para>
-    ///         <see cref="SQLiteDatabaseVersionDetector" /> uses a custom SQL script which is loaded through a script locator using its script name.
+    ///         <see cref="SQLiteDatabaseVersionDetector" /> can be used with either a default SQLite cleanup script or with a custom batch.
+    /// See <see cref="SQLiteDbManagerOptions"/> for more information.
     ///     </para>
     ///     <para>
     ///         The script must return a scalar value which indicates the current version of the database.
@@ -28,29 +31,26 @@ namespace RI.DatabaseManager.Versioning
     ///     </para>
     /// </remarks>
     /// <threadsafety static="false" instance="false" />
-    public sealed class SQLiteDatabaseVersionDetector : DbVersionDetectorBase<SQLiteConnection, SQLiteTransaction, SQLiteConnectionStringBuilder, SQLiteDatabaseManager, SQLiteDatabaseManagerConfiguration>
+    public sealed class SQLiteDatabaseVersionDetector : DbVersionDetectorBase<SQLiteConnection, SQLiteTransaction>
     {
         #region Instance Constructor/Destructor
+
+        private SQLiteDbManagerOptions Options { get; }
 
         /// <summary>
         ///     Creates a new instance of <see cref="SQLiteDatabaseVersionDetector" />.
         /// </summary>
-        /// <param name="scriptName"> The name of the script which performs the version detection. </param>
-        /// <exception cref="ArgumentNullException"> <paramref name="scriptName" /> is null. </exception>
-        /// <exception cref="EmptyStringArgumentException"> <paramref name="scriptName" /> is an empty string. </exception>
-        public SQLiteDatabaseVersionDetector (string scriptName)
+        /// <param name="options"> The used SQLite database manager options.</param>
+        /// <param name="logger"> The used logger. </param>
+        /// <exception cref="ArgumentNullException"> <paramref name="options" /> or <paramref name="logger" /> is null. </exception>
+        public SQLiteDatabaseVersionDetector(SQLiteDbManagerOptions options, ILogger logger) : base(logger)
         {
-            if (scriptName == null)
+            if (options == null)
             {
-                throw new ArgumentNullException(nameof(scriptName));
+                throw new ArgumentNullException(nameof(options));
             }
 
-            if (scriptName.IsNullOrEmptyOrWhitespace())
-            {
-                throw new EmptyStringArgumentException(nameof(scriptName));
-            }
-
-            this.ScriptName = scriptName;
+            this.Options = options;
         }
 
         #endregion
@@ -58,28 +58,8 @@ namespace RI.DatabaseManager.Versioning
 
 
 
-        #region Instance Properties/Indexer
-
-        /// <summary>
-        ///     Gets the name of the script which performs the version detection.
-        /// </summary>
-        /// <value>
-        ///     The name of the script which performs the version detection.
-        /// </value>
-        public string ScriptName { get; }
-
-        #endregion
-
-
-
-
-        #region Overrides
-
         /// <inheritdoc />
-        public override bool RequiresScriptLocator => true;
-
-        /// <inheritdoc />
-        public override bool Detect (SQLiteDatabaseManager manager, out DbState? state, out int version)
+        public override bool Detect (IDbManager<SQLiteConnection, SQLiteTransaction> manager, out DbState? state, out int version)
         {
             if (manager == null)
             {
@@ -126,7 +106,5 @@ namespace RI.DatabaseManager.Versioning
                 return false;
             }
         }
-
-        #endregion
     }
 }

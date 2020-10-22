@@ -9,7 +9,7 @@ namespace RI.DatabaseManager.Upgrading
     ///     Implements an assembly version upgrade step extractor for SQL Server databases.
     /// </summary>
     /// <threadsafety static="false" instance="false" />
-    public sealed class SqlServerAssemblyResourceVersionUpgraderUtility : AssemblyResourceVersionUpgraderUtility<SqlServerDbVersionUpgradeStep, SqlConnection, SqlTransaction, SqlConnectionStringBuilder, SqlServerDatabaseManager, SqlServerDatabaseManagerConfiguration>
+    public sealed class SqlServerAssemblyResourceVersionUpgraderUtility : AssemblyResourceVersionUpgraderUtility<SqlServerDbVersionUpgradeStep, SqlConnection, SqlTransaction, SqlConnectionStringBuilder, SqlServerDbManager, SqlServerDatabaseManagerConfiguration>
     {
         #region Overrides
 

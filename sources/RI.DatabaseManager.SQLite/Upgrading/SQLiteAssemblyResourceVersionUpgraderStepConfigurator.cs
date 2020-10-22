@@ -11,7 +11,7 @@ namespace RI.DatabaseManager.Upgrading
     ///     Implements an assembly version upgrade step configurators for SQLite databases.
     /// </summary>
     /// <threadsafety static="false" instance="false" />
-    public abstract class SQLiteAssemblyResourceVersionUpgraderStepConfigurator : AssemblyResourceVersionUpgraderStepConfigurator<SQLiteDbVersionUpgradeStep, SQLiteConnection, SQLiteTransaction, SQLiteConnectionStringBuilder, SQLiteDatabaseManager, SQLiteDatabaseManagerConfiguration>
+    public abstract class SQLiteAssemblyResourceVersionUpgraderStepConfigurator : AssemblyResourceVersionUpgraderStepConfigurator<SQLiteDbVersionUpgradeStep, SQLiteConnection, SQLiteTransaction, SQLiteConnectionStringBuilder, SQLiteDbManager, SQLiteDatabaseManagerConfiguration>
     {
     }
 }

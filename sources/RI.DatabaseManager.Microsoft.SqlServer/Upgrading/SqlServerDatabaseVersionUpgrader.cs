@@ -107,13 +107,13 @@ namespace RI.DatabaseManager.Upgrading
         public override bool RequiresScriptLocator => this.UpgradeSteps.Any(x => x.RequiresScriptLocator);
 
         /// <inheritdoc />
-        public override int GetMaxVersion (SqlServerDatabaseManager manager) => this.UpgradeSteps.Select(x => x.SourceVersion).Max() + 1;
+        public override int GetMaxVersion (SqlServerDbManager manager) => this.UpgradeSteps.Select(x => x.SourceVersion).Max() + 1;
 
         /// <inheritdoc />
-        public override int GetMinVersion (SqlServerDatabaseManager manager) => this.UpgradeSteps.Select(x => x.SourceVersion).Min();
+        public override int GetMinVersion (SqlServerDbManager manager) => this.UpgradeSteps.Select(x => x.SourceVersion).Min();
 
         /// <inheritdoc />
-        public override bool Upgrade (SqlServerDatabaseManager manager, int sourceVersion)
+        public override bool Upgrade (SqlServerDbManager manager, int sourceVersion)
         {
             if (manager == null)
             {

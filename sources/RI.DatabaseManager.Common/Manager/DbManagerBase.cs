@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Data;
 using System.Data.Common;
 using System.Globalization;
 
@@ -296,11 +297,12 @@ namespace RI.DatabaseManager.Manager
         ///     Creates a new database transaction.
         /// </summary>
         /// <param name="readOnly"> Specifies whether the underlying connection should be read-only. </param>
+        /// <param name="isolationLevel"> Specifies the used isolation level for the transaction.</param>
         /// <returns>
         ///     The newly created transaction with its underlying connection already opened or null if the transaction or connection could not be created.
         ///     Details about failures should be written to logs.
         /// </returns>
-        protected abstract TTransaction CreateTransactionImpl (bool readOnly);
+        protected abstract TTransaction CreateTransactionImpl (bool readOnly, IsolationLevel isolationLevel);
 
         /// <summary>
         ///     Executes database script code of a single batch command.
@@ -335,7 +337,7 @@ namespace RI.DatabaseManager.Manager
         /// </remarks>
         protected virtual bool BackupImpl (object backupTarget)
         {
-            this.Log(LogLevel.Debug, "Performing database backup; Target=[{0}][{1}]", backupTarget.GetType()
+            this.Log(LogLevel.Information, "Performing database backup; Target=[{0}][{1}]", backupTarget.GetType()
                                                                                                   .Name, backupTarget);
 
             return this.BackupCreator.Backup(this, backupTarget);
@@ -614,12 +616,13 @@ namespace RI.DatabaseManager.Manager
         /// </summary>
         /// <param name="transaction"> The transaction. </param>
         /// <param name="readOnly"> Indicates whether the underlying connection is read-only. </param>
+        /// <param name="isolationLevel"> Specifies the used isolation level for the transaction.</param>
         /// <remarks>
         ///     <note type="implement">
         ///         The default implementation does nothing.
         ///     </note>
         /// </remarks>
-        protected virtual void OnTransactionCreated (TTransaction transaction, bool readOnly) { }
+        protected virtual void OnTransactionCreated (TTransaction transaction, bool readOnly, IsolationLevel isolationLevel) { }
 
         /// <summary>
         ///     Called when the current database version has changed.
@@ -648,8 +651,8 @@ namespace RI.DatabaseManager.Manager
         /// </remarks>
         protected virtual bool RestoreImpl (object backupSource)
         {
-            this.Log(LogLevel.Debug, "Performing database restore; Source=[{0}][{1}]", backupSource.GetType()
-                                                                                                   .Name, backupSource);
+            this.Log(LogLevel.Information, "Performing database restore; Source=[{0}][{1}]", backupSource.GetType()
+                                                                                                         .Name, backupSource);
 
             return this.BackupCreator.Restore(this, backupSource);
         }
@@ -844,9 +847,9 @@ namespace RI.DatabaseManager.Manager
         }
 
         /// <inheritdoc />
-        DbTransaction IDbManager.CreateTransaction (bool readOnly)
+        DbTransaction IDbManager.CreateTransaction (bool readOnly, IsolationLevel isolationLevel)
         {
-            return this.CreateTransaction(readOnly);
+            return this.CreateTransaction(readOnly, isolationLevel);
         }
 
         /// <inheritdoc />
@@ -862,7 +865,7 @@ namespace RI.DatabaseManager.Manager
         }
 
         /// <inheritdoc />
-        public TTransaction CreateTransaction (bool readOnly)
+        public TTransaction CreateTransaction (bool readOnly, IsolationLevel isolationLevel)
         {
             if (!this.IsReady())
             {
@@ -880,7 +883,7 @@ namespace RI.DatabaseManager.Manager
 
             try
             {
-                transaction = this.CreateTransactionImpl(readOnly);
+                transaction = this.CreateTransactionImpl(readOnly, isolationLevel);
             }
             catch (Exception exception)
             {
@@ -890,7 +893,7 @@ namespace RI.DatabaseManager.Manager
 
             if (transaction != null)
             {
-                this.OnTransactionCreated(transaction, readOnly);
+                this.OnTransactionCreated(transaction, readOnly, isolationLevel);
             }
 
             return transaction;

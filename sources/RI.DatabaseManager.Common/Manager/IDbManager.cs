@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Data;
 using System.Data.Common;
 
 using RI.DatabaseManager.Backup;
@@ -261,13 +262,14 @@ namespace RI.DatabaseManager.Manager
         ///     Creates a new transaction which can be used to work with the database.
         /// </summary>
         /// <param name="readOnly"> Specifies whether the underlying connection should be read-only. </param>
+        /// <param name="isolationLevel"> Specifies the used isolation level for the transaction.</param>
         /// <returns>
         ///     The newly created transaction with its underlying connection already opened or null if the transaction or connection could not be created.
         ///     Details about failures should be written to logs.
         /// </returns>
         /// <exception cref="InvalidOperationException"> The database is not in a ready state. </exception>
-        /// <exception cref="NotSupportedException"> <paramref name="readOnly" /> is true but read-only connections are not supported. </exception>
-        DbTransaction CreateTransaction (bool readOnly);
+        /// <exception cref="NotSupportedException"> <paramref name="readOnly" /> is true but read-only connections are not supported or the specified <paramref name="isolationLevel"/> is not supported. </exception>
+        DbTransaction CreateTransaction (bool readOnly, IsolationLevel isolationLevel);
 
         /// <summary>
         ///     Executes a batch.
@@ -389,7 +391,7 @@ namespace RI.DatabaseManager.Manager
         new TConnection CreateConnection (bool readOnly);
 
         /// <inheritdoc cref="IDbManager.CreateTransaction" />
-        new TTransaction CreateTransaction (bool readOnly);
+        new TTransaction CreateTransaction (bool readOnly, IsolationLevel isolationLevel);
 
         /// <inheritdoc cref="IDbManager.CreateBatch" />
         new IDbBatch<TConnection, TTransaction> CreateBatch();

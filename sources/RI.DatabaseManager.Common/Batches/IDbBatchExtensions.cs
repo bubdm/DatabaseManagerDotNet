@@ -366,6 +366,40 @@ namespace RI.DatabaseManager.Batches
             return batch.Commands.Any(x => x?.WasExecuted ?? true);
         }
 
+        /// <summary>
+        ///     Determines whether a batch is empty (has no commands).
+        /// </summary>
+        /// <param name="batch"> The batch. </param>
+        /// <returns>
+        ///     true if the batch is empty (has no commands), false otherwise.
+        /// </returns>
+        /// <exception cref="ArgumentNullException"> <paramref name="batch" /> is null. </exception>
+        public static bool IsEmpty (this IDbBatch batch)
+        {
+            if (batch == null)
+            {
+                throw new ArgumentNullException(nameof(batch));
+            }
+
+            return batch.Commands.Count == 0;
+        }
+
+        /// <summary>
+        ///     Clears all commands of a batch.
+        /// </summary>
+        /// <param name="batch"> The batch. </param>
+        /// <exception cref="ArgumentNullException"> <paramref name="batch" /> is null. </exception>
+        public static void Clear (this IDbBatch batch)
+        {
+            if (batch == null)
+            {
+                throw new ArgumentNullException(nameof(batch));
+            }
+
+            batch.Commands.Clear();
+            batch.Reset();
+        }
+
         #endregion
     }
 }

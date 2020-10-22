@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Data.Common;
 
 
@@ -59,5 +60,24 @@ namespace RI.DatabaseManager.Batches
 
         /// <inheritdoc />
         IList<IDbBatchCommand> IDbBatch.Commands => this.CommandsInternal;
+
+        /// <inheritdoc />
+        object ICloneable.Clone()
+        {
+            return this.Clone();
+        }
+
+        /// <inheritdoc cref="ICloneable.Clone"/>
+        public DbBatch<TConnection, TTransaction> Clone()
+        {
+            DbBatch<TConnection, TTransaction> clone = new DbBatch<TConnection, TTransaction>();
+
+            foreach (IDbBatchCommand<TConnection, TTransaction> command in this.CommandsInternal)
+            {
+                clone.CommandsInternal.Add((IDbBatchCommand<TConnection, TTransaction>)command.Clone());
+            }
+
+            return clone;
+        }
     }
 }

@@ -33,8 +33,8 @@ namespace RI.DatabaseManager.Batches
         /// </summary>
         protected DbBatchLocatorBase ()
         {
-            this.OptionsFormat = @"(/\*\s*DBMANAGER:)(?<key>.+?)(=)(?<value>.+?)(\s*\*/)";
-            this.CommandSeparator = $"{Environment.NewLine}GO{Environment.NewLine}";
+            this._optionsFormat = @"(/\*\s*DBMANAGER:)(?<key>.+?)(=)(?<value>.+?)(\s*\*/)";
+            this._commandSeparator = $"{Environment.NewLine}GO{Environment.NewLine}";
         }
 
         #endregion
