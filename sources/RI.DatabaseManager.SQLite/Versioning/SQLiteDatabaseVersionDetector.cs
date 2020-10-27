@@ -1,9 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Data;
 using System.Data.SQLite;
+using System.Globalization;
 
 using RI.Abstractions.Logging;
+using RI.DatabaseManager.Batches;
 using RI.DatabaseManager.Builder;
 using RI.DatabaseManager.Manager;
 
@@ -18,7 +19,7 @@ namespace RI.DatabaseManager.Versioning
     /// <remarks>
     ///     <para>
     ///         <see cref="SQLiteDatabaseVersionDetector" /> can be used with either a default SQLite cleanup script or with a custom batch.
-    /// See <see cref="SQLiteDbManagerOptions"/> for more information.
+    ///         See <see cref="SQLiteDbManagerOptions" /> for more information.
     ///     </para>
     ///     <para>
     ///         The script must return a scalar value which indicates the current version of the database.
@@ -35,15 +36,13 @@ namespace RI.DatabaseManager.Versioning
     {
         #region Instance Constructor/Destructor
 
-        private SQLiteDbManagerOptions Options { get; }
-
         /// <summary>
         ///     Creates a new instance of <see cref="SQLiteDatabaseVersionDetector" />.
         /// </summary>
-        /// <param name="options"> The used SQLite database manager options.</param>
+        /// <param name="options"> The used SQLite database manager options. </param>
         /// <param name="logger"> The used logger. </param>
         /// <exception cref="ArgumentNullException"> <paramref name="options" /> or <paramref name="logger" /> is null. </exception>
-        public SQLiteDatabaseVersionDetector(SQLiteDbManagerOptions options, ILogger logger) : base(logger)
+        public SQLiteDatabaseVersionDetector (SQLiteDbManagerOptions options, ILogger logger) : base(logger)
         {
             if (options == null)
             {
@@ -58,6 +57,98 @@ namespace RI.DatabaseManager.Versioning
 
 
 
+        #region Instance Properties/Indexer
+
+        private SQLiteDbManagerOptions Options { get; }
+
+        private int? ToInt32FromSQLiteResult(object value)
+        {
+            if (value == null)
+            {
+                return null;
+            }
+
+            if (value is DBNull)
+            {
+                return null;
+            }
+
+            if (value is sbyte)
+            {
+                return (sbyte)value;
+            }
+
+            if (value is byte)
+            {
+                return (byte)value;
+            }
+
+            if (value is short)
+            {
+                return (short)value;
+            }
+
+            if (value is ushort)
+            {
+                return (ushort)value;
+            }
+
+            if (value is int)
+            {
+                return (int)value;
+            }
+
+            if (value is uint)
+            {
+                uint testValue = (uint)value;
+                return (testValue > int.MaxValue) ? (int?)null : (int)testValue;
+            }
+
+            if (value is long)
+            {
+                long testValue = (long)value;
+                return (testValue < int.MinValue) || (testValue > int.MaxValue) ? (int?)null : (int)testValue;
+            }
+
+            if (value is ulong)
+            {
+                ulong testValue = (ulong)value;
+                return (testValue > int.MaxValue) ? (int?)null : (int)testValue;
+            }
+
+            if (value is float)
+            {
+                float testValue = (float)value;
+                return (testValue < int.MinValue) || (testValue > int.MaxValue) ? (int?)null : (int)testValue;
+            }
+
+            if (value is double)
+            {
+                double testValue = (double)value;
+                return (testValue < int.MinValue) || (testValue > int.MaxValue) ? (int?)null : (int)testValue;
+            }
+
+            if (value is decimal)
+            {
+                decimal testValue = (decimal)value;
+                return (testValue < int.MinValue) || (testValue > int.MaxValue) ? (int?)null : (int)testValue;
+            }
+
+            if (value is string)
+            {
+                return int.Parse((string)value, CultureInfo.InvariantCulture);
+            }
+
+            return null;
+        }
+
+        #endregion
+
+
+
+
+        #region Overrides
+
         /// <inheritdoc />
         public override bool Detect (IDbManager<SQLiteConnection, SQLiteTransaction> manager, out DbState? state, out int version)
         {
@@ -71,30 +162,41 @@ namespace RI.DatabaseManager.Versioning
 
             try
             {
-                List<string> batches = manager.GetScriptBatch(this.ScriptName, true);
-                if (batches == null)
+                IDbBatch<SQLiteConnection, SQLiteTransaction> batch;
+
+                if (!this.Options.CustomVersionDetectionBatch.IsEmpty())
                 {
-                    throw new Exception("Batch retrieval failed for script: " + (this.ScriptName ?? "[null]"));
+                    batch = this.Options.CustomVersionDetectionBatch;
+                }
+                else if (!string.IsNullOrWhiteSpace(this.Options.CustomVersionDetectionBatchName))
+                {
+                    batch = manager.GetBatch(this.Options.CustomVersionDetectionBatchName);
+                }
+                else
+                {
+                    batch = new DbBatch<SQLiteConnection, SQLiteTransaction>();
+
+                    foreach (string command in this.Options.GetDefaultVersionDetectionScript())
+                    {
+                        batch.AddScript(command, DbBatchTransactionRequirement.Disallowed);
+                    }
                 }
 
-                using (SQLiteConnection connection = manager.CreateInternalConnection(null, false))
-                {
-                    using (SQLiteTransaction transaction = connection.BeginTransaction(IsolationLevel.Serializable))
-                    {
-                        foreach (string batch in batches)
-                        {
-                            using (SQLiteCommand command = new SQLiteCommand(batch, connection, transaction))
-                            {
-                                object value = command.ExecuteScalar();
-                                version = value.ToInt32FromSQLiteResult() ?? -1;
-                                if (version <= -1)
-                                {
-                                    break;
-                                }
-                            }
-                        }
+                IList<DbBatch<SQLiteConnection, SQLiteTransaction>> commands = batch.SplitCommands();
 
-                        transaction?.Rollback();
+                foreach (DbBatch<SQLiteConnection, SQLiteTransaction> command in commands)
+                {
+                    if (!manager.ExecuteBatch(command, false, false))
+                    {
+                        return false;
+                    }
+
+                    object value = command.GetLastResult();
+                    version = this.ToInt32FromSQLiteResult(value) ?? -1;
+
+                    if (version <= -1)
+                    {
+                        break;
                     }
                 }
 
@@ -102,9 +204,11 @@ namespace RI.DatabaseManager.Versioning
             }
             catch (Exception exception)
             {
-                //TODO: Log: this.Log(LogLevel.Error, "SQLite database version detection failed:{0}{1}", Environment.NewLine, exception.ToDetailedString());
+                this.Log(LogLevel.Error, "SQLite database version detection failed:{0}{1}", Environment.NewLine, exception.ToString());
                 return false;
             }
         }
+
+        #endregion
     }
 }

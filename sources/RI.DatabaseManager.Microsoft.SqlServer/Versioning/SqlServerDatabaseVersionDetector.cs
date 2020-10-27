@@ -1,10 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Data;
+using System.Globalization;
 
 using Microsoft.Data.SqlClient;
 
 using RI.Abstractions.Logging;
+using RI.DatabaseManager.Batches;
 using RI.DatabaseManager.Builder;
 using RI.DatabaseManager.Cleanup;
 using RI.DatabaseManager.Manager;
@@ -20,7 +21,7 @@ namespace RI.DatabaseManager.Versioning
     /// <remarks>
     ///     <para>
     ///         <see cref="SqlServerDatabaseVersionDetector" /> can be used with either a default SQL Server cleanup script or with a custom batch.
-    /// See <see cref="SqlServerDbManagerOptions"/> for more information.
+    ///         See <see cref="SqlServerDbManagerOptions" /> for more information.
     ///     </para>
     ///     <para>
     ///         The script must return a scalar value which indicates the current version of the database.
@@ -37,15 +38,13 @@ namespace RI.DatabaseManager.Versioning
     {
         #region Instance Constructor/Destructor
 
-        private SqlServerDbManagerOptions Options { get; }
-
         /// <summary>
         ///     Creates a new instance of <see cref="SqlServerDatabaseCleanupProcessor" />.
         /// </summary>
-        /// <param name="options"> The used SQL Server database manager options.</param>
+        /// <param name="options"> The used SQL Server database manager options. </param>
         /// <param name="logger"> The used logger. </param>
         /// <exception cref="ArgumentNullException"> <paramref name="options" /> or <paramref name="logger" /> is null. </exception>
-        public SqlServerDatabaseVersionDetector(SqlServerDbManagerOptions options, ILogger logger) : base(logger)
+        public SqlServerDatabaseVersionDetector (SqlServerDbManagerOptions options, ILogger logger) : base(logger)
         {
             if (options == null)
             {
@@ -60,6 +59,98 @@ namespace RI.DatabaseManager.Versioning
 
 
 
+        #region Instance Properties/Indexer
+
+        private SqlServerDbManagerOptions Options { get; }
+
+        private int? Int32FromSqlServerResult(object value)
+        {
+            if (value == null)
+            {
+                return null;
+            }
+
+            if (value is DBNull)
+            {
+                return null;
+            }
+
+            if (value is sbyte)
+            {
+                return (sbyte)value;
+            }
+
+            if (value is byte)
+            {
+                return (byte)value;
+            }
+
+            if (value is short)
+            {
+                return (short)value;
+            }
+
+            if (value is ushort)
+            {
+                return (ushort)value;
+            }
+
+            if (value is int)
+            {
+                return (int)value;
+            }
+
+            if (value is uint)
+            {
+                uint testValue = (uint)value;
+                return (testValue > int.MaxValue) ? (int?)null : (int)testValue;
+            }
+
+            if (value is long)
+            {
+                long testValue = (long)value;
+                return (testValue < int.MinValue) || (testValue > int.MaxValue) ? (int?)null : (int)testValue;
+            }
+
+            if (value is ulong)
+            {
+                ulong testValue = (ulong)value;
+                return (testValue > int.MaxValue) ? (int?)null : (int)testValue;
+            }
+
+            if (value is float)
+            {
+                float testValue = (float)value;
+                return (testValue < int.MinValue) || (testValue > int.MaxValue) ? (int?)null : (int)testValue;
+            }
+
+            if (value is double)
+            {
+                double testValue = (double)value;
+                return (testValue < int.MinValue) || (testValue > int.MaxValue) ? (int?)null : (int)testValue;
+            }
+
+            if (value is decimal)
+            {
+                decimal testValue = (decimal)value;
+                return (testValue < int.MinValue) || (testValue > int.MaxValue) ? (int?)null : (int)testValue;
+            }
+
+            if (value is string)
+            {
+                return int.Parse((string)value, CultureInfo.InvariantCulture);
+            }
+
+            return null;
+        }
+
+        #endregion
+
+
+
+
+        #region Overrides
+
         /// <inheritdoc />
         public override bool Detect (IDbManager<SqlConnection, SqlTransaction> manager, out DbState? state, out int version)
         {
@@ -73,30 +164,41 @@ namespace RI.DatabaseManager.Versioning
 
             try
             {
-                List<string> batches = manager.GetScriptBatch(this.ScriptName, true);
-                if (batches == null)
+                IDbBatch<SqlConnection, SqlTransaction> batch;
+
+                if (!this.Options.CustomVersionDetectionBatch.IsEmpty())
                 {
-                    throw new Exception("Batch retrieval failed for script: " + (this.ScriptName ?? "[null]"));
+                    batch = this.Options.CustomVersionDetectionBatch;
+                }
+                else if (!string.IsNullOrWhiteSpace(this.Options.CustomVersionDetectionBatchName))
+                {
+                    batch = manager.GetBatch(this.Options.CustomVersionDetectionBatchName);
+                }
+                else
+                {
+                    batch = new DbBatch<SqlConnection, SqlTransaction>();
+
+                    foreach (string command in this.Options.GetDefaultVersionDetectionScript())
+                    {
+                        batch.AddScript(command, DbBatchTransactionRequirement.Disallowed);
+                    }
                 }
 
-                using (SqlConnection connection = manager.CreateInternalConnection(null))
-                {
-                    using (SqlTransaction transaction = connection.BeginTransaction(IsolationLevel.Serializable))
-                    {
-                        foreach (string batch in batches)
-                        {
-                            using (SqlCommand command = new SqlCommand(batch, connection, transaction))
-                            {
-                                object value = command.ExecuteScalar();
-                                version = value.Int32FromSqlServerResult() ?? -1;
-                                if (version <= 0)
-                                {
-                                    break;
-                                }
-                            }
-                        }
+                IList<DbBatch<SqlConnection, SqlTransaction>> commands = batch.SplitCommands();
 
-                        transaction.Rollback();
+                foreach (DbBatch<SqlConnection, SqlTransaction> command in commands)
+                {
+                    if (!manager.ExecuteBatch(command, false, false))
+                    {
+                        return false;
+                    }
+
+                    object value = command.GetLastResult();
+                    version = this.Int32FromSqlServerResult(value) ?? -1;
+
+                    if (version <= 0)
+                    {
+                        break;
                     }
                 }
 
@@ -104,9 +206,11 @@ namespace RI.DatabaseManager.Versioning
             }
             catch (Exception exception)
             {
-                //TODO: Log: this.Log(LogLevel.Error, "SQL Server database version detection failed:{0}{1}", Environment.NewLine, exception.ToDetailedString());
+                this.Log(LogLevel.Error, "SQL Server database version detection failed:{0}{1}", Environment.NewLine, exception.ToString());
                 return false;
             }
         }
+
+        #endregion
     }
 }

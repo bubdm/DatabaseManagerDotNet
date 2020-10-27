@@ -9,7 +9,7 @@ namespace RI.DatabaseManager.Batches
     /// <summary>
     ///     A single database command which is part of a database batch.
     /// </summary>
-    /// TODO: Store errors/exceptions in property?
+    /// TODO: Store errors/exceptions in property and rethrow?
     public interface IDbBatchCommand : ICloneable
     {
         /// <summary>

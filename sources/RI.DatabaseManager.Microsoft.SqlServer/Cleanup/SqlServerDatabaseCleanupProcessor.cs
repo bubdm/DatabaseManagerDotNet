@@ -75,7 +75,7 @@ namespace RI.DatabaseManager.Cleanup
                 {
                     batch = new DbBatch<SqlConnection, SqlTransaction>();
 
-                    foreach (string command in this.Options.DefaultCleanupScript)
+                    foreach (string command in this.Options.GetDefaultCleanupScript())
                     {
                         batch.AddScript(command, DbBatchTransactionRequirement.Disallowed);
                     }

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Data.Common;
 using System.IO;
 using System.Linq;
@@ -398,6 +399,44 @@ namespace RI.DatabaseManager.Batches
 
             batch.Commands.Clear();
             batch.Reset();
+        }
+
+        /// <summary>
+        /// Splits the commands of a batch into separate batches (one batch per command).
+        /// </summary>
+        /// <typeparam name="TConnection"> The database connection type. </typeparam>
+        /// <typeparam name="TTransaction"> The database transaction type. </typeparam>
+        /// <param name="batch"> The batch to split. </param>
+        /// <param name="filter">An optional predicate to filter the commands to split. The default value splits all commands.</param>
+        /// <returns>
+        /// A list of batches, each with a single command.
+        /// If <paramref name="batch"/> contains no commands or no commands passed <paramref name="filter"/>, an empty list is returned.
+        /// </returns>
+        /// <exception cref="ArgumentNullException"> <paramref name="batch" /> is null. </exception>
+        public static IList<DbBatch<TConnection, TTransaction>> SplitCommands <TConnection, TTransaction> (this IDbBatch<TConnection, TTransaction> batch, Predicate<IDbBatchCommand<TConnection, TTransaction>> filter = null)
+            where TConnection : DbConnection
+            where TTransaction : DbTransaction
+        {
+            if (batch == null)
+            {
+                throw new ArgumentNullException(nameof(batch));
+            }
+
+            filter ??= _ => true;
+
+            List<DbBatch<TConnection, TTransaction>> batches = new List<DbBatch<TConnection, TTransaction>>();
+
+            foreach (IDbBatchCommand<TConnection, TTransaction> command in batch.Commands)
+            {
+                if (filter(command))
+                {
+                    DbBatch<TConnection, TTransaction> splittedBatch = new DbBatch<TConnection, TTransaction>();
+                    splittedBatch.Commands.Add(command);
+                    batches.Add(splittedBatch);
+                }
+            }
+
+            return batches;
         }
 
         #endregion
