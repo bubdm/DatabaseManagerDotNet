@@ -8,7 +8,7 @@ using System.Data.Common;
 namespace RI.DatabaseManager.Batches
 {
     /// <summary>
-    ///     Default implementation of <see cref="IDbBatch" /> suitable for most scenarios.
+    ///     Default implementation of <see cref="IDbBatch" /> and <see cref="IDbBatch{TConnection,TTransaction}"/> suitable for most scenarios.
     /// </summary>
     /// <typeparam name="TConnection"> The database connection type. </typeparam>
     /// <typeparam name="TTransaction"> The database transaction type. </typeparam>

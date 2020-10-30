@@ -1,0 +1,181 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Data.Common;
+using System.Globalization;
+using System.Linq;
+
+using RI.Abstractions.Logging;
+using RI.DatabaseManager.Batches;
+using RI.DatabaseManager.Manager;
+
+
+
+
+namespace RI.DatabaseManager.Upgrading
+{
+    /// <summary>
+    ///     Boilerplate implementation of <see cref="IDbVersionUpgrader" /> and <see cref="IDbVersionUpgrader{TConnection,TTransaction}" /> which uses upgrade steps provided by batches.
+    /// </summary>
+    /// <typeparam name="TConnection"> The database connection type. </typeparam>
+    /// <typeparam name="TTransaction"> The database transaction type. </typeparam>
+    /// <remarks>
+    /// <para>
+    /// This boilerplate implementation uses upgrade steps provided by batches according to their names.
+    /// <see cref="GetBatchNamePattern"/> must be implemented in derived types to provide a RegEx pattern which filters the batch names and extracts the source version numbers from each name.
+    /// See <see cref="GetBatchNamePattern"/> for additional information.
+    /// </para>
+    /// </remarks>
+    /// <threadsafety static="false" instance="false" />
+    public abstract class BatchNameBasedDbVersionUpgrader<TConnection, TTransaction> : DbVersionUpgraderBase<TConnection, TTransaction>
+        where TConnection : DbConnection
+        where TTransaction : DbTransaction
+    {
+        /// <summary>
+        ///     Creates a new instance of <see cref="BatchNameBasedDbVersionUpgrader{TConnection,TTransaction}" />.
+        /// </summary>
+        /// <param name="logger"> The used logger. </param>
+        /// <exception cref="ArgumentNullException"> <paramref name="logger" /> is null. </exception>
+        protected BatchNameBasedDbVersionUpgrader(ILogger logger)
+        : base(logger)
+        {
+        }
+
+        /// <inheritdoc />
+        public override int GetMaxVersion (IDbManager<TConnection, TTransaction> manager)
+        {
+            if (manager == null)
+            {
+                throw new ArgumentNullException(nameof(manager));
+            }
+
+            Dictionary<int, IDbBatch<TConnection, TTransaction>> steps = new Dictionary<int, IDbBatch<TConnection, TTransaction>>();
+            this.GetSteps(manager, steps);
+
+            if (steps.Count == 0)
+            {
+                return -1;
+            }
+
+            return steps.Keys.OrderByDescending(x => x)
+                 .First() + 1;
+        }
+
+        /// <inheritdoc />
+        public override int GetMinVersion (IDbManager<TConnection, TTransaction> manager)
+        {
+            if (manager == null)
+            {
+                throw new ArgumentNullException(nameof(manager));
+            }
+
+            Dictionary<int, IDbBatch<TConnection, TTransaction>> steps = new Dictionary<int, IDbBatch<TConnection, TTransaction>>();
+            this.GetSteps(manager, steps);
+
+            if (steps.Count == 0)
+            {
+                return -1;
+            }
+
+            return steps.Keys.OrderBy(x => x)
+                        .First();
+        }
+
+        /// <inheritdoc />
+        public override bool Upgrade (IDbManager<TConnection, TTransaction> manager, int sourceVersion)
+        {
+            if (manager == null)
+            {
+                throw new ArgumentNullException(nameof(manager));
+            }
+
+            Dictionary<int, IDbBatch<TConnection, TTransaction>> steps = new Dictionary<int, IDbBatch<TConnection, TTransaction>>();
+            string namePattern = this.GetSteps(manager, steps);
+
+            if (steps.Count == 0)
+            {
+                throw new InvalidOperationException($"No batches were provided to {this.GetType().Name} using the name pattern \"{namePattern}\".");
+            }
+
+            int minVersion = steps.Keys.OrderBy(x => x)
+                                  .First();
+
+            int maxVersion = steps.Keys.OrderByDescending(x => x)
+                                  .First() + 1;
+
+            if ((sourceVersion < minVersion) || (sourceVersion > (maxVersion - 1)))
+            {
+                throw new ArgumentOutOfRangeException(nameof(sourceVersion), $"The specified source version is not within the supported range ({minVersion}...{maxVersion - 1}).");
+            }
+
+            try
+            {
+                this.Log(LogLevel.Information, "Beginning version upgrade step: {0} -> {1}", sourceVersion, sourceVersion + 1);
+
+                IDbBatch<TConnection, TTransaction> batch = steps[sourceVersion];
+
+                bool result = manager.ExecuteBatch(batch, false, true);
+
+                if (result)
+                {
+                    this.Log(LogLevel.Information, "Finished version upgrade step: {0} -> {1}", sourceVersion, sourceVersion + 1);
+                }
+                else
+                {
+                    this.Log(LogLevel.Error, "Failed version upgrade step: {0} -> {1}", sourceVersion, sourceVersion + 1);
+                }
+
+                return result;
+            }
+            catch (Exception exception)
+            {
+                this.Log(LogLevel.Error, "Failed version upgrade step:{0} -> {1}{2}{3}", sourceVersion, sourceVersion + 1, Environment.NewLine, exception.ToString());
+                return false;
+            }
+        }
+
+        /// <summary>
+        /// Gets the upgrade steps as batches, based on <see cref="GetBatchNamePattern"/>.
+        /// </summary>
+        /// <param name="manager"> The used database manager. </param>
+        /// <param name="steps">The dictionary which is to be filled with the available steps (batches). Keys are source versions, values are the corresponding batch.</param>
+        /// <returns>
+        /// The RegEx pattern used to filter batches used as version upgrade steps and to extract their source version.
+        /// </returns>
+        protected virtual string GetSteps (IDbManager<TConnection, TTransaction> manager, IDictionary<int, IDbBatch<TConnection, TTransaction>> steps)
+        {
+            string namePattern = this.GetBatchNamePattern();
+
+            throw new NotImplementedException();
+
+            if (steps.Count < 2)
+            {
+                return namePattern;
+            }
+
+            int[] sourceVersions = steps.Keys.OrderBy(x => x).ToArray();
+
+            for (int i1 = 1; i1 < sourceVersions.Length; i1++)
+            {
+                if (sourceVersions[i1 - 1] != (sourceVersions[i1] - 1))
+                {
+                    throw new InvalidOperationException($"A non-contiguous set of batches was provided to {this.GetType().Name} using the name pattern \"{namePattern}\" {string.Join(",", sourceVersions.Select(x => x.ToString(CultureInfo.InvariantCulture)))}.");
+                }
+            }
+
+            return namePattern;
+        }
+
+        /// <summary>
+        /// Gets the RegEx pattern used to filter batches used as version upgrade steps and to extract their source version.
+        /// </summary>
+        /// <returns>
+        /// The used RegEx pattern.
+        /// </returns>
+        /// <remarks>
+        /// <para>
+        /// The extracted version must be the source version, meaning that the corresponding batch upgrades from that source version to source version + 1.
+        /// </para>
+        /// </remarks>
+        protected abstract string GetBatchNamePattern ();
+    }
+}

@@ -16,11 +16,11 @@ using RI.DatabaseManager.Manager;
 namespace RI.DatabaseManager.Versioning
 {
     /// <summary>
-    ///     Implements a database version detector for SQL Server databases.
+    ///     Implements a database version detector for Microsoft SQL Server databases.
     /// </summary>
     /// <remarks>
     ///     <para>
-    ///         <see cref="SqlServerDatabaseVersionDetector" /> can be used with either a default SQL Server cleanup script or with a custom batch.
+    ///         <see cref="SqlServerDbVersionDetector" /> can be used with either a default SQL Server cleanup script or with a custom batch.
     ///         See <see cref="SqlServerDbManagerOptions" /> for more information.
     ///     </para>
     ///     <para>
@@ -34,17 +34,17 @@ namespace RI.DatabaseManager.Versioning
     ///     </para>
     /// </remarks>
     /// <threadsafety static="false" instance="false" />
-    public sealed class SqlServerDatabaseVersionDetector : DbVersionDetectorBase<SqlConnection, SqlTransaction>
+    public sealed class SqlServerDbVersionDetector : DbVersionDetectorBase<SqlConnection, SqlTransaction>
     {
         #region Instance Constructor/Destructor
 
         /// <summary>
-        ///     Creates a new instance of <see cref="SqlServerDatabaseCleanupProcessor" />.
+        ///     Creates a new instance of <see cref="SqlServerDbCleanupProcessor" />.
         /// </summary>
         /// <param name="options"> The used SQL Server database manager options. </param>
         /// <param name="logger"> The used logger. </param>
         /// <exception cref="ArgumentNullException"> <paramref name="options" /> or <paramref name="logger" /> is null. </exception>
-        public SqlServerDatabaseVersionDetector (SqlServerDbManagerOptions options, ILogger logger) : base(logger)
+        public SqlServerDbVersionDetector (SqlServerDbManagerOptions options, ILogger logger) : base(logger)
         {
             if (options == null)
             {

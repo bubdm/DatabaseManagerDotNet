@@ -18,7 +18,7 @@ namespace RI.DatabaseManager.Versioning
     /// </summary>
     /// <remarks>
     ///     <para>
-    ///         <see cref="SQLiteDatabaseVersionDetector" /> can be used with either a default SQLite cleanup script or with a custom batch.
+    ///         <see cref="SQLiteDbVersionDetector" /> can be used with either a default SQLite cleanup script or with a custom batch.
     ///         See <see cref="SQLiteDbManagerOptions" /> for more information.
     ///     </para>
     ///     <para>
@@ -32,17 +32,17 @@ namespace RI.DatabaseManager.Versioning
     ///     </para>
     /// </remarks>
     /// <threadsafety static="false" instance="false" />
-    public sealed class SQLiteDatabaseVersionDetector : DbVersionDetectorBase<SQLiteConnection, SQLiteTransaction>
+    public sealed class SQLiteDbVersionDetector : DbVersionDetectorBase<SQLiteConnection, SQLiteTransaction>
     {
         #region Instance Constructor/Destructor
 
         /// <summary>
-        ///     Creates a new instance of <see cref="SQLiteDatabaseVersionDetector" />.
+        ///     Creates a new instance of <see cref="SQLiteDbVersionDetector" />.
         /// </summary>
         /// <param name="options"> The used SQLite database manager options. </param>
         /// <param name="logger"> The used logger. </param>
         /// <exception cref="ArgumentNullException"> <paramref name="options" /> or <paramref name="logger" /> is null. </exception>
-        public SQLiteDatabaseVersionDetector (SQLiteDbManagerOptions options, ILogger logger) : base(logger)
+        public SQLiteDbVersionDetector (SQLiteDbManagerOptions options, ILogger logger) : base(logger)
         {
             if (options == null)
             {

@@ -48,6 +48,7 @@ namespace RI.DatabaseManager.Upgrading
         ///     </note>
         /// </remarks>
         /// <exception cref="ArgumentNullException"> <paramref name="manager" /> is null. </exception>
+        /// <exception cref="InvalidOperationException"> The version upgrader has been provided with an empty or non-contiguous set of versions to upgrade from/to. </exception>
         int GetMaxVersion (IDbManager manager);
 
         /// <summary>
@@ -64,6 +65,7 @@ namespace RI.DatabaseManager.Upgrading
         ///     </note>
         /// </remarks>
         /// <exception cref="ArgumentNullException"> <paramref name="manager" /> is null. </exception>
+        /// <exception cref="InvalidOperationException"> The version upgrader has been provided with an empty or non-contiguous set of versions to upgrade from/to. </exception>
         int GetMinVersion (IDbManager manager);
 
         /// <summary>
@@ -82,6 +84,7 @@ namespace RI.DatabaseManager.Upgrading
         /// </remarks>
         /// <exception cref="ArgumentNullException"> <paramref name="manager" /> is null. </exception>
         /// <exception cref="ArgumentOutOfRangeException"> <paramref name="sourceVersion" /> is less than zero, less than <see cref="GetMinVersion" />, or equal or greater than <see cref="GetMaxVersion" />. </exception>
+        /// <exception cref="InvalidOperationException"> The version upgrader has been provided with an empty or non-contiguous set of versions to upgrade from/to. </exception>
         bool Upgrade (IDbManager manager, int sourceVersion);
     }
 

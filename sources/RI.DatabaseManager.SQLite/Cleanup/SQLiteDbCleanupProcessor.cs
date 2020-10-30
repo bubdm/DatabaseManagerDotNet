@@ -1,6 +1,5 @@
 ﻿using System;
-
-using Microsoft.Data.SqlClient;
+using System.Data.SQLite;
 
 using RI.Abstractions.Logging;
 using RI.DatabaseManager.Batches;
@@ -13,28 +12,28 @@ using RI.DatabaseManager.Manager;
 namespace RI.DatabaseManager.Cleanup
 {
     /// <summary>
-    ///     Implements a database cleanup processor for Microsoft SQL Server databases.
+    ///     Implements a database cleanup processor for SQLite databases.
     /// </summary>
     /// <remarks>
     ///     <para>
-    ///         <see cref="SqlServerDatabaseCleanupProcessor" /> can be used with either a default SQL Server cleanup script or with a custom batch.
-    /// See <see cref="SqlServerDbManagerOptions"/> for more information.
+    ///         <see cref="SQLiteDbCleanupProcessor" /> can be used with either a default SQLite cleanup script or with a custom batch.
+    /// See <see cref="SQLiteDbManagerOptions"/> for more information.
     ///     </para>
     /// </remarks>
     /// <threadsafety static="false" instance="false" />
-    public sealed class SqlServerDatabaseCleanupProcessor : DbCleanupProcessorBase<SqlConnection, SqlTransaction>
+    public sealed class SQLiteDbCleanupProcessor : DbCleanupProcessorBase<SQLiteConnection, SQLiteTransaction>
     {
         #region Instance Constructor/Destructor
 
-        private SqlServerDbManagerOptions Options { get; }
+        private SQLiteDbManagerOptions Options { get; }
 
         /// <summary>
-        ///     Creates a new instance of <see cref="SqlServerDatabaseCleanupProcessor" />.
+        ///     Creates a new instance of <see cref="SQLiteDbCleanupProcessor" />.
         /// </summary>
-        /// <param name="options"> The used SQL Server database manager options.</param>
+        /// <param name="options"> The used SQLite database manager options.</param>
         /// <param name="logger"> The used logger. </param>
         /// <exception cref="ArgumentNullException"> <paramref name="options" /> or <paramref name="logger" /> is null. </exception>
-        public SqlServerDatabaseCleanupProcessor (SqlServerDbManagerOptions options, ILogger logger) : base(logger)
+        public SQLiteDbCleanupProcessor(SQLiteDbManagerOptions options, ILogger logger) : base(logger)
         {
             if (options == null)
             {
@@ -50,7 +49,7 @@ namespace RI.DatabaseManager.Cleanup
 
 
         /// <inheritdoc />
-        public override bool Cleanup (IDbManager<SqlConnection, SqlTransaction> manager)
+        public override bool Cleanup (IDbManager<SQLiteConnection, SQLiteTransaction> manager)
         {
             if (manager == null)
             {
@@ -59,9 +58,9 @@ namespace RI.DatabaseManager.Cleanup
 
             try
             {
-                this.Log(LogLevel.Information, "Beginning SQL Server database cleanup");
+                this.Log(LogLevel.Information, "Beginning SQLite database cleanup");
 
-                IDbBatch<SqlConnection, SqlTransaction> batch;
+                IDbBatch<SQLiteConnection, SQLiteTransaction> batch;
 
                 if (!this.Options.CustomCleanupBatch.IsEmpty())
                 {
@@ -73,7 +72,7 @@ namespace RI.DatabaseManager.Cleanup
                 }
                 else
                 {
-                    batch = new DbBatch<SqlConnection, SqlTransaction>();
+                    batch = new DbBatch<SQLiteConnection, SQLiteTransaction>();
 
                     foreach (string command in this.Options.GetDefaultCleanupScript())
                     {
@@ -85,18 +84,18 @@ namespace RI.DatabaseManager.Cleanup
 
                 if (result)
                 {
-                    this.Log(LogLevel.Information, "Finished SQL Server database cleanup");
+                    this.Log(LogLevel.Information, "Finished SQLite database cleanup");
                 }
                 else
                 {
-                    this.Log(LogLevel.Error, "SQL Server database cleanup failed");
+                    this.Log(LogLevel.Error, "SQLite database cleanup failed");
                 }
 
                 return result;
             }
             catch (Exception exception)
             {
-                this.Log(LogLevel.Error, "SQL Server database cleanup failed:{0}{1}", Environment.NewLine, exception.ToString());
+                this.Log(LogLevel.Error, "SQLite database cleanup failed:{0}{1}", Environment.NewLine, exception.ToString());
                 return false;
             }
         }

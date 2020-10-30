@@ -137,8 +137,8 @@ namespace RI.DatabaseManager.Builder
             }
 
             builder.AddSingleton(typeof(SqlServerDbManagerOptions), options.Clone());
-            builder.AddSingleton(typeof(IDbVersionDetector<SqlConnection, SqlTransaction>), typeof(SqlServerDatabaseVersionDetector));
-            builder.AddSingleton(typeof(IDbCleanupProcessor<SqlConnection, SqlTransaction>), typeof(SqlServerDatabaseCleanupProcessor));
+            builder.AddSingleton(typeof(IDbVersionDetector<SqlConnection, SqlTransaction>), typeof(SqlServerDbVersionDetector));
+            builder.AddSingleton(typeof(IDbCleanupProcessor<SqlConnection, SqlTransaction>), typeof(SqlServerDbCleanupProcessor));
             builder.AddSingleton(typeof(IDbVersionUpgrader<SqlConnection, SqlTransaction>), typeof(SqlServerDatabaseVersionUpgrader));
 
             return new DbManagerBuilder<SqlConnection, SqlTransaction, SqlServerDbManager>(builder);

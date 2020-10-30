@@ -4,7 +4,10 @@ using System.Data;
 using System.Data.SQLite;
 using System.Linq;
 
+using RI.Abstractions.Logging;
+using RI.DatabaseManager.Builder;
 using RI.DatabaseManager.Manager;
+using RI.DatabaseManager.Versioning;
 
 
 
@@ -16,59 +19,31 @@ namespace RI.DatabaseManager.Upgrading
     /// </summary>
     /// <remarks>
     ///     <para>
-    ///         <see cref="SQLiteDatabaseVersionUpgrader" /> uses upgrade steps associated to specific source versions to perform the upgrade.
+    ///         See <see cref="SQLiteDbManagerOptions" /> for more information.
     ///     </para>
     /// </remarks>
     /// <threadsafety static="false" instance="false" />
-    public sealed class SQLiteDatabaseVersionUpgrader : DbVersionUpgraderBase<,,>
+    public sealed class SQLiteDatabaseVersionUpgrader : DbVersionUpgraderBase<SQLiteConnection,SQLiteTransaction>
     {
         #region Instance Constructor/Destructor
 
         /// <summary>
         ///     Creates a new instance of <see cref="SQLiteDatabaseVersionUpgrader" />.
         /// </summary>
-        /// <param name="upgradeSteps"> The sequence of upgrade steps supported by this version upgrader. </param>
-        /// <remarks>
-        ///     <para>
-        ///         <paramref name="upgradeSteps" /> is enumerated only once.
-        ///     </para>
-        /// </remarks>
-        /// <exception cref="ArgumentNullException"> <paramref name="upgradeSteps" /> is null. </exception>
-        /// <exception cref="ArgumentException"> <paramref name="upgradeSteps" /> is an empty sequence or contains the same source version multiple times. </exception>
-        public SQLiteDatabaseVersionUpgrader (IEnumerable<SQLiteDbVersionUpgradeStep> upgradeSteps)
+        /// <param name="options"> The used SQLite database manager options. </param>
+        /// <param name="logger"> The used logger. </param>
+        /// <exception cref="ArgumentNullException"> <paramref name="options" /> or <paramref name="logger" /> is null. </exception>
+        public SQLiteDatabaseVersionUpgrader(SQLiteDbManagerOptions options, ILogger logger) : base(logger)
         {
-            if (upgradeSteps == null)
+            if (options == null)
             {
-                throw new ArgumentNullException(nameof(upgradeSteps));
+                throw new ArgumentNullException(nameof(options));
             }
 
-            this.UpgradeSteps = new List<SQLiteDbVersionUpgradeStep>(upgradeSteps);
-
-            if (this.UpgradeSteps.Count == 0)
-            {
-                throw new ArgumentException("No upgrade steps.", nameof(upgradeSteps));
-            }
-
-            foreach (int sourceVersion in this.UpgradeSteps.Select(x => x.SourceVersion))
-            {
-                int count = this.UpgradeSteps.Count(x => x.SourceVersion == sourceVersion);
-                if (count != 1)
-                {
-                    throw new ArgumentException("Source version " + sourceVersion + " specified multiple times.", nameof(upgradeSteps));
-                }
-            }
+            this.Options = options;
         }
 
-        /// <summary>
-        ///     Creates a new instance of <see cref="SQLiteDatabaseVersionUpgrader" />.
-        /// </summary>
-        /// <param name="upgradeSteps"> The array of upgrade steps supported by this version upgrader. </param>
-        /// <exception cref="ArgumentNullException"> <paramref name="upgradeSteps" /> is null. </exception>
-        /// <exception cref="ArgumentException"> <paramref name="upgradeSteps" /> is an empty array or contains the same source version multiple times. </exception>
-        public SQLiteDatabaseVersionUpgrader (params SQLiteDbVersionUpgradeStep[] upgradeSteps)
-            : this((IEnumerable<SQLiteDbVersionUpgradeStep>)upgradeSteps)
-        {
-        }
+        private SQLiteDbManagerOptions Options { get; }
 
         #endregion
 
@@ -155,5 +130,26 @@ namespace RI.DatabaseManager.Upgrading
         }
 
         #endregion
+
+
+
+
+        /// <inheritdoc />
+        public override int GetMaxVersion (IDbManager<SQLiteConnection, SQLiteTransaction> manager)
+        {
+            throw new NotImplementedException();
+        }
+
+        /// <inheritdoc />
+        public override int GetMinVersion (IDbManager<SQLiteConnection, SQLiteTransaction> manager)
+        {
+            throw new NotImplementedException();
+        }
+
+        /// <inheritdoc />
+        public override bool Upgrade (IDbManager<SQLiteConnection, SQLiteTransaction> manager, int sourceVersion)
+        {
+            throw new NotImplementedException();
+        }
     }
 }
