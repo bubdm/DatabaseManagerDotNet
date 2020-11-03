@@ -61,5 +61,20 @@ namespace RI.DatabaseManager.Batches.Commands
         public bool WasExecuted { get; set; }
 
         #endregion
+
+
+
+
+        /// <inheritdoc />
+        object ICloneable.Clone () => this.Clone();
+
+        /// <inheritdoc cref="ICloneable.Clone"/>
+        public CallbackBatchCommand<TConnection, TTransaction> Clone ()
+        {
+            CallbackBatchCommand<TConnection, TTransaction> clone = new CallbackBatchCommand<TConnection, TTransaction>(this.Code, this.TransactionRequirement);
+            clone.Result = this.Result;
+            clone.WasExecuted = this.WasExecuted;
+            return clone;
+        }
     }
 }

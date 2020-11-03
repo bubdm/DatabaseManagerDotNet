@@ -53,5 +53,20 @@ namespace RI.DatabaseManager.Batches.Commands
         public bool WasExecuted { get; set; }
 
         #endregion
+
+
+
+
+        /// <inheritdoc />
+        object ICloneable.Clone() => this.Clone();
+
+        /// <inheritdoc cref="ICloneable.Clone"/>
+        public ScriptBatchCommand<TConnection, TTransaction> Clone()
+        {
+            ScriptBatchCommand<TConnection, TTransaction> clone = new ScriptBatchCommand<TConnection, TTransaction>(this.Script, this.TransactionRequirement);
+            clone.Result = this.Result;
+            clone.WasExecuted = this.WasExecuted;
+            return clone;
+        }
     }
 }

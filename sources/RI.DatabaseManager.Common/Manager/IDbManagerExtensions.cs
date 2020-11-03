@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Data;
 using System.Data.Common;
 
 using RI.DatabaseManager.Batches;
@@ -84,7 +85,7 @@ namespace RI.DatabaseManager.Manager
         /// </returns>
         /// <remarks>
         ///     <para>
-        ///         The underlying connection of the transaction is not read-only.
+        ///         The underlying connection of the transaction is not read-only and <see cref="IsolationLevel.ReadCommitted"/> is used as transaction level.
         ///     </para>
         /// </remarks>
         /// <exception cref="ArgumentNullException"> <paramref name="manager" /> is null </exception>
@@ -96,7 +97,7 @@ namespace RI.DatabaseManager.Manager
                 throw new ArgumentNullException(nameof(manager));
             }
 
-            return manager.CreateTransaction(false);
+            return manager.CreateTransaction(false, IsolationLevel.ReadCommitted);
         }
 
         /// <inheritdoc cref="CreateTransaction(IDbManager)" />
@@ -109,7 +110,7 @@ namespace RI.DatabaseManager.Manager
                 throw new ArgumentNullException(nameof(manager));
             }
 
-            return manager.CreateTransaction(false);
+            return manager.CreateTransaction(false, IsolationLevel.ReadCommitted);
         }
 
         /// <summary>
