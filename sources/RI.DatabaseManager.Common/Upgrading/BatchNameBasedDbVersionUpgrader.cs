@@ -3,9 +3,11 @@ using System.Collections.Generic;
 using System.Data.Common;
 using System.Globalization;
 using System.Linq;
+using System.Text.RegularExpressions;
 
 using RI.Abstractions.Logging;
 using RI.DatabaseManager.Batches;
+using RI.DatabaseManager.Builder.Options;
 using RI.DatabaseManager.Manager;
 
 
@@ -31,13 +33,28 @@ namespace RI.DatabaseManager.Upgrading
         where TTransaction : DbTransaction
     {
         /// <summary>
+        ///     Gets the used database manager options.
+        /// </summary>
+        /// <value>
+        ///     The used database manager options.
+        /// </value>
+        protected ISupportVersionUpgradeNameFormat Options { get; }
+
+        /// <summary>
         ///     Creates a new instance of <see cref="BatchNameBasedDbVersionUpgrader{TConnection,TTransaction}" />.
         /// </summary>
+        /// <param name="options"> The used database manager options. </param>
         /// <param name="logger"> The used logger. </param>
-        /// <exception cref="ArgumentNullException"> <paramref name="logger" /> is null. </exception>
-        protected BatchNameBasedDbVersionUpgrader(ILogger logger)
+        /// <exception cref="ArgumentNullException"> <paramref name="options" /> or <paramref name="logger"/> is null. </exception>
+        protected BatchNameBasedDbVersionUpgrader(ISupportVersionUpgradeNameFormat options, ILogger logger)
         : base(logger)
         {
+            if (options == null)
+            {
+                throw new ArgumentNullException(nameof(options));
+            }
+
+            this.Options = options;
         }
 
         /// <inheritdoc />
@@ -141,11 +158,46 @@ namespace RI.DatabaseManager.Upgrading
         /// <returns>
         /// The RegEx pattern used to filter batches used as version upgrade steps and to extract their source version.
         /// </returns>
+        /// <remarks>
+        /// <note type="implement">
+        /// The default implementation searches all available batch names for matches using <see cref="GetBatchNamePattern"/>.
+        /// </note>
+        /// </remarks>
         protected virtual string GetSteps (IDbManager<TConnection, TTransaction> manager, IDictionary<int, IDbBatch<TConnection, TTransaction>> steps)
         {
             string namePattern = this.GetBatchNamePattern();
 
-            throw new NotImplementedException();
+            var candidates = manager.GetBatchNames();
+
+            foreach (string candidate in candidates)
+            {
+                Match match = Regex.Match(candidate, namePattern, RegexOptions.CultureInvariant | RegexOptions.IgnoreCase);
+
+                if (!match.Success)
+                {
+                    continue;
+                }
+
+                string sourceVersion = match.Groups["sourceVersion"]
+                                            ?.Value;
+
+                if (string.IsNullOrWhiteSpace(sourceVersion))
+                {
+                    continue;
+                }
+
+                if (int.TryParse(sourceVersion, NumberStyles.None, CultureInfo.InvariantCulture, out int sourceVersionValue))
+                {
+                    if (steps.ContainsKey(sourceVersionValue))
+                    {
+                        //TODO: #14: Use merging here
+                        throw new InvalidOperationException($"Multiple batches provided to {this.GetType().Name} apply to the same source version {sourceVersion}.");
+
+                    }
+
+                    steps.Add(sourceVersionValue, manager.GetBatch(candidate));
+                }
+            }
 
             if (steps.Count < 2)
             {
@@ -175,7 +227,10 @@ namespace RI.DatabaseManager.Upgrading
         /// <para>
         /// The extracted version must be the source version, meaning that the corresponding batch upgrades from that source version to source version + 1.
         /// </para>
+        /// <note type="implement">
+        /// The default implementation returns the value of  the <see cref="ISupportVersionUpgradeNameFormat.VersionUpgradeNameFormat"/> property from <see cref="Options"/>.
+        /// </note>
         /// </remarks>
-        protected abstract string GetBatchNamePattern ();
+        protected virtual string GetBatchNamePattern () => this.Options.VersionUpgradeNameFormat;
     }
 }

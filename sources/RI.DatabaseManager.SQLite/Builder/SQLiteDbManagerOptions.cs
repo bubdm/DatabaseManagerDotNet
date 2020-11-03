@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Data.SQLite;
 
 using RI.DatabaseManager.Batches;
+using RI.DatabaseManager.Builder.Options;
 using RI.DatabaseManager.Manager;
 
 
@@ -32,7 +33,7 @@ namespace RI.DatabaseManager.Builder
     /// </remarks>
     /// <threadsafety static="false" instance="false" />
     /// TODO: Docs
-    public sealed class SQLiteDbManagerOptions : ICloneable
+    public sealed class SQLiteDbManagerOptions : IDbManagerOptions, ISupportVersionUpgradeNameFormat, ICloneable
     {
         #region Instance Constructor/Destructor
 
@@ -78,6 +79,8 @@ namespace RI.DatabaseManager.Builder
         private string _customCleanupBatchName;
 
         private string _customVersionDetectionBatchName;
+
+        private string _versionUpgradeNameFormat = @".+?(?<sourceVersion>\d{4}).*";
 
         private string _defaultVersionDetectionKey = "Database.Version";
 
@@ -451,5 +454,31 @@ namespace RI.DatabaseManager.Builder
         }
 
         #endregion
+
+
+
+
+        /// <inheritdoc />
+        public string GetConnectionString () => this.ConnectionString?.ToString();
+
+        /// <inheritdoc />
+        public string VersionUpgradeNameFormat
+        {
+            get => this._versionUpgradeNameFormat;
+            set
+            {
+                if (value == null)
+                {
+                    throw new ArgumentNullException(nameof(value));
+                }
+
+                if (string.IsNullOrWhiteSpace(value))
+                {
+                    throw new ArgumentException("The string argument is empty.", nameof(value));
+                }
+
+                this._versionUpgradeNameFormat = value;
+            }
+        }
     }
 }

@@ -137,6 +137,7 @@ namespace RI.DatabaseManager.Builder
             }
 
             builder.AddSingleton(typeof(SQLiteDbManagerOptions), options.Clone());
+            builder.AddSingleton(typeof(IDbManager<SQLiteConnection, SQLiteTransaction>), typeof(SQLiteDbManager));
             builder.AddSingleton(typeof(IDbVersionDetector<SQLiteConnection, SQLiteTransaction>), typeof(SQLiteDbVersionDetector));
             builder.AddSingleton(typeof(IDbBackupCreator<SQLiteConnection, SQLiteTransaction>), typeof(SQLiteDatabaseBackupCreator));
             builder.AddSingleton(typeof(IDbCleanupProcessor<SQLiteConnection, SQLiteTransaction>), typeof(SQLiteDbCleanupProcessor));
