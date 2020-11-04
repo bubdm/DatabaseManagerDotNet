@@ -139,9 +139,9 @@ namespace RI.DatabaseManager.Builder
             builder.AddSingleton(typeof(SQLiteDbManagerOptions), options.Clone());
             builder.AddSingleton(typeof(IDbManager<SQLiteConnection, SQLiteTransaction>), typeof(SQLiteDbManager));
             builder.AddSingleton(typeof(IDbVersionDetector<SQLiteConnection, SQLiteTransaction>), typeof(SQLiteDbVersionDetector));
-            builder.AddSingleton(typeof(IDbBackupCreator<SQLiteConnection, SQLiteTransaction>), typeof(SQLiteDatabaseBackupCreator));
+            builder.AddSingleton(typeof(IDbBackupCreator<SQLiteConnection, SQLiteTransaction>), typeof(SQLiteDbBackupCreator));
             builder.AddSingleton(typeof(IDbCleanupProcessor<SQLiteConnection, SQLiteTransaction>), typeof(SQLiteDbCleanupProcessor));
-            builder.AddSingleton(typeof(IDbVersionUpgrader<SQLiteConnection, SQLiteTransaction>), typeof(SQLiteDatabaseVersionUpgrader));
+            builder.AddSingleton(typeof(IDbVersionUpgrader<SQLiteConnection, SQLiteTransaction>), typeof(SQLiteDbVersionUpgrader));
 
             return new DbManagerBuilder<SQLiteConnection, SQLiteTransaction, SQLiteDbManager>(builder);
         }

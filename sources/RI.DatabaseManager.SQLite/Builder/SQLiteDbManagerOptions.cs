@@ -30,9 +30,18 @@ namespace RI.DatabaseManager.Builder
     ///     <para>
     ///         If <see cref="CustomVersionDetectionBatch" /> is empty (has no commands) and <see cref="CustomVersionDetectionBatchName" /> is not null, <see cref="CustomVersionDetectionBatchName" /> is used for version detection instead of the default script.
     ///     </para>
+    /// TODO: Docs: default version detection script
+    ///     <para>
+    ///         If commands are added to <see cref="BackupPreprocessingBatch" />/<see cref="BackupPostprocessingBatch"/>, <see cref="BackupPreprocessingBatch" />/<see cref="BackupPostprocessingBatch"/> is used for preprocessing/postprocessing instead of the batch named by <see cref="BackupPreprocessingBatchName" />/<see cref="BackupPostprocessingBatchName" />.
+    ///     </para>
+    ///     <para>
+    ///         If <see cref="BackupPreprocessingBatch" />/<see cref="BackupPostprocessingBatch"/> is empty (has no commands) and <see cref="BackupPreprocessingBatchName" />/<see cref="BackupPostprocessingBatchName" /> is not null, <see cref="BackupPreprocessingBatchName" />/<see cref="BackupPostprocessingBatchName" /> is used for preprocessing/postprocessing.
+    ///     </para>
+    ///     <para>
+    ///         If neither <see cref="BackupPreprocessingBatch" />/<see cref="BackupPostprocessingBatch"/> nor <see cref="BackupPreprocessingBatchName" />/<see cref="BackupPostprocessingBatchName" /> is configured, no preprocessing/postprocessing will be done before/after backup.
+    ///     </para>
     /// </remarks>
     /// <threadsafety static="false" instance="false" />
-    /// TODO: Docs
     public sealed class SQLiteDbManagerOptions : IDbManagerOptions, ISupportVersionUpgradeNameFormat, ICloneable
     {
         #region Instance Constructor/Destructor
@@ -79,6 +88,10 @@ namespace RI.DatabaseManager.Builder
         private string _customCleanupBatchName;
 
         private string _customVersionDetectionBatchName;
+
+        private string _backupPreprocessingBatchName;
+
+        private string _backupPostprocessingBatchName;
 
         private string _versionUpgradeNameFormat = @".+?(?<sourceVersion>\d{4}).*";
 
@@ -362,6 +375,90 @@ namespace RI.DatabaseManager.Builder
         }
 
         /// <summary>
+        ///     Gets the used backup preprocessing batch.
+        /// </summary>
+        /// <value>
+        ///     The used backup preprocessing batch.
+        /// </value>
+        /// <remarks>
+        ///     <para>
+        ///         By default, <see cref="BackupPreprocessingBatch" /> is empty (has no commands).
+        ///     </para>
+        /// </remarks>
+        public DbBatch<SQLiteConnection, SQLiteTransaction> BackupPreprocessingBatch { get; private set; } = new DbBatch<SQLiteConnection, SQLiteTransaction>();
+
+        /// <summary>
+        ///     Gets the used backup preprocessing batch name.
+        /// </summary>
+        /// <value>
+        ///     The used backup preprocessing batch name.
+        /// </value>
+        /// <remarks>
+        ///     <para>
+        ///         By default, <see cref="BackupPreprocessingBatchName" /> is null.
+        ///     </para>
+        /// </remarks>
+        /// <exception cref="ArgumentException"> <paramref name="value" /> is an empty string. </exception>
+        public string BackupPreprocessingBatchName
+        {
+            get => this._backupPreprocessingBatchName;
+            set
+            {
+                if (value != null)
+                {
+                    if (string.IsNullOrWhiteSpace(value))
+                    {
+                        throw new ArgumentException("The string argument is empty.", nameof(value));
+                    }
+                }
+
+                this._backupPreprocessingBatchName = value;
+            }
+        }
+
+        /// <summary>
+        ///     Gets the used backup preprocessing batch.
+        /// </summary>
+        /// <value>
+        ///     The used backup preprocessing batch.
+        /// </value>
+        /// <remarks>
+        ///     <para>
+        ///         By default, <see cref="BackupPostprocessingBatch" /> is empty (has no commands).
+        ///     </para>
+        /// </remarks>
+        public DbBatch<SQLiteConnection, SQLiteTransaction> BackupPostprocessingBatch { get; private set; } = new DbBatch<SQLiteConnection, SQLiteTransaction>();
+
+        /// <summary>
+        ///     Gets the used backup postprocessing batch name.
+        /// </summary>
+        /// <value>
+        ///     The used backup postprocessing batch name.
+        /// </value>
+        /// <remarks>
+        ///     <para>
+        ///         By default, <see cref="BackupPostprocessingBatchName" /> is null.
+        ///     </para>
+        /// </remarks>
+        /// <exception cref="ArgumentException"> <paramref name="value" /> is an empty string. </exception>
+        public string BackupPostprocessingBatchName
+        {
+            get => this._backupPostprocessingBatchName;
+            set
+            {
+                if (value != null)
+                {
+                    if (string.IsNullOrWhiteSpace(value))
+                    {
+                        throw new ArgumentException("The string argument is empty.", nameof(value));
+                    }
+                }
+
+                this._backupPostprocessingBatchName = value;
+            }
+        }
+
+        /// <summary>
         /// Gets the default cleanup script.
         /// </summary>
         /// <returns>
@@ -433,6 +530,10 @@ namespace RI.DatabaseManager.Builder
             clone.CustomCleanupBatchName = this.CustomCleanupBatchName;
             clone.CustomVersionDetectionBatch = this.CustomVersionDetectionBatch.Clone();
             clone.CustomVersionDetectionBatchName = this.CustomVersionDetectionBatchName;
+            clone.BackupPreprocessingBatch = this.BackupPreprocessingBatch.Clone();
+            clone.BackupPreprocessingBatchName = this.BackupPreprocessingBatchName;
+            clone.BackupPostprocessingBatch = this.BackupPostprocessingBatch.Clone();
+            clone.BackupPostprocessingBatchName = this.BackupPostprocessingBatchName;
             clone.DefaultVersionDetectionTable = this.DefaultVersionDetectionTable;
             clone.DefaultVersionDetectionNameColumn = this.DefaultVersionDetectionNameColumn;
             clone.DefaultVersionDetectionValueColumn = this.DefaultVersionDetectionValueColumn;

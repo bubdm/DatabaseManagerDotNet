@@ -31,9 +31,9 @@ namespace RI.DatabaseManager.Builder
     ///     <para>
     ///         If <see cref="CustomVersionDetectionBatch" /> is empty (has no commands) and <see cref="CustomVersionDetectionBatchName" /> is not null, <see cref="CustomVersionDetectionBatchName" /> is used for version detection instead of the default script.
     ///     </para>
+    ///  TODO: Docs: default version detection script
     /// </remarks>
     /// <threadsafety static="false" instance="false" />
-    /// TODO: Docs
     public sealed class SqlServerDbManagerOptions : IDbManagerOptions, ISupportVersionUpgradeNameFormat, ICloneable
     {
         #region Instance Constructor/Destructor

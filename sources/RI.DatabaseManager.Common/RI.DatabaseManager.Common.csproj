@@ -21,33 +21,10 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Compile Remove="_OLD\AssemblyResourceVersionUpgraderStepAttribute.cs" />
-    <Compile Remove="_OLD\AssemblyResourceVersionUpgraderStepConfigurator.cs" />
-    <Compile Remove="_OLD\AssemblyResourceVersionUpgraderUtility.cs" />
-    <Compile Remove="_OLD\DbProcessingStepBase.cs" />
-    <Compile Remove="_OLD\DbProcessingStepDelegate.cs" />
-    <Compile Remove="_OLD\DbProcessingStepTransactionRequirement.cs" />
-    <Compile Remove="_OLD\DbScriptLocatorBase.cs" />
-    <Compile Remove="_OLD\IAssemblyResourceVersionUpgraderStepConfigurator.cs" />
-    <Compile Remove="_OLD\IDbProcessingStep.cs" />
-    <Compile Remove="_OLD\IDbScriptLocator.cs" />
-  </ItemGroup>
-
-  <ItemGroup>
     <None Include="..\..\ICON.png">
       <Pack>True</Pack>
       <PackagePath></PackagePath>
     </None>
-    <None Include="_OLD\AssemblyResourceVersionUpgraderStepAttribute.cs" />
-    <None Include="_OLD\AssemblyResourceVersionUpgraderStepConfigurator.cs" />
-    <None Include="_OLD\AssemblyResourceVersionUpgraderUtility.cs" />
-    <None Include="_OLD\DbProcessingStepBase.cs" />
-    <None Include="_OLD\DbProcessingStepDelegate.cs" />
-    <None Include="_OLD\DbProcessingStepTransactionRequirement.cs" />
-    <None Include="_OLD\DbScriptLocatorBase.cs" />
-    <None Include="_OLD\IAssemblyResourceVersionUpgraderStepConfigurator.cs" />
-    <None Include="_OLD\IDbProcessingStep.cs" />
-    <None Include="_OLD\IDbScriptLocator.cs" />
   </ItemGroup>
 
   <ItemGroup>

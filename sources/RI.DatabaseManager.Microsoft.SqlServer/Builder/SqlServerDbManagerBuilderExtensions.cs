@@ -140,7 +140,7 @@ namespace RI.DatabaseManager.Builder
             builder.AddSingleton(typeof(IDbManager<SqlConnection, SqlTransaction>), typeof(SqlServerDbManager));
             builder.AddSingleton(typeof(IDbVersionDetector<SqlConnection, SqlTransaction>), typeof(SqlServerDbVersionDetector));
             builder.AddSingleton(typeof(IDbCleanupProcessor<SqlConnection, SqlTransaction>), typeof(SqlServerDbCleanupProcessor));
-            builder.AddSingleton(typeof(IDbVersionUpgrader<SqlConnection, SqlTransaction>), typeof(SqlServerDatabaseVersionUpgrader));
+            builder.AddSingleton(typeof(IDbVersionUpgrader<SqlConnection, SqlTransaction>), typeof(SqlServerDbVersionUpgrader));
 
             return new DbManagerBuilder<SqlConnection, SqlTransaction, SqlServerDbManager>(builder);
         }

@@ -20,11 +20,11 @@ namespace RI.DatabaseManager.Batches.Locators
     ///         <see cref="Assemblies" /> is the list of assemblies used to lookup callbacks.
     ///     </para>
     ///     <para>
-    ///         <see cref="AssemblyCallbackBatchLocator{TConnection,TTransaction}" /> searches the assemblies for non-abstract class types which implement <see cref="ICallbackBatch" /> and which have a public parameterless constructor.
-    ///         Each found type is considered an independent batch. Each type such a batch is executed, a new instance of the corresponding type is instantiated (using <see cref="Activator.CreateInstance(Type,bool)" />) and <see cref="ICallbackBatch.Execute" /> is called.
+    ///         <see cref="AssemblyCallbackBatchLocator{TConnection,TTransaction}" /> searches the assemblies for non-abstract class types which implement <see cref="ICallbackBatch{TConnection,TTransaction}" /> and which have a public parameterless constructor.
+    ///         Each found type is considered an independent batch. Each type such a batch is executed, a new instance of the corresponding type is instantiated (using <see cref="Activator.CreateInstance(Type,bool)" />) and <see cref="ICallbackBatch{TConnection,TTransaction}.Execute" /> is called.
     ///     </para>
     ///     <para>
-    ///         By default, the name of the types which implement <see cref="ICallbackBatch" /> are used as the batch names and <see cref="DbBatchTransactionRequirement.DontCare" /> is used as transaction requirement.
+    ///         By default, the name of the types which implement <see cref="ICallbackBatch{TConnection,TTransaction}" /> are used as the batch names and <see cref="DbBatchTransactionRequirement.DontCare" /> is used as transaction requirement.
     ///         This can be overriden with the optional <see cref="CallbackBatchAttribute" />, applied to the type, which overrides the name and/or transaction requirement.
     ///     </para>
     /// </remarks>
@@ -98,7 +98,7 @@ namespace RI.DatabaseManager.Batches.Locators
                 List<Type> types = assembly.GetTypes()
                                            .Where(x => x.IsClass)
                                            .Where(x => !x.IsAbstract)
-                                           .Where(x => typeof(ICallbackBatch).IsAssignableFrom(x))
+                                           .Where(x => typeof(ICallbackBatch<TConnection, TTransaction>).IsAssignableFrom(x))
                                            .Where(x => x.GetConstructor(new Type[0])
                                                         ?.IsPublic ?? false)
                                            .ToList();
@@ -213,11 +213,11 @@ namespace RI.DatabaseManager.Batches.Locators
 
             #region Instance Methods
 
-            public Func<DbConnection, DbTransaction, object> CreateCallback ()
+            public Func<TConnection, TTransaction, object> CreateCallback ()
             {
                 return (connection, transaction) =>
                 {
-                    ICallbackBatch instance = (ICallbackBatch)Activator.CreateInstance(this.Type, false);
+                    ICallbackBatch<TConnection, TTransaction> instance = (ICallbackBatch<TConnection, TTransaction>)Activator.CreateInstance(this.Type, false);
                     return instance.Execute(connection, transaction);
                 };
             }

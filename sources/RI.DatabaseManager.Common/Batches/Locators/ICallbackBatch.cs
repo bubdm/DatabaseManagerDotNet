@@ -8,13 +8,16 @@ namespace RI.DatabaseManager.Batches.Locators
     /// <summary>
     ///     Callback batch code contract.
     /// </summary>
+    /// <typeparam name="TConnection"> The database connection type. </typeparam>
+    /// <typeparam name="TTransaction"> The database transaction type. </typeparam>
     /// <remarks>
     ///     <para>
     ///         See <see cref="AssemblyCallbackBatchLocator{TConnection,TTransaction}" /> for more details.
     ///     </para>
     /// </remarks>
-    /// TODO: Make generic
-    public interface ICallbackBatch
+    public interface ICallbackBatch<TConnection, TTransaction>
+        where TConnection : DbConnection
+        where TTransaction : DbTransaction
     {
         /// <summary>
         ///     Executes the batch code.
@@ -24,6 +27,6 @@ namespace RI.DatabaseManager.Batches.Locators
         /// <returns>
         ///     The result of the code callback.
         /// </returns>
-        object Execute (DbConnection connection, DbTransaction transaction);
+        object Execute (TConnection connection, TTransaction transaction);
     }
 }

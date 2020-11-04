@@ -1,6 +1,5 @@
 ﻿using System;
-
-using Microsoft.Data.SqlClient;
+using System.Data.SQLite;
 
 using RI.Abstractions.Logging;
 using RI.DatabaseManager.Builder;
@@ -11,25 +10,25 @@ using RI.DatabaseManager.Builder;
 namespace RI.DatabaseManager.Upgrading
 {
     /// <summary>
-    ///     Implements a database version upgrader for Microsoft SQL Server databases.
+    ///     Implements a database version upgrader for SQLite databases.
     /// </summary>
     /// <remarks>
     ///     <para>
-    ///         See <see cref="SqlServerDbManagerOptions" /> for more information.
+    ///         See <see cref="SQLiteDbManagerOptions" /> for more information.
     ///     </para>
     /// </remarks>
     /// <threadsafety static="false" instance="false" />
-    public sealed class SqlServerDatabaseVersionUpgrader : BatchNameBasedDbVersionUpgrader<SqlConnection,SqlTransaction>
+    public sealed class SQLiteDbVersionUpgrader : BatchNameBasedDbVersionUpgrader<SQLiteConnection,SQLiteTransaction>
     {
         #region Instance Constructor/Destructor
 
         /// <summary>
-        ///     Creates a new instance of <see cref="SqlServerDatabaseVersionUpgrader" />.
+        ///     Creates a new instance of <see cref="SQLiteDbVersionUpgrader" />.
         /// </summary>
-        /// <param name="options"> The used SQL Server database manager options. </param>
+        /// <param name="options"> The used SQLite database manager options. </param>
         /// <param name="logger"> The used logger. </param>
         /// <exception cref="ArgumentNullException"> <paramref name="options" /> or <paramref name="logger" /> is null. </exception>
-        public SqlServerDatabaseVersionUpgrader(SqlServerDbManagerOptions options, ILogger logger) : base(options, logger)
+        public SQLiteDbVersionUpgrader(SQLiteDbManagerOptions options, ILogger logger) : base(options, logger)
         {
             if (options == null)
             {
@@ -39,7 +38,7 @@ namespace RI.DatabaseManager.Upgrading
             this.Options = options;
         }
 
-        private new SqlServerDbManagerOptions Options { get; }
+        private new SQLiteDbManagerOptions Options { get; }
 
         #endregion
     }
