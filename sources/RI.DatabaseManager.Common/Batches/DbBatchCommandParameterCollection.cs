@@ -21,12 +21,6 @@ namespace RI.DatabaseManager.Batches
         protected override string GetKeyForItem (IDbBatchCommandParameter<TParameterTypes> item) => item.Name;
 
         /// <inheritdoc />
-        IEnumerator<IDbBatchCommandParameter> IEnumerable<IDbBatchCommandParameter>.GetEnumerator ()
-        {
-            return this.InternalSet.GetEnumerator();
-        }
-
-        /// <inheritdoc />
         void ICollection<IDbBatchCommandParameter>.Add (IDbBatchCommandParameter item)
         {
             this.InternalSet.Add(item);
@@ -180,6 +174,12 @@ namespace RI.DatabaseManager.Batches
         public void UnionWith (IEnumerable<IDbBatchCommandParameter<TParameterTypes>> other)
         {
             this.InternalSet.UnionWith(other);
+        }
+
+        /// <inheritdoc />
+        public new IEnumerator<IDbBatchCommandParameter> GetEnumerator ()
+        {
+            return this.InternalSet.GetEnumerator();
         }
 
         /// <inheritdoc />
