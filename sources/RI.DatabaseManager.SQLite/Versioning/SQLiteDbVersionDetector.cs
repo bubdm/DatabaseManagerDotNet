@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Data;
 using System.Data.SQLite;
 using System.Globalization;
 
@@ -32,7 +33,7 @@ namespace RI.DatabaseManager.Versioning
     ///     </para>
     /// </remarks>
     /// <threadsafety static="false" instance="false" />
-    public sealed class SQLiteDbVersionDetector : DbVersionDetectorBase<SQLiteConnection, SQLiteTransaction>
+    public sealed class SQLiteDbVersionDetector : DbVersionDetectorBase<SQLiteConnection, SQLiteTransaction, DbType>
     {
         #region Instance Constructor/Destructor
 
@@ -150,7 +151,7 @@ namespace RI.DatabaseManager.Versioning
         #region Overrides
 
         /// <inheritdoc />
-        public override bool Detect (IDbManager<SQLiteConnection, SQLiteTransaction> manager, out DbState? state, out int version)
+        public override bool Detect (IDbManager<SQLiteConnection, SQLiteTransaction, DbType> manager, out DbState? state, out int version)
         {
             if (manager == null)
             {
@@ -162,7 +163,7 @@ namespace RI.DatabaseManager.Versioning
 
             try
             {
-                IDbBatch<SQLiteConnection, SQLiteTransaction> batch;
+                IDbBatch<SQLiteConnection, SQLiteTransaction, DbType> batch;
 
                 if (!this.Options.CustomVersionDetectionBatch.IsEmpty())
                 {
@@ -174,7 +175,7 @@ namespace RI.DatabaseManager.Versioning
                 }
                 else
                 {
-                    batch = new DbBatch<SQLiteConnection, SQLiteTransaction>();
+                    batch = new DbBatch<SQLiteConnection, SQLiteTransaction, DbType>();
 
                     foreach (string command in this.Options.GetDefaultVersionDetectionScript())
                     {
@@ -182,9 +183,9 @@ namespace RI.DatabaseManager.Versioning
                     }
                 }
 
-                IList<DbBatch<SQLiteConnection, SQLiteTransaction>> commands = batch.SplitCommands();
+                IList<DbBatch<SQLiteConnection, SQLiteTransaction, DbType>> commands = batch.SplitCommands();
 
-                foreach (DbBatch<SQLiteConnection, SQLiteTransaction> command in commands)
+                foreach (DbBatch<SQLiteConnection, SQLiteTransaction, DbType> command in commands)
                 {
                     if (!manager.ExecuteBatch(command, false, false))
                     {

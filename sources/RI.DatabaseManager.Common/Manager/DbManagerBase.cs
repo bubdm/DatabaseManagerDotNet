@@ -18,24 +18,30 @@ using RI.DatabaseManager.Versioning;
 namespace RI.DatabaseManager.Manager
 {
     /// <summary>
-    ///     Boilerplate implementation of <see cref="IDbManager" /> and <see cref="IDbManager{TConnection,TTransaction}" />.
+    ///     Boilerplate implementation of <see cref="IDbManager" /> and <see cref="IDbManager{TConnection,TTransaction,TParameterTypes}" />.
     /// </summary>
     /// <typeparam name="TConnection"> The database connection type. </typeparam>
     /// <typeparam name="TTransaction"> The database transaction type. </typeparam>
+    /// <typeparam name="TParameterTypes"> The database command parameter type. </typeparam>
+    /// <typeparam name="TParameters"> The database command parameter collection type. </typeparam>
+    /// <typeparam name="TParameter"> The database command parameter type. </typeparam>
     /// <remarks>
     ///     <note type="implement">
-    ///         It is recommended that database manager implementations use this base class as it already implements most of the database-independent logic defined by <see cref="IDbManager" /> and <see cref="IDbManager{TConnection,TTransaction}" />.
+    ///         It is recommended that database manager implementations use this base class as it already implements most of the database-independent logic defined by <see cref="IDbManager" /> and <see cref="IDbManager{TConnection,TTransaction,TParameterTypes}" />.
     ///     </note>
     /// </remarks>
     /// <threadsafety static="false" instance="false" />
-    public abstract class DbManagerBase <TConnection, TTransaction> : IDbManager<TConnection, TTransaction>
+    public abstract class DbManagerBase <TConnection, TTransaction, TParameterTypes, TParameters, TParameter> : IDbManager<TConnection, TTransaction, TParameterTypes>
         where TConnection : DbConnection
         where TTransaction : DbTransaction
+        where TParameterTypes : Enum
+        where TParameters : DbParameterCollection
+        where TParameter : DbParameter, new()
     {
         #region Instance Constructor/Destructor
 
         /// <summary>
-        ///     Creates a new instance of <see cref="DbManagerBase{TConnection,TTransaction}" />.
+        ///     Creates a new instance of <see cref="DbManagerBase{TConnection,TTransaction,TParameterTypes,TParameters,TParameter}" />.
         /// </summary>
         /// <param name="logger"> The used logger. </param>
         /// <param name="batchLocator"> The used batch locator. </param>
@@ -45,12 +51,12 @@ namespace RI.DatabaseManager.Manager
         /// <param name="versionUpgrader"> The used version upgrader, if any. </param>
         /// <remarks>
         ///     <note type="important">
-        ///         <paramref name="backupCreator" />, <paramref name="cleanupProcessor" />, <paramref name="versionUpgrader" /> can be null or <see cref="DbManagerBuilder.NullInstance{TConnection,TTransaction}" />, depending on how the database manager was build and which (if any) dependency injection library is used.
-        ///         Some dependency injection libraries are not properly able to provide null as a constructor-injected dependency for optional dependencies. In such cases, <see cref="DbManagerBuilder.NullInstance{TConnection,TTransaction}" /> is passed as parameter value.
+        ///         <paramref name="backupCreator" />, <paramref name="cleanupProcessor" />, <paramref name="versionUpgrader" /> can be null or <see cref="DbManagerBuilder.NullInstance{TConnection,TTransaction,TParameterTypes}" />, depending on how the database manager was build and which (if any) dependency injection library is used.
+        ///         Some dependency injection libraries are not properly able to provide null as a constructor-injected dependency for optional dependencies. In such cases, <see cref="DbManagerBuilder.NullInstance{TConnection,TTransaction,TParameterTypes}" /> is passed as parameter value.
         ///     </note>
         /// </remarks>
         /// <exception cref="ArgumentNullException"> <paramref name="logger" />, <paramref name="batchLocator" />, or <paramref name="versionDetector" /> is null. </exception>
-        protected DbManagerBase (ILogger logger, IDbBatchLocator<TConnection, TTransaction> batchLocator, IDbVersionDetector<TConnection, TTransaction> versionDetector, IDbBackupCreator<TConnection, TTransaction> backupCreator, IDbCleanupProcessor<TConnection, TTransaction> cleanupProcessor, IDbVersionUpgrader<TConnection, TTransaction> versionUpgrader)
+        protected DbManagerBase (ILogger logger, IDbBatchLocator<TConnection, TTransaction, TParameterTypes> batchLocator, IDbVersionDetector<TConnection, TTransaction, TParameterTypes> versionDetector, IDbBackupCreator<TConnection, TTransaction, TParameterTypes> backupCreator, IDbCleanupProcessor<TConnection, TTransaction, TParameterTypes> cleanupProcessor, IDbVersionUpgrader<TConnection, TTransaction, TParameterTypes> versionUpgrader)
         {
             if (logger == null)
             {
@@ -71,9 +77,9 @@ namespace RI.DatabaseManager.Manager
             this.BatchLocator = batchLocator;
             this.VersionDetector = versionDetector;
 
-            this.BackupCreator = backupCreator == null ? null : backupCreator is DbManagerBuilder.NullInstance<TConnection, TTransaction> ? null : backupCreator;
-            this.CleanupProcessor = cleanupProcessor == null ? null : cleanupProcessor is DbManagerBuilder.NullInstance<TConnection, TTransaction> ? null : cleanupProcessor;
-            this.VersionUpgrader = versionUpgrader == null ? null : versionUpgrader is DbManagerBuilder.NullInstance<TConnection, TTransaction> ? null : versionUpgrader;
+            this.BackupCreator = backupCreator == null ? null : backupCreator is DbManagerBuilder.NullInstance<TConnection, TTransaction, TParameterTypes> ? null : backupCreator;
+            this.CleanupProcessor = cleanupProcessor == null ? null : cleanupProcessor is DbManagerBuilder.NullInstance<TConnection, TTransaction, TParameterTypes> ? null : cleanupProcessor;
+            this.VersionUpgrader = versionUpgrader == null ? null : versionUpgrader is DbManagerBuilder.NullInstance<TConnection, TTransaction, TParameterTypes> ? null : versionUpgrader;
 
             this.InitialState = DbState.Uninitialized;
             this.InitialVersion = -1;
@@ -85,7 +91,7 @@ namespace RI.DatabaseManager.Manager
         }
 
         /// <summary>
-        ///     Finalizes this instance of <see cref="DbManagerBase{TConnection,TTransaction}" />.
+        ///     Finalizes this instance of <see cref="DbManagerBase{TConnection,TTransaction,TParameterTypes,TParameters,TParameter}" />.
         /// </summary>
         ~DbManagerBase ()
         {
@@ -107,15 +113,15 @@ namespace RI.DatabaseManager.Manager
         /// </value>
         protected ILogger Logger { get; }
 
-        private IDbBackupCreator<TConnection, TTransaction> BackupCreator { get; }
+        private IDbBackupCreator<TConnection, TTransaction, TParameterTypes> BackupCreator { get; }
 
-        private IDbBatchLocator<TConnection, TTransaction> BatchLocator { get; }
+        private IDbBatchLocator<TConnection, TTransaction, TParameterTypes> BatchLocator { get; }
 
-        private IDbCleanupProcessor<TConnection, TTransaction> CleanupProcessor { get; }
+        private IDbCleanupProcessor<TConnection, TTransaction, TParameterTypes> CleanupProcessor { get; }
 
-        private IDbVersionDetector<TConnection, TTransaction> VersionDetector { get; }
+        private IDbVersionDetector<TConnection, TTransaction, TParameterTypes> VersionDetector { get; }
 
-        private IDbVersionUpgrader<TConnection, TTransaction> VersionUpgrader { get; }
+        private IDbVersionUpgrader<TConnection, TTransaction, TParameterTypes> VersionUpgrader { get; }
 
         #endregion
 
@@ -369,18 +375,18 @@ namespace RI.DatabaseManager.Manager
         /// </returns>
         /// <remarks>
         ///     <note type="implement">
-        ///         The default implementation creates and returns a new instance of <see cref="DbBatch{TConnection,TTransaction}" />.
+        ///         The default implementation creates and returns a new instance of <see cref="DbBatch{TConnection,TTransaction,TParameterTypes}" />.
         ///     </note>
         /// </remarks>
-        protected virtual IDbBatch<TConnection, TTransaction> CreateBatchImpl ()
+        protected virtual IDbBatch<TConnection, TTransaction, TParameterTypes> CreateBatchImpl ()
         {
-            return new DbBatch<TConnection, TTransaction>();
+            return new DbBatch<TConnection, TTransaction, TParameterTypes>();
         }
 
         /// <summary>
         ///     Performs the actual state and version detection as required by this database manager implementation.
         /// </summary>
-        /// <param name="state"> Returns the state of the database. Can be null to perform state detection based on <paramref name="version" /> as implemented in <see cref="DbManagerBase{TConnection,TTransaction}" />. </param>
+        /// <param name="state"> Returns the state of the database. Can be null to perform state detection based on <paramref name="version" /> as implemented in <see cref="DbManagerBase{TConnection,TTransaction,TParameterTypes, TParameters,TParameter}" />. </param>
         /// <param name="version"> Returns the version of the database. </param>
         /// <returns>
         ///     true if the state and version could be successfully determined, false if the database is damaged or in an invalid state.
@@ -420,7 +426,7 @@ namespace RI.DatabaseManager.Manager
         ///         The default implementation first resets all commands and then executes <see cref="ExecuteCommandScriptImpl" /> or <see cref="ExecuteCommandCodeImpl" /> for each command of the batch.
         ///     </note>
         /// </remarks>
-        protected virtual bool ExecuteBatchImpl (IDbBatch<TConnection, TTransaction> batch, bool readOnly)
+        protected virtual bool ExecuteBatchImpl (IDbBatch<TConnection, TTransaction, TParameterTypes> batch, bool readOnly)
         {
             TConnection connection;
             TTransaction transaction;
@@ -448,7 +454,7 @@ namespace RI.DatabaseManager.Manager
                 transaction = null;
             }
 
-            foreach (IDbBatchCommand<TConnection, TTransaction> command in batch.Commands)
+            foreach (IDbBatchCommand<TConnection, TTransaction, TParameterTypes> command in batch.Commands)
             {
                 if (command == null)
                 {
@@ -533,7 +539,7 @@ namespace RI.DatabaseManager.Manager
         ///         The default implementation calls <see cref="IDbBatchLocator.GetBatch" />.
         ///     </note>
         /// </remarks>
-        protected virtual IDbBatch<TConnection, TTransaction> GetBatchImpl (string name, string commandSeparator, Func<IDbBatch<TConnection, TTransaction>> batchCreator)
+        protected virtual IDbBatch<TConnection, TTransaction, TParameterTypes> GetBatchImpl (string name, string commandSeparator, Func<IDbBatch<TConnection, TTransaction, TParameterTypes>> batchCreator)
         {
             return this.BatchLocator.GetBatch(name, commandSeparator, batchCreator);
         }
@@ -573,7 +579,7 @@ namespace RI.DatabaseManager.Manager
         ///         The default implementation does nothing.
         ///     </note>
         /// </remarks>
-        protected virtual void OnBatchCreated (IDbBatch<TConnection, TTransaction> batch) { }
+        protected virtual void OnBatchCreated (IDbBatch<TConnection, TTransaction, TParameterTypes> batch) { }
 
         /// <summary>
         ///     Called when a batch has been retrieved.
@@ -585,7 +591,7 @@ namespace RI.DatabaseManager.Manager
         ///         The default implementation does nothing.
         ///     </note>
         /// </remarks>
-        protected virtual void OnBatchRetrieved (IDbBatch<TConnection, TTransaction> batch, string name) { }
+        protected virtual void OnBatchRetrieved (IDbBatch<TConnection, TTransaction, TParameterTypes> batch, string name) { }
 
         /// <summary>
         ///     Called when a connection has been created.
@@ -796,9 +802,9 @@ namespace RI.DatabaseManager.Manager
         }
 
         /// <inheritdoc />
-        public IDbBatch<TConnection, TTransaction> CreateBatch ()
+        public IDbBatch<TConnection, TTransaction, TParameterTypes> CreateBatch ()
         {
-            IDbBatch<TConnection, TTransaction> batch = this.CreateBatchImpl();
+            IDbBatch<TConnection, TTransaction, TParameterTypes> batch = this.CreateBatchImpl();
 
             this.OnBatchCreated(batch);
 
@@ -855,7 +861,7 @@ namespace RI.DatabaseManager.Manager
         /// <inheritdoc />
         bool IDbManager.ExecuteBatch (IDbBatch batch, bool readOnly, bool detectVersionAndStateAfterExecution)
         {
-            return this.ExecuteBatch((IDbBatch<TConnection, TTransaction>)batch, readOnly, detectVersionAndStateAfterExecution);
+            return this.ExecuteBatch((IDbBatch<TConnection, TTransaction, TParameterTypes>)batch, readOnly, detectVersionAndStateAfterExecution);
         }
 
         /// <inheritdoc />
@@ -906,7 +912,7 @@ namespace RI.DatabaseManager.Manager
         }
 
         /// <inheritdoc />
-        public bool ExecuteBatch (IDbBatch<TConnection, TTransaction> batch, bool readOnly, bool detectVersionAndStateAfterExecution)
+        public bool ExecuteBatch (IDbBatch<TConnection, TTransaction, TParameterTypes> batch, bool readOnly, bool detectVersionAndStateAfterExecution)
         {
             if (batch == null)
             {
@@ -938,7 +944,7 @@ namespace RI.DatabaseManager.Manager
         }
 
         /// <inheritdoc />
-        public IDbBatch<TConnection, TTransaction> GetBatch (string name, string commandSeparator)
+        public IDbBatch<TConnection, TTransaction, TParameterTypes> GetBatch (string name, string commandSeparator)
         {
             if (name == null)
             {
@@ -958,7 +964,7 @@ namespace RI.DatabaseManager.Manager
                 }
             }
 
-            IDbBatch<TConnection, TTransaction> batch = this.GetBatchImpl(name, commandSeparator, this.CreateBatch);
+            IDbBatch<TConnection, TTransaction, TParameterTypes> batch = this.GetBatchImpl(name, commandSeparator, this.CreateBatch);
 
             if (batch != null)
             {

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Data;
 using System.Globalization;
 
 using Microsoft.Data.SqlClient;
@@ -34,7 +35,7 @@ namespace RI.DatabaseManager.Versioning
     ///     </para>
     /// </remarks>
     /// <threadsafety static="false" instance="false" />
-    public sealed class SqlServerDbVersionDetector : DbVersionDetectorBase<SqlConnection, SqlTransaction>
+    public sealed class SqlServerDbVersionDetector : DbVersionDetectorBase<SqlConnection, SqlTransaction, SqlDbType>
     {
         #region Instance Constructor/Destructor
 
@@ -152,7 +153,7 @@ namespace RI.DatabaseManager.Versioning
         #region Overrides
 
         /// <inheritdoc />
-        public override bool Detect (IDbManager<SqlConnection, SqlTransaction> manager, out DbState? state, out int version)
+        public override bool Detect (IDbManager<SqlConnection, SqlTransaction, SqlDbType> manager, out DbState? state, out int version)
         {
             if (manager == null)
             {
@@ -164,7 +165,7 @@ namespace RI.DatabaseManager.Versioning
 
             try
             {
-                IDbBatch<SqlConnection, SqlTransaction> batch;
+                IDbBatch<SqlConnection, SqlTransaction, SqlDbType> batch;
 
                 if (!this.Options.CustomVersionDetectionBatch.IsEmpty())
                 {
@@ -176,7 +177,7 @@ namespace RI.DatabaseManager.Versioning
                 }
                 else
                 {
-                    batch = new DbBatch<SqlConnection, SqlTransaction>();
+                    batch = new DbBatch<SqlConnection, SqlTransaction, SqlDbType>();
 
                     foreach (string command in this.Options.GetDefaultVersionDetectionScript())
                     {
@@ -184,9 +185,9 @@ namespace RI.DatabaseManager.Versioning
                     }
                 }
 
-                IList<DbBatch<SqlConnection, SqlTransaction>> commands = batch.SplitCommands();
+                IList<DbBatch<SqlConnection, SqlTransaction, SqlDbType>> commands = batch.SplitCommands();
 
-                foreach (DbBatch<SqlConnection, SqlTransaction> command in commands)
+                foreach (DbBatch<SqlConnection, SqlTransaction, SqlDbType> command in commands)
                 {
                     if (!manager.ExecuteBatch(command, false, false))
                     {

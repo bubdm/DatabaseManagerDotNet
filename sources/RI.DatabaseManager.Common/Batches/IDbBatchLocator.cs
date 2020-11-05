@@ -50,11 +50,13 @@ namespace RI.DatabaseManager.Batches
     /// <inheritdoc cref="IDbBatchLocator" />
     /// <typeparam name="TConnection"> The database connection type. </typeparam>
     /// <typeparam name="TTransaction"> The database transaction type. </typeparam>
-    public interface IDbBatchLocator<TConnection, TTransaction> : IDbBatchLocator
+    /// <typeparam name="TParameterTypes"> The database command parameter type. </typeparam>
+    public interface IDbBatchLocator<TConnection, TTransaction, TParameterTypes> : IDbBatchLocator
         where TConnection : DbConnection
         where TTransaction : DbTransaction
+        where TParameterTypes : Enum
     {
         /// <inheritdoc cref="IDbBatchLocator.GetBatch" />
-        IDbBatch<TConnection, TTransaction> GetBatch(string name, string commandSeparator, Func<IDbBatch<TConnection, TTransaction>> batchCreator);
+        IDbBatch<TConnection, TTransaction, TParameterTypes> GetBatch(string name, string commandSeparator, Func<IDbBatch<TConnection, TTransaction, TParameterTypes>> batchCreator);
     }
 }

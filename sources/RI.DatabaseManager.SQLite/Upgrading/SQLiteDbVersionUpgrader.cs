@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Data;
 using System.Data.SQLite;
 
 using RI.Abstractions.Logging;
@@ -18,7 +19,7 @@ namespace RI.DatabaseManager.Upgrading
     ///     </para>
     /// </remarks>
     /// <threadsafety static="false" instance="false" />
-    public sealed class SQLiteDbVersionUpgrader : BatchNameBasedDbVersionUpgrader<SQLiteConnection,SQLiteTransaction>
+    public sealed class SQLiteDbVersionUpgrader : BatchNameBasedDbVersionUpgrader<SQLiteConnection,SQLiteTransaction, DbType>
     {
         #region Instance Constructor/Destructor
 

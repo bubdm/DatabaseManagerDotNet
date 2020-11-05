@@ -10,24 +10,26 @@ using RI.DatabaseManager.Manager;
 namespace RI.DatabaseManager.Backup
 {
     /// <summary>
-    ///     Boilerplate implementation of <see cref="IDbBackupCreator" /> and <see cref="IDbBackupCreator{TConnection,TTransaction}" />.
+    ///     Boilerplate implementation of <see cref="IDbBackupCreator" /> and <see cref="IDbBackupCreator{TConnection,TTransaction,TParameterTypes}" />.
     /// </summary>
     /// <typeparam name="TConnection"> The database connection type. </typeparam>
     /// <typeparam name="TTransaction"> The database transaction type. </typeparam>
+    /// <typeparam name="TParameterTypes"> The database command parameter type. </typeparam>
     /// <remarks>
     ///     <note type="implement">
-    ///         It is recommended that database backup creators implementations use this base class as it already implements most of the database-independent logic defined by <see cref="IDbBackupCreator" /> and <see cref="IDbBackupCreator{TConnection,TTransaction}" />.
+    ///         It is recommended that database backup creators implementations use this base class as it already implements most of the database-independent logic defined by <see cref="IDbBackupCreator" /> and <see cref="IDbBackupCreator{TConnection,TTransaction,TParameterTypes}" />.
     ///     </note>
     /// </remarks>
     /// <threadsafety static="false" instance="false" />
-    public abstract class DbBackupCreatorBase <TConnection, TTransaction> : IDbBackupCreator<TConnection, TTransaction>
+    public abstract class DbBackupCreatorBase <TConnection, TTransaction, TParameterTypes> : IDbBackupCreator<TConnection, TTransaction, TParameterTypes>
         where TConnection : DbConnection
         where TTransaction : DbTransaction
+        where TParameterTypes : Enum
     {
         #region Instance Constructor/Destructor
 
         /// <summary>
-        ///     Creates a new instance of <see cref="DbBackupCreatorBase{TConnection,TTransaction}" />.
+        ///     Creates a new instance of <see cref="DbBackupCreatorBase{TConnection,TTransaction,TParameterTypes}" />.
         /// </summary>
         /// <param name="logger"> The used logger. </param>
         /// <exception cref="ArgumentNullException"> <paramref name="logger" /> is null. </exception>
@@ -97,20 +99,20 @@ namespace RI.DatabaseManager.Backup
         /// <inheritdoc />
         bool IDbBackupCreator.Backup (IDbManager manager, object backupTarget)
         {
-            return this.Backup((IDbManager<TConnection, TTransaction>)manager, backupTarget);
+            return this.Backup((IDbManager<TConnection, TTransaction, TParameterTypes>)manager, backupTarget);
         }
 
         /// <inheritdoc />
-        public abstract bool Backup (IDbManager<TConnection, TTransaction> manager, object backupTarget);
+        public abstract bool Backup (IDbManager<TConnection, TTransaction, TParameterTypes> manager, object backupTarget);
 
         /// <inheritdoc />
         bool IDbBackupCreator.Restore (IDbManager manager, object backupSource)
         {
-            return this.Restore((IDbManager<TConnection, TTransaction>)manager, backupSource);
+            return this.Restore((IDbManager<TConnection, TTransaction, TParameterTypes>)manager, backupSource);
         }
 
         /// <inheritdoc />
-        public abstract bool Restore (IDbManager<TConnection, TTransaction> manager, object backupSource);
+        public abstract bool Restore (IDbManager<TConnection, TTransaction, TParameterTypes> manager, object backupSource);
 
         #endregion
     }

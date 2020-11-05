@@ -10,14 +10,15 @@ namespace RI.DatabaseManager.Batches.Commands
     ///     A batch command which provides a script to be executed.
     /// </summary>
     /// <threadsafety static="false" instance="false" />
-    public sealed class ScriptBatchCommand<TConnection, TTransaction> : IDbBatchCommand<TConnection, TTransaction>
+    public sealed class ScriptBatchCommand<TConnection, TTransaction, TParameterTypes> : IDbBatchCommand<TConnection, TTransaction, TParameterTypes>
         where TConnection : DbConnection
         where TTransaction : DbTransaction
+        where TParameterTypes : Enum
     {
         #region Instance Constructor/Destructor
 
         /// <summary>
-        ///     Creates a new instance of <see cref="CallbackBatchCommand{TConnection,TTransaction}" />.
+        ///     Creates a new instance of <see cref="CallbackBatchCommand{TConnection,TTransaction,TParameterTypes}" />.
         /// </summary>
         /// <param name="script"> The database script. </param>
         /// <param name="transactionRequirement"> The optional transaction requirement specification. Default values is <see cref="DbBatchTransactionRequirement.DontCare" />. </param>
@@ -38,7 +39,7 @@ namespace RI.DatabaseManager.Batches.Commands
         Func<DbConnection, DbTransaction, object> IDbBatchCommand.Code => null;
 
         /// <inheritdoc />
-        Func<TConnection, TTransaction, object> IDbBatchCommand<TConnection, TTransaction>.Code => null;
+        Func<TConnection, TTransaction, object> IDbBatchCommand<TConnection, TTransaction, TParameterTypes>.Code => null;
 
         /// <inheritdoc />
         public object Result { get; set; }
@@ -61,9 +62,9 @@ namespace RI.DatabaseManager.Batches.Commands
         object ICloneable.Clone() => this.Clone();
 
         /// <inheritdoc cref="ICloneable.Clone"/>
-        public ScriptBatchCommand<TConnection, TTransaction> Clone()
+        public ScriptBatchCommand<TConnection, TTransaction, TParameterTypes> Clone()
         {
-            ScriptBatchCommand<TConnection, TTransaction> clone = new ScriptBatchCommand<TConnection, TTransaction>(this.Script, this.TransactionRequirement);
+            ScriptBatchCommand<TConnection, TTransaction, TParameterTypes> clone = new ScriptBatchCommand<TConnection, TTransaction, TParameterTypes>(this.Script, this.TransactionRequirement);
             clone.Result = this.Result;
             clone.WasExecuted = this.WasExecuted;
             return clone;

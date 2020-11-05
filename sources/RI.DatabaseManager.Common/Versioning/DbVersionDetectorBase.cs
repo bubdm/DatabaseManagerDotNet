@@ -10,24 +10,26 @@ using RI.DatabaseManager.Manager;
 namespace RI.DatabaseManager.Versioning
 {
     /// <summary>
-    ///     Boilerplate implementation of <see cref="IDbVersionDetector" /> and <see cref="IDbVersionDetector{TConnection,TTransaction}" />.
+    ///     Boilerplate implementation of <see cref="IDbVersionDetector" /> and <see cref="IDbVersionDetector{TConnection,TTransaction,TParameterTypes}" />.
     /// </summary>
     /// <typeparam name="TConnection"> The database connection type. </typeparam>
     /// <typeparam name="TTransaction"> The database transaction type. </typeparam>
+    /// <typeparam name="TParameterTypes"> The database command parameter type. </typeparam>
     /// <remarks>
     ///     <note type="implement">
-    ///         It is recommended that database version detector implementations use this base class as it already implements most of the database-independent logic defined by <see cref="IDbVersionDetector" /> and <see cref="IDbVersionDetector{TConnection,TTransaction}" />.
+    ///         It is recommended that database version detector implementations use this base class as it already implements most of the database-independent logic defined by <see cref="IDbVersionDetector" /> and <see cref="IDbVersionDetector{TConnection,TTransaction,TParameterTypes}" />.
     ///     </note>
     /// </remarks>
     /// <threadsafety static="false" instance="false" />
-    public abstract class DbVersionDetectorBase <TConnection, TTransaction> : IDbVersionDetector<TConnection, TTransaction>
+    public abstract class DbVersionDetectorBase <TConnection, TTransaction, TParameterTypes> : IDbVersionDetector<TConnection, TTransaction, TParameterTypes>
         where TConnection : DbConnection
         where TTransaction : DbTransaction
+        where TParameterTypes : Enum
     {
         #region Instance Constructor/Destructor
 
         /// <summary>
-        ///     Creates a new instance of <see cref="DbVersionDetectorBase{TConnection,TTransaction}" />.
+        ///     Creates a new instance of <see cref="DbVersionDetectorBase{TConnection,TTransaction,TParameterTypes}" />.
         /// </summary>
         /// <param name="logger"> The used logger. </param>
         /// <exception cref="ArgumentNullException"> <paramref name="logger" /> is null. </exception>
@@ -89,12 +91,12 @@ namespace RI.DatabaseManager.Versioning
         #region Interface: IDbVersionDetector<TConnection,TTransaction>
 
         /// <inheritdoc />
-        public abstract bool Detect (IDbManager<TConnection, TTransaction> manager, out DbState? state, out int version);
+        public abstract bool Detect (IDbManager<TConnection, TTransaction, TParameterTypes> manager, out DbState? state, out int version);
 
         /// <inheritdoc />
         bool IDbVersionDetector.Detect (IDbManager manager, out DbState? state, out int version)
         {
-            return this.Detect((IDbManager<TConnection, TTransaction>)manager, out state, out version);
+            return this.Detect((IDbManager<TConnection, TTransaction, TParameterTypes>)manager, out state, out version);
         }
 
         #endregion

@@ -20,7 +20,7 @@ namespace RI.DatabaseManager.Manager
     ///     Implements a database manager for Microsoft SQL Server databases.
     /// </summary>
     /// <threadsafety static="false" instance="false" />
-    public sealed class SqlServerDbManager : DbManagerBase<SqlConnection, SqlTransaction>
+    public sealed class SqlServerDbManager : DbManagerBase<SqlConnection, SqlTransaction, SqlDbType, SqlParameterCollection, SqlParameter>
     {
         private SqlServerDbManagerOptions Options { get; }
 
@@ -40,7 +40,7 @@ namespace RI.DatabaseManager.Manager
         /// <param name="cleanupProcessor"> The used cleanup processor, if any. </param>
         /// <param name="versionUpgrader"> The used version upgrader, if any. </param>
         /// <exception cref="ArgumentNullException"> <paramref name="options" />, <paramref name="logger" />, <paramref name="batchLocator" />, or <paramref name="versionDetector" /> is null. </exception>
-        public SqlServerDbManager (SqlServerDbManagerOptions options, ILogger logger, IDbBatchLocator<SqlConnection, SqlTransaction> batchLocator, IDbVersionDetector<SqlConnection, SqlTransaction> versionDetector, IDbBackupCreator<SqlConnection, SqlTransaction> backupCreator, IDbCleanupProcessor<SqlConnection, SqlTransaction> cleanupProcessor, IDbVersionUpgrader<SqlConnection, SqlTransaction> versionUpgrader) : base(logger, batchLocator, versionDetector, backupCreator, cleanupProcessor, versionUpgrader)
+        public SqlServerDbManager (SqlServerDbManagerOptions options, ILogger logger, IDbBatchLocator<SqlConnection, SqlTransaction, SqlDbType> batchLocator, IDbVersionDetector<SqlConnection, SqlTransaction, SqlDbType> versionDetector, IDbBackupCreator<SqlConnection, SqlTransaction, SqlDbType> backupCreator, IDbCleanupProcessor<SqlConnection, SqlTransaction, SqlDbType> cleanupProcessor, IDbVersionUpgrader<SqlConnection, SqlTransaction, SqlDbType> versionUpgrader) : base(logger, batchLocator, versionDetector, backupCreator, cleanupProcessor, versionUpgrader)
         {
             if (options == null)
             {

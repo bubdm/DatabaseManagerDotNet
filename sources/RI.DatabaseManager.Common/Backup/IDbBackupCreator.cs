@@ -76,14 +76,16 @@ namespace RI.DatabaseManager.Backup
     /// <inheritdoc cref="IDbBackupCreator" />
     /// <typeparam name="TConnection"> The database connection type. </typeparam>
     /// <typeparam name="TTransaction"> The database transaction type. </typeparam>
-    public interface IDbBackupCreator <TConnection, TTransaction> : IDbBackupCreator
+    /// <typeparam name="TParameterTypes"> The database command parameter type. </typeparam>
+    public interface IDbBackupCreator <TConnection, TTransaction, TParameterTypes> : IDbBackupCreator
         where TConnection : DbConnection
         where TTransaction : DbTransaction
+        where TParameterTypes : Enum
     {
         /// <inheritdoc cref="IDbBackupCreator.Backup" />
-        bool Backup (IDbManager<TConnection, TTransaction> manager, object backupTarget);
+        bool Backup (IDbManager<TConnection, TTransaction, TParameterTypes> manager, object backupTarget);
 
         /// <inheritdoc cref="IDbBackupCreator.Restore" />
-        bool Restore (IDbManager<TConnection, TTransaction> manager, object backupSource);
+        bool Restore (IDbManager<TConnection, TTransaction, TParameterTypes> manager, object backupSource);
     }
 }

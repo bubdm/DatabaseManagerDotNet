@@ -12,7 +12,7 @@ using RI.DatabaseManager.Upgrading;
 namespace RI.DatabaseManager.Manager
 {
     /// <summary>
-    ///     Provides utility/extension methods for the <see cref="IDbManager" /> and <see cref="IDbManager{TConnection,TTransaction}" /> type.
+    ///     Provides utility/extension methods for the <see cref="IDbManager" /> and <see cref="IDbManager{TConnection,TTransaction,TParameterTypes}" /> type.
     /// </summary>
     /// <threadsafety static="false" instance="false" />
     public static class IDbManagerExtensions
@@ -63,9 +63,10 @@ namespace RI.DatabaseManager.Manager
         }
 
         /// <inheritdoc cref="CreateConnection(IDbManager)" />
-        public static TConnection CreateConnection <TConnection, TTransaction> (this IDbManager<TConnection, TTransaction> manager)
+        public static TConnection CreateConnection <TConnection, TTransaction, TParameterTypes> (this IDbManager<TConnection, TTransaction, TParameterTypes> manager)
             where TConnection : DbConnection
             where TTransaction : DbTransaction
+            where TParameterTypes : Enum
         {
             if (manager == null)
             {
@@ -101,9 +102,10 @@ namespace RI.DatabaseManager.Manager
         }
 
         /// <inheritdoc cref="CreateTransaction(IDbManager)" />
-        public static TTransaction CreateTransaction <TConnection, TTransaction> (this IDbManager<TConnection, TTransaction> manager)
+        public static TTransaction CreateTransaction <TConnection, TTransaction, TParameterTypes> (this IDbManager<TConnection, TTransaction, TParameterTypes> manager)
             where TConnection : DbConnection
             where TTransaction : DbTransaction
+            where TParameterTypes : Enum
         {
             if (manager == null)
             {
@@ -143,9 +145,10 @@ namespace RI.DatabaseManager.Manager
         }
 
         /// <inheritdoc cref="ExecuteBatch(IDbManager,IDbBatch)" />
-        public static bool ExecuteBatch<TConnection, TTransaction>(this IDbManager<TConnection, TTransaction> manager, IDbBatch<TConnection, TTransaction> batch)
+        public static bool ExecuteBatch<TConnection, TTransaction, TParameterTypes>(this IDbManager<TConnection, TTransaction, TParameterTypes> manager, IDbBatch<TConnection, TTransaction, TParameterTypes> batch)
             where TConnection : DbConnection
             where TTransaction : DbTransaction
+            where TParameterTypes : Enum
         {
             if (manager == null)
             {
@@ -182,9 +185,10 @@ namespace RI.DatabaseManager.Manager
         }
 
         /// <inheritdoc cref="GetBatch(IDbManager,string)" />
-        public static IDbBatch<TConnection, TTransaction> GetBatch<TConnection, TTransaction>(this IDbManager<TConnection, TTransaction> manager, string name)
+        public static IDbBatch<TConnection, TTransaction, TParameterTypes> GetBatch<TConnection, TTransaction, TParameterTypes>(this IDbManager<TConnection, TTransaction, TParameterTypes> manager, string name)
             where TConnection : DbConnection
             where TTransaction : DbTransaction
+            where TParameterTypes : Enum
         {
             if (manager == null)
             {
@@ -233,9 +237,10 @@ namespace RI.DatabaseManager.Manager
         }
 
         /// <inheritdoc cref="GetBatches(IDbManager,string)" />
-        public static IDictionary<string, IDbBatch<TConnection, TTransaction>> GetBatches<TConnection, TTransaction>(this IDbManager<TConnection, TTransaction> manager, string commandSeparator = null)
+        public static IDictionary<string, IDbBatch<TConnection, TTransaction, TParameterTypes>> GetBatches<TConnection, TTransaction, TParameterTypes>(this IDbManager<TConnection, TTransaction, TParameterTypes> manager, string commandSeparator = null)
             where TConnection : DbConnection
             where TTransaction : DbTransaction
+            where TParameterTypes : Enum
         {
             if (manager == null)
             {
@@ -251,11 +256,11 @@ namespace RI.DatabaseManager.Manager
             }
 
             ISet<string> names = manager.GetBatchNames();
-            Dictionary<string, IDbBatch<TConnection, TTransaction>> batches = new Dictionary<string, IDbBatch<TConnection, TTransaction>>();
+            Dictionary<string, IDbBatch<TConnection, TTransaction, TParameterTypes>> batches = new Dictionary<string, IDbBatch<TConnection, TTransaction, TParameterTypes>>();
 
             foreach (string name in names)
             {
-                IDbBatch<TConnection, TTransaction> batch = manager.GetBatch(name, commandSeparator);
+                IDbBatch<TConnection, TTransaction, TParameterTypes> batch = manager.GetBatch(name, commandSeparator);
 
                 if (batch != null)
                 {

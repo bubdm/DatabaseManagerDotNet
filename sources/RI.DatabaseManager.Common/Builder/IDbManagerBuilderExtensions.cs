@@ -22,7 +22,7 @@ using RI.DatabaseManager.Versioning;
 namespace RI.DatabaseManager.Builder
 {
     /// <summary>
-    ///     Provides utility/extension methods for the <see cref="IDbManagerBuilder" /> and <see cref="IDbManagerBuilder{TConnection,TTransaction,TManager}" />type.
+    ///     Provides utility/extension methods for the <see cref="IDbManagerBuilder" /> and <see cref="IDbManagerBuilder{TConnection,TTransaction,TParameterTypes,TManager}" />type.
     /// </summary>
     /// <threadsafety static="false" instance="false" />
     public static class IDbManagerBuilderExtensions
@@ -35,17 +35,19 @@ namespace RI.DatabaseManager.Builder
         /// <typeparam name="TBuilder"> The type of the used database manager builder. </typeparam>
         /// <typeparam name="TConnection"> The database connection type. </typeparam>
         /// <typeparam name="TTransaction"> The database transaction type. </typeparam>
+        /// <typeparam name="TParameterTypes"> The database command parameter type. </typeparam>
         /// <typeparam name="TManager"> The type of the database manager. </typeparam>
         /// <param name="builder"> The used database manager builder. </param>
         /// <returns> The built database manager instance. </returns>
         /// <exception cref="ArgumentNullException"><paramref name="builder"/> is null.</exception>
         /// <exception cref="InvalidOperationException"> This builder has already been used to build the database manager. </exception>
         /// <exception cref="BuilderException"> Configuration or registration of objects/services failed. </exception>
-        public static TManager BuildDbManager <TBuilder, TConnection, TTransaction, TManager> (this TBuilder builder)
-            where TBuilder : IDbManagerBuilder<TConnection, TTransaction, TManager>
+        public static TManager BuildDbManager <TBuilder, TConnection, TTransaction, TParameterTypes, TManager> (this TBuilder builder)
+            where TBuilder : IDbManagerBuilder<TConnection, TTransaction, TParameterTypes, TManager>
             where TConnection : DbConnection
             where TTransaction : DbTransaction
-            where TManager : class, IDbManager<TConnection, TTransaction>
+            where TParameterTypes : Enum
+            where TManager : class, IDbManager<TConnection, TTransaction, TParameterTypes>
         {
             if (builder == null)
             {
@@ -54,7 +56,7 @@ namespace RI.DatabaseManager.Builder
 
             builder.ThrowIfAlreadyBuilt();
 
-            (Type connection, Type transaction, Type manager, Type _, Type _, Type _, Type _, Type _) = builder.DetectDbManagerTypes();
+            (Type connection, Type transaction, Type parameterTypes, Type manager, Type _, Type _, Type _, Type _, Type _) = builder.DetectDbManagerTypes();
 
             if (!manager.IsAssignableFrom(typeof(TManager)))
             {
@@ -69,6 +71,11 @@ namespace RI.DatabaseManager.Builder
             if (transaction != typeof(TTransaction))
             {
                 throw new BuilderException($"The registered database transaction type {transaction.Name} is not the same as the requested type {typeof(TTransaction).Name}.");
+            }
+
+            if (!parameterTypes.IsEnum)
+            {
+                throw new BuilderException($"The registered database parameter type {parameterTypes.Name} is not an enumeration.");
             }
 
             IServiceProvider serviceProvider = builder.BuildStandalone();
@@ -88,6 +95,7 @@ namespace RI.DatabaseManager.Builder
         /// <typeparam name="TBuilder"> The type of the used database manager builder. </typeparam>
         /// <typeparam name="TConnection"> The database connection type. </typeparam>
         /// <typeparam name="TTransaction"> The database transaction type. </typeparam>
+        /// <typeparam name="TParameterTypes"> The database command parameter type. </typeparam>
         /// <typeparam name="TManager"> The type of the database manager. </typeparam>
         /// <param name="builder"> The used database manager builder. </param>
         /// <param name="locator"></param>
@@ -96,11 +104,12 @@ namespace RI.DatabaseManager.Builder
         /// </returns>
         /// <exception cref="ArgumentNullException"><paramref name="builder"/> or <paramref name="locator"/> is null.</exception>
         /// <exception cref="InvalidOperationException"> This builder has already been used to build the database manager. </exception>
-        public static TBuilder UseBatchLocator <TBuilder, TConnection, TTransaction, TManager> (this TBuilder builder, IDbBatchLocator<TConnection, TTransaction> locator)
-            where TBuilder : IDbManagerBuilder<TConnection, TTransaction, TManager>
+        public static TBuilder UseBatchLocator <TBuilder, TConnection, TTransaction, TParameterTypes, TManager> (this TBuilder builder, IDbBatchLocator<TConnection, TTransaction, TParameterTypes> locator)
+            where TBuilder : IDbManagerBuilder<TConnection, TTransaction, TParameterTypes, TManager>
             where TConnection : DbConnection
             where TTransaction : DbTransaction
-            where TManager : class, IDbManager<TConnection, TTransaction>
+            where TParameterTypes : Enum
+            where TManager : class, IDbManager<TConnection, TTransaction, TParameterTypes>
         {
             if (builder == null)
             {
@@ -114,7 +123,7 @@ namespace RI.DatabaseManager.Builder
 
             builder.ThrowIfAlreadyBuilt();
 
-            builder.AddTemporary(typeof(TemporaryBatchLocatorRegistration<TConnection, TTransaction>), new TemporaryBatchLocatorRegistration<TConnection, TTransaction>(locator));
+            builder.AddTemporary(typeof(TemporaryBatchLocatorRegistration<TConnection, TTransaction, TParameterTypes>), new TemporaryBatchLocatorRegistration<TConnection, TTransaction, TParameterTypes>(locator));
 
             return builder;
         }
@@ -125,27 +134,29 @@ namespace RI.DatabaseManager.Builder
         /// <typeparam name="TBuilder"> The type of the used database manager builder. </typeparam>
         /// <typeparam name="TConnection"> The database connection type. </typeparam>
         /// <typeparam name="TTransaction"> The database transaction type. </typeparam>
+        /// <typeparam name="TParameterTypes"> The database command parameter type. </typeparam>
         /// <typeparam name="TManager"> The type of the database manager. </typeparam>
         /// <param name="builder"> The used database manager builder. </param>
-        /// <param name="nameFormat"> The optional name format used to search for script assembly resources or null to use the default value of <see cref="AssemblyScriptBatchLocator{TConnection,TTransaction}.NameFormat"/>. The default value of this parameter is null.</param>
-        /// <param name="encoding">The optional encoding used to read the assembly resources or null to use the default value of <see cref="AssemblyScriptBatchLocator{TConnection,TTransaction}.Encoding"/>. The default value of this parameter is null.</param>
-        /// <param name="commandSeparator">The optional command separator used to split scripts into commands or null to use the default value of <see cref="DbBatchLocatorBase{TConnection,TTransaction}.CommandSeparator"/>. The default value of this parameter is null.</param>
-        /// <param name="optionsFormat">The optional options format used to extract options from scripts or null to use the default value of <see cref="DbBatchLocatorBase{TConnection,TTransaction}.OptionsFormat"/>. The default value of this parameter is null.</param>
+        /// <param name="nameFormat"> The optional name format used to search for script assembly resources or null to use the default value of <see cref="AssemblyScriptBatchLocator{TConnection,TTransaction,TParameterTypes}.NameFormat"/>. The default value of this parameter is null.</param>
+        /// <param name="encoding">The optional encoding used to read the assembly resources or null to use the default value of <see cref="AssemblyScriptBatchLocator{TConnection,TTransaction,TParameterTypes}.Encoding"/>. The default value of this parameter is null.</param>
+        /// <param name="commandSeparator">The optional command separator used to split scripts into commands or null to use the default value of <see cref="DbBatchLocatorBase{TConnection,TTransaction,TParameterTypes}.CommandSeparator"/>. The default value of this parameter is null.</param>
+        /// <param name="optionsFormat">The optional options format used to extract options from scripts or null to use the default value of <see cref="DbBatchLocatorBase{TConnection,TTransaction,TParameterTypes}.OptionsFormat"/>. The default value of this parameter is null.</param>
         /// <param name="assemblies"> The used assemblies to locate script assembly resources or null or an empty array if the calling assembly should be used.</param>
         /// <returns>
         /// The used database manager builder.
         /// </returns>
         /// <remarks>
         /// <note type="important">
-        /// <see cref="UseAssemblyScriptBatches{TBuilder,TConnection,TTransaction,TManager}"/> creates an <see cref="AssemblyScriptBatchLocator{TConnection,TTransaction}"/>. See <see cref="AssemblyScriptBatchLocator{TConnection,TTransaction}"/> for more details.
+        /// <see cref="UseAssemblyScriptBatches{TBuilder,TConnection,TTransaction,TParameterTypes,TManager}"/> creates an <see cref="AssemblyScriptBatchLocator{TConnection,TTransaction,TParameterTypes}"/>. See <see cref="AssemblyScriptBatchLocator{TConnection,TTransaction,TParameterTypes}"/> for more details.
         /// </note>
         /// </remarks>
         /// <exception cref="ArgumentNullException"><paramref name="builder"/> is null.</exception>
-        public static TBuilder UseAssemblyScriptBatches<TBuilder, TConnection, TTransaction, TManager>(this TBuilder builder, string nameFormat = null, Encoding encoding = null, string commandSeparator = null, string optionsFormat = null, params Assembly[] assemblies)
-            where TBuilder : IDbManagerBuilder<TConnection, TTransaction, TManager>
+        public static TBuilder UseAssemblyScriptBatches<TBuilder, TConnection, TTransaction, TParameterTypes, TManager>(this TBuilder builder, string nameFormat = null, Encoding encoding = null, string commandSeparator = null, string optionsFormat = null, params Assembly[] assemblies)
+            where TBuilder : IDbManagerBuilder<TConnection, TTransaction, TParameterTypes, TManager>
             where TConnection : DbConnection
             where TTransaction : DbTransaction
-            where TManager : class, IDbManager<TConnection, TTransaction>
+            where TParameterTypes : Enum
+            where TManager : class, IDbManager<TConnection, TTransaction, TParameterTypes>
         {
             if (builder == null)
             {
@@ -159,7 +170,7 @@ namespace RI.DatabaseManager.Builder
                 assemblies = new []{Assembly.GetCallingAssembly()};
             }
 
-            AssemblyScriptBatchLocator<TConnection, TTransaction> locator = new AssemblyScriptBatchLocator<TConnection, TTransaction>(assemblies);
+            AssemblyScriptBatchLocator<TConnection, TTransaction, TParameterTypes> locator = new AssemblyScriptBatchLocator<TConnection, TTransaction, TParameterTypes>(assemblies);
 
             if (nameFormat != null)
             {
@@ -181,7 +192,7 @@ namespace RI.DatabaseManager.Builder
                 locator.OptionsFormat = optionsFormat;
             }
 
-            builder.UseBatchLocator<TBuilder, TConnection, TTransaction, TManager>(locator);
+            builder.UseBatchLocator<TBuilder, TConnection, TTransaction, TParameterTypes, TManager>(locator);
 
             return builder;
         }
@@ -192,6 +203,7 @@ namespace RI.DatabaseManager.Builder
         /// <typeparam name="TBuilder"> The type of the used database manager builder. </typeparam>
         /// <typeparam name="TConnection"> The database connection type. </typeparam>
         /// <typeparam name="TTransaction"> The database transaction type. </typeparam>
+        /// <typeparam name="TParameterTypes"> The database command parameter type. </typeparam>
         /// <typeparam name="TManager"> The type of the database manager. </typeparam>
         /// <param name="builder"> The used database manager builder. </param>
         /// <param name="assemblies"> The used assemblies to locate callback implementations or null or an empty array if the calling assembly should be used.</param>
@@ -200,15 +212,16 @@ namespace RI.DatabaseManager.Builder
         /// </returns>
         /// <remarks>
         /// <note type="important">
-        /// <see cref="UseAssemblyCallbackBatches{TBuilder,TConnection,TTransaction,TManager}"/> creates an <see cref="AssemblyCallbackBatchLocator{TConnection,TTransaction}"/>. See <see cref="AssemblyCallbackBatchLocator{TConnection,TTransaction}"/> for more details.
+        /// <see cref="UseAssemblyCallbackBatches{TBuilder,TConnection,TTransaction,TParameterTypes,TManager}"/> creates an <see cref="AssemblyCallbackBatchLocator{TConnection,TTransaction,TParameterTypes}"/>. See <see cref="AssemblyCallbackBatchLocator{TConnection,TTransaction,TParameterTypes}"/> for more details.
         /// </note>
         /// </remarks>
         /// <exception cref="ArgumentNullException"><paramref name="builder"/> is null.</exception>
-        public static TBuilder UseAssemblyCallbackBatches<TBuilder, TConnection, TTransaction, TManager>(this TBuilder builder, params Assembly[] assemblies)
-            where TBuilder : IDbManagerBuilder<TConnection, TTransaction, TManager>
+        public static TBuilder UseAssemblyCallbackBatches<TBuilder, TConnection, TTransaction, TParameterTypes, TManager>(this TBuilder builder, params Assembly[] assemblies)
+            where TBuilder : IDbManagerBuilder<TConnection, TTransaction, TParameterTypes, TManager>
             where TConnection : DbConnection
             where TTransaction : DbTransaction
-            where TManager : class, IDbManager<TConnection, TTransaction>
+            where TParameterTypes : Enum
+            where TManager : class, IDbManager<TConnection, TTransaction, TParameterTypes>
         {
             if (builder == null)
             {
@@ -222,8 +235,8 @@ namespace RI.DatabaseManager.Builder
                 assemblies = new[] { Assembly.GetCallingAssembly() };
             }
 
-            AssemblyCallbackBatchLocator<TConnection, TTransaction> locator = new AssemblyCallbackBatchLocator<TConnection, TTransaction>(assemblies);
-            builder.UseBatchLocator<TBuilder, TConnection, TTransaction, TManager>(locator);
+            AssemblyCallbackBatchLocator<TConnection, TTransaction, TParameterTypes> locator = new AssemblyCallbackBatchLocator<TConnection, TTransaction, TParameterTypes>(assemblies);
+            builder.UseBatchLocator<TBuilder, TConnection, TTransaction, TParameterTypes, TManager>(locator);
 
             return builder;
         }
@@ -234,18 +247,20 @@ namespace RI.DatabaseManager.Builder
         /// <typeparam name="TBuilder"> The type of the used database manager builder. </typeparam>
         /// <typeparam name="TConnection"> The database connection type. </typeparam>
         /// <typeparam name="TTransaction"> The database transaction type. </typeparam>
+        /// <typeparam name="TParameterTypes"> The database command parameter type. </typeparam>
         /// <typeparam name="TManager"> The type of the database manager. </typeparam>
         /// <param name="builder"> The used database manager builder. </param>
-        /// <param name="dictionary"> The callback used to configure and populate the dictionary (<see cref="DictionaryBatchLocator{TConnection,TTransaction}"/>) with scripts/callbacks.</param>
+        /// <param name="dictionary"> The callback used to configure and populate the dictionary (<see cref="DictionaryBatchLocator{TConnection,TTransaction,TParameterTypes}"/>) with scripts/callbacks.</param>
         /// <returns>
         /// The used database manager builder.
         /// </returns>
         /// <exception cref="ArgumentNullException"><paramref name="builder"/> or <paramref name="dictionary"/> is null.</exception>
-        public static TBuilder UseBatches<TBuilder, TConnection, TTransaction, TManager>(this TBuilder builder, Action<DictionaryBatchLocator<TConnection, TTransaction>> dictionary)
-            where TBuilder : IDbManagerBuilder<TConnection, TTransaction, TManager>
+        public static TBuilder UseBatches<TBuilder, TConnection, TTransaction, TParameterTypes, TManager>(this TBuilder builder, Action<DictionaryBatchLocator<TConnection, TTransaction, TParameterTypes>> dictionary)
+            where TBuilder : IDbManagerBuilder<TConnection, TTransaction, TParameterTypes, TManager>
             where TConnection : DbConnection
             where TTransaction : DbTransaction
-            where TManager : class, IDbManager<TConnection, TTransaction>
+            where TParameterTypes : Enum
+            where TManager : class, IDbManager<TConnection, TTransaction, TParameterTypes>
         {
             if (builder == null)
             {
@@ -257,14 +272,14 @@ namespace RI.DatabaseManager.Builder
                 throw new ArgumentNullException(nameof(dictionary));
             }
             
-            DictionaryBatchLocator<TConnection, TTransaction> locator = new DictionaryBatchLocator<TConnection, TTransaction>();
+            DictionaryBatchLocator<TConnection, TTransaction, TParameterTypes> locator = new DictionaryBatchLocator<TConnection, TTransaction, TParameterTypes>();
             dictionary(locator);
-            builder.UseBatchLocator<TBuilder, TConnection, TTransaction, TManager>(locator);
+            builder.UseBatchLocator<TBuilder, TConnection, TTransaction, TParameterTypes, TManager>(locator);
 
             return builder;
         }
 
-        internal static (Type Connection, Type Transaction, Type Manager, Type VersionDetector, Type BackupCreator, Type CleanupProcessor, Type VersionUpgrader, Type BatchLocator) DetectDbManagerTypes (this IDbManagerBuilder builder)
+        internal static (Type Connection, Type Transaction, Type ParameterTypes, Type Manager, Type VersionDetector, Type BackupCreator, Type CleanupProcessor, Type VersionUpgrader, Type BatchLocator) DetectDbManagerTypes (this IDbManagerBuilder builder)
         {
             if (builder == null)
             {
@@ -277,7 +292,7 @@ namespace RI.DatabaseManager.Builder
             {
                 if (registration.Contract.IsGenericType)
                 {
-                    if (registration.Contract.GetGenericTypeDefinition() == typeof(IDbManager<,>))
+                    if (registration.Contract.GetGenericTypeDefinition() == typeof(IDbManager<,,>))
                     {
                         managerContracts.Add(registration.Contract);
                     }
@@ -299,16 +314,17 @@ namespace RI.DatabaseManager.Builder
 
             Type connection = genericArguments[0];
             Type transaction = genericArguments[1];
+            Type parameterTypes = genericArguments[2];
 
-            Type manager = typeof(IDbManager<,>).MakeGenericType(genericArguments);
-            Type versionDetector = typeof(IDbVersionDetector<,>).MakeGenericType(genericArguments);
+            Type manager = typeof(IDbManager<,,>).MakeGenericType(genericArguments);
+            Type versionDetector = typeof(IDbVersionDetector<,,>).MakeGenericType(genericArguments);
 
-            Type backupCreator = typeof(IDbBackupCreator<,>).MakeGenericType(genericArguments);
-            Type cleanupProcessor = typeof(IDbCleanupProcessor<,>).MakeGenericType(genericArguments);
-            Type versionUpgrader = typeof(IDbVersionUpgrader<,>).MakeGenericType(genericArguments);
-            Type batchLocator = typeof(IDbBatchLocator<,>).MakeGenericType(genericArguments);
+            Type backupCreator = typeof(IDbBackupCreator<,,>).MakeGenericType(genericArguments);
+            Type cleanupProcessor = typeof(IDbCleanupProcessor<,,>).MakeGenericType(genericArguments);
+            Type versionUpgrader = typeof(IDbVersionUpgrader<,,>).MakeGenericType(genericArguments);
+            Type batchLocator = typeof(IDbBatchLocator<,,>).MakeGenericType(genericArguments);
 
-            return (connection, transaction, manager, versionDetector, backupCreator, cleanupProcessor, versionUpgrader, batchLocator);
+            return (connection, transaction, parameterTypes, manager, versionDetector, backupCreator, cleanupProcessor, versionUpgrader, batchLocator);
         }
 
         [SuppressMessage("ReSharper", "CoVariantArrayConversion")]
@@ -319,10 +335,10 @@ namespace RI.DatabaseManager.Builder
                 throw new ArgumentNullException(nameof(builder));
             }
 
-            Type temporaryRegistrationType = typeof(TemporaryBatchLocatorRegistration<,>).MakeGenericType(connectionType, transactionType);
-            Type mergedLocatorType = typeof(AggregateBatchLocator<,>).MakeGenericType(connectionType, transactionType);
-            Type locatorSequenceType = typeof(IEnumerable<>).MakeGenericType(typeof(IDbBatchLocator<,>).MakeGenericType(connectionType, transactionType));
-            Type finalRegistrationType = typeof(IDbBatchLocator<,>).MakeGenericType(connectionType, transactionType);
+            Type temporaryRegistrationType = typeof(TemporaryBatchLocatorRegistration<,,>).MakeGenericType(connectionType, transactionType);
+            Type mergedLocatorType = typeof(AggregateBatchLocator<,,>).MakeGenericType(connectionType, transactionType);
+            Type locatorSequenceType = typeof(IEnumerable<>).MakeGenericType(typeof(IDbBatchLocator<,,>).MakeGenericType(connectionType, transactionType));
+            Type finalRegistrationType = typeof(IDbBatchLocator<,,>).MakeGenericType(connectionType, transactionType);
 
             IList<CompositionRegistration> locatorRegistrations = builder.GetContracts(temporaryRegistrationType);
             object[] locators = locatorRegistrations.Select(x => ((TemporaryBatchLocatorRegistration)x.GetOrCreateInstance()).Instance).ToArray();
@@ -349,16 +365,17 @@ namespace RI.DatabaseManager.Builder
             public IDbBatchLocator Instance { get; }
         }
 
-        private sealed class TemporaryBatchLocatorRegistration<TConnection, TTransaction> : TemporaryBatchLocatorRegistration
+        private sealed class TemporaryBatchLocatorRegistration<TConnection, TTransaction, TParameterTypes> : TemporaryBatchLocatorRegistration
             where TConnection : DbConnection
             where TTransaction : DbTransaction
+            where TParameterTypes : Enum
         {
-            public TemporaryBatchLocatorRegistration (IDbBatchLocator<TConnection, TTransaction> instance)
+            public TemporaryBatchLocatorRegistration (IDbBatchLocator<TConnection, TTransaction, TParameterTypes> instance)
             : base(instance)
             {
             }
 
-            public new IDbBatchLocator<TConnection, TTransaction> Instance => (IDbBatchLocator<TConnection, TTransaction>)base.Instance;
+            public new IDbBatchLocator<TConnection, TTransaction, TParameterTypes> Instance => (IDbBatchLocator<TConnection, TTransaction, TParameterTypes>)base.Instance;
         }
 
         #endregion

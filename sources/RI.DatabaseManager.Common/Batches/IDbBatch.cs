@@ -32,11 +32,13 @@ namespace RI.DatabaseManager.Batches
     /// <inheritdoc cref="IDbBatch" />
     /// <typeparam name="TConnection"> The database connection type. </typeparam>
     /// <typeparam name="TTransaction"> The database transaction type. </typeparam>
-    public interface IDbBatch <TConnection, TTransaction> : IDbBatch
+    /// <typeparam name="TParameterTypes"> The database command parameter type. </typeparam>
+    public interface IDbBatch <TConnection, TTransaction, TParameterTypes> : IDbBatch
         where TConnection : DbConnection
         where TTransaction : DbTransaction
+        where TParameterTypes : Enum
     {
         /// <inheritdoc cref="IDbBatch.Commands" />
-        new IList<IDbBatchCommand<TConnection, TTransaction>> Commands { get; }
+        new IList<IDbBatchCommand<TConnection, TTransaction, TParameterTypes>> Commands { get; }
     }
 }

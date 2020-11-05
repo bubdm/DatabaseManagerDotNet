@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Data;
 using System.Data.SQLite;
 
 using RI.Abstractions.Builder;
@@ -14,7 +15,7 @@ using RI.DatabaseManager.Versioning;
 namespace RI.DatabaseManager.Builder
 {
     /// <summary>
-    ///     Provides utility/extension methods for the <see cref="IDbManagerBuilder" /> and <see cref="IDbManagerBuilder{TConnection,TTransaction,TManager}" />type.
+    ///     Provides utility/extension methods for the <see cref="IDbManagerBuilder" /> and <see cref="IDbManagerBuilder{TConnection,TTransaction,TParameterTypes,TManager}" />type.
     /// </summary>
     /// <threadsafety static="false" instance="false" />
     public static class SQLiteDbManagerBuilderExtensions
@@ -34,7 +35,7 @@ namespace RI.DatabaseManager.Builder
         /// </remarks>
         /// <exception cref="ArgumentNullException"><paramref name="builder"/> or <paramref name="connectionString"/> is null.</exception>
         /// <exception cref="ArgumentException"><paramref name="connectionString"/> is an empty string.</exception>
-        public static IDbManagerBuilder<SQLiteConnection, SQLiteTransaction, SQLiteDbManager> UseSqlServer (this IDbManagerBuilder builder, string connectionString)
+        public static IDbManagerBuilder<SQLiteConnection, SQLiteTransaction, DbType, SQLiteDbManager> UseSqlServer (this IDbManagerBuilder builder, string connectionString)
         {
             if (builder == null)
             {
@@ -71,7 +72,7 @@ namespace RI.DatabaseManager.Builder
         /// </para>
         /// </remarks>
         /// <exception cref="ArgumentNullException"><paramref name="builder"/> or <paramref name="connectionString"/> is null.</exception>
-        public static IDbManagerBuilder<SQLiteConnection, SQLiteTransaction, SQLiteDbManager> UseSqlServer (this IDbManagerBuilder builder, SQLiteConnectionStringBuilder connectionString)
+        public static IDbManagerBuilder<SQLiteConnection, SQLiteTransaction, DbType, SQLiteDbManager> UseSqlServer (this IDbManagerBuilder builder, SQLiteConnectionStringBuilder connectionString)
         {
             if (builder == null)
             {
@@ -98,7 +99,7 @@ namespace RI.DatabaseManager.Builder
         /// The database manager builder.
         /// </returns>
         /// <exception cref="ArgumentNullException"><paramref name="builder"/> or <paramref name="config"/> is null.</exception>
-        public static IDbManagerBuilder<SQLiteConnection, SQLiteTransaction, SQLiteDbManager> UseSqlServer (this IDbManagerBuilder builder, Action<SQLiteDbManagerOptions> config)
+        public static IDbManagerBuilder<SQLiteConnection, SQLiteTransaction, DbType, SQLiteDbManager> UseSqlServer (this IDbManagerBuilder builder, Action<SQLiteDbManagerOptions> config)
         {
             if (builder == null)
             {
@@ -124,7 +125,7 @@ namespace RI.DatabaseManager.Builder
         /// The database manager builder.
         /// </returns>
         /// <exception cref="ArgumentNullException"><paramref name="builder"/> or <paramref name="options"/> is null.</exception>
-        public static IDbManagerBuilder<SQLiteConnection, SQLiteTransaction, SQLiteDbManager> UseSqlServer (this IDbManagerBuilder builder, SQLiteDbManagerOptions options)
+        public static IDbManagerBuilder<SQLiteConnection, SQLiteTransaction, DbType, SQLiteDbManager> UseSqlServer (this IDbManagerBuilder builder, SQLiteDbManagerOptions options)
         {
             if (builder == null)
             {
@@ -137,13 +138,13 @@ namespace RI.DatabaseManager.Builder
             }
 
             builder.AddSingleton(typeof(SQLiteDbManagerOptions), options.Clone());
-            builder.AddSingleton(typeof(IDbManager<SQLiteConnection, SQLiteTransaction>), typeof(SQLiteDbManager));
-            builder.AddSingleton(typeof(IDbVersionDetector<SQLiteConnection, SQLiteTransaction>), typeof(SQLiteDbVersionDetector));
-            builder.AddSingleton(typeof(IDbBackupCreator<SQLiteConnection, SQLiteTransaction>), typeof(SQLiteDbBackupCreator));
-            builder.AddSingleton(typeof(IDbCleanupProcessor<SQLiteConnection, SQLiteTransaction>), typeof(SQLiteDbCleanupProcessor));
-            builder.AddSingleton(typeof(IDbVersionUpgrader<SQLiteConnection, SQLiteTransaction>), typeof(SQLiteDbVersionUpgrader));
+            builder.AddSingleton(typeof(IDbManager<SQLiteConnection, SQLiteTransaction, DbType>), typeof(SQLiteDbManager));
+            builder.AddSingleton(typeof(IDbVersionDetector<SQLiteConnection, SQLiteTransaction, DbType>), typeof(SQLiteDbVersionDetector));
+            builder.AddSingleton(typeof(IDbBackupCreator<SQLiteConnection, SQLiteTransaction, DbType>), typeof(SQLiteDbBackupCreator));
+            builder.AddSingleton(typeof(IDbCleanupProcessor<SQLiteConnection, SQLiteTransaction, DbType>), typeof(SQLiteDbCleanupProcessor));
+            builder.AddSingleton(typeof(IDbVersionUpgrader<SQLiteConnection, SQLiteTransaction, DbType>), typeof(SQLiteDbVersionUpgrader));
 
-            return new DbManagerBuilder<SQLiteConnection, SQLiteTransaction, SQLiteDbManager>(builder);
+            return new DbManagerBuilder<SQLiteConnection, SQLiteTransaction, DbType, SQLiteDbManager>(builder);
         }
     }
 }

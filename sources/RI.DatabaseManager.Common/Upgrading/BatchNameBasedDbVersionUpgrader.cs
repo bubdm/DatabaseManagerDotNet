@@ -16,10 +16,11 @@ using RI.DatabaseManager.Manager;
 namespace RI.DatabaseManager.Upgrading
 {
     /// <summary>
-    ///     Boilerplate implementation of <see cref="IDbVersionUpgrader" /> and <see cref="IDbVersionUpgrader{TConnection,TTransaction}" /> which uses upgrade steps provided by batches.
+    ///     Boilerplate implementation of <see cref="IDbVersionUpgrader" /> and <see cref="IDbVersionUpgrader{TConnection,TTransaction,TParameterTypes}" /> which uses upgrade steps provided by batches.
     /// </summary>
     /// <typeparam name="TConnection"> The database connection type. </typeparam>
     /// <typeparam name="TTransaction"> The database transaction type. </typeparam>
+    /// <typeparam name="TParameterTypes"> The database command parameter type. </typeparam>
     /// <remarks>
     /// <para>
     /// This boilerplate implementation uses upgrade steps provided by batches according to their names.
@@ -28,9 +29,10 @@ namespace RI.DatabaseManager.Upgrading
     /// </para>
     /// </remarks>
     /// <threadsafety static="false" instance="false" />
-    public abstract class BatchNameBasedDbVersionUpgrader<TConnection, TTransaction> : DbVersionUpgraderBase<TConnection, TTransaction>
+    public abstract class BatchNameBasedDbVersionUpgrader<TConnection, TTransaction, TParameterTypes> : DbVersionUpgraderBase<TConnection, TTransaction, TParameterTypes>
         where TConnection : DbConnection
         where TTransaction : DbTransaction
+        where TParameterTypes : Enum
     {
         /// <summary>
         ///     Gets the used database manager options.
@@ -41,7 +43,7 @@ namespace RI.DatabaseManager.Upgrading
         protected ISupportVersionUpgradeNameFormat Options { get; }
 
         /// <summary>
-        ///     Creates a new instance of <see cref="BatchNameBasedDbVersionUpgrader{TConnection,TTransaction}" />.
+        ///     Creates a new instance of <see cref="BatchNameBasedDbVersionUpgrader{TConnection,TTransaction,TParameterTypes}" />.
         /// </summary>
         /// <param name="options"> The used database manager options. </param>
         /// <param name="logger"> The used logger. </param>
@@ -58,14 +60,14 @@ namespace RI.DatabaseManager.Upgrading
         }
 
         /// <inheritdoc />
-        public override int GetMaxVersion (IDbManager<TConnection, TTransaction> manager)
+        public override int GetMaxVersion (IDbManager<TConnection, TTransaction, TParameterTypes> manager)
         {
             if (manager == null)
             {
                 throw new ArgumentNullException(nameof(manager));
             }
 
-            Dictionary<int, IDbBatch<TConnection, TTransaction>> steps = new Dictionary<int, IDbBatch<TConnection, TTransaction>>();
+            Dictionary<int, IDbBatch<TConnection, TTransaction, TParameterTypes>> steps = new Dictionary<int, IDbBatch<TConnection, TTransaction, TParameterTypes>>();
             this.GetSteps(manager, steps);
 
             if (steps.Count == 0)
@@ -78,14 +80,14 @@ namespace RI.DatabaseManager.Upgrading
         }
 
         /// <inheritdoc />
-        public override int GetMinVersion (IDbManager<TConnection, TTransaction> manager)
+        public override int GetMinVersion (IDbManager<TConnection, TTransaction, TParameterTypes> manager)
         {
             if (manager == null)
             {
                 throw new ArgumentNullException(nameof(manager));
             }
 
-            Dictionary<int, IDbBatch<TConnection, TTransaction>> steps = new Dictionary<int, IDbBatch<TConnection, TTransaction>>();
+            Dictionary<int, IDbBatch<TConnection, TTransaction, TParameterTypes>> steps = new Dictionary<int, IDbBatch<TConnection, TTransaction, TParameterTypes>>();
             this.GetSteps(manager, steps);
 
             if (steps.Count == 0)
@@ -98,14 +100,14 @@ namespace RI.DatabaseManager.Upgrading
         }
 
         /// <inheritdoc />
-        public override bool Upgrade (IDbManager<TConnection, TTransaction> manager, int sourceVersion)
+        public override bool Upgrade (IDbManager<TConnection, TTransaction, TParameterTypes> manager, int sourceVersion)
         {
             if (manager == null)
             {
                 throw new ArgumentNullException(nameof(manager));
             }
 
-            Dictionary<int, IDbBatch<TConnection, TTransaction>> steps = new Dictionary<int, IDbBatch<TConnection, TTransaction>>();
+            Dictionary<int, IDbBatch<TConnection, TTransaction, TParameterTypes>> steps = new Dictionary<int, IDbBatch<TConnection, TTransaction, TParameterTypes>>();
             string namePattern = this.GetSteps(manager, steps);
 
             if (steps.Count == 0)
@@ -128,7 +130,7 @@ namespace RI.DatabaseManager.Upgrading
             {
                 this.Log(LogLevel.Information, "Beginning version upgrade step: {0} -> {1}", sourceVersion, sourceVersion + 1);
 
-                IDbBatch<TConnection, TTransaction> batch = steps[sourceVersion];
+                IDbBatch<TConnection, TTransaction, TParameterTypes> batch = steps[sourceVersion];
 
                 bool result = manager.ExecuteBatch(batch, false, true);
 
@@ -163,7 +165,7 @@ namespace RI.DatabaseManager.Upgrading
         /// The default implementation searches all available batch names for matches using <see cref="GetBatchNamePattern"/>.
         /// </note>
         /// </remarks>
-        protected virtual string GetSteps (IDbManager<TConnection, TTransaction> manager, IDictionary<int, IDbBatch<TConnection, TTransaction>> steps)
+        protected virtual string GetSteps (IDbManager<TConnection, TTransaction, TParameterTypes> manager, IDictionary<int, IDbBatch<TConnection, TTransaction, TParameterTypes>> steps)
         {
             string namePattern = this.GetBatchNamePattern();
 

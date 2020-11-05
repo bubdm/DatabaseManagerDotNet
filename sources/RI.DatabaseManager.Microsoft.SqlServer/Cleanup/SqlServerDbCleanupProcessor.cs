@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Data;
 
 using Microsoft.Data.SqlClient;
 
@@ -22,7 +23,7 @@ namespace RI.DatabaseManager.Cleanup
     ///     </para>
     /// </remarks>
     /// <threadsafety static="false" instance="false" />
-    public sealed class SqlServerDbCleanupProcessor : DbCleanupProcessorBase<SqlConnection, SqlTransaction>
+    public sealed class SqlServerDbCleanupProcessor : DbCleanupProcessorBase<SqlConnection, SqlTransaction, SqlDbType>
     {
         #region Instance Constructor/Destructor
 
@@ -50,7 +51,7 @@ namespace RI.DatabaseManager.Cleanup
 
 
         /// <inheritdoc />
-        public override bool Cleanup (IDbManager<SqlConnection, SqlTransaction> manager)
+        public override bool Cleanup (IDbManager<SqlConnection, SqlTransaction, SqlDbType> manager)
         {
             if (manager == null)
             {
@@ -61,7 +62,7 @@ namespace RI.DatabaseManager.Cleanup
             {
                 this.Log(LogLevel.Information, "Beginning SQL Server database cleanup");
 
-                IDbBatch<SqlConnection, SqlTransaction> batch;
+                IDbBatch<SqlConnection, SqlTransaction, SqlDbType> batch;
 
                 if (!this.Options.CustomCleanupBatch.IsEmpty())
                 {
@@ -73,7 +74,7 @@ namespace RI.DatabaseManager.Cleanup
                 }
                 else
                 {
-                    batch = new DbBatch<SqlConnection, SqlTransaction>();
+                    batch = new DbBatch<SqlConnection, SqlTransaction, SqlDbType>();
 
                     foreach (string command in this.Options.GetDefaultCleanupScript())
                     {

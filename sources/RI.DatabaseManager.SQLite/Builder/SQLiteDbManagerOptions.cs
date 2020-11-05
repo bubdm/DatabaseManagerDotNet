@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Data;
 using System.Data.SQLite;
 
 using RI.DatabaseManager.Batches;
@@ -22,15 +23,53 @@ namespace RI.DatabaseManager.Builder
     ///         If <see cref="CustomCleanupBatch" /> is empty (has no commands) and <see cref="CustomCleanupBatchName" /> is not null, <see cref="CustomCleanupBatchName" /> is used for cleanup instead of the default script.
     ///     </para>
     ///     <para>
-    ///         The default cleanup script uses <c> VACUUM </c>, <c> ANALYZE </c>, and <c> REINDEX </c>, each executed as a single command.
+    ///         The default cleanup script is (each line executed as a separate command):
     ///     </para>
+    /// <code language="sql">
+    ///  <![CDATA[
+    /// VACUUM;
+    /// ANALYZE;
+    /// REINDEX;
+    ///  ]]>
+    ///  </code>
     ///     <para>
     ///         If commands are added to <see cref="CustomVersionDetectionBatch" />, <see cref="CustomVersionDetectionBatch" /> is used for version detection instead of the batch named by <see cref="CustomVersionDetectionBatchName" /> or the default script.
     ///     </para>
     ///     <para>
     ///         If <see cref="CustomVersionDetectionBatch" /> is empty (has no commands) and <see cref="CustomVersionDetectionBatchName" /> is not null, <see cref="CustomVersionDetectionBatchName" /> is used for version detection instead of the default script.
     ///     </para>
-    /// TODO: Docs: default version detection script
+    ///     <para>
+    ///         The default version detection script is (each line executed as a separate command):
+    ///     </para>
+    /// <code language="sql">
+    ///  <![CDATA[
+    /// SELECT (SELECT count(*) FROM [sqlite_master] WHERE [type] = 'table' AND [name] = '__@TableName') - 1;
+    /// SELECT (SELECT count(*) FROM [__@TableName] WHERE [__@NameColumnName] = '__@KeyName') - 1;
+    /// SELECT [__@ValueColumnName] FROM [__@TableName] WHERE [__@NameColumnName] = '__@KeyName'; 
+    ///  ]]>
+    ///  </code>
+    /// <para>
+    /// The following replacements will be done in the default version detection script:
+    /// <c>__@TableName</c> with <see cref="DefaultVersionDetectionTable"/> (default: <c>_DatabaseSettings</c>),
+    /// <c>__@NameColumnName</c> with <see cref="DefaultVersionDetectionNameColumn"/> (default: <c>Name</c>),
+    /// <c>__@ValueColumnName</c> with <see cref="DefaultVersionDetectionValueColumn"/> (default: <c>Value</c>),
+    /// <c>__@KeyName</c> with <see cref="DefaultVersionDetectionKey"/> (default: <c>Database.Version</c>).
+    /// </para>
+    /// <para>
+    /// Therefore, the default script requires the following table setup:
+    /// </para>
+    /// <code language="sql">
+    ///  <![CDATA[
+    /// CREATE TABLE [_DatabaseSettings]
+    /// ( 
+    ///    [Id]    INTEGER PRIMARY KEY ASC ON CONFLICT ROLLBACK AUTOINCREMENT,
+    ///    [Name]  TEXT    NOT NULL ON CONFLICT ROLLBACK UNIQUE ON CONFLICT ROLLBACK,
+    ///    [Value] TEXT    NULL
+    /// );
+    ///
+    /// INSERT INTO [_DatabaseSettings] ([Name], [Value]) VALUES ('Database.Version', '0');
+    ///  ]]>
+    ///  </code>
     ///     <para>
     ///         If commands are added to <see cref="BackupPreprocessingBatch" />/<see cref="BackupPostprocessingBatch"/>, <see cref="BackupPreprocessingBatch" />/<see cref="BackupPostprocessingBatch"/> is used for preprocessing/postprocessing instead of the batch named by <see cref="BackupPreprocessingBatchName" />/<see cref="BackupPostprocessingBatchName" />.
     ///     </para>
@@ -142,7 +181,7 @@ namespace RI.DatabaseManager.Builder
         ///         By default, <see cref="CustomCleanupBatch" /> is empty (has no commands).
         ///     </para>
         /// </remarks>
-        public DbBatch<SQLiteConnection, SQLiteTransaction> CustomCleanupBatch { get; private set; } = new DbBatch<SQLiteConnection, SQLiteTransaction>();
+        public DbBatch<SQLiteConnection, SQLiteTransaction, DbType> CustomCleanupBatch { get; private set; } = new DbBatch<SQLiteConnection, SQLiteTransaction, DbType>();
 
         /// <summary>
         ///     Gets or sets the used custom cleanup batch name.
@@ -200,7 +239,7 @@ namespace RI.DatabaseManager.Builder
         ///         By default, <see cref="CustomVersionDetectionBatch" /> is empty (has no commands).
         ///     </para>
         /// </remarks>
-        public DbBatch<SQLiteConnection, SQLiteTransaction> CustomVersionDetectionBatch { get; private set; } = new DbBatch<SQLiteConnection, SQLiteTransaction>();
+        public DbBatch<SQLiteConnection, SQLiteTransaction, DbType> CustomVersionDetectionBatch { get; private set; } = new DbBatch<SQLiteConnection, SQLiteTransaction, DbType>();
 
         /// <summary>
         ///     Gets or sets the used custom version detection batch name.
@@ -385,7 +424,7 @@ namespace RI.DatabaseManager.Builder
         ///         By default, <see cref="BackupPreprocessingBatch" /> is empty (has no commands).
         ///     </para>
         /// </remarks>
-        public DbBatch<SQLiteConnection, SQLiteTransaction> BackupPreprocessingBatch { get; private set; } = new DbBatch<SQLiteConnection, SQLiteTransaction>();
+        public DbBatch<SQLiteConnection, SQLiteTransaction, DbType> BackupPreprocessingBatch { get; private set; } = new DbBatch<SQLiteConnection, SQLiteTransaction, DbType>();
 
         /// <summary>
         ///     Gets the used backup preprocessing batch name.
@@ -427,7 +466,7 @@ namespace RI.DatabaseManager.Builder
         ///         By default, <see cref="BackupPostprocessingBatch" /> is empty (has no commands).
         ///     </para>
         /// </remarks>
-        public DbBatch<SQLiteConnection, SQLiteTransaction> BackupPostprocessingBatch { get; private set; } = new DbBatch<SQLiteConnection, SQLiteTransaction>();
+        public DbBatch<SQLiteConnection, SQLiteTransaction, DbType> BackupPostprocessingBatch { get; private set; } = new DbBatch<SQLiteConnection, SQLiteTransaction, DbType>();
 
         /// <summary>
         ///     Gets the used backup postprocessing batch name.

@@ -45,11 +45,13 @@ namespace RI.DatabaseManager.Cleanup
     /// <inheritdoc cref="IDbCleanupProcessor" />
     /// <typeparam name="TConnection"> The database connection type. </typeparam>
     /// <typeparam name="TTransaction"> The database transaction type. </typeparam>
-    public interface IDbCleanupProcessor <TConnection, TTransaction> : IDbCleanupProcessor
+    /// <typeparam name="TParameterTypes"> The database command parameter type. </typeparam>
+    public interface IDbCleanupProcessor <TConnection, TTransaction, TParameterTypes> : IDbCleanupProcessor
         where TConnection : DbConnection
         where TTransaction : DbTransaction
+        where TParameterTypes : Enum
     {
         /// <inheritdoc cref="IDbCleanupProcessor.Cleanup" />
-        bool Cleanup (IDbManager<TConnection, TTransaction> manager);
+        bool Cleanup (IDbManager<TConnection, TTransaction, TParameterTypes> manager);
     }
 }

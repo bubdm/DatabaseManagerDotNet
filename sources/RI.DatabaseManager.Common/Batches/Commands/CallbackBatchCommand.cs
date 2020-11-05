@@ -11,15 +11,17 @@ namespace RI.DatabaseManager.Batches.Commands
     /// </summary>
     /// <typeparam name="TConnection"> The database connection type. </typeparam>
     /// <typeparam name="TTransaction"> The database transaction type. </typeparam>
+    /// <typeparam name="TParameterTypes"> The database command parameter type. </typeparam>
     /// <threadsafety static="false" instance="false" />
-    public sealed class CallbackBatchCommand <TConnection, TTransaction> : IDbBatchCommand<TConnection, TTransaction>
+    public sealed class CallbackBatchCommand <TConnection, TTransaction, TParameterTypes> : IDbBatchCommand<TConnection, TTransaction, TParameterTypes>
         where TConnection : DbConnection
         where TTransaction : DbTransaction
+        where TParameterTypes : Enum
     {
         #region Instance Constructor/Destructor
 
         /// <summary>
-        ///     Creates a new instance of <see cref="CallbackBatchCommand{TConnection,TTransaction}" />.
+        ///     Creates a new instance of <see cref="CallbackBatchCommand{TConnection,TTransaction,TParameterTypes}" />.
         /// </summary>
         /// <param name="callback"> The delegate to the callback which is called when the command is executed. </param>
         /// <param name="transactionRequirement"> The optional transaction requirement specification. Default values is <see cref="DbBatchTransactionRequirement.DontCare" />. </param>
@@ -69,9 +71,9 @@ namespace RI.DatabaseManager.Batches.Commands
         object ICloneable.Clone () => this.Clone();
 
         /// <inheritdoc cref="ICloneable.Clone"/>
-        public CallbackBatchCommand<TConnection, TTransaction> Clone ()
+        public CallbackBatchCommand<TConnection, TTransaction, TParameterTypes> Clone ()
         {
-            CallbackBatchCommand<TConnection, TTransaction> clone = new CallbackBatchCommand<TConnection, TTransaction>(this.Code, this.TransactionRequirement);
+            CallbackBatchCommand<TConnection, TTransaction, TParameterTypes> clone = new CallbackBatchCommand<TConnection, TTransaction, TParameterTypes>(this.Code, this.TransactionRequirement);
             clone.Result = this.Result;
             clone.WasExecuted = this.WasExecuted;
             return clone;

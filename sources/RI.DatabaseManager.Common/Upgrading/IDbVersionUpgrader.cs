@@ -91,17 +91,19 @@ namespace RI.DatabaseManager.Upgrading
     /// <inheritdoc cref="IDbVersionUpgrader" />
     /// <typeparam name="TConnection"> The database connection type. </typeparam>
     /// <typeparam name="TTransaction"> The database transaction type. </typeparam>
-    public interface IDbVersionUpgrader <TConnection, TTransaction> : IDbVersionUpgrader
+    /// <typeparam name="TParameterTypes"> The database command parameter type. </typeparam>
+    public interface IDbVersionUpgrader <TConnection, TTransaction, TParameterTypes> : IDbVersionUpgrader
         where TConnection : DbConnection
         where TTransaction : DbTransaction
+        where TParameterTypes : Enum
     {
         /// <inheritdoc cref="IDbVersionUpgrader.GetMaxVersion" />
-        int GetMaxVersion (IDbManager<TConnection, TTransaction> manager);
+        int GetMaxVersion (IDbManager<TConnection, TTransaction, TParameterTypes> manager);
 
         /// <inheritdoc cref="IDbVersionUpgrader.GetMinVersion" />
-        int GetMinVersion (IDbManager<TConnection, TTransaction> manager);
+        int GetMinVersion (IDbManager<TConnection, TTransaction, TParameterTypes> manager);
 
         /// <inheritdoc cref="IDbVersionUpgrader.Upgrade" />
-        bool Upgrade (IDbManager<TConnection, TTransaction> manager, int sourceVersion);
+        bool Upgrade (IDbManager<TConnection, TTransaction, TParameterTypes> manager, int sourceVersion);
     }
 }

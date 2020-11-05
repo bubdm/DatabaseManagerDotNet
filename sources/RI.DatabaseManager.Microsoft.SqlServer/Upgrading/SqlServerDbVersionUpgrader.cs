@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Data;
 
 using Microsoft.Data.SqlClient;
 
@@ -19,7 +20,7 @@ namespace RI.DatabaseManager.Upgrading
     ///     </para>
     /// </remarks>
     /// <threadsafety static="false" instance="false" />
-    public sealed class SqlServerDbVersionUpgrader : BatchNameBasedDbVersionUpgrader<SqlConnection,SqlTransaction>
+    public sealed class SqlServerDbVersionUpgrader : BatchNameBasedDbVersionUpgrader<SqlConnection,SqlTransaction, SqlDbType>
     {
         #region Instance Constructor/Destructor
 

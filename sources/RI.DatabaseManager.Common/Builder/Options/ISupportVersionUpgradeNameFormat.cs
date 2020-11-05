@@ -8,7 +8,7 @@ using RI.DatabaseManager.Upgrading;
 namespace RI.DatabaseManager.Builder.Options
 {
     /// <summary>
-    /// Stores general database manager options and also provides a version upgrade RegEx pattern for version upgrader implementations (e.g. based on <see cref="BatchNameBasedDbVersionUpgrader{TConnection,TTransaction}"/>
+    /// Stores general database manager options and also provides a version upgrade RegEx pattern for version upgrader implementations (e.g. based on <see cref="BatchNameBasedDbVersionUpgrader{TConnection,TTransaction,TParameterTypes}"/>
     /// </summary>
     public interface ISupportVersionUpgradeNameFormat : IDbManagerOptions
     {

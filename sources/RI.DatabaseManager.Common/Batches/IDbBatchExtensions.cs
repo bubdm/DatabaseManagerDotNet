@@ -30,6 +30,7 @@ namespace RI.DatabaseManager.Batches
         /// </summary>
         /// <typeparam name="TConnection"> The database connection type. </typeparam>
         /// <typeparam name="TTransaction"> The database transaction type. </typeparam>
+        /// <typeparam name="TParameterTypes"> The database command parameter type. </typeparam>
         /// <param name="batch"> The batch. </param>
         /// <param name="callback"> The callback. </param>
         /// <param name="transactionRequirement"> The optional transaction requirement specification. Default values is <see cref="DbBatchTransactionRequirement.DontCare" />. </param>
@@ -42,16 +43,17 @@ namespace RI.DatabaseManager.Batches
         ///     </note>
         /// </remarks>
         /// <exception cref="ArgumentNullException"> <paramref name="batch" /> is null. </exception>
-        public static int AddCode <TConnection, TTransaction> (this IDbBatch<TConnection,TTransaction> batch, Func<TConnection, TTransaction, object> callback, DbBatchTransactionRequirement transactionRequirement = DbBatchTransactionRequirement.DontCare)
+        public static int AddCode <TConnection, TTransaction, TParameterTypes> (this IDbBatch<TConnection,TTransaction, TParameterTypes> batch, Func<TConnection, TTransaction, object> callback, DbBatchTransactionRequirement transactionRequirement = DbBatchTransactionRequirement.DontCare)
             where TConnection : DbConnection
             where TTransaction : DbTransaction
+            where TParameterTypes : Enum
         {
             if (batch == null)
             {
                 throw new ArgumentNullException(nameof(batch));
             }
 
-            batch.Commands.Add(callback == null ? null : new CallbackBatchCommand<TConnection, TTransaction>(callback, transactionRequirement));
+            batch.Commands.Add(callback == null ? null : new CallbackBatchCommand<TConnection, TTransaction, TParameterTypes>(callback, transactionRequirement));
             return batch.Commands.Count - 1;
         }
 
@@ -60,6 +62,7 @@ namespace RI.DatabaseManager.Batches
         /// </summary>
         /// <typeparam name="TConnection"> The database connection type. </typeparam>
         /// <typeparam name="TTransaction"> The database transaction type. </typeparam>
+        /// <typeparam name="TParameterTypes"> The database command parameter type. </typeparam>
         /// <param name="batch"> The batch. </param>
         /// <param name="script"> The script. </param>
         /// <param name="transactionRequirement"> The optional transaction requirement specification. Default values is <see cref="DbBatchTransactionRequirement.DontCare" />. </param>
@@ -72,16 +75,17 @@ namespace RI.DatabaseManager.Batches
         ///     </note>
         /// </remarks>
         /// <exception cref="ArgumentNullException"> <paramref name="batch" /> is null. </exception>
-        public static int AddScript<TConnection, TTransaction>(this IDbBatch<TConnection, TTransaction> batch, string script, DbBatchTransactionRequirement transactionRequirement = DbBatchTransactionRequirement.DontCare)
+        public static int AddScript<TConnection, TTransaction, TParameterTypes>(this IDbBatch<TConnection, TTransaction, TParameterTypes> batch, string script, DbBatchTransactionRequirement transactionRequirement = DbBatchTransactionRequirement.DontCare)
             where TConnection : DbConnection
             where TTransaction : DbTransaction
+            where TParameterTypes : Enum
         {
             if (batch == null)
             {
                 throw new ArgumentNullException(nameof(batch));
             }
 
-            batch.Commands.Add(script == null ? null : new ScriptBatchCommand<TConnection, TTransaction>(script, transactionRequirement));
+            batch.Commands.Add(script == null ? null : new ScriptBatchCommand<TConnection, TTransaction, TParameterTypes>(script, transactionRequirement));
             return batch.Commands.Count - 1;
         }
 
@@ -90,6 +94,7 @@ namespace RI.DatabaseManager.Batches
         /// </summary>
         /// <typeparam name="TConnection"> The database connection type. </typeparam>
         /// <typeparam name="TTransaction"> The database transaction type. </typeparam>
+        /// <typeparam name="TParameterTypes"> The database command parameter type. </typeparam>
         /// <param name="batch"> The batch. </param>
         /// <param name="reader"> The text reader from which the script is read. </param>
         /// <param name="transactionRequirement"> The optional transaction requirement specification. Default values is <see cref="DbBatchTransactionRequirement.DontCare" />. </param>
@@ -97,9 +102,10 @@ namespace RI.DatabaseManager.Batches
         ///     The index in the list of commands the script was added.
         /// </returns>
         /// <exception cref="ArgumentNullException"> <paramref name="batch" /> or <paramref name="reader"/> is null. </exception>
-        public static int AddScriptFromReader<TConnection, TTransaction>(this IDbBatch<TConnection, TTransaction> batch, TextReader reader, DbBatchTransactionRequirement transactionRequirement = DbBatchTransactionRequirement.DontCare)
+        public static int AddScriptFromReader<TConnection, TTransaction, TParameterTypes>(this IDbBatch<TConnection, TTransaction, TParameterTypes> batch, TextReader reader, DbBatchTransactionRequirement transactionRequirement = DbBatchTransactionRequirement.DontCare)
             where TConnection : DbConnection
             where TTransaction : DbTransaction
+            where TParameterTypes : Enum
         {
             if (batch == null)
             {
@@ -119,6 +125,7 @@ namespace RI.DatabaseManager.Batches
         /// </summary>
         /// <typeparam name="TConnection"> The database connection type. </typeparam>
         /// <typeparam name="TTransaction"> The database transaction type. </typeparam>
+        /// <typeparam name="TParameterTypes"> The database command parameter type. </typeparam>
         /// <param name="batch"> The batch. </param>
         /// <param name="stream"> The stream from which the script is read. </param>
         /// <param name="encoding"> The optional encoding to read the script. Default value is null, using <see cref="Encoding.UTF8"/>. </param>
@@ -128,9 +135,10 @@ namespace RI.DatabaseManager.Batches
         /// </returns>
         /// <exception cref="ArgumentNullException"> <paramref name="batch" /> or <paramref name="stream"/> is null. </exception>
         /// <exception cref="ArgumentException"><paramref name="stream"/> is not readable.</exception>
-        public static int AddScriptFromStream<TConnection, TTransaction>(this IDbBatch<TConnection, TTransaction> batch, Stream stream, Encoding encoding = null, DbBatchTransactionRequirement transactionRequirement = DbBatchTransactionRequirement.DontCare)
+        public static int AddScriptFromStream<TConnection, TTransaction, TParameterTypes>(this IDbBatch<TConnection, TTransaction, TParameterTypes> batch, Stream stream, Encoding encoding = null, DbBatchTransactionRequirement transactionRequirement = DbBatchTransactionRequirement.DontCare)
             where TConnection : DbConnection
             where TTransaction : DbTransaction
+            where TParameterTypes : Enum
         {
             if (batch == null)
             {
@@ -158,6 +166,7 @@ namespace RI.DatabaseManager.Batches
         /// </summary>
         /// <typeparam name="TConnection"> The database connection type. </typeparam>
         /// <typeparam name="TTransaction"> The database transaction type. </typeparam>
+        /// <typeparam name="TParameterTypes"> The database command parameter type. </typeparam>
         /// <param name="batch"> The batch. </param>
         /// <param name="file"> The file from which the script is read. </param>
         /// <param name="encoding"> The optional encoding to read the script. Default value is null, using <see cref="Encoding.UTF8"/>. </param>
@@ -166,9 +175,10 @@ namespace RI.DatabaseManager.Batches
         ///     The index in the list of commands the script was added.
         /// </returns>
         /// <exception cref="ArgumentNullException"> <paramref name="batch" /> or <paramref name="file"/> is null. </exception>
-        public static int AddScriptFromFile<TConnection, TTransaction>(this IDbBatch<TConnection, TTransaction> batch, string file, Encoding encoding = null, DbBatchTransactionRequirement transactionRequirement = DbBatchTransactionRequirement.DontCare)
+        public static int AddScriptFromFile<TConnection, TTransaction, TParameterTypes>(this IDbBatch<TConnection, TTransaction, TParameterTypes> batch, string file, Encoding encoding = null, DbBatchTransactionRequirement transactionRequirement = DbBatchTransactionRequirement.DontCare)
             where TConnection : DbConnection
             where TTransaction : DbTransaction
+            where TParameterTypes : Enum
         {
             if (batch == null)
             {
@@ -191,6 +201,7 @@ namespace RI.DatabaseManager.Batches
         /// </summary>
         /// <typeparam name="TConnection"> The database connection type. </typeparam>
         /// <typeparam name="TTransaction"> The database transaction type. </typeparam>
+        /// <typeparam name="TParameterTypes"> The database command parameter type. </typeparam>
         /// <param name="batch"> The batch. </param>
         /// <param name="assembly"> The assembly which contains the resource named by <paramref name="name"/>. </param>
         /// <param name="name"> The embedded assembly resource name of the script. </param>
@@ -201,9 +212,10 @@ namespace RI.DatabaseManager.Batches
         /// </returns>
         /// <exception cref="ArgumentNullException"> <paramref name="batch" />, <paramref name="assembly"/>, or <paramref name="name"/> is null. </exception>
         /// <exception cref="ArgumentException"><paramref name="name"/> is an empty string.</exception>
-        public static int AddScriptFromAssemblyResource<TConnection, TTransaction>(this IDbBatch<TConnection, TTransaction> batch, Assembly assembly, string name, Encoding encoding = null, DbBatchTransactionRequirement transactionRequirement = DbBatchTransactionRequirement.DontCare)
+        public static int AddScriptFromAssemblyResource<TConnection, TTransaction, TParameterTypes>(this IDbBatch<TConnection, TTransaction, TParameterTypes> batch, Assembly assembly, string name, Encoding encoding = null, DbBatchTransactionRequirement transactionRequirement = DbBatchTransactionRequirement.DontCare)
             where TConnection : DbConnection
             where TTransaction : DbTransaction
+            where TParameterTypes : Enum
         {
             if (batch == null)
             {
@@ -406,6 +418,7 @@ namespace RI.DatabaseManager.Batches
         /// </summary>
         /// <typeparam name="TConnection"> The database connection type. </typeparam>
         /// <typeparam name="TTransaction"> The database transaction type. </typeparam>
+        /// <typeparam name="TParameterTypes"> The database command parameter type. </typeparam>
         /// <param name="batch"> The batch to split. </param>
         /// <param name="filter">An optional predicate to filter the commands to split. The default value splits all commands.</param>
         /// <returns>
@@ -413,9 +426,10 @@ namespace RI.DatabaseManager.Batches
         /// If <paramref name="batch"/> contains no commands or no commands passed <paramref name="filter"/>, an empty list is returned.
         /// </returns>
         /// <exception cref="ArgumentNullException"> <paramref name="batch" /> is null. </exception>
-        public static IList<DbBatch<TConnection, TTransaction>> SplitCommands <TConnection, TTransaction> (this IDbBatch<TConnection, TTransaction> batch, Predicate<IDbBatchCommand<TConnection, TTransaction>> filter = null)
+        public static IList<DbBatch<TConnection, TTransaction, TParameterTypes>> SplitCommands <TConnection, TTransaction, TParameterTypes> (this IDbBatch<TConnection, TTransaction, TParameterTypes> batch, Predicate<IDbBatchCommand<TConnection, TTransaction, TParameterTypes>> filter = null)
             where TConnection : DbConnection
             where TTransaction : DbTransaction
+            where TParameterTypes : Enum
         {
             if (batch == null)
             {
@@ -424,13 +438,13 @@ namespace RI.DatabaseManager.Batches
 
             filter ??= _ => true;
 
-            List<DbBatch<TConnection, TTransaction>> batches = new List<DbBatch<TConnection, TTransaction>>();
+            List<DbBatch<TConnection, TTransaction, TParameterTypes>> batches = new List<DbBatch<TConnection, TTransaction, TParameterTypes>>();
 
-            foreach (IDbBatchCommand<TConnection, TTransaction> command in batch.Commands)
+            foreach (IDbBatchCommand<TConnection, TTransaction, TParameterTypes> command in batch.Commands)
             {
                 if (filter(command))
                 {
-                    DbBatch<TConnection, TTransaction> splittedBatch = new DbBatch<TConnection, TTransaction>();
+                    DbBatch<TConnection, TTransaction, TParameterTypes> splittedBatch = new DbBatch<TConnection, TTransaction, TParameterTypes>();
                     splittedBatch.Commands.Add(command);
                     batches.Add(splittedBatch);
                 }

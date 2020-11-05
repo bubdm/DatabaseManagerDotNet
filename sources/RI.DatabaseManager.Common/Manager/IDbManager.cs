@@ -383,9 +383,11 @@ namespace RI.DatabaseManager.Manager
     /// <inheritdoc cref="IDbManager" />
     /// <typeparam name="TConnection"> The database connection type. </typeparam>
     /// <typeparam name="TTransaction"> The database transaction type. </typeparam>
-    public interface IDbManager <TConnection, TTransaction> : IDbManager
+    /// <typeparam name="TParameterTypes"> The database command parameter type. </typeparam>
+    public interface IDbManager <TConnection, TTransaction, TParameterTypes> : IDbManager
         where TConnection : DbConnection
         where TTransaction : DbTransaction
+        where TParameterTypes : Enum
     {
         /// <inheritdoc cref="IDbManager.CreateConnection" />
         new TConnection CreateConnection (bool readOnly);
@@ -394,12 +396,12 @@ namespace RI.DatabaseManager.Manager
         new TTransaction CreateTransaction (bool readOnly, IsolationLevel isolationLevel);
 
         /// <inheritdoc cref="IDbManager.CreateBatch" />
-        new IDbBatch<TConnection, TTransaction> CreateBatch();
+        new IDbBatch<TConnection, TTransaction, TParameterTypes> CreateBatch();
 
         /// <inheritdoc cref="IDbManager.ExecuteBatch" />
-        bool ExecuteBatch(IDbBatch<TConnection, TTransaction> batch, bool readOnly, bool detectVersionAndStateAfterExecution);
+        bool ExecuteBatch(IDbBatch<TConnection, TTransaction, TParameterTypes> batch, bool readOnly, bool detectVersionAndStateAfterExecution);
 
         /// <inheritdoc cref="IDbManager.GetBatch" />
-        new IDbBatch<TConnection, TTransaction> GetBatch(string name, string commandSeparator);
+        new IDbBatch<TConnection, TTransaction, TParameterTypes> GetBatch(string name, string commandSeparator);
     }
 }

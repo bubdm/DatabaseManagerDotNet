@@ -1,4 +1,5 @@
-﻿using System.Data.Common;
+﻿using System;
+using System.Data.Common;
 
 
 
@@ -10,14 +11,16 @@ namespace RI.DatabaseManager.Batches.Locators
     /// </summary>
     /// <typeparam name="TConnection"> The database connection type. </typeparam>
     /// <typeparam name="TTransaction"> The database transaction type. </typeparam>
+    /// <typeparam name="TParameterTypes"> The database command parameter type. </typeparam>
     /// <remarks>
     ///     <para>
-    ///         See <see cref="AssemblyCallbackBatchLocator{TConnection,TTransaction}" /> for more details.
+    ///         See <see cref="AssemblyCallbackBatchLocator{TConnection,TTransaction,TParameterTypes}" /> for more details.
     ///     </para>
     /// </remarks>
-    public interface ICallbackBatch<TConnection, TTransaction>
+    public interface ICallbackBatch<TConnection, TTransaction, TParameterTypes>
         where TConnection : DbConnection
         where TTransaction : DbTransaction
+        where  TParameterTypes : Enum
     {
         /// <summary>
         ///     Executes the batch code.

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Data;
 using System.Data.SQLite;
 
 using RI.Abstractions.Logging;
@@ -21,7 +22,7 @@ namespace RI.DatabaseManager.Cleanup
     ///     </para>
     /// </remarks>
     /// <threadsafety static="false" instance="false" />
-    public sealed class SQLiteDbCleanupProcessor : DbCleanupProcessorBase<SQLiteConnection, SQLiteTransaction>
+    public sealed class SQLiteDbCleanupProcessor : DbCleanupProcessorBase<SQLiteConnection, SQLiteTransaction, DbType>
     {
         #region Instance Constructor/Destructor
 
@@ -49,7 +50,7 @@ namespace RI.DatabaseManager.Cleanup
 
 
         /// <inheritdoc />
-        public override bool Cleanup (IDbManager<SQLiteConnection, SQLiteTransaction> manager)
+        public override bool Cleanup (IDbManager<SQLiteConnection, SQLiteTransaction, DbType> manager)
         {
             if (manager == null)
             {
@@ -60,7 +61,7 @@ namespace RI.DatabaseManager.Cleanup
             {
                 this.Log(LogLevel.Information, "Beginning SQLite database cleanup");
 
-                IDbBatch<SQLiteConnection, SQLiteTransaction> batch;
+                IDbBatch<SQLiteConnection, SQLiteTransaction, DbType> batch;
 
                 if (!this.Options.CustomCleanupBatch.IsEmpty())
                 {
@@ -72,7 +73,7 @@ namespace RI.DatabaseManager.Cleanup
                 }
                 else
                 {
-                    batch = new DbBatch<SQLiteConnection, SQLiteTransaction>();
+                    batch = new DbBatch<SQLiteConnection, SQLiteTransaction, DbType>();
 
                     foreach (string command in this.Options.GetDefaultCleanupScript())
                     {

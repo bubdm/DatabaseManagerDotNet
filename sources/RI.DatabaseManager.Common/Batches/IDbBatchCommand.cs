@@ -9,7 +9,7 @@ namespace RI.DatabaseManager.Batches
     /// <summary>
     ///     A single database command which is part of a database batch.
     /// </summary>
-    /// TODO: Store errors/exceptions in property and rethrow?
+    /// TODO: #16: Store errors/exceptions in property and rethrow
     public interface IDbBatchCommand : ICloneable
     {
         /// <summary>
@@ -56,9 +56,11 @@ namespace RI.DatabaseManager.Batches
     /// <inheritdoc cref="IDbBatch" />
     /// <typeparam name="TConnection"> The database connection type. </typeparam>
     /// <typeparam name="TTransaction"> The database transaction type. </typeparam>
-    public interface IDbBatchCommand<TConnection, TTransaction> : IDbBatchCommand
+    /// <typeparam name="TParameterTypes"> The database command parameter type. </typeparam>
+    public interface IDbBatchCommand<TConnection, TTransaction, TParameterTypes> : IDbBatchCommand
         where TConnection : DbConnection
         where TTransaction : DbTransaction
+        where TParameterTypes : Enum
     {
         /// <inheritdoc cref="IDbBatchCommand.Code" />
         new Func<TConnection, TTransaction, object> Code { get; }

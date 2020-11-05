@@ -47,11 +47,13 @@ namespace RI.DatabaseManager.Versioning
     /// <inheritdoc cref="IDbVersionDetector" />
     /// <typeparam name="TConnection"> The database connection type. </typeparam>
     /// <typeparam name="TTransaction"> The database transaction type. </typeparam>
-    public interface IDbVersionDetector <TConnection, TTransaction> : IDbVersionDetector
+    /// <typeparam name="TParameterTypes"> The database command parameter type. </typeparam>
+    public interface IDbVersionDetector <TConnection, TTransaction, TParameterTypes> : IDbVersionDetector
         where TConnection : DbConnection
         where TTransaction : DbTransaction
+        where TParameterTypes : Enum
     {
         /// <inheritdoc cref="IDbVersionDetector.Detect" />
-        bool Detect (IDbManager<TConnection, TTransaction> manager, out DbState? state, out int version);
+        bool Detect (IDbManager<TConnection, TTransaction, TParameterTypes> manager, out DbState? state, out int version);
     }
 }

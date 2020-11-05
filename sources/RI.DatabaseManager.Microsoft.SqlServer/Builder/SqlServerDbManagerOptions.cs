@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Data;
 
 using Microsoft.Data.SqlClient;
 
@@ -23,15 +24,71 @@ namespace RI.DatabaseManager.Builder
     ///         If <see cref="CustomCleanupBatch" /> is empty (has no commands) and <see cref="CustomCleanupBatchName" /> is not null, <see cref="CustomCleanupBatchName" /> is used for cleanup instead of the default script.
     ///     </para>
     ///     <para>
-    ///         The default cleanup script uses <c> DBCC SHRINKDATABASE 0 </c>, executed as a single command.
+    ///         The default cleanup script is:
     ///     </para>
+    /// <code language="sql">
+    ///  <![CDATA[
+    /// DBCC SHRINKDATABASE 0
+    ///  ]]>
+    ///  </code>
     ///     <para>
     ///         If commands are added to <see cref="CustomVersionDetectionBatch" />, <see cref="CustomVersionDetectionBatch" /> is used for version detection instead of the batch named by <see cref="CustomVersionDetectionBatchName" /> or the default script.
     ///     </para>
     ///     <para>
     ///         If <see cref="CustomVersionDetectionBatch" /> is empty (has no commands) and <see cref="CustomVersionDetectionBatchName" /> is not null, <see cref="CustomVersionDetectionBatchName" /> is used for version detection instead of the default script.
     ///     </para>
-    ///  TODO: Docs: default version detection script
+    /// <code language="cs">
+    ///  <![CDATA[
+    /// // create a list of integers
+    /// var numbers = new List<int> { 0, 1, 4, 5, 12 };
+    ///
+    /// // create the comparer, including a hash value calculation function
+    /// // what we do: two integers are considered the same if they have the same remainder when divided by 5
+    /// var comparer = new EqualityComparison<int>(
+    ///     (x,y) => (x % 5) == (y % 5),
+    ///     (obj) => obj % 5 );
+    /// 
+    /// // lets use the comparer to check whether we have some numbers in the list or not
+    /// numbers.Contains(0, comparer); //returns "true" because of 0 in the list
+    /// numbers.Contains(1, comparer); //returns "true" because of 1 in the list
+    /// numbers.Contains(2, comparer); //returns "true" because of 12 in the list
+    /// numbers.Contains(3, comparer); //returns "false"
+    /// numbers.Contains(4, comparer); //returns "true" because of 4 in the list
+    /// numbers.Contains(5, comparer); //returns "true" because of 0 in the list
+    ///  ]]>
+    ///  </code>
+    ///     <para>
+    ///         The default version detection script is (each line executed as a separate command):
+    ///     </para>
+    /// <code language="sql">
+    ///  <![CDATA[
+    /// IF EXISTS (SELECT 1 FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_TYPE='BASE TABLE' AND TABLE_NAME='__@TableName') SELECT 1 ELSE SELECT 0;
+    /// IF (SELECT count(*) FROM [__@TableName] WHERE [__@NameColumnName] = '__@KeyName') = 0 SELECT -1 ELSE SELECT 1;
+    /// SELECT [__@ValueColumnName] FROM [__@TableName] WHERE [__@NameColumnName] = '__@KeyName';
+    ///  ]]>
+    ///  </code>
+    /// <para>
+    /// The following replacements will be done in the default version detection script:
+    /// <c>__@TableName</c> with <see cref="DefaultVersionDetectionTable"/> (default: <c>_DatabaseSettings</c>),
+    /// <c>__@NameColumnName</c> with <see cref="DefaultVersionDetectionNameColumn"/> (default: <c>Name</c>),
+    /// <c>__@ValueColumnName</c> with <see cref="DefaultVersionDetectionValueColumn"/> (default: <c>Value</c>),
+    /// <c>__@KeyName</c> with <see cref="DefaultVersionDetectionKey"/> (default: <c>Database.Version</c>).
+    /// </para>
+    /// <para>
+    /// Therefore, the default script requires the following table setup:
+    /// </para>
+    /// <code language="sql">
+    ///  <![CDATA[
+    /// CREATE TABLE [_DatabaseSettings]
+    /// (
+    ///     [Id]    INT            PRIMARY KEY IDENTITY(1,1),
+    ///     [Name]  NVARCHAR(1024) NOT NULL,
+    ///     [Value] NVARCHAR(MAX)  NULL
+    /// );
+    ///
+    /// INSERT INTO [_DatabaseSettings] ([Name], [Value]) VALUES ('Database.Version', '0');
+    ///  ]]>
+    ///  </code>
     /// </remarks>
     /// <threadsafety static="false" instance="false" />
     public sealed class SqlServerDbManagerOptions : IDbManagerOptions, ISupportVersionUpgradeNameFormat, ICloneable
@@ -130,7 +187,7 @@ namespace RI.DatabaseManager.Builder
         ///         By default, <see cref="CustomCleanupBatch" /> is empty (has no commands).
         ///     </para>
         /// </remarks>
-        public DbBatch<SqlConnection, SqlTransaction> CustomCleanupBatch { get; private set; } = new DbBatch<SqlConnection, SqlTransaction>();
+        public DbBatch<SqlConnection, SqlTransaction, SqlDbType> CustomCleanupBatch { get; private set; } = new DbBatch<SqlConnection, SqlTransaction, SqlDbType>();
 
         /// <summary>
         ///     Gets or sets the used custom cleanup batch name.
@@ -172,7 +229,7 @@ namespace RI.DatabaseManager.Builder
         ///         By default, <see cref="CustomVersionDetectionBatch" /> is empty (has no commands).
         ///     </para>
         /// </remarks>
-        public DbBatch<SqlConnection, SqlTransaction> CustomVersionDetectionBatch { get; private set; } = new DbBatch<SqlConnection, SqlTransaction>();
+        public DbBatch<SqlConnection, SqlTransaction, SqlDbType> CustomVersionDetectionBatch { get; private set; } = new DbBatch<SqlConnection, SqlTransaction, SqlDbType>();
 
         /// <summary>
         ///     Gets or sets the used custom version detection batch name.
@@ -365,7 +422,7 @@ namespace RI.DatabaseManager.Builder
                 return new[]
                 {
                     "IF EXISTS (SELECT 1 FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_TYPE='BASE TABLE' AND TABLE_NAME='__@TableName') SELECT 1 ELSE SELECT 0;",
-                    "IF (SELECT count(*) FROM [__@TableName] WHERE [__@NameColumnName] = '__@KeyName') = 0 SELECT -1 ELSE SELECT 1;;",
+                    "IF (SELECT count(*) FROM [__@TableName] WHERE [__@NameColumnName] = '__@KeyName') = 0 SELECT -1 ELSE SELECT 1;",
                     "SELECT [__@ValueColumnName] FROM [__@TableName] WHERE [__@NameColumnName] = '__@KeyName';",
                 };
             }

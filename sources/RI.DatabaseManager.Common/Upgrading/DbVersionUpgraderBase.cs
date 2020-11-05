@@ -10,24 +10,26 @@ using RI.DatabaseManager.Manager;
 namespace RI.DatabaseManager.Upgrading
 {
     /// <summary>
-    ///     Boilerplate implementation of <see cref="IDbVersionUpgrader" /> and <see cref="IDbVersionUpgrader{TConnection,TTransaction}" />.
+    ///     Boilerplate implementation of <see cref="IDbVersionUpgrader" /> and <see cref="IDbVersionUpgrader{TConnection,TTransaction,TParameterTypes}" />.
     /// </summary>
     /// <typeparam name="TConnection"> The database connection type. </typeparam>
     /// <typeparam name="TTransaction"> The database transaction type. </typeparam>
+    /// <typeparam name="TParameterTypes"> The database command parameter type. </typeparam>
     /// <remarks>
     ///     <note type="implement">
-    ///         It is recommended that database version upgrader implementations use this base class as it already implements most of the database-independent logic defined by <see cref="IDbVersionUpgrader" /> and <see cref="IDbVersionUpgrader{TConnection,TTransaction}" />.
+    ///         It is recommended that database version upgrader implementations use this base class as it already implements most of the database-independent logic defined by <see cref="IDbVersionUpgrader" /> and <see cref="IDbVersionUpgrader{TConnection,TTransaction,TParameterTypes}" />.
     ///     </note>
     /// </remarks>
     /// <threadsafety static="false" instance="false" />
-    public abstract class DbVersionUpgraderBase <TConnection, TTransaction> : IDbVersionUpgrader<TConnection, TTransaction>
+    public abstract class DbVersionUpgraderBase <TConnection, TTransaction, TParameterTypes> : IDbVersionUpgrader<TConnection, TTransaction, TParameterTypes>
         where TConnection : DbConnection
         where TTransaction : DbTransaction
+        where TParameterTypes : Enum
     {
         #region Instance Constructor/Destructor
 
         /// <summary>
-        ///     Creates a new instance of <see cref="DbVersionUpgraderBase{TConnection,TTransaction}" />.
+        ///     Creates a new instance of <see cref="DbVersionUpgraderBase{TConnection,TTransaction,TParameterTypes}" />.
         /// </summary>
         /// <param name="logger"> The used logger. </param>
         /// <exception cref="ArgumentNullException"> <paramref name="logger" /> is null. </exception>
@@ -91,28 +93,28 @@ namespace RI.DatabaseManager.Upgrading
         /// <inheritdoc />
         int IDbVersionUpgrader.GetMaxVersion (IDbManager manager)
         {
-            return this.GetMaxVersion((IDbManager<TConnection, TTransaction>)manager);
+            return this.GetMaxVersion((IDbManager<TConnection, TTransaction, TParameterTypes>)manager);
         }
 
         /// <inheritdoc />
-        public abstract int GetMaxVersion (IDbManager<TConnection, TTransaction> manager);
+        public abstract int GetMaxVersion (IDbManager<TConnection, TTransaction, TParameterTypes> manager);
 
         /// <inheritdoc />
         int IDbVersionUpgrader.GetMinVersion (IDbManager manager)
         {
-            return this.GetMinVersion((IDbManager<TConnection, TTransaction>)manager);
+            return this.GetMinVersion((IDbManager<TConnection, TTransaction, TParameterTypes>)manager);
         }
 
         /// <inheritdoc />
-        public abstract int GetMinVersion (IDbManager<TConnection, TTransaction> manager);
+        public abstract int GetMinVersion (IDbManager<TConnection, TTransaction, TParameterTypes> manager);
 
         /// <inheritdoc />
-        public abstract bool Upgrade (IDbManager<TConnection, TTransaction> manager, int sourceVersion);
+        public abstract bool Upgrade (IDbManager<TConnection, TTransaction, TParameterTypes> manager, int sourceVersion);
 
         /// <inheritdoc />
         bool IDbVersionUpgrader.Upgrade (IDbManager manager, int sourceVersion)
         {
-            return this.Upgrade((IDbManager<TConnection, TTransaction>)manager, sourceVersion);
+            return this.Upgrade((IDbManager<TConnection, TTransaction, TParameterTypes>)manager, sourceVersion);
         }
 
         #endregion

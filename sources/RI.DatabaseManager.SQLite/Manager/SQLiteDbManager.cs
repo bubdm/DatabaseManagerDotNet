@@ -21,7 +21,7 @@ namespace RI.DatabaseManager.Manager
     ///     Implements a database manager for SQLite databases.
     /// </summary>
     /// <threadsafety static="false" instance="false" />
-    public sealed class SQLiteDbManager : DbManagerBase<SQLiteConnection, SQLiteTransaction>
+    public sealed class SQLiteDbManager : DbManagerBase<SQLiteConnection, SQLiteTransaction, DbType, SQLiteParameterCollection, SQLiteParameter>
     {
         private SQLiteDbManagerOptions Options { get; }
 
@@ -41,7 +41,7 @@ namespace RI.DatabaseManager.Manager
         /// <param name="cleanupProcessor"> The used cleanup processor, if any. </param>
         /// <param name="versionUpgrader"> The used version upgrader, if any. </param>
         /// <exception cref="ArgumentNullException"> <paramref name="options" />, <paramref name="logger" />, <paramref name="batchLocator" />, or <paramref name="versionDetector" /> is null. </exception>
-        public SQLiteDbManager (SQLiteDbManagerOptions options, ILogger logger, IDbBatchLocator<SQLiteConnection, SQLiteTransaction> batchLocator, IDbVersionDetector<SQLiteConnection, SQLiteTransaction> versionDetector, IDbBackupCreator<SQLiteConnection, SQLiteTransaction> backupCreator, IDbCleanupProcessor<SQLiteConnection, SQLiteTransaction> cleanupProcessor, IDbVersionUpgrader<SQLiteConnection, SQLiteTransaction> versionUpgrader) : base(logger, batchLocator, versionDetector, backupCreator, cleanupProcessor, versionUpgrader)
+        public SQLiteDbManager (SQLiteDbManagerOptions options, ILogger logger, IDbBatchLocator<SQLiteConnection, SQLiteTransaction, DbType> batchLocator, IDbVersionDetector<SQLiteConnection, SQLiteTransaction, DbType> versionDetector, IDbBackupCreator<SQLiteConnection, SQLiteTransaction, DbType> backupCreator, IDbCleanupProcessor<SQLiteConnection, SQLiteTransaction, DbType> cleanupProcessor, IDbVersionUpgrader<SQLiteConnection, SQLiteTransaction, DbType> versionUpgrader) : base(logger, batchLocator, versionDetector, backupCreator, cleanupProcessor, versionUpgrader)
         {
             if (options == null)
             {

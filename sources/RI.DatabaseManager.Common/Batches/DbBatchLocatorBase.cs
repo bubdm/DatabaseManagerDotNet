@@ -13,6 +13,7 @@ namespace RI.DatabaseManager.Batches
     /// </summary>
     /// <typeparam name="TConnection"> The database connection type. </typeparam>
     /// <typeparam name="TTransaction"> The database transaction type. </typeparam>
+    /// <typeparam name="TParameterTypes"> The database command parameter type. </typeparam>
     /// <remarks>
     ///     <note type="implement">
     ///         It is recommended that database batch locator implementations use this base class as it already implements already some boilerplate code.
@@ -22,14 +23,15 @@ namespace RI.DatabaseManager.Batches
     ///     </note>
     /// </remarks>
     /// <threadsafety static="false" instance="false" />
-    public abstract class DbBatchLocatorBase<TConnection, TTransaction> : IDbBatchLocator<TConnection, TTransaction>
+    public abstract class DbBatchLocatorBase<TConnection, TTransaction, TParameterTypes> : IDbBatchLocator<TConnection, TTransaction, TParameterTypes>
         where TConnection : DbConnection
         where TTransaction : DbTransaction
+        where TParameterTypes : Enum
     {
         #region Instance Constructor/Destructor
 
         /// <summary>
-        ///     Creates a new instance of <see cref="DbBatchLocatorBase{TConnection,TTransaction}" />.
+        ///     Creates a new instance of <see cref="DbBatchLocatorBase{TConnection,TTransaction,TParameterTypes}" />.
         /// </summary>
         protected DbBatchLocatorBase ()
         {
@@ -170,7 +172,7 @@ namespace RI.DatabaseManager.Batches
         ///     true if the batch could be successfully retrieved, false otherwise.
         ///     Details about failures should be written to logs.
         /// </returns>
-        protected abstract bool FillBatch (IDbBatch<TConnection, TTransaction> batch, string name, string commandSeparator);
+        protected abstract bool FillBatch (IDbBatch<TConnection, TTransaction, TParameterTypes> batch, string name, string commandSeparator);
 
         /// <summary>
         ///     Gets the names of all available batches this batch locator can retrieve.
@@ -362,7 +364,7 @@ namespace RI.DatabaseManager.Batches
         #region Interface: IDbBatchLocator
 
         /// <inheritdoc />
-        IDbBatch<TConnection, TTransaction> IDbBatchLocator<TConnection, TTransaction>.GetBatch (string name, string commandSeparator, Func<IDbBatch<TConnection, TTransaction>> batchCreator)
+        IDbBatch<TConnection, TTransaction, TParameterTypes> IDbBatchLocator<TConnection, TTransaction, TParameterTypes>.GetBatch (string name, string commandSeparator, Func<IDbBatch<TConnection, TTransaction, TParameterTypes>> batchCreator)
         {
             if (name == null)
             {
@@ -390,7 +392,7 @@ namespace RI.DatabaseManager.Batches
             commandSeparator ??= this.CommandSeparator;
             commandSeparator = string.IsNullOrWhiteSpace(commandSeparator) ? null : commandSeparator;
 
-            IDbBatch<TConnection, TTransaction> batch = batchCreator();
+            IDbBatch<TConnection, TTransaction, TParameterTypes> batch = batchCreator();
 
             if (!this.FillBatch(batch, name, commandSeparator))
             {
@@ -403,7 +405,7 @@ namespace RI.DatabaseManager.Batches
         /// <inheritdoc />
         IDbBatch IDbBatchLocator.GetBatch (string name, string commandSeparator, Func<IDbBatch> batchCreator)
         {
-            return ((IDbBatchLocator<TConnection, TTransaction>)this).GetBatch(name, commandSeparator, () => (IDbBatch<TConnection, TTransaction>)batchCreator());
+            return ((IDbBatchLocator<TConnection, TTransaction, TParameterTypes>)this).GetBatch(name, commandSeparator, () => (IDbBatch<TConnection, TTransaction, TParameterTypes>)batchCreator());
         }
 
         /// <inheritdoc />

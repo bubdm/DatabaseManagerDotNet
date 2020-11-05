@@ -6,11 +6,11 @@
 namespace RI.DatabaseManager.Batches.Locators
 {
     /// <summary>
-    ///     Optional attribute to override batch name and/or transaction requirement of <see cref="ICallbackBatch{TConnection,TTransaction}" /> implementations.
+    ///     Optional attribute to override batch name and/or transaction requirement of <see cref="ICallbackBatch{TConnection,TTransaction,TParameterTypes}" /> implementations.
     /// </summary>
     /// <remarks>
     ///     <para>
-    ///         See <see cref="AssemblyCallbackBatchLocator{TConnection,TTransaction}" /> for more details.
+    ///         See <see cref="AssemblyCallbackBatchLocator{TConnection,TTransaction,TParameterTypes}" /> for more details.
     ///     </para>
     /// </remarks>
     [AttributeUsage(AttributeTargets.Class),]

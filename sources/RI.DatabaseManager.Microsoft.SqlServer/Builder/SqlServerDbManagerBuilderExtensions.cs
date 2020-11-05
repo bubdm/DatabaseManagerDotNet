@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Data;
 
 using Microsoft.Data.SqlClient;
 
@@ -14,7 +15,7 @@ using RI.DatabaseManager.Versioning;
 namespace RI.DatabaseManager.Builder
 {
     /// <summary>
-    ///     Provides utility/extension methods for the <see cref="IDbManagerBuilder" /> and <see cref="IDbManagerBuilder{TConnection,TTransaction,TManager}" />type.
+    ///     Provides utility/extension methods for the <see cref="IDbManagerBuilder" /> and <see cref="IDbManagerBuilder{TConnection,TTransaction,TParameterTypes,TManager}" />type.
     /// </summary>
     /// <threadsafety static="false" instance="false" />
     public static class SqlServerDbManagerBuilderExtensions
@@ -34,7 +35,7 @@ namespace RI.DatabaseManager.Builder
         /// </remarks>
         /// <exception cref="ArgumentNullException"><paramref name="builder"/> or <paramref name="connectionString"/> is null.</exception>
         /// <exception cref="ArgumentException"><paramref name="connectionString"/> is an empty string.</exception>
-        public static IDbManagerBuilder<SqlConnection, SqlTransaction, SqlServerDbManager> UseSqlServer (this IDbManagerBuilder builder, string connectionString)
+        public static IDbManagerBuilder<SqlConnection, SqlTransaction, SqlDbType, SqlServerDbManager> UseSqlServer (this IDbManagerBuilder builder, string connectionString)
         {
             if (builder == null)
             {
@@ -71,7 +72,7 @@ namespace RI.DatabaseManager.Builder
         /// </para>
         /// </remarks>
         /// <exception cref="ArgumentNullException"><paramref name="builder"/> or <paramref name="connectionString"/> is null.</exception>
-        public static IDbManagerBuilder<SqlConnection, SqlTransaction, SqlServerDbManager> UseSqlServer (this IDbManagerBuilder builder, SqlConnectionStringBuilder connectionString)
+        public static IDbManagerBuilder<SqlConnection, SqlTransaction, SqlDbType, SqlServerDbManager> UseSqlServer (this IDbManagerBuilder builder, SqlConnectionStringBuilder connectionString)
         {
             if (builder == null)
             {
@@ -98,7 +99,7 @@ namespace RI.DatabaseManager.Builder
         /// The database manager builder.
         /// </returns>
         /// <exception cref="ArgumentNullException"><paramref name="builder"/> or <paramref name="config"/> is null.</exception>
-        public static IDbManagerBuilder<SqlConnection, SqlTransaction, SqlServerDbManager> UseSqlServer (this IDbManagerBuilder builder, Action<SqlServerDbManagerOptions> config)
+        public static IDbManagerBuilder<SqlConnection, SqlTransaction, SqlDbType, SqlServerDbManager> UseSqlServer (this IDbManagerBuilder builder, Action<SqlServerDbManagerOptions> config)
         {
             if (builder == null)
             {
@@ -124,7 +125,7 @@ namespace RI.DatabaseManager.Builder
         /// The database manager builder.
         /// </returns>
         /// <exception cref="ArgumentNullException"><paramref name="builder"/> or <paramref name="options"/> is null.</exception>
-        public static IDbManagerBuilder<SqlConnection, SqlTransaction, SqlServerDbManager> UseSqlServer (this IDbManagerBuilder builder, SqlServerDbManagerOptions options)
+        public static IDbManagerBuilder<SqlConnection, SqlTransaction, SqlDbType, SqlServerDbManager> UseSqlServer (this IDbManagerBuilder builder, SqlServerDbManagerOptions options)
         {
             if (builder == null)
             {
@@ -137,12 +138,12 @@ namespace RI.DatabaseManager.Builder
             }
 
             builder.AddSingleton(typeof(SqlServerDbManagerOptions), options.Clone());
-            builder.AddSingleton(typeof(IDbManager<SqlConnection, SqlTransaction>), typeof(SqlServerDbManager));
-            builder.AddSingleton(typeof(IDbVersionDetector<SqlConnection, SqlTransaction>), typeof(SqlServerDbVersionDetector));
-            builder.AddSingleton(typeof(IDbCleanupProcessor<SqlConnection, SqlTransaction>), typeof(SqlServerDbCleanupProcessor));
-            builder.AddSingleton(typeof(IDbVersionUpgrader<SqlConnection, SqlTransaction>), typeof(SqlServerDbVersionUpgrader));
+            builder.AddSingleton(typeof(IDbManager<SqlConnection, SqlTransaction, SqlDbType>), typeof(SqlServerDbManager));
+            builder.AddSingleton(typeof(IDbVersionDetector<SqlConnection, SqlTransaction, SqlDbType>), typeof(SqlServerDbVersionDetector));
+            builder.AddSingleton(typeof(IDbCleanupProcessor<SqlConnection, SqlTransaction, SqlDbType>), typeof(SqlServerDbCleanupProcessor));
+            builder.AddSingleton(typeof(IDbVersionUpgrader<SqlConnection, SqlTransaction, SqlDbType>), typeof(SqlServerDbVersionUpgrader));
 
-            return new DbManagerBuilder<SqlConnection, SqlTransaction, SqlServerDbManager>(builder);
+            return new DbManagerBuilder<SqlConnection, SqlTransaction, SqlDbType, SqlServerDbManager>(builder);
         }
     }
 }

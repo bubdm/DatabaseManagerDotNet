@@ -1,4 +1,5 @@
-﻿using System.Data.Common;
+﻿using System;
+using System.Data.Common;
 
 using RI.Abstractions.Builder;
 using RI.DatabaseManager.Manager;
@@ -16,9 +17,11 @@ namespace RI.DatabaseManager.Builder
     /// <inheritdoc cref="IDbManagerBuilder" />
     /// <typeparam name="TConnection"> The database connection type. </typeparam>
     /// <typeparam name="TTransaction"> The database transaction type. </typeparam>
+    /// <typeparam name="TParameterTypes"> The database command parameter type. </typeparam>
     /// <typeparam name="TManager"> The type of the database manager. </typeparam>
-    public interface IDbManagerBuilder <TConnection, TTransaction, TManager> : IDbManagerBuilder
+    public interface IDbManagerBuilder <TConnection, TTransaction, TParameterTypes, TManager> : IDbManagerBuilder
         where TConnection : DbConnection
         where TTransaction : DbTransaction
-        where TManager : class, IDbManager<TConnection, TTransaction> { }
+        where TParameterTypes : Enum
+        where TManager : class, IDbManager<TConnection, TTransaction, TParameterTypes> { }
 }

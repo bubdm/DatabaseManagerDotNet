@@ -15,6 +15,7 @@ namespace RI.DatabaseManager.Batches.Locators
     /// </summary>
     /// <typeparam name="TConnection"> The database connection type. </typeparam>
     /// <typeparam name="TTransaction"> The database transaction type. </typeparam>
+    /// <typeparam name="TParameterTypes"> The database command parameter type. </typeparam>
     /// <remarks>
     ///     <para>
     ///         <see cref="Scripts" /> holds named scripts as strings.
@@ -30,7 +31,7 @@ namespace RI.DatabaseManager.Batches.Locators
     ///         If no value is set for a given batch name, <see cref="DbBatchTransactionRequirement.DontCare" /> is used.
     ///     </para>
     ///     <para>
-    ///         Currently, the following options are supported which are extracted from the scripts (see <see cref="DbBatchLocatorBase{TConnection,TTransaction}.OptionsFormat" /> for more details):
+    ///         Currently, the following options are supported which are extracted from the scripts (see <see cref="DbBatchLocatorBase{TConnection,TTransaction,TParameterTypes}.OptionsFormat" /> for more details):
     ///     </para>
     ///     <list type="bullet">
     ///         <item> <c> TransactionRequirement </c> [optional] One of the <see cref="DbBatchTransactionRequirement" /> values (as string), e.g. <c> /* DBMANAGER:TransactionRequirement=Disallowed */ </c> </item>
@@ -43,14 +44,15 @@ namespace RI.DatabaseManager.Batches.Locators
     /// TODO: Change return values from void to command
     /// TODO: AddCodeFromAssembly
     /// TODO: AddScriptFromAssembly
-    public sealed class DictionaryBatchLocator<TConnection, TTransaction> : DbBatchLocatorBase<TConnection, TTransaction>
+    public sealed class DictionaryBatchLocator<TConnection, TTransaction, TParameterTypes> : DbBatchLocatorBase<TConnection, TTransaction, TParameterTypes>
         where TConnection : DbConnection
         where TTransaction : DbTransaction
+        where TParameterTypes : Enum
     {
         #region Instance Constructor/Destructor
 
         /// <summary>
-        ///     Creates a new instance of <see cref="DictionaryBatchLocator{TConnection,TTransaction}" />.
+        ///     Creates a new instance of <see cref="DictionaryBatchLocator{TConnection,TTransaction,TParameterTypes}" />.
         /// </summary>
         public DictionaryBatchLocator ()
         {
@@ -98,7 +100,7 @@ namespace RI.DatabaseManager.Batches.Locators
         #region Overrides
 
         /// <inheritdoc />
-        protected override bool FillBatch (IDbBatch<TConnection, TTransaction> batch, string name, string commandSeparator)
+        protected override bool FillBatch (IDbBatch<TConnection, TTransaction, TParameterTypes> batch, string name, string commandSeparator)
         {
             DbBatchTransactionRequirement transactionRequirement = this.TransactionRequirements.ContainsKey(name) ? this.TransactionRequirements[name] : DbBatchTransactionRequirement.DontCare;
 
