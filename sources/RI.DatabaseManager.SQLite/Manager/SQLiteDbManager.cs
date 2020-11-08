@@ -126,11 +126,18 @@ namespace RI.DatabaseManager.Manager
         protected override SQLiteTransaction CreateTransactionImpl (bool readOnly, IsolationLevel isolationLevel) => this.CreateInternalTransaction(null, readOnly, isolationLevel);
 
         /// <inheritdoc />
-        protected override object ExecuteCommandScriptImpl (SQLiteConnection connection, SQLiteTransaction transaction, string script)
+        protected override object ExecuteCommandScriptImpl (SQLiteConnection connection, SQLiteTransaction transaction, string script, IDbBatchCommandParameterCollection<DbType> parameters)
         {
             this.Log(LogLevel.Debug, "Executing SQLite database processing command:{0}{1}", Environment.NewLine, script);
+
             using (SQLiteCommand command = transaction == null ? new SQLiteCommand(script, connection) : new SQLiteCommand(script, connection, transaction))
             {
+                foreach (IDbBatchCommandParameter<DbType> parameter in parameters)
+                {
+                    command.Parameters.Add(parameter.Name, parameter.Type)
+                           .Value = parameter.Value;
+                }
+
                 return command.ExecuteScalar();
             }
         }

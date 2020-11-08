@@ -316,10 +316,11 @@ namespace RI.DatabaseManager.Manager
         /// <param name="connection"> The used database connection. </param>
         /// <param name="transaction"> The used database transaction or null if no transaction is used. </param>
         /// <param name="script"> The database script to execute. </param>
+        /// <param name="parameters"> The parameters used in the command. </param>
         /// <returns>
         ///     The result of the code callback.
         /// </returns>
-        protected abstract object ExecuteCommandScriptImpl (TConnection connection, TTransaction transaction, string script);
+        protected abstract object ExecuteCommandScriptImpl (TConnection connection, TTransaction transaction, string script, IDbBatchCommandParameterCollection<TParameterTypes> parameters);
 
         #endregion
 
@@ -463,13 +464,13 @@ namespace RI.DatabaseManager.Manager
 
                 object result;
 
-                //TODO: Handle parameters
+                DbBatchCommandParameterCollection<TParameterTypes> parameters = command.MergeParameters(batch);
 
                 if ((command.Script != null) && (command.Code == null))
                 {
                     try
                     {
-                        result = this.ExecuteCommandScriptImpl(connection, transaction, command.Script);
+                        result = this.ExecuteCommandScriptImpl(connection, transaction, command.Script, parameters);
                     }
                     catch (Exception exception)
                     {
@@ -481,7 +482,7 @@ namespace RI.DatabaseManager.Manager
                 {
                     try
                     {
-                        result = this.ExecuteCommandCodeImpl(connection, transaction, command.Code);
+                        result = this.ExecuteCommandCodeImpl(connection, transaction, command.Code, parameters);
                     }
                     catch (Exception exception)
                     {
@@ -511,17 +512,18 @@ namespace RI.DatabaseManager.Manager
         /// <param name="connection"> The used database connection. </param>
         /// <param name="transaction"> The used database transaction or null if no transaction is used. </param>
         /// <param name="code"> The callback to execute. </param>
+        /// <param name="parameters"> The parameters used in the command. </param>
         /// <returns>
         ///     The result of the code callback.
         /// </returns>
         /// <remarks>
         ///     <note type="implement">
-        ///         The default implementation calls <paramref name="code" /> with <paramref name="connection" /> and <paramref name="transaction" /> as parameters.
+        ///         The default implementation calls <paramref name="code" /> with <paramref name="connection" />, <paramref name="transaction" />, and <paramref name="parameters"/> as parameters.
         ///     </note>
         /// </remarks>
-        protected virtual object ExecuteCommandCodeImpl (TConnection connection, TTransaction transaction, Func<TConnection, TTransaction, object> code)
+        protected virtual object ExecuteCommandCodeImpl (TConnection connection, TTransaction transaction, Func<TConnection, TTransaction, IDbBatchCommandParameterCollection<TParameterTypes>, object> code, IDbBatchCommandParameterCollection<TParameterTypes> parameters)
         {
-            return code(connection, transaction);
+            return code(connection, transaction, parameters);
         }
 
         /// <summary>

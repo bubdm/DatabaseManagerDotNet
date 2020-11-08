@@ -36,10 +36,13 @@ namespace RI.DatabaseManager.Batches.Commands
         #region Interface: IDbBatchCommand
 
         /// <inheritdoc />
-        Func<DbConnection, DbTransaction, object> IDbBatchCommand.Code => null;
+        Func<DbConnection, DbTransaction, IDbBatchCommandParameterCollection, object> IDbBatchCommand.Code => null;
 
         /// <inheritdoc />
-        Func<TConnection, TTransaction, object> IDbBatchCommand<TConnection, TTransaction, TParameterTypes>.Code => null;
+        public IDbBatchCommandParameterCollection<TParameterTypes> Parameters { get; } = new DbBatchCommandParameterCollection<TParameterTypes>();
+
+        /// <inheritdoc />
+        Func<TConnection, TTransaction, IDbBatchCommandParameterCollection<TParameterTypes>, object> IDbBatchCommand<TConnection, TTransaction, TParameterTypes>.Code => null;
 
         /// <inheritdoc />
         public object Result { get; set; }
@@ -52,6 +55,9 @@ namespace RI.DatabaseManager.Batches.Commands
 
         /// <inheritdoc />
         public bool WasExecuted { get; set; }
+
+        /// <inheritdoc />
+        IDbBatchCommandParameterCollection IDbBatchCommand.Parameters => this.Parameters;
 
         #endregion
 
@@ -67,6 +73,12 @@ namespace RI.DatabaseManager.Batches.Commands
             ScriptBatchCommand<TConnection, TTransaction, TParameterTypes> clone = new ScriptBatchCommand<TConnection, TTransaction, TParameterTypes>(this.Script, this.TransactionRequirement);
             clone.Result = this.Result;
             clone.WasExecuted = this.WasExecuted;
+
+            foreach (IDbBatchCommandParameter<TParameterTypes> parameter in this.Parameters)
+            {
+                clone.Parameters.Add((IDbBatchCommandParameter<TParameterTypes>)parameter.Clone());
+            }
+
             return clone;
         }
     }

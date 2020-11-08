@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Linq;
 
 
 
@@ -15,81 +16,69 @@ namespace RI.DatabaseManager.Batches
     public sealed class DbBatchCommandParameterCollection<TParameterTypes> : KeyedCollection<string, IDbBatchCommandParameter<TParameterTypes>>, IDbBatchCommandParameterCollection<TParameterTypes>
         where TParameterTypes : Enum
     {
-        private HashSet<IDbBatchCommandParameter> InternalSet { get; } = new HashSet<IDbBatchCommandParameter>();
+        private HashSet<IDbBatchCommandParameter<TParameterTypes>> InternalSet { get; } = new HashSet<IDbBatchCommandParameter<TParameterTypes>>();
 
         /// <inheritdoc />
         protected override string GetKeyForItem (IDbBatchCommandParameter<TParameterTypes> item) => item.Name;
 
         /// <inheritdoc />
-        void ICollection<IDbBatchCommandParameter>.Add (IDbBatchCommandParameter item)
-        {
-            this.InternalSet.Add(item);
-        }
-
-        /// <inheritdoc />
         public void ExceptWith (IEnumerable<IDbBatchCommandParameter> other)
         {
-            this.InternalSet.ExceptWith(other);
+            this.InternalSet.ExceptWith(other.Cast<IDbBatchCommandParameter<TParameterTypes>>());
         }
 
         /// <inheritdoc />
         public void IntersectWith (IEnumerable<IDbBatchCommandParameter> other)
         {
-            this.InternalSet.IntersectWith(other);
+            this.InternalSet.IntersectWith(other.Cast<IDbBatchCommandParameter<TParameterTypes>>());
         }
 
         /// <inheritdoc />
         public bool IsProperSubsetOf (IEnumerable<IDbBatchCommandParameter> other)
         {
-            return this.InternalSet.IsProperSubsetOf(other);
+            return this.InternalSet.IsProperSubsetOf(other.Cast<IDbBatchCommandParameter<TParameterTypes>>());
         }
 
         /// <inheritdoc />
         public bool IsProperSupersetOf (IEnumerable<IDbBatchCommandParameter> other)
         {
-            return this.InternalSet.IsProperSupersetOf(other);
+            return this.InternalSet.IsProperSupersetOf(other.Cast<IDbBatchCommandParameter<TParameterTypes>>());
         }
 
         /// <inheritdoc />
         public bool IsSubsetOf (IEnumerable<IDbBatchCommandParameter> other)
         {
-            return this.InternalSet.IsSubsetOf(other);
+            return this.InternalSet.IsSubsetOf(other.Cast<IDbBatchCommandParameter<TParameterTypes>>());
         }
 
         /// <inheritdoc />
         public bool IsSupersetOf (IEnumerable<IDbBatchCommandParameter> other)
         {
-            return this.InternalSet.IsSupersetOf(other);
+            return this.InternalSet.IsSupersetOf(other.Cast<IDbBatchCommandParameter<TParameterTypes>>());
         }
 
         /// <inheritdoc />
         public bool Overlaps (IEnumerable<IDbBatchCommandParameter> other)
         {
-            return this.InternalSet.Overlaps(other);
+            return this.InternalSet.Overlaps(other.Cast<IDbBatchCommandParameter<TParameterTypes>>());
         }
 
         /// <inheritdoc />
         public bool SetEquals (IEnumerable<IDbBatchCommandParameter> other)
         {
-            return this.InternalSet.SetEquals(other);
+            return this.InternalSet.SetEquals(other.Cast<IDbBatchCommandParameter<TParameterTypes>>());
         }
 
         /// <inheritdoc />
         public void SymmetricExceptWith (IEnumerable<IDbBatchCommandParameter> other)
         {
-            this.InternalSet.SymmetricExceptWith(other);
+            this.InternalSet.SymmetricExceptWith(other.Cast<IDbBatchCommandParameter<TParameterTypes>>());
         }
 
         /// <inheritdoc />
         public void UnionWith (IEnumerable<IDbBatchCommandParameter> other)
         {
-            this.InternalSet.UnionWith(other);
-        }
-
-        /// <inheritdoc />
-        bool ISet<IDbBatchCommandParameter>.Add (IDbBatchCommandParameter item)
-        {
-            return this.InternalSet.Add(item);
+            this.InternalSet.UnionWith(other.Cast<IDbBatchCommandParameter<TParameterTypes>>());
         }
 
         /// <inheritdoc />
@@ -101,13 +90,13 @@ namespace RI.DatabaseManager.Batches
         /// <inheritdoc />
         public void CopyTo (IDbBatchCommandParameter[] array, int arrayIndex)
         {
-            this.InternalSet.CopyTo(array, arrayIndex);
+            this.InternalSet.Cast<IDbBatchCommandParameter>().ToArray().CopyTo(array, arrayIndex);
         }
 
         /// <inheritdoc />
         public bool Remove (IDbBatchCommandParameter item)
         {
-            return this.InternalSet.Remove(item);
+            return this.InternalSet.Remove(item as IDbBatchCommandParameter<TParameterTypes>);
         }
 
         /// <inheritdoc />
@@ -183,6 +172,22 @@ namespace RI.DatabaseManager.Batches
         }
 
         /// <inheritdoc />
-        public bool IsReadOnly => ((ICollection<IDbBatchCommandParameter>)this.InternalSet).IsReadOnly;
+        public bool IsReadOnly => ((ICollection<IDbBatchCommandParameter<TParameterTypes>>)this.InternalSet).IsReadOnly;
+
+        /// <inheritdoc />
+        public DbBatchCommandParameterCollection<TParameterTypes> Clone ()
+        {
+            DbBatchCommandParameterCollection<TParameterTypes> clone = new DbBatchCommandParameterCollection<TParameterTypes>();
+
+            foreach (IDbBatchCommandParameter<TParameterTypes> parameter in this.InternalSet)
+            {
+                clone.Add(parameter);
+            }
+
+            return clone;
+        }
+
+        /// <inheritdoc />
+        object ICloneable.Clone() => this.Clone();
     }
 }

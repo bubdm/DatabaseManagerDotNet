@@ -9,7 +9,7 @@ namespace RI.DatabaseManager.Batches
     /// <summary>
     ///     A single batch command parameter.
     /// </summary>
-    public interface IDbBatchCommandParameter : IEquatable<IDbBatchCommandParameter>
+    public interface IDbBatchCommandParameter : IEquatable<IDbBatchCommandParameter>, ICloneable
     {
         /// <summary>
         /// Gets the name of the parameter.

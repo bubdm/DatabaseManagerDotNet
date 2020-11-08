@@ -26,7 +26,7 @@ namespace RI.DatabaseManager.Batches.Commands
         /// <param name="callback"> The delegate to the callback which is called when the command is executed. </param>
         /// <param name="transactionRequirement"> The optional transaction requirement specification. Default values is <see cref="DbBatchTransactionRequirement.DontCare" />. </param>
         /// <exception cref="ArgumentNullException"> <paramref name="callback" /> is null. </exception>
-        public CallbackBatchCommand (Func<TConnection, TTransaction, object> callback, DbBatchTransactionRequirement transactionRequirement = DbBatchTransactionRequirement.DontCare)
+        public CallbackBatchCommand (Func<TConnection, TTransaction, IDbBatchCommandParameterCollection<TParameterTypes>, object> callback, DbBatchTransactionRequirement transactionRequirement = DbBatchTransactionRequirement.DontCare)
         {
             if (callback == null)
             {
@@ -45,10 +45,13 @@ namespace RI.DatabaseManager.Batches.Commands
         #region Interface: IDbBatchCommand
 
         /// <inheritdoc />
-        Func<DbConnection, DbTransaction, object> IDbBatchCommand.Code => (c, t) => this.Code((TConnection)c, (TTransaction)t);
+        Func<DbConnection, DbTransaction, IDbBatchCommandParameterCollection, object> IDbBatchCommand.Code => (c, t, p) => this.Code((TConnection)c, (TTransaction)t, (IDbBatchCommandParameterCollection<TParameterTypes>)p);
 
         /// <inheritdoc />
-        public Func<TConnection, TTransaction, object> Code { get; }
+        public IDbBatchCommandParameterCollection<TParameterTypes> Parameters { get; } = new DbBatchCommandParameterCollection<TParameterTypes>();
+
+        /// <inheritdoc />
+        public Func<TConnection, TTransaction, IDbBatchCommandParameterCollection<TParameterTypes>, object> Code { get; }
 
         /// <inheritdoc />
         public object Result { get; set; }
@@ -61,6 +64,9 @@ namespace RI.DatabaseManager.Batches.Commands
 
         /// <inheritdoc />
         public bool WasExecuted { get; set; }
+
+        /// <inheritdoc />
+        IDbBatchCommandParameterCollection IDbBatchCommand.Parameters => this.Parameters;
 
         #endregion
 
@@ -76,6 +82,12 @@ namespace RI.DatabaseManager.Batches.Commands
             CallbackBatchCommand<TConnection, TTransaction, TParameterTypes> clone = new CallbackBatchCommand<TConnection, TTransaction, TParameterTypes>(this.Code, this.TransactionRequirement);
             clone.Result = this.Result;
             clone.WasExecuted = this.WasExecuted;
+
+            foreach (IDbBatchCommandParameter<TParameterTypes> parameter in this.Parameters)
+            {
+                clone.Parameters.Add((IDbBatchCommandParameter<TParameterTypes>)parameter.Clone());
+            }
+
             return clone;
         }
     }

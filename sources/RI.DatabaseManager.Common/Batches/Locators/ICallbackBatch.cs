@@ -27,9 +27,10 @@ namespace RI.DatabaseManager.Batches.Locators
         /// </summary>
         /// <param name="connection"> The used database connection. </param>
         /// <param name="transaction"> The used database transaction or null if no transaction is used. </param>
+        /// <param name="parameters"> The parameters used in the command. </param>
         /// <returns>
         ///     The result of the code callback.
         /// </returns>
-        object Execute (TConnection connection, TTransaction transaction);
+        object Execute (TConnection connection, TTransaction transaction, IDbBatchCommandParameterCollection<TParameterTypes> parameters);
     }
 }

@@ -215,12 +215,12 @@ namespace RI.DatabaseManager.Batches.Locators
 
             #region Instance Methods
 
-            public Func<TConnection, TTransaction, object> CreateCallback ()
+            public Func<TConnection, TTransaction, IDbBatchCommandParameterCollection<TParameterTypes>, object> CreateCallback ()
             {
-                return (connection, transaction) =>
+                return (connection, transaction, parameters) =>
                 {
                     ICallbackBatch<TConnection, TTransaction, TParameterTypes> instance = (ICallbackBatch<TConnection, TTransaction, TParameterTypes>)Activator.CreateInstance(this.Type, false);
-                    return instance.Execute(connection, transaction);
+                    return instance.Execute(connection, transaction, parameters);
                 };
             }
 

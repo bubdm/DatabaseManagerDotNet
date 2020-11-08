@@ -27,6 +27,19 @@ namespace RI.DatabaseManager.Batches
         ///     </note>
         /// </remarks>
         IList<IDbBatchCommand> Commands { get; }
+
+        /// <summary>
+        ///     Gets the collection of parameters which are applied to all commands.
+        /// </summary>
+        /// <value>
+        ///     The collection of parameters which are applied to all commands.
+        /// </value>
+        /// <remarks>
+        ///     <note type="implement">
+        ///         This property should never be null.
+        ///     </note>
+        /// </remarks>
+        IDbBatchCommandParameterCollection Parameters { get; }
     }
 
     /// <inheritdoc cref="IDbBatch" />
@@ -40,5 +53,8 @@ namespace RI.DatabaseManager.Batches
     {
         /// <inheritdoc cref="IDbBatch.Commands" />
         new IList<IDbBatchCommand<TConnection, TTransaction, TParameterTypes>> Commands { get; }
+
+        /// <inheritdoc cref="IDbBatch.Parameters" />
+        new IDbBatchCommandParameterCollection<TParameterTypes> Parameters { get; }
     }
 }

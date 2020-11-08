@@ -43,7 +43,7 @@ namespace RI.DatabaseManager.Batches
         ///     </note>
         /// </remarks>
         /// <exception cref="ArgumentNullException"> <paramref name="batch" /> is null. </exception>
-        public static int AddCode <TConnection, TTransaction, TParameterTypes> (this IDbBatch<TConnection,TTransaction, TParameterTypes> batch, Func<TConnection, TTransaction, object> callback, DbBatchTransactionRequirement transactionRequirement = DbBatchTransactionRequirement.DontCare)
+        public static int AddCode <TConnection, TTransaction, TParameterTypes> (this IDbBatch<TConnection,TTransaction, TParameterTypes> batch, Func<TConnection, TTransaction, IDbBatchCommandParameterCollection<TParameterTypes>, object> callback, DbBatchTransactionRequirement transactionRequirement = DbBatchTransactionRequirement.DontCare)
             where TConnection : DbConnection
             where TTransaction : DbTransaction
             where TParameterTypes : Enum

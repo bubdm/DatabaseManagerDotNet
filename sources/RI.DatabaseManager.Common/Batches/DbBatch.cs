@@ -59,6 +59,12 @@ namespace RI.DatabaseManager.Batches
         public IList<IDbBatchCommand<TConnection, TTransaction, TParameterTypes>> Commands => this.CommandsInternal;
 
         /// <inheritdoc />
+        public IDbBatchCommandParameterCollection<TParameterTypes> Parameters { get; private set; } = new DbBatchCommandParameterCollection<TParameterTypes>();
+
+        /// <inheritdoc />
+        IDbBatchCommandParameterCollection IDbBatch.Parameters => this.Parameters;
+
+        /// <inheritdoc />
         IList<IDbBatchCommand> IDbBatch.Commands => this.CommandsInternal;
 
         /// <inheritdoc />
@@ -76,6 +82,8 @@ namespace RI.DatabaseManager.Batches
             {
                 clone.CommandsInternal.Add((IDbBatchCommand<TConnection, TTransaction, TParameterTypes>)command.Clone());
             }
+
+            clone.Parameters = (DbBatchCommandParameterCollection<TParameterTypes>)this.Parameters.Clone();
 
             return clone;
         }

@@ -18,7 +18,7 @@ namespace RI.DatabaseManager.Batches
         /// <value>
         ///     The code callback of this command or null if a script is used instead of code (<see cref="Script" />).
         /// </value>
-        Func<DbConnection, DbTransaction, object> Code { get; }
+        Func<DbConnection, DbTransaction, IDbBatchCommandParameterCollection, object> Code { get; }
 
         /// <summary>
         ///     Gets or sets the result of the last execution of this command.
@@ -51,6 +51,19 @@ namespace RI.DatabaseManager.Batches
         ///     true if the command was executed, false otherwise.
         /// </value>
         bool WasExecuted { get; set; }
+
+        /// <summary>
+        ///     Gets the collection of parameters which are applied to this command.
+        /// </summary>
+        /// <value>
+        ///     The collection of parameters which are applied to this command.
+        /// </value>
+        /// <remarks>
+        ///     <note type="implement">
+        ///         This property should never be null.
+        ///     </note>
+        /// </remarks>
+        IDbBatchCommandParameterCollection Parameters { get; }
     }
 
     /// <inheritdoc cref="IDbBatch" />
@@ -63,6 +76,9 @@ namespace RI.DatabaseManager.Batches
         where TParameterTypes : Enum
     {
         /// <inheritdoc cref="IDbBatchCommand.Code" />
-        new Func<TConnection, TTransaction, object> Code { get; }
+        new Func<TConnection, TTransaction, IDbBatchCommandParameterCollection<TParameterTypes>, object> Code { get; }
+
+        /// <inheritdoc cref="IDbBatch.Parameters" />
+        new IDbBatchCommandParameterCollection<TParameterTypes> Parameters { get; }
     }
 }

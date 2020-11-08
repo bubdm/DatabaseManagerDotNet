@@ -95,11 +95,18 @@ namespace RI.DatabaseManager.Manager
         protected override SqlTransaction CreateTransactionImpl(bool readOnly, IsolationLevel isolationLevel) => this.CreateInternalTransaction(null, isolationLevel);
 
         /// <inheritdoc />
-        protected override object ExecuteCommandScriptImpl (SqlConnection connection, SqlTransaction transaction, string script)
+        protected override object ExecuteCommandScriptImpl (SqlConnection connection, SqlTransaction transaction, string script, IDbBatchCommandParameterCollection<SqlDbType> parameters)
         {
             this.Log(LogLevel.Debug, "Executing SQL Server database processing command script:{0}{1}", Environment.NewLine, script);
+            
             using (SqlCommand command = transaction == null ? new SqlCommand(script, connection) : new SqlCommand(script, connection, transaction))
             {
+                foreach (IDbBatchCommandParameter<SqlDbType> parameter in parameters)
+                {
+                    command.Parameters.Add(parameter.Name, parameter.Type)
+                           .Value = parameter.Value;
+                }
+
                 return command.ExecuteScalar();
             }
         }

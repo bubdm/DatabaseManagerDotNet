@@ -74,6 +74,12 @@ namespace RI.DatabaseManager.Batches
             return base.ToString();
         }
 
+        /// <inheritdoc cref="ICloneable.Clone" />
+        public DbBatchCommandParameter<TParameterTypes> Clone () => new DbBatchCommandParameter<TParameterTypes>(this.Name, this.Type, this.Value);
+
+        /// <inheritdoc />
+        object ICloneable.Clone () => this.Clone();
+
         /// <inheritdoc />
         public override int GetHashCode () => this.Name.GetHashCode();
     }
