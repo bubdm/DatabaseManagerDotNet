@@ -1,18 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Topics>
-  <Topic id="dd278019-2ff1-4217-9fbf-57b716025f9d" visible="True" isDefault="true" isSelected="true" title="Welcome to the [TODO: Add project name]">
-    <HelpKeywords>
-      <HelpKeyword index="K" term="Welcome" />
-    </HelpKeywords>
-  </Topic>
-  <Topic id="8700cf01-eccd-4840-8383-163a0750e91b" visible="True" isExpanded="true" title="Version History">
-    <HelpKeywords>
-      <HelpKeyword index="K" term="version, history" />
-    </HelpKeywords>
-    <Topic id="979d768c-b4b4-4d77-a5c3-0222d7675fcc" visible="True" title="Version 1.0.0.0">
-      <HelpKeywords>
-        <HelpKeyword index="K" term="version, 1.0.0.0" />
-      </HelpKeywords>
-    </Topic>
-  </Topic>
+  <Topic id="ccefe60f-e9ae-412d-88f8-5c9cd2c98a0a" visible="True" isDefault="true" title="Start" />
+  <Topic id="b63e72a8-f17e-48cb-be8f-5f34333c9c26" visible="True" isSelected="true" title="Assemblies" />
 </Topics>

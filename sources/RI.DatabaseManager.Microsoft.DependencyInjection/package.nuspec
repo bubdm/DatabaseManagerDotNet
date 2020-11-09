@@ -3,7 +3,7 @@
 <package xmlns="http://schemas.microsoft.com/packaging/2013/05/nuspec.xsd">
   <metadata>
     <id>RI.DatabaseManager.Microsoft.DependencyInjection</id>
-    <version>1.0.0.0</version>
+    <version>0.1.0.0</version>
     <authors>RotenInformatik</authors>
     <owners>RotenInformatik</owners>
     <title>RI.DatabaseManager.Microsoft.DependencyInjection</title>

@@ -41,9 +41,6 @@ namespace RI.DatabaseManager.Batches.Locators
     ///     </note>
     /// </remarks>
     /// <threadsafety static="false" instance="false" />
-    /// TODO: Change return values from void to command
-    /// TODO: AddCodeFromAssembly
-    /// TODO: AddScriptFromAssembly
     public sealed class DictionaryBatchLocator<TConnection, TTransaction, TParameterTypes> : DbBatchLocatorBase<TConnection, TTransaction, TParameterTypes>
         where TConnection : DbConnection
         where TTransaction : DbTransaction

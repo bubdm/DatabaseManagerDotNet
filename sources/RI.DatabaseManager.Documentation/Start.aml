@@ -1,0 +1,59 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<topic id="ccefe60f-e9ae-412d-88f8-5c9cd2c98a0a" revisionNumber="1">
+  <developerConceptualDocument
+    xmlns="http://ddue.schemas.microsoft.com/authoring/2003/5"
+    xmlns:xlink="http://www.w3.org/1999/xlink">
+    <introduction>
+      <para>
+        Database manager for .NET.
+      </para>
+      <para>
+        Based on .NET Standard 2.0, with minimal dependencies.
+      </para>
+      <para>
+        <markup>
+          <a href='https://www.nuget.org/packages/RI.DatabaseManager.Common/'>
+            <img src="https://img.shields.io/nuget/v/RI.DatabaseManager.Common" referrerpolicy="no-referrer" alt="Nuget"/>
+          </a>
+        </markup>
+      </para>
+      <para>
+        <markup>
+          <a href='https://github.com/RotenInformatik/DatabaseManagerDotNet/blob/master/LICENSE'>
+            <img src="https://img.shields.io/github/license/RotenInformatik/DatabaseManagerDotNet" referrerpolicy="no-referrer" alt="License"/>
+          </a>
+        </markup>
+      </para>
+      <para>
+        <markup>
+          <a href='https://github.com/RotenInformatik/DatabaseManagerDotNet'>
+            <img src="https://img.shields.io/badge/repo-DatabaseManagerDotNet-lightgrey" referrerpolicy="no-referrer" alt="Repository"/>
+          </a>
+        </markup>
+      </para>
+      <para>
+        <markup>
+          <a href='https://github.com/RotenInformatik/DatabaseManagerDotNet/blob/master/README.md'>
+            <img src="https://img.shields.io/badge/docs-Readme-yellowgreen" referrerpolicy="no-referrer" alt="Documentation"/>
+          </a>
+        </markup>
+      </para>
+      <para>
+        <markup>
+          <a href='https://github.com/RotenInformatik/DatabaseManagerDotNet/blob/master/HISTORY.md'>
+            <img src="https://img.shields.io/badge/docs-History-yellowgreen" referrerpolicy="no-referrer" alt="Documentation"/>
+          </a>
+        </markup>
+      </para>
+      <para>
+        <markup>
+          <a href='https://roteninformatik.github.io/DatabaseManagerDotNet/api/'>
+            <img src="https://img.shields.io/badge/docs-API-yellowgreen" referrerpolicy="no-referrer" alt="Documentation"/>
+          </a>
+        </markup>
+      </para>
+    </introduction>
+    <relatedTopics>
+    </relatedTopics>
+  </developerConceptualDocument>
+</topic>
