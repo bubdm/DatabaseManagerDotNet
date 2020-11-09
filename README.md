@@ -10,3 +10,11 @@ Based on .NET Standard 2.0, with minimal dependencies.
 
 ---
 
+Basic usage (Microsoft SQL Server)
+
+
+
+Basic usage (SQLite)
+
+
+
