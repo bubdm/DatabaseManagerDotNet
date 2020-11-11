@@ -10,11 +10,35 @@ Based on .NET Standard 2.0, with minimal dependencies.
 
 ---
 
-Basic usage (Microsoft SQL Server)
+[TBD: Link to API documentation]
 
+## Basic usage (Microsoft SQL Server)
 
+```c#
 
-Basic usage (SQLite)
+```
 
+## Basic usage (SQLite)
 
+```c#
+
+```
+
+## Use in ASP.NET Core
+
+```c#
+
+```
+
+## Additional options
+
+```c#
+
+```
+
+## Default schemas
+
+```sql
+
+```
 

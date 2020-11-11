@@ -35,7 +35,7 @@ namespace RI.DatabaseManager.Builder
         /// </remarks>
         /// <exception cref="ArgumentNullException"><paramref name="builder"/> or <paramref name="connectionString"/> is null.</exception>
         /// <exception cref="ArgumentException"><paramref name="connectionString"/> is an empty string.</exception>
-        public static IDbManagerBuilder<SQLiteConnection, SQLiteTransaction, DbType, SQLiteDbManager> UseSqlServer (this IDbManagerBuilder builder, string connectionString)
+        public static IDbManagerBuilder<SQLiteConnection, SQLiteTransaction, DbType, SQLiteDbManager> UseSQLite (this IDbManagerBuilder builder, string connectionString)
         {
             if (builder == null)
             {
@@ -52,7 +52,7 @@ namespace RI.DatabaseManager.Builder
                 throw new ArgumentException("The string argument is empty.", nameof(connectionString));
             }
 
-            return builder.UseSqlServer(x =>
+            return builder.UseSQLite(x =>
             {
                 x.ConnectionString = new SQLiteConnectionStringBuilder(connectionString);
             });
@@ -72,7 +72,7 @@ namespace RI.DatabaseManager.Builder
         /// </para>
         /// </remarks>
         /// <exception cref="ArgumentNullException"><paramref name="builder"/> or <paramref name="connectionString"/> is null.</exception>
-        public static IDbManagerBuilder<SQLiteConnection, SQLiteTransaction, DbType, SQLiteDbManager> UseSqlServer (this IDbManagerBuilder builder, SQLiteConnectionStringBuilder connectionString)
+        public static IDbManagerBuilder<SQLiteConnection, SQLiteTransaction, DbType, SQLiteDbManager> UseSQLite (this IDbManagerBuilder builder, SQLiteConnectionStringBuilder connectionString)
         {
             if (builder == null)
             {
@@ -84,7 +84,7 @@ namespace RI.DatabaseManager.Builder
                 throw new ArgumentNullException(nameof(connectionString));
             }
 
-            return builder.UseSqlServer(x =>
+            return builder.UseSQLite(x =>
             {
                 x.ConnectionString = connectionString;
             });
@@ -99,7 +99,7 @@ namespace RI.DatabaseManager.Builder
         /// The database manager builder.
         /// </returns>
         /// <exception cref="ArgumentNullException"><paramref name="builder"/> or <paramref name="config"/> is null.</exception>
-        public static IDbManagerBuilder<SQLiteConnection, SQLiteTransaction, DbType, SQLiteDbManager> UseSqlServer (this IDbManagerBuilder builder, Action<SQLiteDbManagerOptions> config)
+        public static IDbManagerBuilder<SQLiteConnection, SQLiteTransaction, DbType, SQLiteDbManager> UseSQLite (this IDbManagerBuilder builder, Action<SQLiteDbManagerOptions> config)
         {
             if (builder == null)
             {
@@ -113,7 +113,7 @@ namespace RI.DatabaseManager.Builder
 
             SQLiteDbManagerOptions options = new SQLiteDbManagerOptions();
             config(options);
-            return builder.UseSqlServer(options);
+            return builder.UseSQLite(options);
         }
 
         /// <summary>
@@ -125,7 +125,7 @@ namespace RI.DatabaseManager.Builder
         /// The database manager builder.
         /// </returns>
         /// <exception cref="ArgumentNullException"><paramref name="builder"/> or <paramref name="options"/> is null.</exception>
-        public static IDbManagerBuilder<SQLiteConnection, SQLiteTransaction, DbType, SQLiteDbManager> UseSqlServer (this IDbManagerBuilder builder, SQLiteDbManagerOptions options)
+        public static IDbManagerBuilder<SQLiteConnection, SQLiteTransaction, DbType, SQLiteDbManager> UseSQLite (this IDbManagerBuilder builder, SQLiteDbManagerOptions options)
         {
             if (builder == null)
             {
