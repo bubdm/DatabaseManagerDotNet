@@ -3,85 +3,85 @@
 
   <HelpTOCNode Title="Start" Url="html/ccefe60f-e9ae-412d-88f8-5c9cd2c98a0a.htm" />
   <HelpTOCNode Title="Assemblies" Url="html/b63e72a8-f17e-48cb-be8f-5f34333c9c26.htm" />
-  <HelpTOCNode Id="50d1acc6-30f0-430f-a452-f1537d2eb66c" Title="Namespaces" Url="html/E88C8BF6.htm">
-    <HelpTOCNode Id="6f242f3f-728c-4c33-b247-d23b35ee9a9b" Title="RI.DatabaseManager.Backup" Url="html/21241FED.htm">
-      <HelpTOCNode Id="2a27007b-b3d5-4fa3-931e-8aeed0fa30ed" Title="DbBackupCreatorBase(TConnection, TTransaction, TParameterTypes) Class" Url="html/3B5130B4.htm">
+  <HelpTOCNode Id="a640b39a-5254-47e5-ab35-e2e8939260fd" Title="Namespaces" Url="html/E88C8BF6.htm">
+    <HelpTOCNode Id="afc4bd2d-ff63-41c9-9d0b-1c1814d2592c" Title="RI.DatabaseManager.Backup" Url="html/21241FED.htm">
+      <HelpTOCNode Id="d7d6e4fb-4507-416e-89a5-f3514ea3fc8e" Title="DbBackupCreatorBase(TConnection, TTransaction, TParameterTypes) Class" Url="html/3B5130B4.htm">
         <HelpTOCNode Title="DbBackupCreatorBase(TConnection, TTransaction, TParameterTypes) Constructor " Url="html/1A1BFBD9.htm" />
-        <HelpTOCNode Id="8a7aa6df-6a97-49b1-a294-d52fc5aabc2e" Title="DbBackupCreatorBase(TConnection, TTransaction, TParameterTypes) Properties" Url="html/A3E61682.htm">
+        <HelpTOCNode Id="fd905d58-7a46-423a-9367-7f26a58a3cc1" Title="DbBackupCreatorBase(TConnection, TTransaction, TParameterTypes) Properties" Url="html/A3E61682.htm">
           <HelpTOCNode Title="Logger Property " Url="html/17EAEF51.htm" />
           <HelpTOCNode Title="SupportsBackup Property " Url="html/174FF549.htm" />
           <HelpTOCNode Title="SupportsRestore Property " Url="html/B962693B.htm" />
         </HelpTOCNode>
-        <HelpTOCNode Id="15a6c4e5-e718-407b-aea9-7b73e03dc073" Title="DbBackupCreatorBase(TConnection, TTransaction, TParameterTypes) Methods" Url="html/BC8B3290.htm">
+        <HelpTOCNode Id="f2514ca4-c6f9-4059-9afa-9be523d378ed" Title="DbBackupCreatorBase(TConnection, TTransaction, TParameterTypes) Methods" Url="html/BC8B3290.htm">
           <HelpTOCNode Title="Backup Method " Url="html/DFA5AE92.htm" />
           <HelpTOCNode Title="IDbBackupCreator.Backup Method " Url="html/A8FB09AE.htm" />
           <HelpTOCNode Title="IDbBackupCreator.Restore Method " Url="html/196D12B7.htm" />
-          <HelpTOCNode Id="d285f513-4674-48c1-952f-525efafc89e5" Title="Log Method " Url="html/EF847BE5.htm">
+          <HelpTOCNode Id="46adc721-79be-4f99-a5b7-4f0ee22109de" Title="Log Method " Url="html/EF847BE5.htm">
             <HelpTOCNode Title="Log Method (LogLevel, String, Object[])" Url="html/7C70A574.htm" />
             <HelpTOCNode Title="Log Method (LogLevel, Exception, String, Object[])" Url="html/A2CAEAB6.htm" />
           </HelpTOCNode>
           <HelpTOCNode Title="Restore Method " Url="html/EBE47DE4.htm" />
         </HelpTOCNode>
       </HelpTOCNode>
-      <HelpTOCNode Id="fb3e6002-4c03-4377-bc14-7da4d3b65c3f" Title="IDbBackupCreator Interface" Url="html/C1D5255.htm">
-        <HelpTOCNode Id="a3f26065-3d31-4c25-886a-0dc772669ae8" Title="IDbBackupCreator Properties" Url="html/1A7C406C.htm">
+      <HelpTOCNode Id="7226557e-bb90-4154-a8ea-1835a302bed3" Title="IDbBackupCreator Interface" Url="html/C1D5255.htm">
+        <HelpTOCNode Id="9e72ccd7-e473-43ae-806f-800a2b2c3c1e" Title="IDbBackupCreator Properties" Url="html/1A7C406C.htm">
           <HelpTOCNode Title="SupportsBackup Property " Url="html/30891E9F.htm" />
           <HelpTOCNode Title="SupportsRestore Property " Url="html/4A78E7DE.htm" />
         </HelpTOCNode>
-        <HelpTOCNode Id="541ddbcf-ea48-443d-ac45-b4ae2a8d67f4" Title="IDbBackupCreator Methods" Url="html/85CA43D5.htm">
+        <HelpTOCNode Id="50dd71b9-3909-455d-99a0-18c76380ad4d" Title="IDbBackupCreator Methods" Url="html/85CA43D5.htm">
           <HelpTOCNode Title="Backup Method " Url="html/EDE7191A.htm" />
           <HelpTOCNode Title="Restore Method " Url="html/39E94FB3.htm" />
         </HelpTOCNode>
       </HelpTOCNode>
-      <HelpTOCNode Id="1fc2ef52-d1de-440f-880a-7b3e03f46edb" Title="IDbBackupCreator(TConnection, TTransaction, TParameterTypes) Interface" Url="html/417BD72D.htm">
+      <HelpTOCNode Id="9a82bd65-d98f-4c39-b0bc-11d5ca2cfffb" Title="IDbBackupCreator(TConnection, TTransaction, TParameterTypes) Interface" Url="html/417BD72D.htm">
         <HelpTOCNode Title="IDbBackupCreator(TConnection, TTransaction, TParameterTypes) Properties" Url="html/D123D4CB.htm" />
-        <HelpTOCNode Id="37e90d19-dac0-493e-92fa-448776890f83" Title="IDbBackupCreator(TConnection, TTransaction, TParameterTypes) Methods" Url="html/32BDE37F.htm">
-          <HelpTOCNode Id="c48176ae-ba8c-4bef-8fd8-0c31c2f4a818" Title="Backup Method " Url="html/67B74DA7.htm">
+        <HelpTOCNode Id="984ff948-d95a-422c-b67c-c1aa166ebb9f" Title="IDbBackupCreator(TConnection, TTransaction, TParameterTypes) Methods" Url="html/32BDE37F.htm">
+          <HelpTOCNode Id="9763ab71-c94b-4138-b1de-b0bae2b70f5e" Title="Backup Method " Url="html/67B74DA7.htm">
             <HelpTOCNode Title="Backup Method (IDbManager(TConnection, TTransaction, TParameterTypes), Object)" Url="html/11783EFC.htm" />
           </HelpTOCNode>
-          <HelpTOCNode Id="11792043-5c34-4c64-ab7e-5b1cd4fbd3e7" Title="Restore Method " Url="html/4A0CBAD9.htm">
+          <HelpTOCNode Id="ef1bbe53-0a13-4691-9c82-c098963b2032" Title="Restore Method " Url="html/4A0CBAD9.htm">
             <HelpTOCNode Title="Restore Method (IDbManager(TConnection, TTransaction, TParameterTypes), Object)" Url="html/68AC57ED.htm" />
           </HelpTOCNode>
         </HelpTOCNode>
       </HelpTOCNode>
-      <HelpTOCNode Id="6966d017-f655-447e-88c9-70437597307f" Title="SQLiteDbBackupCreator Class" Url="html/73A2977E.htm">
+      <HelpTOCNode Id="efb38dc2-0578-49f3-9bf4-8d66ef6b3c06" Title="SQLiteDbBackupCreator Class" Url="html/73A2977E.htm">
         <HelpTOCNode Title="SQLiteDbBackupCreator Constructor " Url="html/787235BC.htm" />
-        <HelpTOCNode Id="434ef3eb-1ac9-4c71-9d1b-219bcf8b761e" Title="SQLiteDbBackupCreator Properties" Url="html/CC2EB4E6.htm">
+        <HelpTOCNode Id="89881a08-4656-46fd-a961-ea0f4d5c204e" Title="SQLiteDbBackupCreator Properties" Url="html/CC2EB4E6.htm">
           <HelpTOCNode Title="SupportsBackup Property " Url="html/F88DB920.htm" />
           <HelpTOCNode Title="SupportsRestore Property " Url="html/FEF2E45.htm" />
         </HelpTOCNode>
-        <HelpTOCNode Id="cbe19395-e4fc-44aa-a4f2-f8c3306ca279" Title="SQLiteDbBackupCreator Methods" Url="html/73CD29E4.htm">
+        <HelpTOCNode Id="c5a080a2-2c4f-421c-a2f7-78b9dcb17b50" Title="SQLiteDbBackupCreator Methods" Url="html/73CD29E4.htm">
           <HelpTOCNode Title="Backup Method " Url="html/4DEF085.htm" />
           <HelpTOCNode Title="Restore Method " Url="html/DE00347A.htm" />
         </HelpTOCNode>
       </HelpTOCNode>
     </HelpTOCNode>
-    <HelpTOCNode Id="6f5ba163-962e-413b-9027-b0e195c19f11" Title="RI.DatabaseManager.Batches" Url="html/377F228E.htm">
-      <HelpTOCNode Id="216b21a4-cf1a-4391-9cd4-8cb83a13ff72" Title="DbBatch(TConnection, TTransaction, TParameterTypes) Class" Url="html/94538750.htm">
+    <HelpTOCNode Id="5e720364-65c0-4fd3-b653-6c344e99952e" Title="RI.DatabaseManager.Batches" Url="html/377F228E.htm">
+      <HelpTOCNode Id="0f12aa28-2e90-49c0-9342-503145702a27" Title="DbBatch(TConnection, TTransaction, TParameterTypes) Class" Url="html/94538750.htm">
         <HelpTOCNode Title="DbBatch(TConnection, TTransaction, TParameterTypes) Constructor " Url="html/D2D71E7B.htm" />
-        <HelpTOCNode Id="e9dbcb61-9755-494a-80db-c8933070a6a8" Title="DbBatch(TConnection, TTransaction, TParameterTypes) Properties" Url="html/CF2BC852.htm">
+        <HelpTOCNode Id="ab8f367d-3189-474b-83cb-d8fa14241c21" Title="DbBatch(TConnection, TTransaction, TParameterTypes) Properties" Url="html/CF2BC852.htm">
           <HelpTOCNode Title="Commands Property " Url="html/FAB40725.htm" />
           <HelpTOCNode Title="IDbBatch.Commands Property " Url="html/E4B63B64.htm" />
           <HelpTOCNode Title="IDbBatch.Parameters Property " Url="html/9D390C4B.htm" />
           <HelpTOCNode Title="Parameters Property " Url="html/2E397875.htm" />
         </HelpTOCNode>
-        <HelpTOCNode Id="a727573f-b841-41f1-807f-aa2afd157ba6" Title="DbBatch(TConnection, TTransaction, TParameterTypes) Methods" Url="html/F4B9BE40.htm">
+        <HelpTOCNode Id="99f75ec8-d40d-43ab-ae44-702fc0562654" Title="DbBatch(TConnection, TTransaction, TParameterTypes) Methods" Url="html/F4B9BE40.htm">
           <HelpTOCNode Title="ICloneable.Clone Method " Url="html/41B417E2.htm" />
           <HelpTOCNode Title="Clone Method " Url="html/8535A9D5.htm" />
         </HelpTOCNode>
       </HelpTOCNode>
-      <HelpTOCNode Id="8f12deeb-5dc0-494d-b4de-8da9750d8d73" Title="DbBatchCommandParameter(TParameterTypes) Class" Url="html/4A2B9C63.htm">
+      <HelpTOCNode Id="9835fa94-e75d-4b8b-8458-4477d3edaf4b" Title="DbBatchCommandParameter(TParameterTypes) Class" Url="html/4A2B9C63.htm">
         <HelpTOCNode Title="DbBatchCommandParameter(TParameterTypes) Constructor " Url="html/B3AEE509.htm" />
-        <HelpTOCNode Id="fb064696-9772-4649-98d9-834075fd663d" Title="DbBatchCommandParameter(TParameterTypes) Properties" Url="html/4A62E2BA.htm">
+        <HelpTOCNode Id="93019203-6c08-4295-86bd-02ae28992e94" Title="DbBatchCommandParameter(TParameterTypes) Properties" Url="html/4A62E2BA.htm">
           <HelpTOCNode Title="IDbBatchCommandParameter.Type Property " Url="html/623F39C5.htm" />
           <HelpTOCNode Title="Name Property " Url="html/597584F7.htm" />
           <HelpTOCNode Title="Type Property " Url="html/90484FF.htm" />
           <HelpTOCNode Title="Value Property " Url="html/3AE03B47.htm" />
         </HelpTOCNode>
-        <HelpTOCNode Id="767ec274-a18b-4cc3-8191-77c857a56d3e" Title="DbBatchCommandParameter(TParameterTypes) Methods" Url="html/5C8E19F.htm">
+        <HelpTOCNode Id="249545a1-1c46-4cab-a83e-ee0a2a5f6589" Title="DbBatchCommandParameter(TParameterTypes) Methods" Url="html/5C8E19F.htm">
           <HelpTOCNode Title="ICloneable.Clone Method " Url="html/5B92125E.htm" />
           <HelpTOCNode Title="Clone Method " Url="html/44CD707B.htm" />
-          <HelpTOCNode Id="761115c7-73fd-4b60-b2f7-6b857d010c96" Title="Equals Method " Url="html/49BA7D59.htm">
+          <HelpTOCNode Id="1a37d4e5-4b55-4e79-9730-01425973f634" Title="Equals Method " Url="html/49BA7D59.htm">
             <HelpTOCNode Title="Equals Method (Object)" Url="html/843C108.htm" />
             <HelpTOCNode Title="Equals Method (IDbBatchCommandParameter)" Url="html/FCAD3506.htm" />
             <HelpTOCNode Title="Equals Method (IDbBatchCommandParameter(TParameterTypes))" Url="html/204D6337.htm" />
@@ -90,82 +90,82 @@
           <HelpTOCNode Title="ToString Method " Url="html/8B195574.htm" />
         </HelpTOCNode>
       </HelpTOCNode>
-      <HelpTOCNode Id="a51a5750-ad5f-4ee8-b354-64f37af9c057" Title="DbBatchCommandParameterCollection(TParameterTypes) Class" Url="html/1962DB7F.htm">
+      <HelpTOCNode Id="cd9ae4bb-37b6-424f-8320-126c517e00df" Title="DbBatchCommandParameterCollection(TParameterTypes) Class" Url="html/1962DB7F.htm">
         <HelpTOCNode Title="DbBatchCommandParameterCollection(TParameterTypes) Constructor " Url="html/6BE185D6.htm" />
-        <HelpTOCNode Id="7dede62d-9ee3-448f-b703-9935ede002af" Title="DbBatchCommandParameterCollection(TParameterTypes) Properties" Url="html/479B9422.htm">
+        <HelpTOCNode Id="45b07165-c02f-45c0-a95b-4900e9670f38" Title="DbBatchCommandParameterCollection(TParameterTypes) Properties" Url="html/479B9422.htm">
           <HelpTOCNode Title="IsReadOnly Property " Url="html/EB05E339.htm" />
         </HelpTOCNode>
-        <HelpTOCNode Id="c6e5ca2c-0248-44f5-adb6-a1ddaf39764e" Title="DbBatchCommandParameterCollection(TParameterTypes) Methods" Url="html/90831387.htm">
+        <HelpTOCNode Id="848e4c23-9c35-4897-930d-46879b82705f" Title="DbBatchCommandParameterCollection(TParameterTypes) Methods" Url="html/90831387.htm">
           <HelpTOCNode Title="ICloneable.Clone Method " Url="html/2E6D3A97.htm" />
           <HelpTOCNode Title="Add Method " Url="html/6A1474A2.htm" />
           <HelpTOCNode Title="Clone Method " Url="html/A4EE9F4A.htm" />
-          <HelpTOCNode Id="64106f57-0a78-4991-8235-0fe292e67840" Title="Contains Method " Url="html/E0CAD621.htm">
+          <HelpTOCNode Id="2a8976a8-5937-4665-a807-502eb2172a3b" Title="Contains Method " Url="html/E0CAD621.htm">
             <HelpTOCNode Title="Contains Method (IDbBatchCommandParameter)" Url="html/243B0945.htm" />
           </HelpTOCNode>
-          <HelpTOCNode Id="8abe810f-538d-4403-9011-528d5b083d7a" Title="CopyTo Method " Url="html/88D77806.htm">
+          <HelpTOCNode Id="2fd45713-267b-43df-a3ef-d3006db717e6" Title="CopyTo Method " Url="html/88D77806.htm">
             <HelpTOCNode Title="CopyTo Method (IDbBatchCommandParameter[], Int32)" Url="html/CA68120A.htm" />
           </HelpTOCNode>
-          <HelpTOCNode Id="3c7ed41d-413d-47cd-8d5a-8111e1b40725" Title="ExceptWith Method " Url="html/97E718BF.htm">
+          <HelpTOCNode Id="973b73a2-039c-4930-a2b5-6d6587d48651" Title="ExceptWith Method " Url="html/97E718BF.htm">
             <HelpTOCNode Title="ExceptWith Method (IEnumerable(IDbBatchCommandParameter(TParameterTypes)))" Url="html/20BE90B4.htm" />
             <HelpTOCNode Title="ExceptWith Method (IEnumerable(IDbBatchCommandParameter))" Url="html/C2668261.htm" />
           </HelpTOCNode>
           <HelpTOCNode Title="GetEnumerator Method " Url="html/F56D6F15.htm" />
           <HelpTOCNode Title="GetKeyForItem Method " Url="html/69F98ACB.htm" />
-          <HelpTOCNode Id="3d8630b6-f367-402f-9d93-99fd49fae657" Title="IntersectWith Method " Url="html/B9C7C261.htm">
+          <HelpTOCNode Id="15d62673-3243-42de-baca-cef9acb3f9ff" Title="IntersectWith Method " Url="html/B9C7C261.htm">
             <HelpTOCNode Title="IntersectWith Method (IEnumerable(IDbBatchCommandParameter(TParameterTypes)))" Url="html/61DA6F6A.htm" />
             <HelpTOCNode Title="IntersectWith Method (IEnumerable(IDbBatchCommandParameter))" Url="html/369D2242.htm" />
           </HelpTOCNode>
-          <HelpTOCNode Id="9e71467e-985b-4bff-9ec6-7cfbf4b324a1" Title="IsProperSubsetOf Method " Url="html/319EB757.htm">
+          <HelpTOCNode Id="f4e75d57-202a-4f21-a617-08d196e2669b" Title="IsProperSubsetOf Method " Url="html/319EB757.htm">
             <HelpTOCNode Title="IsProperSubsetOf Method (IEnumerable(IDbBatchCommandParameter(TParameterTypes)))" Url="html/C87E3147.htm" />
             <HelpTOCNode Title="IsProperSubsetOf Method (IEnumerable(IDbBatchCommandParameter))" Url="html/22E6E0C4.htm" />
           </HelpTOCNode>
-          <HelpTOCNode Id="9bdca547-6789-4d67-ae41-9afcd814785b" Title="IsProperSupersetOf Method " Url="html/BE31F7D5.htm">
+          <HelpTOCNode Id="460fe67b-7e11-4590-b516-8fcc37463b1a" Title="IsProperSupersetOf Method " Url="html/BE31F7D5.htm">
             <HelpTOCNode Title="IsProperSupersetOf Method (IEnumerable(IDbBatchCommandParameter(TParameterTypes)))" Url="html/95456288.htm" />
             <HelpTOCNode Title="IsProperSupersetOf Method (IEnumerable(IDbBatchCommandParameter))" Url="html/173613F0.htm" />
           </HelpTOCNode>
-          <HelpTOCNode Id="2bbb512d-4531-426d-8f1e-d14c84604869" Title="IsSubsetOf Method " Url="html/B33FEC9C.htm">
+          <HelpTOCNode Id="83b36ec0-d65a-43f1-840e-c4c5e151c58f" Title="IsSubsetOf Method " Url="html/B33FEC9C.htm">
             <HelpTOCNode Title="IsSubsetOf Method (IEnumerable(IDbBatchCommandParameter(TParameterTypes)))" Url="html/2D6DC815.htm" />
             <HelpTOCNode Title="IsSubsetOf Method (IEnumerable(IDbBatchCommandParameter))" Url="html/6F097C02.htm" />
           </HelpTOCNode>
-          <HelpTOCNode Id="d0206085-a17c-4791-b3ff-a61b84c255b4" Title="IsSupersetOf Method " Url="html/215FE81F.htm">
+          <HelpTOCNode Id="b070343d-f28c-440f-b93a-11da0ca31db1" Title="IsSupersetOf Method " Url="html/215FE81F.htm">
             <HelpTOCNode Title="IsSupersetOf Method (IEnumerable(IDbBatchCommandParameter(TParameterTypes)))" Url="html/2FDC4BA.htm" />
             <HelpTOCNode Title="IsSupersetOf Method (IEnumerable(IDbBatchCommandParameter))" Url="html/E639055.htm" />
           </HelpTOCNode>
-          <HelpTOCNode Id="c335b5ba-b4ac-406e-a0b4-6cda872c3015" Title="Overlaps Method " Url="html/C3F39B7D.htm">
+          <HelpTOCNode Id="09731ee3-3b53-4bdb-9e60-5c49ce53f4a3" Title="Overlaps Method " Url="html/C3F39B7D.htm">
             <HelpTOCNode Title="Overlaps Method (IEnumerable(IDbBatchCommandParameter(TParameterTypes)))" Url="html/DFFC027E.htm" />
             <HelpTOCNode Title="Overlaps Method (IEnumerable(IDbBatchCommandParameter))" Url="html/6029BF65.htm" />
           </HelpTOCNode>
-          <HelpTOCNode Id="2a356826-00b8-4d17-a42b-6c3b4354aa9e" Title="Remove Method " Url="html/3EDEC654.htm">
+          <HelpTOCNode Id="ad4cea3b-7050-4be6-93b9-f1b30e286467" Title="Remove Method " Url="html/3EDEC654.htm">
             <HelpTOCNode Title="Remove Method (IDbBatchCommandParameter)" Url="html/B8FB5428.htm" />
           </HelpTOCNode>
-          <HelpTOCNode Id="c118560d-635a-4005-a2b2-677750aa9fd9" Title="SetEquals Method " Url="html/5EB4BCE1.htm">
+          <HelpTOCNode Id="fa63dc12-8ffa-424a-b46d-c35e2f1442cf" Title="SetEquals Method " Url="html/5EB4BCE1.htm">
             <HelpTOCNode Title="SetEquals Method (IEnumerable(IDbBatchCommandParameter(TParameterTypes)))" Url="html/7892D786.htm" />
             <HelpTOCNode Title="SetEquals Method (IEnumerable(IDbBatchCommandParameter))" Url="html/9DBB49C9.htm" />
           </HelpTOCNode>
-          <HelpTOCNode Id="42f6ba68-0bf2-4c9b-b64b-8d80522c1157" Title="SymmetricExceptWith Method " Url="html/B2BA07F6.htm">
+          <HelpTOCNode Id="ff8d3a8b-4bad-436a-8b3e-dc9558c9c051" Title="SymmetricExceptWith Method " Url="html/B2BA07F6.htm">
             <HelpTOCNode Title="SymmetricExceptWith Method (IEnumerable(IDbBatchCommandParameter(TParameterTypes)))" Url="html/D313C6A5.htm" />
             <HelpTOCNode Title="SymmetricExceptWith Method (IEnumerable(IDbBatchCommandParameter))" Url="html/4FDD492E.htm" />
           </HelpTOCNode>
-          <HelpTOCNode Id="a007c5e8-534e-4f8b-8bf9-5652a31b29a1" Title="UnionWith Method " Url="html/45F8043E.htm">
+          <HelpTOCNode Id="89f10e55-69b3-4d40-9ac3-8889d9ff8c79" Title="UnionWith Method " Url="html/45F8043E.htm">
             <HelpTOCNode Title="UnionWith Method (IEnumerable(IDbBatchCommandParameter(TParameterTypes)))" Url="html/B5CAFE4B.htm" />
             <HelpTOCNode Title="UnionWith Method (IEnumerable(IDbBatchCommandParameter))" Url="html/30EED4A3.htm" />
           </HelpTOCNode>
         </HelpTOCNode>
       </HelpTOCNode>
-      <HelpTOCNode Id="301fddf9-d541-4c36-a45a-157a45f141b6" Title="DbBatchLocatorBase(TConnection, TTransaction, TParameterTypes) Class" Url="html/98FB52B7.htm">
+      <HelpTOCNode Id="f8552bdc-847c-44aa-93a7-9887166be50c" Title="DbBatchLocatorBase(TConnection, TTransaction, TParameterTypes) Class" Url="html/98FB52B7.htm">
         <HelpTOCNode Title="DbBatchLocatorBase(TConnection, TTransaction, TParameterTypes) Constructor " Url="html/B1E2E677.htm" />
-        <HelpTOCNode Id="4e330208-62fa-41a4-9324-622e49b4675c" Title="DbBatchLocatorBase(TConnection, TTransaction, TParameterTypes) Properties" Url="html/BE2087A0.htm">
+        <HelpTOCNode Id="353a9168-4a63-425c-bad8-06d387f36b25" Title="DbBatchLocatorBase(TConnection, TTransaction, TParameterTypes) Properties" Url="html/BE2087A0.htm">
           <HelpTOCNode Title="CommandSeparator Property " Url="html/C6256A90.htm" />
           <HelpTOCNode Title="DefaultNameComparer Property " Url="html/C0801403.htm" />
           <HelpTOCNode Title="OptionsFormat Property " Url="html/8078A20F.htm" />
           <HelpTOCNode Title="SupportsCallbacks Property " Url="html/DB718FB3.htm" />
           <HelpTOCNode Title="SupportsScripts Property " Url="html/CF645C98.htm" />
         </HelpTOCNode>
-        <HelpTOCNode Id="0257f832-4b5a-4a6b-a739-45e4eef36f2c" Title="DbBatchLocatorBase(TConnection, TTransaction, TParameterTypes) Methods" Url="html/B66FC81.htm">
+        <HelpTOCNode Id="67c5a2a4-e8ce-447f-a66d-fa43ce924c30" Title="DbBatchLocatorBase(TConnection, TTransaction, TParameterTypes) Methods" Url="html/B66FC81.htm">
           <HelpTOCNode Title="FillBatch Method " Url="html/EB920AD9.htm" />
           <HelpTOCNode Title="GetNames Method " Url="html/7DA0AAA6.htm" />
           <HelpTOCNode Title="GetOptionsFromCommand Method " Url="html/618F1B94.htm" />
-          <HelpTOCNode Id="3f12f8e6-a872-49dd-8abf-cbc14ae3ccf2" Title="GetTransactionRequirementFromCommandOptions Method " Url="html/9A9BFABB.htm">
+          <HelpTOCNode Id="515afeb4-39b9-4cca-92c9-be59ca073745" Title="GetTransactionRequirementFromCommandOptions Method " Url="html/9A9BFABB.htm">
             <HelpTOCNode Title="GetTransactionRequirementFromCommandOptions Method (IDictionary(String, String))" Url="html/29F81BFB.htm" />
             <HelpTOCNode Title="GetTransactionRequirementFromCommandOptions Method (String)" Url="html/9EC0AFDB.htm" />
           </HelpTOCNode>
@@ -176,22 +176,22 @@
         </HelpTOCNode>
       </HelpTOCNode>
       <HelpTOCNode Title="DbBatchTransactionRequirement Enumeration" Url="html/E311A970.htm" />
-      <HelpTOCNode Id="236e5e1f-1515-4a6a-a2d3-27e9306aaec9" Title="IDbBatch Interface" Url="html/27A2ADFE.htm">
-        <HelpTOCNode Id="22df201c-9e64-4a2e-99cd-b39e9d3200cf" Title="IDbBatch Properties" Url="html/29191D5E.htm">
+      <HelpTOCNode Id="44de8004-c093-432d-b1fd-9ee3c9ea589d" Title="IDbBatch Interface" Url="html/27A2ADFE.htm">
+        <HelpTOCNode Id="6b291d6d-5579-423f-a6fc-3f8be71afe28" Title="IDbBatch Properties" Url="html/29191D5E.htm">
           <HelpTOCNode Title="Commands Property " Url="html/77A14F23.htm" />
           <HelpTOCNode Title="Parameters Property " Url="html/29A82861.htm" />
         </HelpTOCNode>
         <HelpTOCNode Title="IDbBatch Methods" Url="html/48F9EE9E.htm" />
       </HelpTOCNode>
-      <HelpTOCNode Id="4b5fb2a3-99a8-455b-8327-152b13e6acbb" Title="IDbBatch(TConnection, TTransaction, TParameterTypes) Interface" Url="html/59D3CE02.htm">
-        <HelpTOCNode Id="bd662b5d-4e4a-4c9a-9ca1-39a5b7cfa780" Title="IDbBatch(TConnection, TTransaction, TParameterTypes) Properties" Url="html/F170FBA9.htm">
+      <HelpTOCNode Id="87fc383d-7361-4630-8e3e-c653d25e32b0" Title="IDbBatch(TConnection, TTransaction, TParameterTypes) Interface" Url="html/59D3CE02.htm">
+        <HelpTOCNode Id="b7ba85cf-1f20-4b5d-aa57-0ec262cf777e" Title="IDbBatch(TConnection, TTransaction, TParameterTypes) Properties" Url="html/F170FBA9.htm">
           <HelpTOCNode Title="Commands Property " Url="html/99030ED4.htm" />
           <HelpTOCNode Title="Parameters Property " Url="html/8E7AE1E7.htm" />
         </HelpTOCNode>
         <HelpTOCNode Title="IDbBatch(TConnection, TTransaction, TParameterTypes) Methods" Url="html/DD8BA2F2.htm" />
       </HelpTOCNode>
-      <HelpTOCNode Id="5d62d949-83e6-4480-8d79-d9973958d32e" Title="IDbBatchCommand Interface" Url="html/4A5BE5AE.htm">
-        <HelpTOCNode Id="f2a19265-361c-4025-8be8-c39fabb765a5" Title="IDbBatchCommand Properties" Url="html/D6CB66FA.htm">
+      <HelpTOCNode Id="fb508e5b-c359-4782-ab0c-996d57360074" Title="IDbBatchCommand Interface" Url="html/4A5BE5AE.htm">
+        <HelpTOCNode Id="0adbc236-d851-43dc-9c71-f54d1c3d323c" Title="IDbBatchCommand Properties" Url="html/D6CB66FA.htm">
           <HelpTOCNode Title="Code Property " Url="html/E8CD5F1F.htm" />
           <HelpTOCNode Title="Parameters Property " Url="html/81286643.htm" />
           <HelpTOCNode Title="Result Property " Url="html/73DBCC1B.htm" />
@@ -201,42 +201,42 @@
         </HelpTOCNode>
         <HelpTOCNode Title="IDbBatchCommand Methods" Url="html/59861FCE.htm" />
       </HelpTOCNode>
-      <HelpTOCNode Id="fac067af-b862-4f91-90ee-bbdb60f9cfc1" Title="IDbBatchCommand(TConnection, TTransaction, TParameterTypes) Interface" Url="html/EB6ADE1C.htm">
-        <HelpTOCNode Id="98c3ac6a-67ce-494f-9529-a131f4b7c637" Title="IDbBatchCommand(TConnection, TTransaction, TParameterTypes) Properties" Url="html/15E07B06.htm">
+      <HelpTOCNode Id="98848150-6444-46c2-a92d-6205bc40fbbf" Title="IDbBatchCommand(TConnection, TTransaction, TParameterTypes) Interface" Url="html/EB6ADE1C.htm">
+        <HelpTOCNode Id="4e692208-ad1d-4073-af3f-be9ad7f73798" Title="IDbBatchCommand(TConnection, TTransaction, TParameterTypes) Properties" Url="html/15E07B06.htm">
           <HelpTOCNode Title="Code Property " Url="html/FA25F77D.htm" />
           <HelpTOCNode Title="Parameters Property " Url="html/3E8A3493.htm" />
         </HelpTOCNode>
         <HelpTOCNode Title="IDbBatchCommand(TConnection, TTransaction, TParameterTypes) Methods" Url="html/34CD0108.htm" />
       </HelpTOCNode>
-      <HelpTOCNode Id="499b5ef5-8761-407f-81cb-500732e4d4da" Title="IDbBatchCommandExtensions Class" Url="html/404AF91F.htm">
-        <HelpTOCNode Id="bc4c4e76-60b0-4bd3-b57d-c56a83cdf85f" Title="IDbBatchCommandExtensions Methods" Url="html/7FF9F0F0.htm">
+      <HelpTOCNode Id="14b3d07e-d0e6-4eff-8270-ef508bfcf4e6" Title="IDbBatchCommandExtensions Class" Url="html/404AF91F.htm">
+        <HelpTOCNode Id="13e943d5-cd72-4f54-ae04-f4275933acb6" Title="IDbBatchCommandExtensions Methods" Url="html/7FF9F0F0.htm">
           <HelpTOCNode Title="MergeParameters(TConnection, TTransaction, TParameterTypes) Method " Url="html/54709D95.htm" />
           <HelpTOCNode Title="Reset Method " Url="html/FA8658DB.htm" />
         </HelpTOCNode>
       </HelpTOCNode>
-      <HelpTOCNode Id="cc5a808d-9aec-4b69-ab50-e6a4ead30149" Title="IDbBatchCommandParameter Interface" Url="html/C5E46E57.htm">
-        <HelpTOCNode Id="856de688-9f5a-486c-bc67-2c59805057b0" Title="IDbBatchCommandParameter Properties" Url="html/5E07506B.htm">
+      <HelpTOCNode Id="c9d37c3a-c1b7-4600-bb4c-3c39288be5e1" Title="IDbBatchCommandParameter Interface" Url="html/C5E46E57.htm">
+        <HelpTOCNode Id="accc23cf-75ef-4149-9081-eeb0801e2c13" Title="IDbBatchCommandParameter Properties" Url="html/5E07506B.htm">
           <HelpTOCNode Title="Name Property " Url="html/7038397B.htm" />
           <HelpTOCNode Title="Type Property " Url="html/9B4CF532.htm" />
           <HelpTOCNode Title="Value Property " Url="html/23473635.htm" />
         </HelpTOCNode>
         <HelpTOCNode Title="IDbBatchCommandParameter Methods" Url="html/239F9CF8.htm" />
       </HelpTOCNode>
-      <HelpTOCNode Id="0295b80a-aafe-4d6f-9490-0f7168145922" Title="IDbBatchCommandParameter(TParameterTypes) Interface" Url="html/2A091DDC.htm">
-        <HelpTOCNode Id="7588a7ec-f37e-4f0d-ae2f-64c859991282" Title="IDbBatchCommandParameter(TParameterTypes) Properties" Url="html/A821EB4C.htm">
+      <HelpTOCNode Id="1e2bc9da-3f7f-4de6-ad80-65fd12d0d7ce" Title="IDbBatchCommandParameter(TParameterTypes) Interface" Url="html/2A091DDC.htm">
+        <HelpTOCNode Id="cb19b2e9-fb1b-474c-8483-2d7eb8c414df" Title="IDbBatchCommandParameter(TParameterTypes) Properties" Url="html/A821EB4C.htm">
           <HelpTOCNode Title="Type Property " Url="html/A05BB567.htm" />
         </HelpTOCNode>
         <HelpTOCNode Title="IDbBatchCommandParameter(TParameterTypes) Methods" Url="html/DA207B62.htm" />
       </HelpTOCNode>
-      <HelpTOCNode Id="37e433db-bf5f-4d80-80db-e7b3d507a429" Title="IDbBatchCommandParameterCollection Interface" Url="html/DBAF36F6.htm">
+      <HelpTOCNode Id="4c2d6ba2-4699-463d-be3b-86719333cde7" Title="IDbBatchCommandParameterCollection Interface" Url="html/DBAF36F6.htm">
         <HelpTOCNode Title="IDbBatchCommandParameterCollection Methods" Url="html/C88AEB5.htm" />
       </HelpTOCNode>
-      <HelpTOCNode Id="fd638ea1-93c6-4fea-9139-a26d47902d5c" Title="IDbBatchCommandParameterCollection(TParameterTypes) Interface" Url="html/FD1421E6.htm">
+      <HelpTOCNode Id="84f3b946-58b2-4ccb-88f1-0f7c291f2c24" Title="IDbBatchCommandParameterCollection(TParameterTypes) Interface" Url="html/FD1421E6.htm">
         <HelpTOCNode Title="IDbBatchCommandParameterCollection(TParameterTypes) Properties" Url="html/41D5CB2E.htm" />
         <HelpTOCNode Title="IDbBatchCommandParameterCollection(TParameterTypes) Methods" Url="html/8D023FA9.htm" />
       </HelpTOCNode>
-      <HelpTOCNode Id="0c3f3512-c57d-4f8f-a2a0-61aa8fa14dba" Title="IDbBatchExtensions Class" Url="html/5D46C1C7.htm">
-        <HelpTOCNode Id="091b6c9b-f47e-4c93-ab9e-71f5fc518a5e" Title="IDbBatchExtensions Methods" Url="html/1F9C5118.htm">
+      <HelpTOCNode Id="ba055bd5-72a3-47e3-b548-d09dc1f3e44a" Title="IDbBatchExtensions Class" Url="html/5D46C1C7.htm">
+        <HelpTOCNode Id="7dc1f953-d2af-415e-8a57-9ef6fd2d5922" Title="IDbBatchExtensions Methods" Url="html/1F9C5118.htm">
           <HelpTOCNode Title="AddCode(TConnection, TTransaction, TParameterTypes) Method " Url="html/D5515314.htm" />
           <HelpTOCNode Title="AddScript(TConnection, TTransaction, TParameterTypes) Method " Url="html/EBEF1BFE.htm" />
           <HelpTOCNode Title="AddScriptFromAssemblyResource(TConnection, TTransaction, TParameterTypes) Method " Url="html/86DC5CE1.htm" />
@@ -254,24 +254,24 @@
           <HelpTOCNode Title="WasPartiallyExecuted Method " Url="html/8A93BDA8.htm" />
         </HelpTOCNode>
       </HelpTOCNode>
-      <HelpTOCNode Id="faad194e-5331-42c6-893d-f31b7fd53347" Title="IDbBatchLocator Interface" Url="html/1D4C7117.htm">
-        <HelpTOCNode Id="635c7e38-9a2a-4d42-a66f-974d8dc4aa5b" Title="IDbBatchLocator Methods" Url="html/2B259465.htm">
+      <HelpTOCNode Id="349d20ab-efb6-4ff9-999d-eba57e0ac59d" Title="IDbBatchLocator Interface" Url="html/1D4C7117.htm">
+        <HelpTOCNode Id="1f6ff63f-6b69-4a8b-91e2-99ed7ca49f82" Title="IDbBatchLocator Methods" Url="html/2B259465.htm">
           <HelpTOCNode Title="GetBatch Method " Url="html/96F58D2B.htm" />
           <HelpTOCNode Title="GetNames Method " Url="html/9019F0D9.htm" />
         </HelpTOCNode>
       </HelpTOCNode>
-      <HelpTOCNode Id="8214de8e-7f49-4e5e-9010-c9d62e097801" Title="IDbBatchLocator(TConnection, TTransaction, TParameterTypes) Interface" Url="html/BBFB6A05.htm">
-        <HelpTOCNode Id="99a13342-fa3c-4de5-9540-979aed8dd69a" Title="IDbBatchLocator(TConnection, TTransaction, TParameterTypes) Methods" Url="html/D22C755F.htm">
-          <HelpTOCNode Id="ffbecbc1-357f-430c-8f62-11f0ed203560" Title="GetBatch Method " Url="html/68176263.htm">
+      <HelpTOCNode Id="21311be1-ce31-479f-9828-c925490b1484" Title="IDbBatchLocator(TConnection, TTransaction, TParameterTypes) Interface" Url="html/BBFB6A05.htm">
+        <HelpTOCNode Id="42a78834-0e32-48ab-973c-149057ec8c31" Title="IDbBatchLocator(TConnection, TTransaction, TParameterTypes) Methods" Url="html/D22C755F.htm">
+          <HelpTOCNode Id="ab3fd978-9a04-4ce2-9db9-0d7f46ecb885" Title="GetBatch Method " Url="html/68176263.htm">
             <HelpTOCNode Title="GetBatch Method (String, String, Func(IDbBatch(TConnection, TTransaction, TParameterTypes)))" Url="html/DE0ACC59.htm" />
           </HelpTOCNode>
         </HelpTOCNode>
       </HelpTOCNode>
     </HelpTOCNode>
-    <HelpTOCNode Id="6c8602a9-2fe0-4448-8668-daa9220bd55c" Title="RI.DatabaseManager.Batches.Commands" Url="html/431BBA43.htm">
-      <HelpTOCNode Id="3a46e003-e423-48c1-990d-e80d80381646" Title="CallbackBatchCommand(TConnection, TTransaction, TParameterTypes) Class" Url="html/3D8F8D0E.htm">
+    <HelpTOCNode Id="c01d0a0c-9c41-43ab-85b2-ce7f65c8798d" Title="RI.DatabaseManager.Batches.Commands" Url="html/431BBA43.htm">
+      <HelpTOCNode Id="dbd049a7-a49f-4a74-9ebc-5d9eda66c76a" Title="CallbackBatchCommand(TConnection, TTransaction, TParameterTypes) Class" Url="html/3D8F8D0E.htm">
         <HelpTOCNode Title="CallbackBatchCommand(TConnection, TTransaction, TParameterTypes) Constructor " Url="html/E38274CD.htm" />
-        <HelpTOCNode Id="f9eaddc4-807a-494b-a89c-36e14423c0cb" Title="CallbackBatchCommand(TConnection, TTransaction, TParameterTypes) Properties" Url="html/BF6269FE.htm">
+        <HelpTOCNode Id="e935b132-4f29-40b8-9cad-4a984c2fa0d2" Title="CallbackBatchCommand(TConnection, TTransaction, TParameterTypes) Properties" Url="html/BF6269FE.htm">
           <HelpTOCNode Title="Code Property " Url="html/1C62D401.htm" />
           <HelpTOCNode Title="IDbBatchCommand.Code Property " Url="html/B92634F5.htm" />
           <HelpTOCNode Title="IDbBatchCommand.Parameters Property " Url="html/9793E026.htm" />
@@ -281,14 +281,14 @@
           <HelpTOCNode Title="TransactionRequirement Property " Url="html/4C801737.htm" />
           <HelpTOCNode Title="WasExecuted Property " Url="html/EEB5C54E.htm" />
         </HelpTOCNode>
-        <HelpTOCNode Id="06f99135-b460-4e10-b5c8-1c81542cfaa5" Title="CallbackBatchCommand(TConnection, TTransaction, TParameterTypes) Methods" Url="html/794F0604.htm">
+        <HelpTOCNode Id="9a55c3a9-9cb4-4f69-976f-8384674da698" Title="CallbackBatchCommand(TConnection, TTransaction, TParameterTypes) Methods" Url="html/794F0604.htm">
           <HelpTOCNode Title="ICloneable.Clone Method " Url="html/47443D19.htm" />
           <HelpTOCNode Title="Clone Method " Url="html/C2FD0033.htm" />
         </HelpTOCNode>
       </HelpTOCNode>
-      <HelpTOCNode Id="7fed150e-6d08-4d37-bf5f-bbe79efb0d2e" Title="ScriptBatchCommand(TConnection, TTransaction, TParameterTypes) Class" Url="html/BC5D378D.htm">
+      <HelpTOCNode Id="0a32390d-521c-4ed6-baa1-7b50b24dcb38" Title="ScriptBatchCommand(TConnection, TTransaction, TParameterTypes) Class" Url="html/BC5D378D.htm">
         <HelpTOCNode Title="ScriptBatchCommand(TConnection, TTransaction, TParameterTypes) Constructor " Url="html/52B8F4C.htm" />
-        <HelpTOCNode Id="2424f748-5b07-4279-8d5f-6b1def581640" Title="ScriptBatchCommand(TConnection, TTransaction, TParameterTypes) Properties" Url="html/6B3D1E65.htm">
+        <HelpTOCNode Id="67281734-aacb-4412-a0d2-a99aa4fcf9e4" Title="ScriptBatchCommand(TConnection, TTransaction, TParameterTypes) Properties" Url="html/6B3D1E65.htm">
           <HelpTOCNode Title="IDbBatchCommand.Code Property " Url="html/66F85ED3.htm" />
           <HelpTOCNode Title="IDbBatchCommand(TConnection, TTransaction, TParameterTypes).Code Property " Url="html/87406C4C.htm" />
           <HelpTOCNode Title="IDbBatchCommand.Parameters Property " Url="html/71AFBAB4.htm" />
@@ -298,25 +298,25 @@
           <HelpTOCNode Title="TransactionRequirement Property " Url="html/580CE0D5.htm" />
           <HelpTOCNode Title="WasExecuted Property " Url="html/B7E2A8C5.htm" />
         </HelpTOCNode>
-        <HelpTOCNode Id="346ca364-45a8-474e-914a-91c56e5016f5" Title="ScriptBatchCommand(TConnection, TTransaction, TParameterTypes) Methods" Url="html/D5D4764A.htm">
+        <HelpTOCNode Id="2de1a805-683f-43d2-846f-e1c52603dbb7" Title="ScriptBatchCommand(TConnection, TTransaction, TParameterTypes) Methods" Url="html/D5D4764A.htm">
           <HelpTOCNode Title="ICloneable.Clone Method " Url="html/3271C307.htm" />
           <HelpTOCNode Title="Clone Method " Url="html/E52A1AA8.htm" />
         </HelpTOCNode>
       </HelpTOCNode>
     </HelpTOCNode>
-    <HelpTOCNode Id="d2d4be23-a02d-42ad-8717-a6e76f104463" Title="RI.DatabaseManager.Batches.Locators" Url="html/6F18462C.htm">
-      <HelpTOCNode Id="8ffae7ed-9840-4986-8728-a43f3078e5ea" Title="AggregateBatchLocator(TConnection, TTransaction, TParameterTypes) Class" Url="html/373E1D07.htm">
-        <HelpTOCNode Id="4155296f-53fa-440e-99ce-77315fd4e158" Title="AggregateBatchLocator(TConnection, TTransaction, TParameterTypes) Constructor " Url="html/CC7E5439.htm">
+    <HelpTOCNode Id="e9da312d-972b-4668-80cc-722583b4c37f" Title="RI.DatabaseManager.Batches.Locators" Url="html/6F18462C.htm">
+      <HelpTOCNode Id="f8915261-6f21-44f8-8c4b-8a7d94541b3a" Title="AggregateBatchLocator(TConnection, TTransaction, TParameterTypes) Class" Url="html/373E1D07.htm">
+        <HelpTOCNode Id="b238b937-9870-40ec-a22c-9c7b46281fb0" Title="AggregateBatchLocator(TConnection, TTransaction, TParameterTypes) Constructor " Url="html/CC7E5439.htm">
           <HelpTOCNode Title="AggregateBatchLocator(TConnection, TTransaction, TParameterTypes) Constructor " Url="html/5801B0D1.htm" />
           <HelpTOCNode Title="AggregateBatchLocator(TConnection, TTransaction, TParameterTypes) Constructor (IDbBatchLocator(TConnection, TTransaction, TParameterTypes)[])" Url="html/4A4A7893.htm" />
           <HelpTOCNode Title="AggregateBatchLocator(TConnection, TTransaction, TParameterTypes) Constructor (IEnumerable(IDbBatchLocator(TConnection, TTransaction, TParameterTypes)))" Url="html/4A4A7892.htm" />
         </HelpTOCNode>
-        <HelpTOCNode Id="d5c12e33-58f3-4ca4-b6de-020ff00797d5" Title="AggregateBatchLocator(TConnection, TTransaction, TParameterTypes) Properties" Url="html/6E42B710.htm">
+        <HelpTOCNode Id="29587698-0a4f-432a-bae8-32e5ed64858b" Title="AggregateBatchLocator(TConnection, TTransaction, TParameterTypes) Properties" Url="html/6E42B710.htm">
           <HelpTOCNode Title="ICollection(IDbBatchLocator(TConnection, TTransaction, TParameterTypes)).IsReadOnly Property " Url="html/96A3E0A8.htm" />
           <HelpTOCNode Title="Count Property " Url="html/898A0B69.htm" />
           <HelpTOCNode Title="Item Property " Url="html/87C638FC.htm" />
         </HelpTOCNode>
-        <HelpTOCNode Id="fde309fa-ad52-4fd7-94e9-3adfbf603a5a" Title="AggregateBatchLocator(TConnection, TTransaction, TParameterTypes) Methods" Url="html/C9D9EA24.htm">
+        <HelpTOCNode Id="bd073c58-3c56-4075-876d-f0c1e281b55d" Title="AggregateBatchLocator(TConnection, TTransaction, TParameterTypes) Methods" Url="html/C9D9EA24.htm">
           <HelpTOCNode Title="ICollection(IDbBatchLocator(TConnection, TTransaction, TParameterTypes)).CopyTo Method " Url="html/5F66E54E.htm" />
           <HelpTOCNode Title="IEnumerable.GetEnumerator Method " Url="html/5C57A3E.htm" />
           <HelpTOCNode Title="Add Method " Url="html/A50EFB62.htm" />
@@ -332,58 +332,58 @@
           <HelpTOCNode Title="RemoveAt Method " Url="html/83FA755B.htm" />
         </HelpTOCNode>
       </HelpTOCNode>
-      <HelpTOCNode Id="9fadf46f-2e58-406a-9340-5e099d3c118e" Title="AssemblyCallbackBatchLocator(TConnection, TTransaction, TParameterTypes) Class" Url="html/228B53D3.htm">
-        <HelpTOCNode Id="b8b93b27-a169-4010-aca5-765c5d22223c" Title="AssemblyCallbackBatchLocator(TConnection, TTransaction, TParameterTypes) Constructor " Url="html/79C772D7.htm">
+      <HelpTOCNode Id="b46b2316-cf83-4b0a-9b74-ce3fcec79ed9" Title="AssemblyCallbackBatchLocator(TConnection, TTransaction, TParameterTypes) Class" Url="html/228B53D3.htm">
+        <HelpTOCNode Id="a2b9d61f-0799-4560-bf39-d1bde8f13b9e" Title="AssemblyCallbackBatchLocator(TConnection, TTransaction, TParameterTypes) Constructor " Url="html/79C772D7.htm">
           <HelpTOCNode Title="AssemblyCallbackBatchLocator(TConnection, TTransaction, TParameterTypes) Constructor " Url="html/85D17B8A.htm" />
           <HelpTOCNode Title="AssemblyCallbackBatchLocator(TConnection, TTransaction, TParameterTypes) Constructor (IEnumerable(Assembly))" Url="html/950C5404.htm" />
           <HelpTOCNode Title="AssemblyCallbackBatchLocator(TConnection, TTransaction, TParameterTypes) Constructor (Assembly[])" Url="html/F2DD5404.htm" />
         </HelpTOCNode>
-        <HelpTOCNode Id="41162339-f916-4820-bad4-40fec296642a" Title="AssemblyCallbackBatchLocator(TConnection, TTransaction, TParameterTypes) Properties" Url="html/525655D.htm">
+        <HelpTOCNode Id="872878ef-4ee2-4eff-a168-9fda08913127" Title="AssemblyCallbackBatchLocator(TConnection, TTransaction, TParameterTypes) Properties" Url="html/525655D.htm">
           <HelpTOCNode Title="Assemblies Property " Url="html/D4FDE3A1.htm" />
           <HelpTOCNode Title="SupportsCallbacks Property " Url="html/4CD1298D.htm" />
           <HelpTOCNode Title="SupportsScripts Property " Url="html/7ADDFBE.htm" />
         </HelpTOCNode>
-        <HelpTOCNode Id="c6e217e9-d3c2-4feb-9780-7ad61b15cf0f" Title="AssemblyCallbackBatchLocator(TConnection, TTransaction, TParameterTypes) Methods" Url="html/AD54111C.htm">
+        <HelpTOCNode Id="eec16343-a39e-4327-aef6-d82c88b282ce" Title="AssemblyCallbackBatchLocator(TConnection, TTransaction, TParameterTypes) Methods" Url="html/AD54111C.htm">
           <HelpTOCNode Title="FillBatch Method " Url="html/BAF59298.htm" />
           <HelpTOCNode Title="GetNames Method " Url="html/EE3736B2.htm" />
         </HelpTOCNode>
       </HelpTOCNode>
-      <HelpTOCNode Id="d2ee840a-5640-4c2e-a8b8-4aac1ccfdb6a" Title="AssemblyScriptBatchLocator(TConnection, TTransaction, TParameterTypes) Class" Url="html/5988917.htm">
-        <HelpTOCNode Id="0cb434ab-b4e7-4dfe-b5ce-ed39a090ea10" Title="AssemblyScriptBatchLocator(TConnection, TTransaction, TParameterTypes) Constructor " Url="html/23E23CB6.htm">
+      <HelpTOCNode Id="ee5a8748-a520-40a0-8d10-9ab46a9936e3" Title="AssemblyScriptBatchLocator(TConnection, TTransaction, TParameterTypes) Class" Url="html/5988917.htm">
+        <HelpTOCNode Id="dbc0c9d5-fdd5-4aa6-86c4-ecfce3c51494" Title="AssemblyScriptBatchLocator(TConnection, TTransaction, TParameterTypes) Constructor " Url="html/23E23CB6.htm">
           <HelpTOCNode Title="AssemblyScriptBatchLocator(TConnection, TTransaction, TParameterTypes) Constructor " Url="html/9E79A439.htm" />
           <HelpTOCNode Title="AssemblyScriptBatchLocator(TConnection, TTransaction, TParameterTypes) Constructor (IEnumerable(Assembly))" Url="html/F8626C3.htm" />
           <HelpTOCNode Title="AssemblyScriptBatchLocator(TConnection, TTransaction, TParameterTypes) Constructor (Assembly[])" Url="html/F8726C3.htm" />
         </HelpTOCNode>
-        <HelpTOCNode Id="daa2bb5d-d09e-4e76-9e73-4af9ebc60cfe" Title="AssemblyScriptBatchLocator(TConnection, TTransaction, TParameterTypes) Properties" Url="html/A459E51E.htm">
+        <HelpTOCNode Id="89d6ec2c-5ebf-42ac-8668-3f6b9dc429eb" Title="AssemblyScriptBatchLocator(TConnection, TTransaction, TParameterTypes) Properties" Url="html/A459E51E.htm">
           <HelpTOCNode Title="Assemblies Property " Url="html/E9BE3ADB.htm" />
           <HelpTOCNode Title="Encoding Property " Url="html/9AA04228.htm" />
           <HelpTOCNode Title="NameFormat Property " Url="html/6380BD82.htm" />
           <HelpTOCNode Title="SupportsCallbacks Property " Url="html/9819A2FF.htm" />
           <HelpTOCNode Title="SupportsScripts Property " Url="html/71F28281.htm" />
         </HelpTOCNode>
-        <HelpTOCNode Id="cbe15a9f-7fff-40f9-84ea-3dd6f32ff632" Title="AssemblyScriptBatchLocator(TConnection, TTransaction, TParameterTypes) Methods" Url="html/95206D2F.htm">
+        <HelpTOCNode Id="0ff08cc1-c41c-48c9-96a4-148d5eff8b72" Title="AssemblyScriptBatchLocator(TConnection, TTransaction, TParameterTypes) Methods" Url="html/95206D2F.htm">
           <HelpTOCNode Title="FillBatch Method " Url="html/8B7B1A70.htm" />
           <HelpTOCNode Title="GetNames Method " Url="html/B8EEE5D2.htm" />
         </HelpTOCNode>
       </HelpTOCNode>
-      <HelpTOCNode Id="5fae07d0-69b0-4420-a424-280e4ccdc19c" Title="CallbackBatchAttribute Class" Url="html/F02C8E7F.htm">
+      <HelpTOCNode Id="c48091ed-0ddc-44a1-8664-c708e50e9c7d" Title="CallbackBatchAttribute Class" Url="html/F02C8E7F.htm">
         <HelpTOCNode Title="CallbackBatchAttribute Constructor " Url="html/4B4145D5.htm" />
-        <HelpTOCNode Id="6e093a4c-efad-49a8-a7c7-17a9e21c5148" Title="CallbackBatchAttribute Properties" Url="html/64AB4850.htm">
+        <HelpTOCNode Id="a5be2800-48c9-45f7-a920-ab0cc1c686ec" Title="CallbackBatchAttribute Properties" Url="html/64AB4850.htm">
           <HelpTOCNode Title="Name Property " Url="html/AF46A6DB.htm" />
           <HelpTOCNode Title="TransactionRequirement Property " Url="html/5862DD6.htm" />
         </HelpTOCNode>
         <HelpTOCNode Title="CallbackBatchAttribute Methods" Url="html/C2793569.htm" />
       </HelpTOCNode>
-      <HelpTOCNode Id="24a29b3c-41c1-49a0-90f8-ab55fdaaeeac" Title="DictionaryBatchLocator(TConnection, TTransaction, TParameterTypes) Class" Url="html/6F866C5C.htm">
+      <HelpTOCNode Id="f7be2f58-f095-4919-9f4e-d709546bb1e9" Title="DictionaryBatchLocator(TConnection, TTransaction, TParameterTypes) Class" Url="html/6F866C5C.htm">
         <HelpTOCNode Title="DictionaryBatchLocator(TConnection, TTransaction, TParameterTypes) Constructor " Url="html/D484D8F6.htm" />
-        <HelpTOCNode Id="e9c7601d-4d42-4b13-8135-f07c3b7ae608" Title="DictionaryBatchLocator(TConnection, TTransaction, TParameterTypes) Properties" Url="html/2143052F.htm">
+        <HelpTOCNode Id="06d4a069-a82b-498c-8e00-12a960cb2527" Title="DictionaryBatchLocator(TConnection, TTransaction, TParameterTypes) Properties" Url="html/2143052F.htm">
           <HelpTOCNode Title="Callbacks Property " Url="html/7A56E420.htm" />
           <HelpTOCNode Title="Scripts Property " Url="html/8A4182FC.htm" />
           <HelpTOCNode Title="SupportsCallbacks Property " Url="html/9859CB5C.htm" />
           <HelpTOCNode Title="SupportsScripts Property " Url="html/3E7678A6.htm" />
           <HelpTOCNode Title="TransactionRequirements Property " Url="html/AC5FA10B.htm" />
         </HelpTOCNode>
-        <HelpTOCNode Id="ba5f079a-1e17-4ea6-8334-435eb6370206" Title="DictionaryBatchLocator(TConnection, TTransaction, TParameterTypes) Methods" Url="html/C1733F9D.htm">
+        <HelpTOCNode Id="9094bc0e-1786-41a3-b8ef-6b2046334377" Title="DictionaryBatchLocator(TConnection, TTransaction, TParameterTypes) Methods" Url="html/C1733F9D.htm">
           <HelpTOCNode Title="AddCode Method " Url="html/B5D0363E.htm" />
           <HelpTOCNode Title="AddScript Method " Url="html/F5CD6E41.htm" />
           <HelpTOCNode Title="AddScriptFromAssemblyResource Method " Url="html/B1B7CB53.htm" />
@@ -394,32 +394,32 @@
           <HelpTOCNode Title="GetNames Method " Url="html/CC1DE811.htm" />
         </HelpTOCNode>
       </HelpTOCNode>
-      <HelpTOCNode Id="ac941f79-80ee-48d6-9926-9ae2335d04db" Title="ICallbackBatch(TConnection, TTransaction, TParameterTypes) Interface" Url="html/EAB176ED.htm">
-        <HelpTOCNode Id="16f6697b-7826-4de4-af05-3e9c6f4b7d14" Title="ICallbackBatch(TConnection, TTransaction, TParameterTypes) Methods" Url="html/A28AD610.htm">
+      <HelpTOCNode Id="790097cd-bff6-4711-bdc7-2d743928839c" Title="ICallbackBatch(TConnection, TTransaction, TParameterTypes) Interface" Url="html/EAB176ED.htm">
+        <HelpTOCNode Id="26780108-8422-412e-9ad9-ddd47bf910c8" Title="ICallbackBatch(TConnection, TTransaction, TParameterTypes) Methods" Url="html/A28AD610.htm">
           <HelpTOCNode Title="Execute Method " Url="html/4EF3B841.htm" />
         </HelpTOCNode>
       </HelpTOCNode>
     </HelpTOCNode>
-    <HelpTOCNode Id="9e2514be-8291-4b57-9e8c-d16f1ad41180" Title="RI.DatabaseManager.Builder" Url="html/C1E4006F.htm">
-      <HelpTOCNode Id="39199201-9776-4868-830c-5506eb360405" Title="DbManagerBuilder Class" Url="html/59A7835C.htm">
-        <HelpTOCNode Id="e40feb0b-336d-412b-8943-a7cd1adce565" Title="DbManagerBuilder Constructor " Url="html/CAE578D4.htm">
+    <HelpTOCNode Id="6ff9c394-6211-4a16-86c8-6410dbbf7570" Title="RI.DatabaseManager.Builder" Url="html/C1E4006F.htm">
+      <HelpTOCNode Id="8c53e94c-ec6d-4143-84d2-f0d87f38ab5a" Title="DbManagerBuilder Class" Url="html/59A7835C.htm">
+        <HelpTOCNode Id="48e65109-85fb-4f54-b51f-612aa9b80cb3" Title="DbManagerBuilder Constructor " Url="html/CAE578D4.htm">
           <HelpTOCNode Title="DbManagerBuilder Constructor " Url="html/40B740D7.htm" />
           <HelpTOCNode Title="DbManagerBuilder Constructor (IDbManagerBuilder)" Url="html/DE00BC8E.htm" />
         </HelpTOCNode>
-        <HelpTOCNode Id="841d47b9-fab4-41ae-aac4-0b231e06760c" Title="DbManagerBuilder Properties" Url="html/3FEA401F.htm">
+        <HelpTOCNode Id="a1e28cd2-0c61-4cd9-86d5-91213a193b5d" Title="DbManagerBuilder Properties" Url="html/3FEA401F.htm">
           <HelpTOCNode Title="AlreadyBuilt Property " Url="html/7726060.htm" />
           <HelpTOCNode Title="Registrations Property " Url="html/B6ED77F4.htm" />
         </HelpTOCNode>
-        <HelpTOCNode Id="631e0eea-d25c-4a61-9891-6a33ec8fa21b" Title="DbManagerBuilder Methods" Url="html/3987B99E.htm">
+        <HelpTOCNode Id="3b0db0fd-2e52-47af-a4e9-dafd44dcbcad" Title="DbManagerBuilder Methods" Url="html/3987B99E.htm">
           <HelpTOCNode Title="Build Method " Url="html/76F89C9D.htm" />
         </HelpTOCNode>
       </HelpTOCNode>
-      <HelpTOCNode Id="2cd6cb10-4195-4640-82c9-947738dce085" Title="DbManagerBuilder.NullInstance(TConnection, TTransaction, TParameterTypes) Class" Url="html/6780DE40.htm">
-        <HelpTOCNode Id="7620bb88-7c6b-43e7-8fc1-410c65490d98" Title="NullInstance(TConnection, TTransaction, TParameterTypes) Properties" Url="html/5DFA5F24.htm">
+      <HelpTOCNode Id="420b7b61-7068-47d3-a94a-355733082b27" Title="DbManagerBuilder.NullInstance(TConnection, TTransaction, TParameterTypes) Class" Url="html/6780DE40.htm">
+        <HelpTOCNode Id="2d9c0374-edc8-4465-90c8-310a5143bef4" Title="NullInstance(TConnection, TTransaction, TParameterTypes) Properties" Url="html/5DFA5F24.htm">
           <HelpTOCNode Title="IDbBackupCreator.SupportsBackup Property " Url="html/3FCBA96D.htm" />
           <HelpTOCNode Title="IDbBackupCreator.SupportsRestore Property " Url="html/649764E1.htm" />
         </HelpTOCNode>
-        <HelpTOCNode Id="c0773f1d-4e63-4b11-b9f3-dfb69749fdc6" Title="NullInstance(TConnection, TTransaction, TParameterTypes) Methods" Url="html/C3CA207F.htm">
+        <HelpTOCNode Id="9cd5bd85-e983-457b-9ad5-f57c3978ff88" Title="NullInstance(TConnection, TTransaction, TParameterTypes) Methods" Url="html/C3CA207F.htm">
           <HelpTOCNode Title="IDbBackupCreator.Backup Method " Url="html/ED92F4C6.htm" />
           <HelpTOCNode Title="IDbBackupCreator(TConnection, TTransaction, TParameterTypes).Backup Method " Url="html/D28C7E18.htm" />
           <HelpTOCNode Title="IDbBackupCreator.Restore Method " Url="html/90261EC6.htm" />
@@ -437,29 +437,29 @@
           <HelpTOCNode Title="IDbVersionUpgrader(TConnection, TTransaction, TParameterTypes).Upgrade Method " Url="html/68AB0442.htm" />
         </HelpTOCNode>
       </HelpTOCNode>
-      <HelpTOCNode Id="8e8d0004-77d5-4a60-b250-a256b1fa72a1" Title="DbManagerBuilder(TConnection, TTransaction, TParameterTypes, TManager) Class" Url="html/9F998192.htm">
-        <HelpTOCNode Id="3ae3e039-bbcb-44fe-ae1d-2ef9b53842a0" Title="DbManagerBuilder(TConnection, TTransaction, TParameterTypes, TManager) Constructor " Url="html/96C17FCB.htm">
+      <HelpTOCNode Id="d0e23f59-d842-41f4-b0b4-fd89b6865dd2" Title="DbManagerBuilder(TConnection, TTransaction, TParameterTypes, TManager) Class" Url="html/9F998192.htm">
+        <HelpTOCNode Id="175dce93-c124-4d9a-a2b6-8b9f69e8a272" Title="DbManagerBuilder(TConnection, TTransaction, TParameterTypes, TManager) Constructor " Url="html/96C17FCB.htm">
           <HelpTOCNode Title="DbManagerBuilder(TConnection, TTransaction, TParameterTypes, TManager) Constructor " Url="html/81BBA620.htm" />
           <HelpTOCNode Title="DbManagerBuilder(TConnection, TTransaction, TParameterTypes, TManager) Constructor (IDbManagerBuilder)" Url="html/5F7B6200.htm" />
         </HelpTOCNode>
-        <HelpTOCNode Id="ef76eef8-78b7-4362-b58a-262201f842c0" Title="DbManagerBuilder(TConnection, TTransaction, TParameterTypes, TManager) Properties" Url="html/B9650687.htm">
+        <HelpTOCNode Id="066a0e41-2793-4f36-b007-d0fe8cb4ecf9" Title="DbManagerBuilder(TConnection, TTransaction, TParameterTypes, TManager) Properties" Url="html/B9650687.htm">
           <HelpTOCNode Title="AlreadyBuilt Property " Url="html/4237F4F1.htm" />
           <HelpTOCNode Title="Registrations Property " Url="html/CE547A9A.htm" />
         </HelpTOCNode>
-        <HelpTOCNode Id="1e4d6c53-5707-4aef-9a97-d6d36201cda4" Title="DbManagerBuilder(TConnection, TTransaction, TParameterTypes, TManager) Methods" Url="html/AE0AB40.htm">
+        <HelpTOCNode Id="cf11ebaa-eeb6-4af6-8d15-f4e5eccfc43c" Title="DbManagerBuilder(TConnection, TTransaction, TParameterTypes, TManager) Methods" Url="html/AE0AB40.htm">
           <HelpTOCNode Title="Build Method " Url="html/DF10B476.htm" />
         </HelpTOCNode>
       </HelpTOCNode>
-      <HelpTOCNode Id="1338b8d3-d0dc-4ec5-af86-f1b6ec961b84" Title="IDbManagerBuilder Interface" Url="html/7AF0551E.htm">
+      <HelpTOCNode Id="f0e40ccb-4147-4b2d-9de5-2b55dcd543ea" Title="IDbManagerBuilder Interface" Url="html/7AF0551E.htm">
         <HelpTOCNode Title="IDbManagerBuilder Properties" Url="html/7460DCEF.htm" />
         <HelpTOCNode Title="IDbManagerBuilder Methods" Url="html/798EE0AB.htm" />
       </HelpTOCNode>
-      <HelpTOCNode Id="913427da-f979-4dab-b339-41463800a871" Title="IDbManagerBuilder(TConnection, TTransaction, TParameterTypes, TManager) Interface" Url="html/E713D2A.htm">
+      <HelpTOCNode Id="bc6fb267-a31f-4677-86fe-ec6ddbc7cc41" Title="IDbManagerBuilder(TConnection, TTransaction, TParameterTypes, TManager) Interface" Url="html/E713D2A.htm">
         <HelpTOCNode Title="IDbManagerBuilder(TConnection, TTransaction, TParameterTypes, TManager) Properties" Url="html/C4B98F05.htm" />
         <HelpTOCNode Title="IDbManagerBuilder(TConnection, TTransaction, TParameterTypes, TManager) Methods" Url="html/AADB307D.htm" />
       </HelpTOCNode>
-      <HelpTOCNode Id="49d73553-7777-4887-9da4-f49f01dc88f0" Title="IDbManagerBuilderExtensions Class" Url="html/71E5A0F2.htm">
-        <HelpTOCNode Id="8b38695a-caed-4c78-9fc1-cd14cc7b2ca1" Title="IDbManagerBuilderExtensions Methods" Url="html/C4435B2A.htm">
+      <HelpTOCNode Id="3721ebea-7eba-425c-bf92-402d5753b649" Title="IDbManagerBuilderExtensions Class" Url="html/71E5A0F2.htm">
+        <HelpTOCNode Id="fde48346-37ea-45a6-8726-565c0a6ab49f" Title="IDbManagerBuilderExtensions Methods" Url="html/C4435B2A.htm">
           <HelpTOCNode Title="BuildDbManager(TBuilder, TConnection, TTransaction, TParameterTypes, TManager) Method " Url="html/429C73FF.htm" />
           <HelpTOCNode Title="UseAssemblyCallbackBatches(TBuilder, TConnection, TTransaction, TParameterTypes, TManager) Method " Url="html/AF7CAB79.htm" />
           <HelpTOCNode Title="UseAssemblyScriptBatches(TBuilder, TConnection, TTransaction, TParameterTypes, TManager) Method " Url="html/ABDD6211.htm" />
@@ -467,27 +467,27 @@
           <HelpTOCNode Title="UseBatchLocator(TBuilder, TConnection, TTransaction, TParameterTypes, TManager) Method " Url="html/1E88F7A7.htm" />
         </HelpTOCNode>
       </HelpTOCNode>
-      <HelpTOCNode Id="554cf872-4e40-46da-9e9d-9a92847d55b0" Title="ServiceCollectionDbManagerBuilderExtensions Class" Url="html/BA5F4596.htm">
-        <HelpTOCNode Id="81e6ed8a-c067-49cc-a836-26c5700f2968" Title="ServiceCollectionDbManagerBuilderExtensions Methods" Url="html/A06F0DB3.htm">
+      <HelpTOCNode Id="d6ded27d-dcc9-4d4e-bb50-eaf0ef662727" Title="ServiceCollectionDbManagerBuilderExtensions Class" Url="html/BA5F4596.htm">
+        <HelpTOCNode Id="c619f3eb-1cdc-40c4-a332-94fc9792c827" Title="ServiceCollectionDbManagerBuilderExtensions Methods" Url="html/A06F0DB3.htm">
           <HelpTOCNode Title="AddDbManager Method " Url="html/2E809800.htm" />
         </HelpTOCNode>
       </HelpTOCNode>
-      <HelpTOCNode Id="8c97a8fc-5c4d-4f53-b8c1-5f94cc4db8b0" Title="SQLiteDbManagerBuilderExtensions Class" Url="html/1B4A5D77.htm">
-        <HelpTOCNode Id="12de8763-f00b-438e-bcad-c1da5c48fc1e" Title="SQLiteDbManagerBuilderExtensions Methods" Url="html/F308756D.htm">
-          <HelpTOCNode Id="9942b23e-891e-494b-964f-9bbe99aa56e3" Title="UseSqlServer Method " Url="html/597DB0F2.htm">
-            <HelpTOCNode Title="UseSqlServer Method (IDbManagerBuilder, SQLiteDbManagerOptions)" Url="html/61806E6F.htm" />
-            <HelpTOCNode Title="UseSqlServer Method (IDbManagerBuilder, Action(SQLiteDbManagerOptions))" Url="html/6BAD0E3.htm" />
-            <HelpTOCNode Title="UseSqlServer Method (IDbManagerBuilder, SQLiteConnectionStringBuilder)" Url="html/921FD0E3.htm" />
-            <HelpTOCNode Title="UseSqlServer Method (IDbManagerBuilder, String)" Url="html/1D84D0E3.htm" />
+      <HelpTOCNode Id="d82395a7-2a4e-450e-aea4-f00147f552e9" Title="SQLiteDbManagerBuilderExtensions Class" Url="html/1B4A5D77.htm">
+        <HelpTOCNode Id="243427fc-af00-47ba-bd8b-446ef1d8221a" Title="SQLiteDbManagerBuilderExtensions Methods" Url="html/F308756D.htm">
+          <HelpTOCNode Id="2f32342b-80f6-4dbd-ae6d-f5728e11410c" Title="UseSQLite Method " Url="html/7AA22B6B.htm">
+            <HelpTOCNode Title="UseSQLite Method (IDbManagerBuilder, SQLiteDbManagerOptions)" Url="html/23B052DD.htm" />
+            <HelpTOCNode Title="UseSQLite Method (IDbManagerBuilder, Action(SQLiteDbManagerOptions))" Url="html/D15290C0.htm" />
+            <HelpTOCNode Title="UseSQLite Method (IDbManagerBuilder, SQLiteConnectionStringBuilder)" Url="html/D15290BD.htm" />
+            <HelpTOCNode Title="UseSQLite Method (IDbManagerBuilder, String)" Url="html/D15290BE.htm" />
           </HelpTOCNode>
         </HelpTOCNode>
       </HelpTOCNode>
-      <HelpTOCNode Id="2d828fca-fefc-4389-b026-6704dad32dca" Title="SQLiteDbManagerOptions Class" Url="html/97604D4.htm">
-        <HelpTOCNode Id="f33b2b87-943f-4c3f-922c-277218da6c1d" Title="SQLiteDbManagerOptions Constructor " Url="html/173AC4BE.htm">
+      <HelpTOCNode Id="8ce9adc2-4b55-4210-b00f-b2da6b11220d" Title="SQLiteDbManagerOptions Class" Url="html/97604D4.htm">
+        <HelpTOCNode Id="2e99a1df-dada-4b1d-92ea-03343a1bfa15" Title="SQLiteDbManagerOptions Constructor " Url="html/173AC4BE.htm">
           <HelpTOCNode Title="SQLiteDbManagerOptions Constructor " Url="html/2F553D6B.htm" />
           <HelpTOCNode Title="SQLiteDbManagerOptions Constructor (String)" Url="html/A6CEC528.htm" />
         </HelpTOCNode>
-        <HelpTOCNode Id="d442c4dd-7b37-4312-a563-77d0b022544a" Title="SQLiteDbManagerOptions Properties" Url="html/EEE4CF6.htm">
+        <HelpTOCNode Id="5c7ea765-3bbd-4e7e-b47c-2aa808b57389" Title="SQLiteDbManagerOptions Properties" Url="html/EEE4CF6.htm">
           <HelpTOCNode Title="BackupPostprocessingBatch Property " Url="html/5E1B6D45.htm" />
           <HelpTOCNode Title="BackupPostprocessingBatchName Property " Url="html/B14BFFDD.htm" />
           <HelpTOCNode Title="BackupPreprocessingBatch Property " Url="html/CF912DC6.htm" />
@@ -506,7 +506,7 @@
           <HelpTOCNode Title="DefaultVersionDetectionValueColumn Property " Url="html/CEE9D24E.htm" />
           <HelpTOCNode Title="VersionUpgradeNameFormat Property " Url="html/1350DB3F.htm" />
         </HelpTOCNode>
-        <HelpTOCNode Id="c0e44724-def4-49a1-bc6f-8c29b20ca099" Title="SQLiteDbManagerOptions Methods" Url="html/B90F8C9C.htm">
+        <HelpTOCNode Id="26784d81-ffd6-49d4-a925-a8aec0d6bafc" Title="SQLiteDbManagerOptions Methods" Url="html/B90F8C9C.htm">
           <HelpTOCNode Title="ICloneable.Clone Method " Url="html/7700E7EB.htm" />
           <HelpTOCNode Title="Clone Method " Url="html/484176B.htm" />
           <HelpTOCNode Title="GetConnectionString Method " Url="html/B299769E.htm" />
@@ -514,9 +514,9 @@
           <HelpTOCNode Title="GetDefaultVersionDetectionScript Method " Url="html/9CFEB56B.htm" />
         </HelpTOCNode>
       </HelpTOCNode>
-      <HelpTOCNode Id="3c701482-4ca4-4c6a-b114-3d0536c3cd20" Title="SqlServerDbManagerBuilderExtensions Class" Url="html/E22C3BEA.htm">
-        <HelpTOCNode Id="53383b7e-6b34-4015-96b6-9189f0649ff5" Title="SqlServerDbManagerBuilderExtensions Methods" Url="html/947A9FA3.htm">
-          <HelpTOCNode Id="ca97b4ca-8f23-4fce-97f8-d92e84959d9c" Title="UseSqlServer Method " Url="html/C9E98DBF.htm">
+      <HelpTOCNode Id="c7f3c37e-e06d-47bb-aab0-426e72a8380d" Title="SqlServerDbManagerBuilderExtensions Class" Url="html/E22C3BEA.htm">
+        <HelpTOCNode Id="56266cf4-198f-44e5-9e20-3502e01a92c5" Title="SqlServerDbManagerBuilderExtensions Methods" Url="html/947A9FA3.htm">
+          <HelpTOCNode Id="7be77983-be45-453e-a2f6-091b27fe7584" Title="UseSqlServer Method " Url="html/C9E98DBF.htm">
             <HelpTOCNode Title="UseSqlServer Method (IDbManagerBuilder, SqlConnectionStringBuilder)" Url="html/8603108F.htm" />
             <HelpTOCNode Title="UseSqlServer Method (IDbManagerBuilder, SqlServerDbManagerOptions)" Url="html/9E2B93E9.htm" />
             <HelpTOCNode Title="UseSqlServer Method (IDbManagerBuilder, Action(SqlServerDbManagerOptions))" Url="html/FB841F4E.htm" />
@@ -524,12 +524,12 @@
           </HelpTOCNode>
         </HelpTOCNode>
       </HelpTOCNode>
-      <HelpTOCNode Id="52cfe52d-23e9-4af3-b931-f0f3e43348d6" Title="SqlServerDbManagerOptions Class" Url="html/DA226621.htm">
-        <HelpTOCNode Id="013a459e-7a6d-4d64-83e7-ebc83afccdbd" Title="SqlServerDbManagerOptions Constructor " Url="html/D9BF19BD.htm">
+      <HelpTOCNode Id="c879bb00-63ab-4c7e-aeed-e509982e8241" Title="SqlServerDbManagerOptions Class" Url="html/DA226621.htm">
+        <HelpTOCNode Id="4600de71-c252-43ac-8b98-4cc187166d6d" Title="SqlServerDbManagerOptions Constructor " Url="html/D9BF19BD.htm">
           <HelpTOCNode Title="SqlServerDbManagerOptions Constructor " Url="html/D00888E1.htm" />
           <HelpTOCNode Title="SqlServerDbManagerOptions Constructor (String)" Url="html/36FA4BE7.htm" />
         </HelpTOCNode>
-        <HelpTOCNode Id="cc9f27ef-c615-4fb0-a912-eb0b53a8c8ef" Title="SqlServerDbManagerOptions Properties" Url="html/2229ED7E.htm">
+        <HelpTOCNode Id="2958dcca-2594-4808-bbd6-baa3214734ac" Title="SqlServerDbManagerOptions Properties" Url="html/2229ED7E.htm">
           <HelpTOCNode Title="ConnectionString Property " Url="html/E056D087.htm" />
           <HelpTOCNode Title="CustomCleanupBatch Property " Url="html/7E5015A8.htm" />
           <HelpTOCNode Title="CustomCleanupBatchName Property " Url="html/476C98CD.htm" />
@@ -541,7 +541,7 @@
           <HelpTOCNode Title="DefaultVersionDetectionValueColumn Property " Url="html/32E141E5.htm" />
           <HelpTOCNode Title="VersionUpgradeNameFormat Property " Url="html/7EE77725.htm" />
         </HelpTOCNode>
-        <HelpTOCNode Id="6b88855c-9b47-49fa-90c3-7b1ca5aad36b" Title="SqlServerDbManagerOptions Methods" Url="html/6EA1442D.htm">
+        <HelpTOCNode Id="983a59d0-da60-4ab9-8d1c-a943f909c0f9" Title="SqlServerDbManagerOptions Methods" Url="html/6EA1442D.htm">
           <HelpTOCNode Title="ICloneable.Clone Method " Url="html/24E94048.htm" />
           <HelpTOCNode Title="Clone Method " Url="html/103F1443.htm" />
           <HelpTOCNode Title="GetConnectionString Method " Url="html/B8FBA93F.htm" />
@@ -550,65 +550,65 @@
         </HelpTOCNode>
       </HelpTOCNode>
     </HelpTOCNode>
-    <HelpTOCNode Id="63f773a5-0aa0-441a-bfee-e97cb3ae93fc" Title="RI.DatabaseManager.Builder.Options" Url="html/FBF6CA80.htm">
-      <HelpTOCNode Id="5ab2126d-ad89-4e20-957a-4eab998f2a64" Title="IDbManagerOptions Interface" Url="html/63310046.htm">
-        <HelpTOCNode Id="ef18cbc2-37ad-4e02-a449-004b926af916" Title="IDbManagerOptions Methods" Url="html/F290365A.htm">
+    <HelpTOCNode Id="b6118695-2dcc-4580-ad11-b3132c6e6849" Title="RI.DatabaseManager.Builder.Options" Url="html/FBF6CA80.htm">
+      <HelpTOCNode Id="e06af3bb-74b5-4e5c-9cea-ee808cd604f8" Title="IDbManagerOptions Interface" Url="html/63310046.htm">
+        <HelpTOCNode Id="ada337e5-7d6b-4865-b6e0-6dc446ba2258" Title="IDbManagerOptions Methods" Url="html/F290365A.htm">
           <HelpTOCNode Title="GetConnectionString Method " Url="html/A55B5A5D.htm" />
         </HelpTOCNode>
       </HelpTOCNode>
-      <HelpTOCNode Id="2327fd65-3435-4acc-9c3e-f4ffc2329585" Title="ISupportVersionUpgradeNameFormat Interface" Url="html/E81C1154.htm">
-        <HelpTOCNode Id="820d3d2b-bb5b-4839-991b-fc5c2968eafe" Title="ISupportVersionUpgradeNameFormat Properties" Url="html/DC18DF5E.htm">
+      <HelpTOCNode Id="e3ba6f49-64d6-4693-9257-3472eaa98da1" Title="ISupportVersionUpgradeNameFormat Interface" Url="html/E81C1154.htm">
+        <HelpTOCNode Id="33b401b3-14c8-4d1a-8ff6-741413e0d44c" Title="ISupportVersionUpgradeNameFormat Properties" Url="html/DC18DF5E.htm">
           <HelpTOCNode Title="VersionUpgradeNameFormat Property " Url="html/37E2352D.htm" />
         </HelpTOCNode>
         <HelpTOCNode Title="ISupportVersionUpgradeNameFormat Methods" Url="html/6E9D5DF0.htm" />
       </HelpTOCNode>
     </HelpTOCNode>
-    <HelpTOCNode Id="143b10c6-7847-45df-8598-5e89d80b381b" Title="RI.DatabaseManager.Cleanup" Url="html/D1E6438D.htm">
-      <HelpTOCNode Id="9d82646d-b591-4d8d-b30c-0d24f4d7892f" Title="DbCleanupProcessorBase(TConnection, TTransaction, TParameterTypes) Class" Url="html/5BC5AF10.htm">
+    <HelpTOCNode Id="8f009f1c-ac25-4598-a109-07947423cc15" Title="RI.DatabaseManager.Cleanup" Url="html/D1E6438D.htm">
+      <HelpTOCNode Id="3a706742-b5ae-40fd-ac43-c6daae2f2d49" Title="DbCleanupProcessorBase(TConnection, TTransaction, TParameterTypes) Class" Url="html/5BC5AF10.htm">
         <HelpTOCNode Title="DbCleanupProcessorBase(TConnection, TTransaction, TParameterTypes) Constructor " Url="html/A2DA5505.htm" />
-        <HelpTOCNode Id="b53bf9d5-2caf-4432-af51-7459c8a1c4bb" Title="DbCleanupProcessorBase(TConnection, TTransaction, TParameterTypes) Properties" Url="html/B36E38E1.htm">
+        <HelpTOCNode Id="f7cd0ee7-e4f8-49ba-8ec1-70ef93ea179c" Title="DbCleanupProcessorBase(TConnection, TTransaction, TParameterTypes) Properties" Url="html/B36E38E1.htm">
           <HelpTOCNode Title="Logger Property " Url="html/42F03F1F.htm" />
         </HelpTOCNode>
-        <HelpTOCNode Id="e23a8b10-c9b0-4251-b3a4-29b13cefde93" Title="DbCleanupProcessorBase(TConnection, TTransaction, TParameterTypes) Methods" Url="html/6860F33A.htm">
+        <HelpTOCNode Id="c4217af0-035a-4a91-9d68-ff15970590c9" Title="DbCleanupProcessorBase(TConnection, TTransaction, TParameterTypes) Methods" Url="html/6860F33A.htm">
           <HelpTOCNode Title="Cleanup Method " Url="html/D6D64C19.htm" />
           <HelpTOCNode Title="IDbCleanupProcessor.Cleanup Method " Url="html/46B97A5.htm" />
-          <HelpTOCNode Id="9c508dec-79b2-4336-b3e8-b89c9bc5cfff" Title="Log Method " Url="html/93404C9D.htm">
+          <HelpTOCNode Id="a7730110-d66f-42a8-a568-f43044b0738b" Title="Log Method " Url="html/93404C9D.htm">
             <HelpTOCNode Title="Log Method (LogLevel, String, Object[])" Url="html/AFA1BB60.htm" />
             <HelpTOCNode Title="Log Method (LogLevel, Exception, String, Object[])" Url="html/C033B6DF.htm" />
           </HelpTOCNode>
         </HelpTOCNode>
       </HelpTOCNode>
-      <HelpTOCNode Id="bb9ef219-dc84-467c-b96e-d3a6bf271aff" Title="IDbCleanupProcessor Interface" Url="html/114C33DF.htm">
-        <HelpTOCNode Id="d4859cef-fea1-41f7-9361-92b73de149db" Title="IDbCleanupProcessor Methods" Url="html/5E54F394.htm">
+      <HelpTOCNode Id="fd9dc259-3816-4d15-9faa-0508102a5120" Title="IDbCleanupProcessor Interface" Url="html/114C33DF.htm">
+        <HelpTOCNode Id="e57a3de1-4ecd-4add-9c0a-e3be07e73c93" Title="IDbCleanupProcessor Methods" Url="html/5E54F394.htm">
           <HelpTOCNode Title="Cleanup Method " Url="html/F3AD36E8.htm" />
         </HelpTOCNode>
       </HelpTOCNode>
-      <HelpTOCNode Id="203df48f-9013-462a-8224-ba79cd54563e" Title="IDbCleanupProcessor(TConnection, TTransaction, TParameterTypes) Interface" Url="html/41DDA38D.htm">
-        <HelpTOCNode Id="c28989cd-79f4-4ae3-8cb8-e6e72eb6dd79" Title="IDbCleanupProcessor(TConnection, TTransaction, TParameterTypes) Methods" Url="html/D887A1F6.htm">
-          <HelpTOCNode Id="ec773850-aa5a-4be4-a9fb-3d45f894a4e4" Title="Cleanup Method " Url="html/695A0AD.htm">
+      <HelpTOCNode Id="4cdb181b-a23f-4ee3-8337-44a81fd81543" Title="IDbCleanupProcessor(TConnection, TTransaction, TParameterTypes) Interface" Url="html/41DDA38D.htm">
+        <HelpTOCNode Id="15ae03ac-7701-4096-84ff-892983f7cc0f" Title="IDbCleanupProcessor(TConnection, TTransaction, TParameterTypes) Methods" Url="html/D887A1F6.htm">
+          <HelpTOCNode Id="1e627c8f-44fb-4f44-b188-3df49f9851d7" Title="Cleanup Method " Url="html/695A0AD.htm">
             <HelpTOCNode Title="Cleanup Method (IDbManager(TConnection, TTransaction, TParameterTypes))" Url="html/BC7C60CB.htm" />
           </HelpTOCNode>
         </HelpTOCNode>
       </HelpTOCNode>
-      <HelpTOCNode Id="034f17f8-060f-41a0-8928-b135cad86a8c" Title="SQLiteDbCleanupProcessor Class" Url="html/5794FBFF.htm">
+      <HelpTOCNode Id="b2619777-a4ff-46a9-a9f4-ad7161ead698" Title="SQLiteDbCleanupProcessor Class" Url="html/5794FBFF.htm">
         <HelpTOCNode Title="SQLiteDbCleanupProcessor Constructor " Url="html/C5C1AB63.htm" />
         <HelpTOCNode Title="SQLiteDbCleanupProcessor Properties" Url="html/974DE844.htm" />
-        <HelpTOCNode Id="f8368503-42e5-45cf-a9ba-379fd71516f2" Title="SQLiteDbCleanupProcessor Methods" Url="html/3B10832E.htm">
+        <HelpTOCNode Id="6ba6e797-6384-48ab-bfc5-50434b3fc826" Title="SQLiteDbCleanupProcessor Methods" Url="html/3B10832E.htm">
           <HelpTOCNode Title="Cleanup Method " Url="html/39B8036E.htm" />
         </HelpTOCNode>
       </HelpTOCNode>
-      <HelpTOCNode Id="11f0cd61-bc73-4e20-802d-8e8ad394d9a6" Title="SqlServerDbCleanupProcessor Class" Url="html/8A265C94.htm">
+      <HelpTOCNode Id="16be22a3-5aa8-4d7e-b13d-53c3c0d17bf0" Title="SqlServerDbCleanupProcessor Class" Url="html/8A265C94.htm">
         <HelpTOCNode Title="SqlServerDbCleanupProcessor Constructor " Url="html/612DA09A.htm" />
         <HelpTOCNode Title="SqlServerDbCleanupProcessor Properties" Url="html/3E61B98A.htm" />
-        <HelpTOCNode Id="3aed0c69-e00a-45bd-b248-91ca193c2b86" Title="SqlServerDbCleanupProcessor Methods" Url="html/3F0DA006.htm">
+        <HelpTOCNode Id="26971708-2950-44ff-9b29-998338a3f38d" Title="SqlServerDbCleanupProcessor Methods" Url="html/3F0DA006.htm">
           <HelpTOCNode Title="Cleanup Method " Url="html/1226BA7F.htm" />
         </HelpTOCNode>
       </HelpTOCNode>
     </HelpTOCNode>
-    <HelpTOCNode Id="8cae7a10-a39b-48e5-9d2d-55a8c0e44164" Title="RI.DatabaseManager.Manager" Url="html/F90A2290.htm">
-      <HelpTOCNode Id="2635094d-092b-43f4-b70d-2ea91b8d1a01" Title="DbManagerBase(TConnection, TTransaction, TParameterTypes, TParameters, TParameter) Class" Url="html/94005EF1.htm">
+    <HelpTOCNode Id="cdc71ed5-ca80-4ce8-b643-1bf96aa5466e" Title="RI.DatabaseManager.Manager" Url="html/F90A2290.htm">
+      <HelpTOCNode Id="1ff78614-8739-4621-95a1-c16bf059c8a7" Title="DbManagerBase(TConnection, TTransaction, TParameterTypes, TParameters, TParameter) Class" Url="html/94005EF1.htm">
         <HelpTOCNode Title="DbManagerBase(TConnection, TTransaction, TParameterTypes, TParameters, TParameter) Constructor " Url="html/6F9DF237.htm" />
-        <HelpTOCNode Id="c5b4f2b6-e1ba-4416-831b-22d3e7b3171f" Title="DbManagerBase(TConnection, TTransaction, TParameterTypes, TParameters, TParameter) Properties" Url="html/A59D254D.htm">
+        <HelpTOCNode Id="64e5c5e1-fce6-4329-ad63-4a98aea9d94c" Title="DbManagerBase(TConnection, TTransaction, TParameterTypes, TParameters, TParameter) Properties" Url="html/A59D254D.htm">
           <HelpTOCNode Title="InitialState Property " Url="html/C1A3E884.htm" />
           <HelpTOCNode Title="InitialVersion Property " Url="html/698D3966.htm" />
           <HelpTOCNode Title="Logger Property " Url="html/3E04C66A.htm" />
@@ -627,7 +627,7 @@
           <HelpTOCNode Title="SupportsUpgradeImpl Property " Url="html/E0974465.htm" />
           <HelpTOCNode Title="Version Property " Url="html/ED28FD87.htm" />
         </HelpTOCNode>
-        <HelpTOCNode Id="1cdf5aa6-8115-413e-8879-c9caffed90f7" Title="DbManagerBase(TConnection, TTransaction, TParameterTypes, TParameters, TParameter) Methods" Url="html/4780CD5C.htm">
+        <HelpTOCNode Id="62816570-3aef-48ce-943b-0af0a6675cce" Title="DbManagerBase(TConnection, TTransaction, TParameterTypes, TParameters, TParameter) Methods" Url="html/4780CD5C.htm">
           <HelpTOCNode Title="IDisposable.Dispose Method " Url="html/EE2164FA.htm" />
           <HelpTOCNode Title="Backup Method " Url="html/7E892558.htm" />
           <HelpTOCNode Title="BackupImpl Method " Url="html/17C4324E.htm" />
@@ -660,7 +660,7 @@
           <HelpTOCNode Title="IDbManager.GetBatch Method " Url="html/162F408A.htm" />
           <HelpTOCNode Title="Initialize Method " Url="html/9A346197.htm" />
           <HelpTOCNode Title="InitializeImpl Method " Url="html/87AA1D9D.htm" />
-          <HelpTOCNode Id="55f6a260-3325-48ea-9b84-fa671af7a7c5" Title="Log Method " Url="html/88602DE6.htm">
+          <HelpTOCNode Id="8e4c635b-0270-40f3-bb96-b2d74f9e170d" Title="Log Method " Url="html/88602DE6.htm">
             <HelpTOCNode Title="Log Method (LogLevel, String, Object[])" Url="html/730C694B.htm" />
             <HelpTOCNode Title="Log Method (LogLevel, Exception, String, Object[])" Url="html/F491E5A6.htm" />
           </HelpTOCNode>
@@ -678,8 +678,8 @@
         </HelpTOCNode>
       </HelpTOCNode>
       <HelpTOCNode Title="DbState Enumeration" Url="html/204B2759.htm" />
-      <HelpTOCNode Id="a4e315b1-1861-4e0d-bc55-34ee0613bcf8" Title="IDbManager Interface" Url="html/677BD929.htm">
-        <HelpTOCNode Id="14963676-eb62-4bdf-a5d7-950a25581fe7" Title="IDbManager Properties" Url="html/F32C3238.htm">
+      <HelpTOCNode Id="6c623e24-ccd0-4bb0-a6f7-2e80b069f175" Title="IDbManager Interface" Url="html/677BD929.htm">
+        <HelpTOCNode Id="639a2216-43d2-40bd-81bd-f86b0fc46306" Title="IDbManager Properties" Url="html/F32C3238.htm">
           <HelpTOCNode Title="InitialState Property " Url="html/DC7F063D.htm" />
           <HelpTOCNode Title="InitialVersion Property " Url="html/9FB75B96.htm" />
           <HelpTOCNode Title="MaxVersion Property " Url="html/F1B8FF1F.htm" />
@@ -692,7 +692,7 @@
           <HelpTOCNode Title="SupportsUpgrade Property " Url="html/F3330AD6.htm" />
           <HelpTOCNode Title="Version Property " Url="html/F85DC03C.htm" />
         </HelpTOCNode>
-        <HelpTOCNode Id="73cdd1aa-18bc-4760-ae8c-92f32bb490fc" Title="IDbManager Methods" Url="html/B7BFF8C2.htm">
+        <HelpTOCNode Id="4261ace9-6372-4e44-bdf1-18f7ee8da4b0" Title="IDbManager Methods" Url="html/B7BFF8C2.htm">
           <HelpTOCNode Title="Backup Method " Url="html/B1F17CF6.htm" />
           <HelpTOCNode Title="Cleanup Method " Url="html/8279257A.htm" />
           <HelpTOCNode Title="Close Method " Url="html/8140A9AF.htm" />
@@ -707,38 +707,38 @@
           <HelpTOCNode Title="Upgrade Method " Url="html/1AE3DDFE.htm" />
         </HelpTOCNode>
       </HelpTOCNode>
-      <HelpTOCNode Id="184a5cd5-00dd-4e23-a583-7573a8f8ff92" Title="IDbManager(TConnection, TTransaction, TParameterTypes) Interface" Url="html/14387676.htm">
+      <HelpTOCNode Id="da4e9ca3-a38c-4396-ab11-c13eeb44e0a7" Title="IDbManager(TConnection, TTransaction, TParameterTypes) Interface" Url="html/14387676.htm">
         <HelpTOCNode Title="IDbManager(TConnection, TTransaction, TParameterTypes) Properties" Url="html/FF6A8E46.htm" />
-        <HelpTOCNode Id="3dd74383-ce64-416b-abc8-06c32b1645f2" Title="IDbManager(TConnection, TTransaction, TParameterTypes) Methods" Url="html/EAEC8466.htm">
+        <HelpTOCNode Id="3cd2c4b3-ef77-4552-9700-61f038621fa0" Title="IDbManager(TConnection, TTransaction, TParameterTypes) Methods" Url="html/EAEC8466.htm">
           <HelpTOCNode Title="CreateBatch Method " Url="html/881C89D1.htm" />
           <HelpTOCNode Title="CreateConnection Method " Url="html/38468425.htm" />
           <HelpTOCNode Title="CreateTransaction Method " Url="html/97EE7E94.htm" />
-          <HelpTOCNode Id="4f40f53b-34c8-4370-a89d-2862df8d57c0" Title="ExecuteBatch Method " Url="html/B9D885BE.htm">
+          <HelpTOCNode Id="e5db88bc-a656-4abf-a1d4-4206b768f2c2" Title="ExecuteBatch Method " Url="html/B9D885BE.htm">
             <HelpTOCNode Title="ExecuteBatch Method (IDbBatch(TConnection, TTransaction, TParameterTypes), Boolean, Boolean)" Url="html/F243A36B.htm" />
           </HelpTOCNode>
           <HelpTOCNode Title="GetBatch Method " Url="html/E113B6DC.htm" />
         </HelpTOCNode>
       </HelpTOCNode>
-      <HelpTOCNode Id="f5ec2aa4-633f-46a4-814f-3abc16287187" Title="IDbManagerExtensions Class" Url="html/1E29F963.htm">
-        <HelpTOCNode Id="5541dc30-c09d-4379-819b-a87b2058e770" Title="IDbManagerExtensions Methods" Url="html/4FBDF86C.htm">
+      <HelpTOCNode Id="7bdbbf9a-a769-47a9-a901-f8aaf4b26009" Title="IDbManagerExtensions Class" Url="html/1E29F963.htm">
+        <HelpTOCNode Id="31213aa0-5d6a-4359-8b6a-0fed933fccdc" Title="IDbManagerExtensions Methods" Url="html/4FBDF86C.htm">
           <HelpTOCNode Title="CanUpgrade Method " Url="html/876A6DF5.htm" />
-          <HelpTOCNode Id="9ffaaf5c-f62f-4161-b9e6-1004a6e26db7" Title="CreateConnection Method " Url="html/FEAA6E62.htm">
+          <HelpTOCNode Id="9b09450e-f534-485b-98ef-f2e42cdf6892" Title="CreateConnection Method " Url="html/FEAA6E62.htm">
             <HelpTOCNode Title="CreateConnection Method (IDbManager)" Url="html/C97DD07D.htm" />
             <HelpTOCNode Title="CreateConnection(TConnection, TTransaction, TParameterTypes) Method (IDbManager(TConnection, TTransaction, TParameterTypes))" Url="html/A7A860B9.htm" />
           </HelpTOCNode>
-          <HelpTOCNode Id="4e799953-7f24-4425-897a-a7da47989e67" Title="CreateTransaction Method " Url="html/CE725371.htm">
+          <HelpTOCNode Id="0fc5a9f9-3fec-4ff2-9416-7ce24556e37e" Title="CreateTransaction Method " Url="html/CE725371.htm">
             <HelpTOCNode Title="CreateTransaction Method (IDbManager)" Url="html/F1BBFED1.htm" />
             <HelpTOCNode Title="CreateTransaction(TConnection, TTransaction, TParameterTypes) Method (IDbManager(TConnection, TTransaction, TParameterTypes))" Url="html/BDB44FEA.htm" />
           </HelpTOCNode>
-          <HelpTOCNode Id="9ec26d38-d3f5-44ac-a424-9e7338d110d4" Title="ExecuteBatch Method " Url="html/18D0E0CB.htm">
+          <HelpTOCNode Id="b1feae89-a614-4209-9755-e4b3dd72fb96" Title="ExecuteBatch Method " Url="html/18D0E0CB.htm">
             <HelpTOCNode Title="ExecuteBatch Method (IDbManager, IDbBatch)" Url="html/761873A5.htm" />
             <HelpTOCNode Title="ExecuteBatch(TConnection, TTransaction, TParameterTypes) Method (IDbManager(TConnection, TTransaction, TParameterTypes), IDbBatch(TConnection, TTransaction, TParameterTypes))" Url="html/BFB53B9C.htm" />
           </HelpTOCNode>
-          <HelpTOCNode Id="37ed1340-998f-4258-9466-b5cff7391961" Title="GetBatch Method " Url="html/B4B67C3C.htm">
+          <HelpTOCNode Id="be6f7379-d35b-4080-a9ea-283dfeb12629" Title="GetBatch Method " Url="html/B4B67C3C.htm">
             <HelpTOCNode Title="GetBatch Method (IDbManager, String)" Url="html/AB0E94E0.htm" />
             <HelpTOCNode Title="GetBatch(TConnection, TTransaction, TParameterTypes) Method (IDbManager(TConnection, TTransaction, TParameterTypes), String)" Url="html/3BEBD4C1.htm" />
           </HelpTOCNode>
-          <HelpTOCNode Id="a644c0eb-103a-46fb-bce1-b1e4938c5070" Title="GetBatches Method " Url="html/7E2337CA.htm">
+          <HelpTOCNode Id="70cdda1b-4837-407c-b82b-5117d0668a10" Title="GetBatches Method " Url="html/7E2337CA.htm">
             <HelpTOCNode Title="GetBatches Method (IDbManager, String)" Url="html/DB68BD40.htm" />
             <HelpTOCNode Title="GetBatches(TConnection, TTransaction, TParameterTypes) Method (IDbManager(TConnection, TTransaction, TParameterTypes), String)" Url="html/C37E96.htm" />
           </HelpTOCNode>
@@ -746,45 +746,45 @@
           <HelpTOCNode Title="Upgrade Method " Url="html/1CDCAEE1.htm" />
         </HelpTOCNode>
       </HelpTOCNode>
-      <HelpTOCNode Id="0285cd08-6b5a-4451-b371-6ec61a3f5ba8" Title="SQLiteDbManager Class" Url="html/E3BEB43F.htm">
+      <HelpTOCNode Id="124813c5-737d-4f96-aa7e-83c2337a5e21" Title="SQLiteDbManager Class" Url="html/E3BEB43F.htm">
         <HelpTOCNode Title="SQLiteDbManager Constructor " Url="html/F798F5C8.htm" />
-        <HelpTOCNode Id="db6026c3-8471-4da3-90ca-f6344c01c97a" Title="SQLiteDbManager Properties" Url="html/9C28FA1B.htm">
+        <HelpTOCNode Id="1f942ea4-a0cb-4bfe-a9d9-18e6d2395694" Title="SQLiteDbManager Properties" Url="html/9C28FA1B.htm">
           <HelpTOCNode Title="SupportsBackupImpl Property " Url="html/C986AA7D.htm" />
           <HelpTOCNode Title="SupportsCleanupImpl Property " Url="html/B21A84C9.htm" />
           <HelpTOCNode Title="SupportsReadOnlyImpl Property " Url="html/B42000D0.htm" />
           <HelpTOCNode Title="SupportsRestoreImpl Property " Url="html/84DC21E7.htm" />
           <HelpTOCNode Title="SupportsUpgradeImpl Property " Url="html/93B1AAC9.htm" />
         </HelpTOCNode>
-        <HelpTOCNode Id="9e4b8fb3-be4f-4d72-b14b-c4b597654541" Title="SQLiteDbManager Methods" Url="html/1D04B4A0.htm">
+        <HelpTOCNode Id="94118390-a678-4ec4-88c5-26deaef649cf" Title="SQLiteDbManager Methods" Url="html/1D04B4A0.htm">
           <HelpTOCNode Title="CreateConnectionImpl Method " Url="html/6B7D605.htm" />
           <HelpTOCNode Title="CreateTransactionImpl Method " Url="html/D14BD7B2.htm" />
           <HelpTOCNode Title="DetectStateAndVersionImpl Method " Url="html/CC136581.htm" />
           <HelpTOCNode Title="ExecuteCommandScriptImpl Method " Url="html/E1096D42.htm" />
         </HelpTOCNode>
       </HelpTOCNode>
-      <HelpTOCNode Id="7d08af61-ba80-40cd-af96-92216f54f823" Title="SqlServerDbManager Class" Url="html/A526D50A.htm">
+      <HelpTOCNode Id="85fff3cd-a9e8-45ea-88b0-536dd1fd3d32" Title="SqlServerDbManager Class" Url="html/A526D50A.htm">
         <HelpTOCNode Title="SqlServerDbManager Constructor " Url="html/37B1A1C1.htm" />
-        <HelpTOCNode Id="875fa8e7-8b38-4389-aab0-52505ef5f7cd" Title="SqlServerDbManager Properties" Url="html/2F7FF43A.htm">
+        <HelpTOCNode Id="f4420066-f335-477e-97ec-e30a690a2fbe" Title="SqlServerDbManager Properties" Url="html/2F7FF43A.htm">
           <HelpTOCNode Title="SupportsBackupImpl Property " Url="html/B81E6C1D.htm" />
           <HelpTOCNode Title="SupportsCleanupImpl Property " Url="html/109FA8FC.htm" />
           <HelpTOCNode Title="SupportsReadOnlyImpl Property " Url="html/7FE3948C.htm" />
           <HelpTOCNode Title="SupportsRestoreImpl Property " Url="html/20C4A413.htm" />
           <HelpTOCNode Title="SupportsUpgradeImpl Property " Url="html/1AFC230F.htm" />
         </HelpTOCNode>
-        <HelpTOCNode Id="772b09b6-ea16-4344-b9b5-ef277ec5dcc0" Title="SqlServerDbManager Methods" Url="html/2DE49B4B.htm">
+        <HelpTOCNode Id="013331f4-e158-43b3-aa00-3d9fa7955254" Title="SqlServerDbManager Methods" Url="html/2DE49B4B.htm">
           <HelpTOCNode Title="CreateConnectionImpl Method " Url="html/4222B3DE.htm" />
           <HelpTOCNode Title="CreateTransactionImpl Method " Url="html/76FB6222.htm" />
           <HelpTOCNode Title="ExecuteCommandScriptImpl Method " Url="html/E1C426E6.htm" />
         </HelpTOCNode>
       </HelpTOCNode>
     </HelpTOCNode>
-    <HelpTOCNode Id="e0aa7365-cfaa-467a-a81d-dd3da9a9ae27" Title="RI.DatabaseManager.Upgrading" Url="html/FF94F270.htm">
-      <HelpTOCNode Id="558b01db-7682-4407-bebd-1889ada70c60" Title="BatchNameBasedDbVersionUpgrader(TConnection, TTransaction, TParameterTypes) Class" Url="html/B2074F16.htm">
+    <HelpTOCNode Id="1c2e3cc2-eef9-41de-841f-39c54657fcd9" Title="RI.DatabaseManager.Upgrading" Url="html/FF94F270.htm">
+      <HelpTOCNode Id="68723378-2268-40fe-9c4a-22b0dd0514ea" Title="BatchNameBasedDbVersionUpgrader(TConnection, TTransaction, TParameterTypes) Class" Url="html/B2074F16.htm">
         <HelpTOCNode Title="BatchNameBasedDbVersionUpgrader(TConnection, TTransaction, TParameterTypes) Constructor " Url="html/6C3B1D9B.htm" />
-        <HelpTOCNode Id="cf47be2c-87ba-4397-aad2-3668a5ec17f4" Title="BatchNameBasedDbVersionUpgrader(TConnection, TTransaction, TParameterTypes) Properties" Url="html/944A8577.htm">
+        <HelpTOCNode Id="17343639-4ecf-4a92-90c0-b6ac2303100e" Title="BatchNameBasedDbVersionUpgrader(TConnection, TTransaction, TParameterTypes) Properties" Url="html/944A8577.htm">
           <HelpTOCNode Title="Options Property " Url="html/BB4717E8.htm" />
         </HelpTOCNode>
-        <HelpTOCNode Id="434efaf7-5d76-40ee-9f7b-b1a045985a99" Title="BatchNameBasedDbVersionUpgrader(TConnection, TTransaction, TParameterTypes) Methods" Url="html/41255554.htm">
+        <HelpTOCNode Id="42d63e0c-0d15-4704-970f-4dd420802ea8" Title="BatchNameBasedDbVersionUpgrader(TConnection, TTransaction, TParameterTypes) Methods" Url="html/41255554.htm">
           <HelpTOCNode Title="GetBatchNamePattern Method " Url="html/81B9B1BB.htm" />
           <HelpTOCNode Title="GetMaxVersion Method " Url="html/A5316637.htm" />
           <HelpTOCNode Title="GetMinVersion Method " Url="html/DA4722A5.htm" />
@@ -792,93 +792,93 @@
           <HelpTOCNode Title="Upgrade Method " Url="html/92E9F49D.htm" />
         </HelpTOCNode>
       </HelpTOCNode>
-      <HelpTOCNode Id="c2f16159-85b9-46f6-b858-62403a1273b7" Title="DbVersionUpgraderBase(TConnection, TTransaction, TParameterTypes) Class" Url="html/3D55AF29.htm">
+      <HelpTOCNode Id="b8c4a0ec-4878-4023-8e83-2f5e087381f3" Title="DbVersionUpgraderBase(TConnection, TTransaction, TParameterTypes) Class" Url="html/3D55AF29.htm">
         <HelpTOCNode Title="DbVersionUpgraderBase(TConnection, TTransaction, TParameterTypes) Constructor " Url="html/7ABC6B14.htm" />
-        <HelpTOCNode Id="a4df8865-6a22-44d0-b031-75905db02074" Title="DbVersionUpgraderBase(TConnection, TTransaction, TParameterTypes) Properties" Url="html/7FC04F14.htm">
+        <HelpTOCNode Id="a346f479-351b-43f4-8db7-b8810bc6d1d6" Title="DbVersionUpgraderBase(TConnection, TTransaction, TParameterTypes) Properties" Url="html/7FC04F14.htm">
           <HelpTOCNode Title="Logger Property " Url="html/5B12501F.htm" />
         </HelpTOCNode>
-        <HelpTOCNode Id="07de430e-eae3-4ade-afb5-0bb8fc77dd6e" Title="DbVersionUpgraderBase(TConnection, TTransaction, TParameterTypes) Methods" Url="html/270255DA.htm">
+        <HelpTOCNode Id="cb6061b6-e209-4b3a-817a-a5f73d772f04" Title="DbVersionUpgraderBase(TConnection, TTransaction, TParameterTypes) Methods" Url="html/270255DA.htm">
           <HelpTOCNode Title="GetMaxVersion Method " Url="html/8343FECF.htm" />
           <HelpTOCNode Title="GetMinVersion Method " Url="html/746C0185.htm" />
           <HelpTOCNode Title="IDbVersionUpgrader.GetMaxVersion Method " Url="html/2F948C51.htm" />
           <HelpTOCNode Title="IDbVersionUpgrader.GetMinVersion Method " Url="html/170C8A1F.htm" />
           <HelpTOCNode Title="IDbVersionUpgrader.Upgrade Method " Url="html/C2511408.htm" />
-          <HelpTOCNode Id="5dc80766-c6b3-440a-b6d1-eb273f979453" Title="Log Method " Url="html/3080E88C.htm">
+          <HelpTOCNode Id="74e16e1f-fe1f-463c-918a-6bd788423cc9" Title="Log Method " Url="html/3080E88C.htm">
             <HelpTOCNode Title="Log Method (LogLevel, String, Object[])" Url="html/5E0CB4C8.htm" />
             <HelpTOCNode Title="Log Method (LogLevel, Exception, String, Object[])" Url="html/63C03A75.htm" />
           </HelpTOCNode>
           <HelpTOCNode Title="Upgrade Method " Url="html/FB5EFABD.htm" />
         </HelpTOCNode>
       </HelpTOCNode>
-      <HelpTOCNode Id="1c9e8bab-7f6b-4d38-8418-7bb33348b5f8" Title="IDbVersionUpgrader Interface" Url="html/E0F45290.htm">
-        <HelpTOCNode Id="7ecd8efc-ff30-4c6b-a558-48e794f6717b" Title="IDbVersionUpgrader Methods" Url="html/4CBB539D.htm">
+      <HelpTOCNode Id="63ff74c1-9ffd-4a38-b719-7a8acb63b94d" Title="IDbVersionUpgrader Interface" Url="html/E0F45290.htm">
+        <HelpTOCNode Id="adfd4f15-d3e9-45a0-a2c6-a6008274450a" Title="IDbVersionUpgrader Methods" Url="html/4CBB539D.htm">
           <HelpTOCNode Title="GetMaxVersion Method " Url="html/FC726A9D.htm" />
           <HelpTOCNode Title="GetMinVersion Method " Url="html/EE7AEFC5.htm" />
           <HelpTOCNode Title="Upgrade Method " Url="html/BB181BF9.htm" />
         </HelpTOCNode>
       </HelpTOCNode>
-      <HelpTOCNode Id="6d2f364a-bb09-4739-b71a-cf1f6ff8b28d" Title="IDbVersionUpgrader(TConnection, TTransaction, TParameterTypes) Interface" Url="html/C0AB59F6.htm">
-        <HelpTOCNode Id="fd669fbb-94c1-4e52-823b-913e329d580e" Title="IDbVersionUpgrader(TConnection, TTransaction, TParameterTypes) Methods" Url="html/6A3B33F4.htm">
-          <HelpTOCNode Id="8d276866-68fd-453d-a8ee-8dac88c92fa6" Title="GetMaxVersion Method " Url="html/E68DF710.htm">
+      <HelpTOCNode Id="b6b0308c-1d58-492e-8158-20d4363e22a1" Title="IDbVersionUpgrader(TConnection, TTransaction, TParameterTypes) Interface" Url="html/C0AB59F6.htm">
+        <HelpTOCNode Id="4a2cbd42-c6d6-4336-b220-99aa79c595c2" Title="IDbVersionUpgrader(TConnection, TTransaction, TParameterTypes) Methods" Url="html/6A3B33F4.htm">
+          <HelpTOCNode Id="143ed3e0-05c5-4e1d-b01b-e1adb7a4f27b" Title="GetMaxVersion Method " Url="html/E68DF710.htm">
             <HelpTOCNode Title="GetMaxVersion Method (IDbManager(TConnection, TTransaction, TParameterTypes))" Url="html/FDD45D3C.htm" />
           </HelpTOCNode>
-          <HelpTOCNode Id="fe799d06-8b4d-4938-9965-ce733b975786" Title="GetMinVersion Method " Url="html/6415F842.htm">
+          <HelpTOCNode Id="128ab649-5a09-4d71-ab23-d132b4cabd22" Title="GetMinVersion Method " Url="html/6415F842.htm">
             <HelpTOCNode Title="GetMinVersion Method (IDbManager(TConnection, TTransaction, TParameterTypes))" Url="html/B45A3A64.htm" />
           </HelpTOCNode>
-          <HelpTOCNode Id="c8a55831-c63b-4cc8-ac5e-fa2b716e4570" Title="Upgrade Method " Url="html/38F59633.htm">
+          <HelpTOCNode Id="2f9c64ca-9e20-45b3-9ae5-7ebbc641f346" Title="Upgrade Method " Url="html/38F59633.htm">
             <HelpTOCNode Title="Upgrade Method (IDbManager(TConnection, TTransaction, TParameterTypes), Int32)" Url="html/CCD3F473.htm" />
           </HelpTOCNode>
         </HelpTOCNode>
       </HelpTOCNode>
-      <HelpTOCNode Id="b248d2c1-9ae3-4eb4-aa7e-c4fca8fa8ed7" Title="SQLiteDbVersionUpgrader Class" Url="html/73E78F21.htm">
+      <HelpTOCNode Id="ebde880b-89dc-4424-8d12-d6f21aac0316" Title="SQLiteDbVersionUpgrader Class" Url="html/73E78F21.htm">
         <HelpTOCNode Title="SQLiteDbVersionUpgrader Constructor " Url="html/A3FE25CB.htm" />
         <HelpTOCNode Title="SQLiteDbVersionUpgrader Properties" Url="html/A786481C.htm" />
         <HelpTOCNode Title="SQLiteDbVersionUpgrader Methods" Url="html/670B05BC.htm" />
       </HelpTOCNode>
-      <HelpTOCNode Id="68db618f-98bb-4ec9-b97d-d63df6cbee6f" Title="SqlServerDbVersionUpgrader Class" Url="html/292CCB19.htm">
+      <HelpTOCNode Id="2a9995ac-3cec-4326-a17e-503960672294" Title="SqlServerDbVersionUpgrader Class" Url="html/292CCB19.htm">
         <HelpTOCNode Title="SqlServerDbVersionUpgrader Constructor " Url="html/989B0901.htm" />
         <HelpTOCNode Title="SqlServerDbVersionUpgrader Properties" Url="html/4A8A2E2.htm" />
         <HelpTOCNode Title="SqlServerDbVersionUpgrader Methods" Url="html/77D529F1.htm" />
       </HelpTOCNode>
     </HelpTOCNode>
-    <HelpTOCNode Id="4e9c4bae-4345-4334-80dd-c9d65d3d348c" Title="RI.DatabaseManager.Versioning" Url="html/BBB9E570.htm">
-      <HelpTOCNode Id="bcb5caf1-6975-4f27-9472-7c6bb72aac63" Title="DbVersionDetectorBase(TConnection, TTransaction, TParameterTypes) Class" Url="html/B252AD9E.htm">
+    <HelpTOCNode Id="120a1fa6-63aa-4e5d-9435-2e9cacb6460f" Title="RI.DatabaseManager.Versioning" Url="html/BBB9E570.htm">
+      <HelpTOCNode Id="6cd20dab-3112-4113-8bc5-2c2fec368253" Title="DbVersionDetectorBase(TConnection, TTransaction, TParameterTypes) Class" Url="html/B252AD9E.htm">
         <HelpTOCNode Title="DbVersionDetectorBase(TConnection, TTransaction, TParameterTypes) Constructor " Url="html/DA732C31.htm" />
-        <HelpTOCNode Id="034bff08-885b-4787-b876-b782c2fdc606" Title="DbVersionDetectorBase(TConnection, TTransaction, TParameterTypes) Properties" Url="html/311B42DF.htm">
+        <HelpTOCNode Id="91deef4d-6014-4058-a96f-a07c4f15c9b1" Title="DbVersionDetectorBase(TConnection, TTransaction, TParameterTypes) Properties" Url="html/311B42DF.htm">
           <HelpTOCNode Title="Logger Property " Url="html/F0A77CD7.htm" />
         </HelpTOCNode>
-        <HelpTOCNode Id="3cb67885-3bbd-48f7-a607-7cca8c28f646" Title="DbVersionDetectorBase(TConnection, TTransaction, TParameterTypes) Methods" Url="html/89C8962A.htm">
+        <HelpTOCNode Id="33454ee2-5eb1-4a9c-96e2-8e3e7cf3ddb1" Title="DbVersionDetectorBase(TConnection, TTransaction, TParameterTypes) Methods" Url="html/89C8962A.htm">
           <HelpTOCNode Title="Detect Method " Url="html/1E5F1FA1.htm" />
           <HelpTOCNode Title="IDbVersionDetector.Detect Method " Url="html/99F65E91.htm" />
-          <HelpTOCNode Id="ebb6af90-49d7-465e-8c5e-80f394ecaf05" Title="Log Method " Url="html/320EC541.htm">
+          <HelpTOCNode Id="1fe07c33-a31b-40cd-984a-239b17028b5e" Title="Log Method " Url="html/320EC541.htm">
             <HelpTOCNode Title="Log Method (LogLevel, String, Object[])" Url="html/1239776A.htm" />
             <HelpTOCNode Title="Log Method (LogLevel, Exception, String, Object[])" Url="html/A5782526.htm" />
           </HelpTOCNode>
         </HelpTOCNode>
       </HelpTOCNode>
-      <HelpTOCNode Id="032ab68e-ded6-4709-9eee-8a814845fa7d" Title="IDbVersionDetector Interface" Url="html/58B106B3.htm">
-        <HelpTOCNode Id="2624d13b-22a5-462d-abe9-0d6f1c801b54" Title="IDbVersionDetector Methods" Url="html/7B9D6DA6.htm">
+      <HelpTOCNode Id="522f5db8-5c24-4ad0-be17-82c42110b4e1" Title="IDbVersionDetector Interface" Url="html/58B106B3.htm">
+        <HelpTOCNode Id="23064772-bc37-4798-af23-cf964668345b" Title="IDbVersionDetector Methods" Url="html/7B9D6DA6.htm">
           <HelpTOCNode Title="Detect Method " Url="html/F6346D34.htm" />
         </HelpTOCNode>
       </HelpTOCNode>
-      <HelpTOCNode Id="dc9b0ede-d5e9-4257-adec-6b87771272fe" Title="IDbVersionDetector(TConnection, TTransaction, TParameterTypes) Interface" Url="html/254497DD.htm">
-        <HelpTOCNode Id="1bcdfeff-8b16-4ede-b827-7e12b79bb681" Title="IDbVersionDetector(TConnection, TTransaction, TParameterTypes) Methods" Url="html/705DE4A3.htm">
-          <HelpTOCNode Id="01442d30-bc4e-4442-b711-bfa034297bbe" Title="Detect Method " Url="html/D9F60B16.htm">
+      <HelpTOCNode Id="a0d7ac39-1659-43c0-a21b-5123c69ccdad" Title="IDbVersionDetector(TConnection, TTransaction, TParameterTypes) Interface" Url="html/254497DD.htm">
+        <HelpTOCNode Id="5a9b2254-c20a-4aae-ae1a-67ac62611923" Title="IDbVersionDetector(TConnection, TTransaction, TParameterTypes) Methods" Url="html/705DE4A3.htm">
+          <HelpTOCNode Id="16a79609-a547-400f-ad47-da5c8a082cb9" Title="Detect Method " Url="html/D9F60B16.htm">
             <HelpTOCNode Title="Detect Method (IDbManager(TConnection, TTransaction, TParameterTypes), Nullable(DbState), Int32)" Url="html/498D71AB.htm" />
           </HelpTOCNode>
         </HelpTOCNode>
       </HelpTOCNode>
-      <HelpTOCNode Id="bade6408-a60a-4e1a-9797-7f69208f10cc" Title="SQLiteDbVersionDetector Class" Url="html/EEE7EDBA.htm">
+      <HelpTOCNode Id="d6c8bef1-972b-4726-9c9d-0f0edf319634" Title="SQLiteDbVersionDetector Class" Url="html/EEE7EDBA.htm">
         <HelpTOCNode Title="SQLiteDbVersionDetector Constructor " Url="html/B5296041.htm" />
         <HelpTOCNode Title="SQLiteDbVersionDetector Properties" Url="html/55E3ECB9.htm" />
-        <HelpTOCNode Id="ab6f6465-7c39-4301-8801-d3e4ac53a223" Title="SQLiteDbVersionDetector Methods" Url="html/D388C74B.htm">
+        <HelpTOCNode Id="8bb21203-7909-432d-9beb-9cbd5ae143dd" Title="SQLiteDbVersionDetector Methods" Url="html/D388C74B.htm">
           <HelpTOCNode Title="Detect Method " Url="html/70FD6C8D.htm" />
         </HelpTOCNode>
       </HelpTOCNode>
-      <HelpTOCNode Id="6a917431-c137-4fd5-bf6a-960e1cbbb01e" Title="SqlServerDbVersionDetector Class" Url="html/FA45D7E8.htm">
+      <HelpTOCNode Id="ddc081b7-6fd6-4efa-b680-fc21e46e27af" Title="SqlServerDbVersionDetector Class" Url="html/FA45D7E8.htm">
         <HelpTOCNode Title="SqlServerDbVersionDetector Constructor " Url="html/53B6A56B.htm" />
         <HelpTOCNode Title="SqlServerDbVersionDetector Properties" Url="html/68CD0FBC.htm" />
-        <HelpTOCNode Id="e8951a87-6932-48fd-9269-5cac8582d11f" Title="SqlServerDbVersionDetector Methods" Url="html/6BC818EA.htm">
+        <HelpTOCNode Id="2bfbbf5b-65ae-4476-a72b-734de4c74a72" Title="SqlServerDbVersionDetector Methods" Url="html/6BC818EA.htm">
           <HelpTOCNode Title="Detect Method " Url="html/B2DFBAC3.htm" />
         </HelpTOCNode>
       </HelpTOCNode>

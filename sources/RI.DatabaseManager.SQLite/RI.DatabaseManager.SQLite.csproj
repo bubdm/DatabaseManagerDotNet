@@ -28,7 +28,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="RI.Abstractions.Common" Version="1.1.0" />
+    <PackageReference Include="RI.Abstractions.Common" Version="1.2.0" />
     <PackageReference Include="System.Data.SQLite.Core" Version="1.0.113.1" />
   </ItemGroup>
 

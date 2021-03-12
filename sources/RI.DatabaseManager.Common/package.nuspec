@@ -16,7 +16,7 @@
     <projectUrl>https://github.com/RotenInformatik/DatabaseManagerDotNet</projectUrl>
     <dependencies>
       <group targetFramework=".NETStandard2.0">
-        <dependency id="RI.Abstractions.Common" version="1.0.0" />
+        <dependency id="RI.Abstractions.Common" version="1.2.0" />
       </group>
     </dependencies>
   </metadata>

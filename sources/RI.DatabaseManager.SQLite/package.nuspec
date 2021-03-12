@@ -16,8 +16,8 @@
     <projectUrl>https://github.com/RotenInformatik/DatabaseManagerDotNet</projectUrl>
     <dependencies>
       <group targetFramework=".NETStandard2.0">
-        <dependency id="RI.Abstractions.Common" version="1.0.0" />
-        <dependency id="RI.DatabaseManager.Common" version="1.0.0" />
+        <dependency id="RI.Abstractions.Common" version="1.2.0" />
+        <dependency id="RI.DatabaseManager.Common" version="0.2.0" />
         <dependency id="System.Data.SQLite.Core" version="1.0.113.1" />
       </group>
     </dependencies>

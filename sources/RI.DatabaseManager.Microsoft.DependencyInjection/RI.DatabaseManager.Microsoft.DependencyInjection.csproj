@@ -28,8 +28,8 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="RI.Abstractions.Common" Version="1.1.0" />
-    <PackageReference Include="RI.Abstractions.Microsoft.DependencyInjection" Version="1.1.0" />
+    <PackageReference Include="RI.Abstractions.Common" Version="1.2.0" />
+    <PackageReference Include="RI.Abstractions.Microsoft.DependencyInjection" Version="1.2.0" />
     <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="3.1.7" />
   </ItemGroup>
 

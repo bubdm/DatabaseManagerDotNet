@@ -1644,7 +1644,7 @@
     <HelpKINode Title="SQLiteDbManagerBuilderExtensions Class" Url="html/1B4A5D77.htm" />
     <HelpKINode Title="methods" Url="html/F308756D.htm" />
   </HelpKINode>
-  <HelpKINode Title="SQLiteDbManagerBuilderExtensions.UseSqlServer method" Url="html/597DB0F2.htm" />
+  <HelpKINode Title="SQLiteDbManagerBuilderExtensions.UseSQLite method" Url="html/7AA22B6B.htm" />
   <HelpKINode Title="SQLiteDbManagerOptions class">
     <HelpKINode Title="SQLiteDbManagerOptions Class" Url="html/97604D4.htm" />
     <HelpKINode Title="constructor" Url="html/173AC4BE.htm" />
@@ -1861,10 +1861,8 @@
   <HelpKINode Title="UseBatches&lt;TBuilder, TConnection, TTransaction, TParameterTypes, TManager&gt; method" Url="html/AAA786B5.htm" />
   <HelpKINode Title="UseBatchLocator(Of TBuilder, TConnection, TTransaction, TParameterTypes, TManager) method" Url="html/1E88F7A7.htm" />
   <HelpKINode Title="UseBatchLocator&lt;TBuilder, TConnection, TTransaction, TParameterTypes, TManager&gt; method" Url="html/1E88F7A7.htm" />
-  <HelpKINode Title="UseSqlServer method">
-    <HelpKINode Title="SQLiteDbManagerBuilderExtensions.UseSqlServer Method " Url="html/597DB0F2.htm" />
-    <HelpKINode Title="SqlServerDbManagerBuilderExtensions.UseSqlServer Method " Url="html/C9E98DBF.htm" />
-  </HelpKINode>
+  <HelpKINode Title="UseSQLite method" Url="html/7AA22B6B.htm" />
+  <HelpKINode Title="UseSqlServer method" Url="html/C9E98DBF.htm" />
   <HelpKINode Title="Value property">
     <HelpKINode Title="DbBatchCommandParameter(TParameterTypes).Value Property " Url="html/3AE03B47.htm" />
     <HelpKINode Title="IDbBatchCommandParameter.Value Property " Url="html/23473635.htm" />

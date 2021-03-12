@@ -10,7 +10,7 @@ Based on .NET Standard 2.0, with minimal dependencies.
 
 ---
 
-[TBD: Link to API documentation]
+The [API documentation](https://roteninformatik.github.io/DatabaseManagerDotNet/api/) provides a complete list of all available functionality.
 
 ## Basic usage (Microsoft SQL Server)
 
@@ -32,13 +32,29 @@ Based on .NET Standard 2.0, with minimal dependencies.
 
 ## Additional options
 
+### Microsoft SQL Server
+
+```c#
+
+```
+
+### SQLite
+
 ```c#
 
 ```
 
 ## Default schemas
 
-```sql
+### Microsoft SQL Server
+
+```mssql
+
+```
+
+### SQLite
+
+```sqlite
 
 ```
 
