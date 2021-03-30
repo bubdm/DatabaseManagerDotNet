@@ -4,6 +4,7 @@ using System.Data.Common;
 using System.IO;
 using System.Linq;
 using System.Reflection;
+using System.Runtime.ExceptionServices;
 using System.Text;
 
 using RI.DatabaseManager.Batches.Commands;
@@ -17,10 +18,6 @@ namespace RI.DatabaseManager.Batches
     ///     Provides utility/extension methods for the <see cref="IDbBatch" /> type.
     /// </summary>
     /// <threadsafety static="false" instance="false" />
-    /// TODO: ThrowException
-    /// TODO: ThrowExceptions()
-    /// TODO: ThrowErrorOrException()
-    /// TODO: ThrowErrorsOrExceptions()
     public static class IDbBatchExtensions
     {
         #region Static Methods
@@ -604,6 +601,91 @@ namespace RI.DatabaseManager.Batches
             }
 
             return batches;
+        }
+
+        /// <summary>
+        /// Rethrows the exception of the last executed command from the last execution of this batch.
+        /// </summary>
+        /// <param name="batch"> The batch. </param>
+        /// <exception cref="Exception"> The exception of the last executed command from the last execution of this batch. </exception>
+        public static void RethrowException (this IDbBatch batch)
+        {
+            if (batch == null)
+            {
+                throw new ArgumentNullException(nameof(batch));
+            }
+
+            Exception exception = batch.GetException();
+
+            if (exception != null)
+            {
+                ExceptionDispatchInfo.Capture(exception).Throw();
+            }
+        }
+
+        /// <summary>
+        /// Rethrows all exceptions of the last execution of this batch.
+        /// </summary>
+        /// <param name="batch"> The batch. </param>
+        /// <exception cref="AggregateException"> The aggregated exception which contains all exceptions of the last execution of this batch. </exception>
+        public static void RethrowExceptions (this IDbBatch batch)
+        {
+            if (batch == null)
+            {
+                throw new ArgumentNullException(nameof(batch));
+            }
+
+            List<Exception> exceptions = batch.GetExceptions();
+
+            if (exceptions.Count != 0)
+            {
+                throw new AggregateException(exceptions);
+            }
+        }
+
+        /// <summary>
+        /// Rethrows the error or exception of the last executed command from the last execution of this batch.
+        /// </summary>
+        /// <param name="batch"> The batch. </param>
+        /// <exception cref="DbBatchErrorException"> The error of the last executed command from the last execution of this batch. </exception>
+        /// <exception cref="Exception"> The exception of the last executed command from the last execution of this batch. </exception>
+        public static void RethrowErrorOrException(this IDbBatch batch)
+        {
+            if (batch == null)
+            {
+                throw new ArgumentNullException(nameof(batch));
+            }
+
+            string error = batch.GetError();
+
+            if (!string.IsNullOrWhiteSpace(error))
+            {
+                throw new DbBatchErrorException(error);
+            }
+
+            batch.RethrowException();
+        }
+
+        /// <summary>
+        /// Rethrows all errors and exceptions of the last execution of this batch.
+        /// </summary>
+        /// <param name="batch"> The batch. </param>
+        /// <exception cref="AggregateException"> The aggregated exception which contains all errors and exceptions of the last execution of this batch. </exception>
+        public static void RethrowErrorsOrExceptions(this IDbBatch batch)
+        {
+            if (batch == null)
+            {
+                throw new ArgumentNullException(nameof(batch));
+            }
+
+            List<Exception> exceptions = batch.GetExceptions();
+            List<string> errors = batch.GetErrors();
+            
+            List<Exception> finalExceptions = new List<Exception>();
+            finalExceptions.AddRange(exceptions);
+            finalExceptions.AddRange(errors.Select(x => new DbBatchErrorException(x)));
+
+            throw new AggregateException(finalExceptions);
         }
 
         #endregion
