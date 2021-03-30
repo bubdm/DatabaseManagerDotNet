@@ -192,7 +192,7 @@ namespace RI.DatabaseManager.Versioning
                         return false;
                     }
 
-                    object value = command.GetLastResult();
+                    object value = command.GetResult();
                     version = this.ToInt32FromSQLiteResult(value) ?? -1;
 
                     if (version <= -1)

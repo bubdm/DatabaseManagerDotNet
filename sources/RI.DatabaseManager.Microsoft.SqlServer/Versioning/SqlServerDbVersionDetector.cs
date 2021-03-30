@@ -194,7 +194,7 @@ namespace RI.DatabaseManager.Versioning
                         return false;
                     }
 
-                    object value = command.GetLastResult();
+                    object value = command.GetResult();
                     version = this.Int32FromSqlServerResult(value) ?? -1;
 
                     if (version <= 0)

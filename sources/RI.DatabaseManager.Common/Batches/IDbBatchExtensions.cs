@@ -17,6 +17,10 @@ namespace RI.DatabaseManager.Batches
     ///     Provides utility/extension methods for the <see cref="IDbBatch" /> type.
     /// </summary>
     /// <threadsafety static="false" instance="false" />
+    /// TODO: ThrowException
+    /// TODO: ThrowExceptions()
+    /// TODO: ThrowErrorOrException()
+    /// TODO: ThrowErrorsOrExceptions()
     public static class IDbBatchExtensions
     {
         #region Static Methods
@@ -39,7 +43,7 @@ namespace RI.DatabaseManager.Batches
         ///     </note>
         /// </remarks>
         /// <exception cref="ArgumentNullException"> <paramref name="batch" /> is null. </exception>
-        public static IDbBatchCommand<TConnection, TTransaction, TParameterTypes> AddCode <TConnection, TTransaction, TParameterTypes> (this IDbBatch<TConnection,TTransaction, TParameterTypes> batch, Func<TConnection, TTransaction, IDbBatchCommandParameterCollection<TParameterTypes>, object> callback, DbBatchTransactionRequirement transactionRequirement = DbBatchTransactionRequirement.DontCare)
+        public static IDbBatchCommand<TConnection, TTransaction, TParameterTypes> AddCode <TConnection, TTransaction, TParameterTypes> (this IDbBatch<TConnection,TTransaction, TParameterTypes> batch, CallbackBatchCommandDelegate<TConnection, TTransaction, TParameterTypes> callback, DbBatchTransactionRequirement transactionRequirement = DbBatchTransactionRequirement.DontCare)
             where TConnection : DbConnection
             where TTransaction : DbTransaction
             where TParameterTypes : Enum
@@ -253,7 +257,7 @@ namespace RI.DatabaseManager.Batches
         ///     The result of the last executed command or null if no command was executed.
         /// </returns>
         /// <exception cref="ArgumentNullException"> <paramref name="batch" /> is null. </exception>
-        public static object GetLastResult (this IDbBatch batch)
+        public static object GetResult (this IDbBatch batch)
         {
             if (batch == null)
             {
@@ -271,6 +275,135 @@ namespace RI.DatabaseManager.Batches
             }
 
             return result;
+        }
+
+        /// <summary>
+        ///     Gets all results of the last execution of this batch.
+        /// </summary>
+        /// <param name="batch"> The batch. </param>
+        /// <returns>
+        ///     The list of all results of all executed commands.
+        /// The list is empty if no command was executed.
+        /// </returns>
+        /// <exception cref="ArgumentNullException"> <paramref name="batch" /> is null. </exception>
+        public static List<object> GetResults(this IDbBatch batch)
+        {
+            if (batch == null)
+            {
+                throw new ArgumentNullException(nameof(batch));
+            }
+
+            return batch.Commands.Where(x => x.WasExecuted)
+                        .Select(x => x.Result)
+                        .ToList();
+        }
+
+        /// <summary>
+        ///     Gets the error of the last executed command from the last execution of this batch.
+        /// </summary>
+        /// <param name="batch"> The batch. </param>
+        /// <returns>
+        ///     The error of the last executed command or null if no command was executed.
+        /// </returns>
+        /// <exception cref="ArgumentNullException"> <paramref name="batch" /> is null. </exception>
+        public static string GetError(this IDbBatch batch)
+        {
+            if (batch == null)
+            {
+                throw new ArgumentNullException(nameof(batch));
+            }
+
+            string result = null;
+
+            foreach (IDbBatchCommand command in batch.Commands)
+            {
+                if (command?.WasExecuted ?? false)
+                {
+                    string candidate = command.Error;
+
+                    if (!string.IsNullOrWhiteSpace(candidate))
+                    {
+                        result = candidate;
+                    }
+                }
+            }
+
+            return result;
+        }
+
+        /// <summary>
+        ///     Gets all errors of the last execution of this batch.
+        /// </summary>
+        /// <param name="batch"> The batch. </param>
+        /// <returns>
+        ///     The list of all errors of all executed commands.
+        /// The list is empty if no command was executed.
+        /// </returns>
+        /// <exception cref="ArgumentNullException"> <paramref name="batch" /> is null. </exception>
+        public static List<string> GetErrors(this IDbBatch batch)
+        {
+            if (batch == null)
+            {
+                throw new ArgumentNullException(nameof(batch));
+            }
+
+            return batch.Commands.Where(x => x.WasExecuted)
+                        .Select(x => x.Error)
+                        .ToList();
+        }
+
+        /// <summary>
+        ///     Gets the exception of the last executed command from the last execution of this batch.
+        /// </summary>
+        /// <param name="batch"> The batch. </param>
+        /// <returns>
+        ///     The exception of the last executed command or null if no command was executed.
+        /// </returns>
+        /// <exception cref="ArgumentNullException"> <paramref name="batch" /> is null. </exception>
+        public static Exception GetException(this IDbBatch batch)
+        {
+            if (batch == null)
+            {
+                throw new ArgumentNullException(nameof(batch));
+            }
+
+            Exception result = null;
+
+            foreach (IDbBatchCommand command in batch.Commands)
+            {
+                if (command?.WasExecuted ?? false)
+                {
+                    Exception candidate = command.Exception;
+
+                    if (candidate != null)
+                    {
+                        result = candidate;
+                    }
+                }
+            }
+
+            return result;
+        }
+
+        /// <summary>
+        ///     Gets all exceptions of the last execution of this batch.
+        /// </summary>
+        /// <param name="batch"> The batch. </param>
+        /// <returns>
+        ///     The list of all exceptions of all executed commands.
+        /// The list is empty if no command was executed.
+        /// </returns>
+        /// <exception cref="ArgumentNullException"> <paramref name="batch" /> is null. </exception>
+        public static List<Exception> GetExceptions(this IDbBatch batch)
+        {
+            if (batch == null)
+            {
+                throw new ArgumentNullException(nameof(batch));
+            }
+
+            return batch.Commands.Where(x => x.WasExecuted)
+                        .Select(x => x.Exception)
+                        .ToList();
         }
 
         /// <summary>
@@ -379,6 +512,24 @@ namespace RI.DatabaseManager.Batches
             }
 
             return batch.Commands.Any(x => x?.WasExecuted ?? true);
+        }
+
+        /// <summary>
+        ///     Determines whether a batch has failed (has any command witherror or exception).
+        /// </summary>
+        /// <param name="batch"> The batch. </param>
+        /// <returns>
+        ///     true if the batch has failed (at least in execution of one command), false otherwise.
+        /// </returns>
+        /// <exception cref="ArgumentNullException"> <paramref name="batch" /> is null. </exception>
+        public static bool HasFailed (this IDbBatch batch)
+        {
+            if (batch == null)
+            {
+                throw new ArgumentNullException(nameof(batch));
+            }
+
+            return batch.Commands.Any(x => (!string.IsNullOrWhiteSpace(x.Error)) || (x.Exception != null));
         }
 
         /// <summary>

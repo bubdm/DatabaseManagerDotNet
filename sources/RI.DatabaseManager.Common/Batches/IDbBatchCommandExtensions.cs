@@ -27,6 +27,8 @@ namespace RI.DatabaseManager.Batches
             }
 
             command.Result = null;
+            command.Exception = null;
+            command.Error = null;
             command.WasExecuted = false;
         }
 

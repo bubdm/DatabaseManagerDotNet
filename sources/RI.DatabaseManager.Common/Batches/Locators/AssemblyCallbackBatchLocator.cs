@@ -5,6 +5,8 @@ using System.Data.Common;
 using System.Linq;
 using System.Reflection;
 
+using RI.DatabaseManager.Batches.Commands;
+
 
 
 
@@ -215,13 +217,12 @@ namespace RI.DatabaseManager.Batches.Locators
 
             #region Instance Methods
 
-            public Func<TConnection, TTransaction, IDbBatchCommandParameterCollection<TParameterTypes>, object> CreateCallback ()
+            public CallbackBatchCommandDelegate<TConnection, TTransaction, TParameterTypes> CreateCallback () => this.Target;
+
+            private object Target (TConnection connection, TTransaction transaction, IDbBatchCommandParameterCollection<TParameterTypes> parameters, out string error, out Exception exception)
             {
-                return (connection, transaction, parameters) =>
-                {
-                    ICallbackBatch<TConnection, TTransaction, TParameterTypes> instance = (ICallbackBatch<TConnection, TTransaction, TParameterTypes>)Activator.CreateInstance(this.Type, false);
-                    return instance.Execute(connection, transaction, parameters);
-                };
+                ICallbackBatch<TConnection, TTransaction, TParameterTypes> instance = (ICallbackBatch<TConnection, TTransaction, TParameterTypes>)Activator.CreateInstance(this.Type, false);
+                return instance.Execute(connection, transaction, parameters, out error, out exception);
             }
 
             #endregion

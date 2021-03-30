@@ -1,14 +1,12 @@
 ﻿using System;
 
-using RI.DatabaseManager.Upgrading;
-
 
 
 
 namespace RI.DatabaseManager.Builder.Options
 {
     /// <summary>
-    /// Stores general database manager options and also provides a version upgrade RegEx pattern for version upgrader implementations (e.g. based on <see cref="BatchNameBasedDbVersionUpgrader{TConnection,TTransaction,TParameterTypes}"/>).
+    /// Stores general database manager options and also provides a version upgrade RegEx pattern for version upgrader implementations.
     /// </summary>
     public interface ISupportVersionUpgradeNameFormat : IDbManagerOptions
     {

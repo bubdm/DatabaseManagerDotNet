@@ -26,7 +26,7 @@ namespace RI.DatabaseManager.Batches.Commands
         /// <param name="callback"> The delegate to the callback which is called when the command is executed. </param>
         /// <param name="transactionRequirement"> The optional transaction requirement specification. Default values is <see cref="DbBatchTransactionRequirement.DontCare" />. </param>
         /// <exception cref="ArgumentNullException"> <paramref name="callback" /> is null. </exception>
-        public CallbackBatchCommand (Func<TConnection, TTransaction, IDbBatchCommandParameterCollection<TParameterTypes>, object> callback, DbBatchTransactionRequirement transactionRequirement = DbBatchTransactionRequirement.DontCare)
+        public CallbackBatchCommand (CallbackBatchCommandDelegate<TConnection, TTransaction, TParameterTypes> callback, DbBatchTransactionRequirement transactionRequirement = DbBatchTransactionRequirement.DontCare)
         {
             if (callback == null)
             {
@@ -45,16 +45,24 @@ namespace RI.DatabaseManager.Batches.Commands
         #region Interface: IDbBatchCommand
 
         /// <inheritdoc />
-        Func<DbConnection, DbTransaction, IDbBatchCommandParameterCollection, object> IDbBatchCommand.Code => (c, t, p) => this.Code((TConnection)c, (TTransaction)t, (IDbBatchCommandParameterCollection<TParameterTypes>)p);
+        CallbackBatchCommandDelegate IDbBatchCommand.Code => this.CodeExecution;
+
+        private object CodeExecution (DbConnection connection, DbTransaction transaction, IDbBatchCommandParameterCollection parameters, out string error, out Exception exception) => this.Code((TConnection)connection, (TTransaction)transaction, (IDbBatchCommandParameterCollection<TParameterTypes>)parameters, out error, out exception);
 
         /// <inheritdoc />
         public IDbBatchCommandParameterCollection<TParameterTypes> Parameters { get; } = new DbBatchCommandParameterCollection<TParameterTypes>();
 
         /// <inheritdoc />
-        public Func<TConnection, TTransaction, IDbBatchCommandParameterCollection<TParameterTypes>, object> Code { get; }
+        public CallbackBatchCommandDelegate<TConnection, TTransaction, TParameterTypes> Code { get; }
 
         /// <inheritdoc />
         public object Result { get; set; }
+
+        /// <inheritdoc />
+        public Exception Exception { get; set; }
+
+        /// <inheritdoc />
+        public string Error { get; set; }
 
         /// <inheritdoc />
         string IDbBatchCommand.Script => null;
@@ -81,6 +89,8 @@ namespace RI.DatabaseManager.Batches.Commands
         {
             CallbackBatchCommand<TConnection, TTransaction, TParameterTypes> clone = new CallbackBatchCommand<TConnection, TTransaction, TParameterTypes>(this.Code, this.TransactionRequirement);
             clone.Result = this.Result;
+            clone.Exception = this.Exception;
+            clone.Error = this.Error;
             clone.WasExecuted = this.WasExecuted;
 
             foreach (IDbBatchCommandParameter<TParameterTypes> parameter in this.Parameters)

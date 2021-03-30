@@ -5,6 +5,8 @@ using System.IO;
 using System.Reflection;
 using System.Text;
 
+using RI.DatabaseManager.Batches.Commands;
+
 
 
 
@@ -54,7 +56,7 @@ namespace RI.DatabaseManager.Batches.Locators
         public DictionaryBatchLocator ()
         {
             this.Scripts = new Dictionary<string, string>(this.DefaultNameComparer);
-            this.Callbacks = new Dictionary<string, Func<TConnection, TTransaction, IDbBatchCommandParameterCollection<TParameterTypes>, object>>(this.DefaultNameComparer);
+            this.Callbacks = new Dictionary<string, CallbackBatchCommandDelegate<TConnection, TTransaction, TParameterTypes>>(this.DefaultNameComparer);
             this.TransactionRequirements = new Dictionary<string, DbBatchTransactionRequirement>(this.DefaultNameComparer);
         }
 
@@ -71,7 +73,7 @@ namespace RI.DatabaseManager.Batches.Locators
         /// <value>
         ///     The dictionary with callbacks.
         /// </value>
-        public Dictionary<string, Func<TConnection, TTransaction, IDbBatchCommandParameterCollection<TParameterTypes>, object>> Callbacks { get; }
+        public Dictionary<string, CallbackBatchCommandDelegate<TConnection, TTransaction, TParameterTypes>> Callbacks { get; }
 
         /// <summary>
         ///     Gets the dictionary with scripts as batches.
@@ -105,7 +107,7 @@ namespace RI.DatabaseManager.Batches.Locators
 
             if (this.Callbacks.ContainsKey(name))
             {
-                Func<TConnection, TTransaction, IDbBatchCommandParameterCollection<TParameterTypes>, object> callback = this.Callbacks[name];
+                CallbackBatchCommandDelegate<TConnection, TTransaction, TParameterTypes> callback = this.Callbacks[name];
                 batch.AddCode(callback, transactionRequirement);
                 found = true;
             }
@@ -169,7 +171,7 @@ namespace RI.DatabaseManager.Batches.Locators
         /// <param name="transactionRequirement"> The optional transaction requirement specification. Default values is <see cref="DbBatchTransactionRequirement.DontCare" />. </param>
         /// <exception cref="ArgumentNullException"> <paramref name="batchName" /> or <paramref name="callback"/> is null. </exception>
         /// <exception cref="ArgumentException"> <paramref name="batchName" /> is an empty string. </exception>
-        public void AddCode(string batchName, Func<TConnection, TTransaction, IDbBatchCommandParameterCollection<TParameterTypes>, object> callback, DbBatchTransactionRequirement transactionRequirement = DbBatchTransactionRequirement.DontCare)
+        public void AddCode(string batchName, CallbackBatchCommandDelegate<TConnection, TTransaction, TParameterTypes> callback, DbBatchTransactionRequirement transactionRequirement = DbBatchTransactionRequirement.DontCare)
         {
             if (batchName == null)
             {

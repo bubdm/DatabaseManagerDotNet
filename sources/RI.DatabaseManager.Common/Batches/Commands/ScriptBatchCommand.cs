@@ -36,16 +36,22 @@ namespace RI.DatabaseManager.Batches.Commands
         #region Interface: IDbBatchCommand
 
         /// <inheritdoc />
-        Func<DbConnection, DbTransaction, IDbBatchCommandParameterCollection, object> IDbBatchCommand.Code => null;
+        CallbackBatchCommandDelegate IDbBatchCommand.Code => null;
 
         /// <inheritdoc />
         public IDbBatchCommandParameterCollection<TParameterTypes> Parameters { get; } = new DbBatchCommandParameterCollection<TParameterTypes>();
 
         /// <inheritdoc />
-        Func<TConnection, TTransaction, IDbBatchCommandParameterCollection<TParameterTypes>, object> IDbBatchCommand<TConnection, TTransaction, TParameterTypes>.Code => null;
+        CallbackBatchCommandDelegate<TConnection, TTransaction, TParameterTypes> IDbBatchCommand<TConnection, TTransaction, TParameterTypes>.Code => null;
 
         /// <inheritdoc />
         public object Result { get; set; }
+
+        /// <inheritdoc />
+        public Exception Exception { get; set; }
+
+        /// <inheritdoc />
+        public string Error { get; set; }
 
         /// <inheritdoc />
         public string Script { get; }
@@ -72,6 +78,8 @@ namespace RI.DatabaseManager.Batches.Commands
         {
             ScriptBatchCommand<TConnection, TTransaction, TParameterTypes> clone = new ScriptBatchCommand<TConnection, TTransaction, TParameterTypes>(this.Script, this.TransactionRequirement);
             clone.Result = this.Result;
+            clone.Exception = this.Exception;
+            clone.Error = this.Error;
             clone.WasExecuted = this.WasExecuted;
 
             foreach (IDbBatchCommandParameter<TParameterTypes> parameter in this.Parameters)

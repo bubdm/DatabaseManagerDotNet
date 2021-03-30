@@ -7,6 +7,7 @@ using System.Globalization;
 using RI.Abstractions.Logging;
 using RI.DatabaseManager.Backup;
 using RI.DatabaseManager.Batches;
+using RI.DatabaseManager.Batches.Commands;
 using RI.DatabaseManager.Builder;
 using RI.DatabaseManager.Cleanup;
 using RI.DatabaseManager.Upgrading;
@@ -311,16 +312,26 @@ namespace RI.DatabaseManager.Manager
         protected abstract TTransaction CreateTransactionImpl (bool readOnly, IsolationLevel isolationLevel);
 
         /// <summary>
+        /// Gets the default isolation level used by the database if none is provided.
+        /// </summary>
+        /// <returns>
+        /// The default isolation level used by the database.
+        /// </returns>
+        protected abstract IsolationLevel GetDefaultIsolationLevel ();
+
+        /// <summary>
         ///     Executes database script code of a single batch command.
         /// </summary>
         /// <param name="connection"> The used database connection. </param>
         /// <param name="transaction"> The used database transaction or null if no transaction is used. </param>
         /// <param name="script"> The database script to execute. </param>
         /// <param name="parameters"> The parameters used in the command. </param>
+        /// <param name="error"> The database specific error which occurred during execution (or null if none is available). </param>
+        /// <param name="exception"> The database specific exception which occurred during execution (or null if none is available). </param>
         /// <returns>
         ///     The result of the code callback.
         /// </returns>
-        protected abstract object ExecuteCommandScriptImpl (TConnection connection, TTransaction transaction, string script, IDbBatchCommandParameterCollection<TParameterTypes> parameters);
+        protected abstract object ExecuteCommandScriptImpl (TConnection connection, TTransaction transaction, string script, IDbBatchCommandParameterCollection<TParameterTypes> parameters, out string error, out Exception exception);
 
         #endregion
 
@@ -434,7 +445,7 @@ namespace RI.DatabaseManager.Manager
 
             if (batch.RequiresTransaction() || (!batch.DisallowsTransaction()))
             {
-                transaction = this.CreateTransaction();
+                transaction = this.CreateTransaction(readOnly, batch.IsolationLevel.GetValueOrDefault(this.GetDefaultIsolationLevel()));
 
                 if (transaction == null)
                 {
@@ -463,6 +474,8 @@ namespace RI.DatabaseManager.Manager
                 }
 
                 object result;
+                string error;
+                Exception exception;
 
                 DbBatchCommandParameterCollection<TParameterTypes> parameters = command.MergeParameters(batch);
 
@@ -470,11 +483,13 @@ namespace RI.DatabaseManager.Manager
                 {
                     try
                     {
-                        result = this.ExecuteCommandScriptImpl(connection, transaction, command.Script, parameters);
+                        command.WasExecuted = true;
+                        result = this.ExecuteCommandScriptImpl(connection, transaction, command.Script, parameters, out error, out exception);
                     }
-                    catch (Exception exception)
+                    catch (Exception ex)
                     {
-                        this.Log(LogLevel.Error, exception, "Execution of database batch script failed.");
+                        command.Exception = ex;
+                        this.Log(LogLevel.Error, ex, "Execution of database batch script failed.");
                         return false;
                     }
                 }
@@ -482,11 +497,13 @@ namespace RI.DatabaseManager.Manager
                 {
                     try
                     {
-                        result = this.ExecuteCommandCodeImpl(connection, transaction, command.Code, parameters);
+                        command.WasExecuted = true;
+                        result = this.ExecuteCommandCodeImpl(connection, transaction, command.Code, parameters, out error, out exception);
                     }
-                    catch (Exception exception)
+                    catch (Exception ex)
                     {
-                        this.Log(LogLevel.Error, exception, "Execution of database batch script failed.");
+                        command.Exception = ex;
+                        this.Log(LogLevel.Error, ex, "Execution of database batch code failed.");
                         return false;
                     }
                 }
@@ -499,8 +516,21 @@ namespace RI.DatabaseManager.Manager
                     throw new NotSupportedException($"The provided batch command is invalid (contains neither script nor code): {command.GetType().Name}.");
                 }
 
+                if (!string.IsNullOrWhiteSpace(error))
+                {
+                    command.Error = error;
+                    this.Log(LogLevel.Error, "Execution of database batch failed.{0}{1}", Environment.NewLine, error);
+                    return false;
+                }
+
+                if (exception != null)
+                {
+                    command.Exception = exception;
+                    this.Log(LogLevel.Error, exception, "Execution of database batch failed.");
+                    return false;
+                }
+
                 command.Result = result;
-                command.WasExecuted = true;
             }
 
             return true;
@@ -513,6 +543,8 @@ namespace RI.DatabaseManager.Manager
         /// <param name="transaction"> The used database transaction or null if no transaction is used. </param>
         /// <param name="code"> The callback to execute. </param>
         /// <param name="parameters"> The parameters used in the command. </param>
+        /// <param name="error"> The database specific error which occurred during execution (or null if none is available). </param>
+        /// <param name="exception"> The database specific exception which occurred during execution (or null if none is available). </param>
         /// <returns>
         ///     The result of the code callback.
         /// </returns>
@@ -521,9 +553,12 @@ namespace RI.DatabaseManager.Manager
         ///         The default implementation calls <paramref name="code" /> with <paramref name="connection" />, <paramref name="transaction" />, and <paramref name="parameters"/> as parameters.
         ///     </note>
         /// </remarks>
-        protected virtual object ExecuteCommandCodeImpl (TConnection connection, TTransaction transaction, Func<TConnection, TTransaction, IDbBatchCommandParameterCollection<TParameterTypes>, object> code, IDbBatchCommandParameterCollection<TParameterTypes> parameters)
+        protected virtual object ExecuteCommandCodeImpl (TConnection connection, TTransaction transaction, CallbackBatchCommandDelegate<TConnection, TTransaction, TParameterTypes> code, IDbBatchCommandParameterCollection<TParameterTypes> parameters, out string error, out Exception exception)
         {
-            return code(connection, transaction, parameters);
+            error = null;
+            exception = null;
+
+            return code(connection, transaction, parameters, out error, out exception);
         }
 
         /// <summary>
