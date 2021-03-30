@@ -24,7 +24,7 @@ namespace RI.DatabaseManager.Builder
     ///         If <see cref="CustomCleanupBatch" /> is empty (has no commands) and <see cref="CustomCleanupBatchName" /> is not null, <see cref="CustomCleanupBatchName" /> is used for cleanup instead of the default script.
     ///     </para>
     ///     <para>
-    ///         The default cleanup script is:
+    ///         The default cleanup script is (each line executed as a separate command):
     ///     </para>
     /// <code language="sql">
     ///  <![CDATA[
@@ -37,26 +37,6 @@ namespace RI.DatabaseManager.Builder
     ///     <para>
     ///         If <see cref="CustomVersionDetectionBatch" /> is empty (has no commands) and <see cref="CustomVersionDetectionBatchName" /> is not null, <see cref="CustomVersionDetectionBatchName" /> is used for version detection instead of the default script.
     ///     </para>
-    /// <code language="cs">
-    ///  <![CDATA[
-    /// // create a list of integers
-    /// var numbers = new List<int> { 0, 1, 4, 5, 12 };
-    ///
-    /// // create the comparer, including a hash value calculation function
-    /// // what we do: two integers are considered the same if they have the same remainder when divided by 5
-    /// var comparer = new EqualityComparison<int>(
-    ///     (x,y) => (x % 5) == (y % 5),
-    ///     (obj) => obj % 5 );
-    /// 
-    /// // lets use the comparer to check whether we have some numbers in the list or not
-    /// numbers.Contains(0, comparer); //returns "true" because of 0 in the list
-    /// numbers.Contains(1, comparer); //returns "true" because of 1 in the list
-    /// numbers.Contains(2, comparer); //returns "true" because of 12 in the list
-    /// numbers.Contains(3, comparer); //returns "false"
-    /// numbers.Contains(4, comparer); //returns "true" because of 4 in the list
-    /// numbers.Contains(5, comparer); //returns "true" because of 0 in the list
-    ///  ]]>
-    ///  </code>
     ///     <para>
     ///         The default version detection script is (each line executed as a separate command):
     ///     </para>
@@ -89,9 +69,12 @@ namespace RI.DatabaseManager.Builder
     /// INSERT INTO [_DatabaseSettings] ([Name], [Value]) VALUES ('Database.Version', '0');
     ///  ]]>
     ///  </code>
+    ///     <para>
+    ///         The default setup script (as shown above) can be obtained using <see cref="GetDefaultSetupScript"/>.
+    ///     </para>
     /// </remarks>
     /// <threadsafety static="false" instance="false" />
-    public sealed class SqlServerDbManagerOptions : IDbManagerOptions, ISupportVersionUpgradeNameFormat, ICloneable
+    public sealed class SqlServerDbManagerOptions : IDbManagerOptions, ISupportVersionUpgradeNameFormat, ISupportDatabaseCreation, ICloneable
     {
         #region Instance Constructor/Destructor
 
@@ -410,6 +393,32 @@ namespace RI.DatabaseManager.Builder
             return commands.ToArray();
         }
 
+        /// <summary>
+        /// Gets the default setup script.
+        /// </summary>
+        /// <returns>
+        /// The array with the commands of the default setup script or null or an empty array if a default setup script is not available.
+        /// </returns>
+        /// <remarks>
+        /// <para>
+        /// The placeholders in the default script are replaced as follows: <c>__@TableName</c> = <see cref="DefaultVersionDetectionTable"/>, <c>__@NameColumnName</c> = <see cref="DefaultVersionDetectionNameColumn"/>, <c>__@ValueColumnName</c> = <see cref="DefaultVersionDetectionValueColumn"/>, <c>__@KeyName</c> = <see cref="DefaultVersionDetectionKey"/>.
+        /// </para>
+        /// </remarks>
+        public string[] GetDefaultSetupScript()
+        {
+            List<string> commands = new List<string>();
+
+            foreach (string command in this.DefaultSetupScript)
+            {
+                commands.Add(command.Replace("__@TableName", this.DefaultVersionDetectionTable)
+                                    .Replace("__@NameColumnName", this.DefaultVersionDetectionNameColumn)
+                                    .Replace("__@ValueColumnName", this.DefaultVersionDetectionValueColumn)
+                                    .Replace("__@KeyName", this.DefaultVersionDetectionKey));
+            }
+
+            return commands.ToArray();
+        }
+
         private string[] DefaultCleanupScript { get; } =
         {
             "DBCC SHRINKDATABASE (0);",
@@ -424,6 +433,18 @@ namespace RI.DatabaseManager.Builder
                     "IF EXISTS (SELECT 1 FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_TYPE='BASE TABLE' AND TABLE_NAME='__@TableName') SELECT 1 ELSE SELECT 0;",
                     "IF (SELECT count(*) FROM [__@TableName] WHERE [__@NameColumnName] = '__@KeyName') = 0 SELECT -1 ELSE SELECT 1;",
                     "SELECT [__@ValueColumnName] FROM [__@TableName] WHERE [__@NameColumnName] = '__@KeyName';",
+                };
+            }
+        }
+
+        private string[] DefaultSetupScript
+        {
+            get
+            {
+                return new[]
+                {
+                    "CREATE TABLE [_DatabaseSettings] ([Id] INT PRIMARY KEY IDENTITY(1,1), [Name] NVARCHAR(1024) NOT NULL, [Value] NVARCHAR(MAX) NULL);",
+                    "INSERT INTO [_DatabaseSettings] ([Name], [Value]) VALUES ('Database.Version', '0');",
                 };
             }
         }

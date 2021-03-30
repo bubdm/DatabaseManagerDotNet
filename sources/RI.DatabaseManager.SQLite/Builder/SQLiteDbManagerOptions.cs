@@ -71,6 +71,9 @@ namespace RI.DatabaseManager.Builder
     ///  ]]>
     ///  </code>
     ///     <para>
+    ///         The default setup script (as shown above) can be obtained using <see cref="GetDefaultSetupScript"/>.
+    ///     </para>
+    ///     <para>
     ///         If commands are added to <see cref="BackupPreprocessingBatch" />/<see cref="BackupPostprocessingBatch"/>, <see cref="BackupPreprocessingBatch" />/<see cref="BackupPostprocessingBatch"/> is used for preprocessing/postprocessing instead of the batch named by <see cref="BackupPreprocessingBatchName" />/<see cref="BackupPostprocessingBatchName" />.
     ///     </para>
     ///     <para>
@@ -81,7 +84,7 @@ namespace RI.DatabaseManager.Builder
     ///     </para>
     /// </remarks>
     /// <threadsafety static="false" instance="false" />
-    public sealed class SQLiteDbManagerOptions : IDbManagerOptions, ISupportVersionUpgradeNameFormat, ICloneable
+    public sealed class SQLiteDbManagerOptions : IDbManagerOptions, ISupportVersionUpgradeNameFormat, ISupportDatabaseCreation, ICloneable
     {
         #region Instance Constructor/Destructor
 
@@ -531,6 +534,32 @@ namespace RI.DatabaseManager.Builder
             return commands.ToArray();
         }
 
+        /// <summary>
+        /// Gets the default setup script.
+        /// </summary>
+        /// <returns>
+        /// The array with the commands of the default setup script or null or an empty array if a default setup script is not available.
+        /// </returns>
+        /// <remarks>
+        /// <para>
+        /// The placeholders in the default script are replaced as follows: <c>__@TableName</c> = <see cref="DefaultVersionDetectionTable"/>, <c>__@NameColumnName</c> = <see cref="DefaultVersionDetectionNameColumn"/>, <c>__@ValueColumnName</c> = <see cref="DefaultVersionDetectionValueColumn"/>, <c>__@KeyName</c> = <see cref="DefaultVersionDetectionKey"/>.
+        /// </para>
+        /// </remarks>
+        public string[] GetDefaultSetupScript()
+        {
+            List<string> commands = new List<string>();
+
+            foreach (string command in this.DefaultSetupScript)
+            {
+                commands.Add(command.Replace("__@TableName", this.DefaultVersionDetectionTable)
+                                    .Replace("__@NameColumnName", this.DefaultVersionDetectionNameColumn)
+                                    .Replace("__@ValueColumnName", this.DefaultVersionDetectionValueColumn)
+                                    .Replace("__@KeyName", this.DefaultVersionDetectionKey));
+            }
+
+            return commands.ToArray();
+        }
+
         private string[] DefaultCleanupScript { get; } =
         {
             "VACUUM;",
@@ -547,6 +576,18 @@ namespace RI.DatabaseManager.Builder
                     "SELECT (SELECT count(*) FROM [sqlite_master] WHERE [type] = 'table' AND [name] = '__@TableName') - 1;",
                     "SELECT (SELECT count(*) FROM [__@TableName] WHERE [__@NameColumnName] = '__@KeyName') - 1;",
                     "SELECT [__@ValueColumnName] FROM [__@TableName] WHERE [__@NameColumnName] = '__@KeyName';",
+                };
+            }
+        }
+
+        private string[] DefaultSetupScript
+        {
+            get
+            {
+                return new[]
+                {
+                    "CREATE TABLE [_DatabaseSettings] ([Id] INTEGER PRIMARY KEY ASC ON CONFLICT ROLLBACK AUTOINCREMENT, [Name] TEXT NOT NULL ON CONFLICT ROLLBACK UNIQUE ON CONFLICT ROLLBACK, [Value] TEXT NULL);",
+                    "INSERT INTO [_DatabaseSettings] ([Name], [Value]) VALUES ('Database.Version', '0');",
                 };
             }
         }

@@ -1,7 +1,13 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Data.Common;
+using System.Globalization;
+using System.Linq;
+using System.Text.RegularExpressions;
 
 using RI.Abstractions.Logging;
+using RI.DatabaseManager.Batches;
+using RI.DatabaseManager.Builder.Options;
 using RI.DatabaseManager.Manager;
 
 
@@ -31,15 +37,22 @@ namespace RI.DatabaseManager.Upgrading
         /// <summary>
         ///     Creates a new instance of <see cref="DbVersionUpgraderBase{TConnection,TTransaction,TParameterTypes}" />.
         /// </summary>
+        /// <param name="options"> The used database manager options. </param>
         /// <param name="logger"> The used logger. </param>
         /// <exception cref="ArgumentNullException"> <paramref name="logger" /> is null. </exception>
-        protected DbVersionUpgraderBase (ILogger logger)
+        protected DbVersionUpgraderBase (IDbManagerOptions options, ILogger logger)
         {
+            if (options == null)
+            {
+                throw new ArgumentNullException(nameof(options));
+            }
+
             if (logger == null)
             {
                 throw new ArgumentNullException(nameof(logger));
             }
 
+            this.Options = options;
             this.Logger = logger;
         }
 
@@ -49,6 +62,14 @@ namespace RI.DatabaseManager.Upgrading
 
 
         #region Instance Properties/Indexer
+
+        /// <summary>
+        ///     Gets the used database manager options.
+        /// </summary>
+        /// <value>
+        ///     The used database manager options.
+        /// </value>
+        protected IDbManagerOptions Options { get; }
 
         /// <summary>
         ///     Gets the used logger.
@@ -90,6 +111,139 @@ namespace RI.DatabaseManager.Upgrading
 
         #region Interface: IDbVersionUpgrader<TConnection,TTransaction>
 
+        /// <summary>
+        /// Gets the upgrade steps as batches.
+        /// </summary>
+        /// <param name="manager"> The used database manager. </param>
+        /// <param name="steps">The dictionary which is to be filled with the available steps (batches). Keys are source versions, values are the corresponding batch.</param>
+        /// <returns>
+        /// true if the upgrade steps could be retrieved, false otherwise.
+        /// </returns>
+        /// <remarks>
+        /// <note type="implement">
+        /// The default implementation searches all available batch names for matches using <see cref="GetUpgradeBatchNamePattern"/> which then are used as upgrade step batches.
+        /// </note>
+        /// </remarks>
+        protected virtual bool GetUpgradeSteps(IDbManager<TConnection, TTransaction, TParameterTypes> manager, IDictionary<int, IDbBatch<TConnection, TTransaction, TParameterTypes>> steps)
+        {
+            string namePattern = this.GetUpgradeBatchNamePattern();
+
+            if (string.IsNullOrWhiteSpace(namePattern))
+            {
+                return false;
+            }
+
+            ISet<string> candidates = manager.GetBatchNames();
+
+            foreach (string candidate in candidates)
+            {
+                Match match = Regex.Match(candidate, namePattern, RegexOptions.CultureInvariant | RegexOptions.IgnoreCase);
+
+                if (!match.Success)
+                {
+                    continue;
+                }
+
+                string sourceVersion = match.Groups["sourceVersion"]
+                                            ?.Value;
+
+                if (string.IsNullOrWhiteSpace(sourceVersion))
+                {
+                    continue;
+                }
+
+                if (int.TryParse(sourceVersion, NumberStyles.None, CultureInfo.InvariantCulture, out int sourceVersionValue))
+                {
+                    if (steps.ContainsKey(sourceVersionValue))
+                    {
+                        //TODO: #14: Use merging here
+                        throw new InvalidOperationException($"Multiple batches provided to {this.GetType().Name} apply to the same source version {sourceVersion} using the name pattern \"{namePattern}\".");
+
+                    }
+
+                    steps.Add(sourceVersionValue, manager.GetBatch(candidate));
+                }
+            }
+
+            if (steps.Count < 2)
+            {
+                return steps.Count > 0;
+            }
+
+            int[] sourceVersions = steps.Keys.OrderBy(x => x).ToArray();
+
+            for (int i1 = 1; i1 < sourceVersions.Length; i1++)
+            {
+                if (sourceVersions[i1 - 1] != (sourceVersions[i1] - 1))
+                {
+                    throw new InvalidOperationException($"A non-contiguous set of batches was provided to {this.GetType().Name} using the name pattern \"{namePattern}\": {string.Join(",", sourceVersions.Select(x => x.ToString(CultureInfo.InvariantCulture)))}.");
+                }
+            }
+
+            return true;
+        }
+
+        /// <summary>
+        /// Gets the creation steps as batches.
+        /// </summary>
+        /// <param name="manager"> The used database manager. </param>
+        /// <param name="steps">The list which is to be filled with the available steps (batches). </param>
+        /// <returns>
+        /// true if the creation steps could be retrieved, false otherwise.
+        /// </returns>
+        /// <remarks>
+        /// <note type="implement">
+        /// The default implementation uses <see cref="GetDefaultCreationCommands"/> to retrieve all creation commands which are converted to batches (one batch per command).
+        /// </note>
+        /// </remarks>
+        protected virtual bool GetCreationSteps (IDbManager<TConnection, TTransaction, TParameterTypes> manager, IList<IDbBatch<TConnection, TTransaction, TParameterTypes>> steps)
+        {
+            string[] commands = this.GetDefaultCreationCommands() ?? new string[0];
+
+            if (commands.Length == 0)
+            {
+                return false;
+            }
+
+            foreach (string command in commands)
+            {
+                IDbBatch<TConnection, TTransaction, TParameterTypes> batch = manager.CreateBatch();
+                batch.AddScript(command);
+                steps.Add(batch);
+            }
+
+            return steps.Count > 0;
+        }
+
+        /// <summary>
+        /// Gets the RegEx pattern used to filter batches used as version upgrade steps and to extract their source version.
+        /// </summary>
+        /// <returns>
+        /// The used RegEx pattern or null if none is available.
+        /// </returns>
+        /// <remarks>
+        /// <para>
+        /// The extracted version must be the source version, meaning that the corresponding batch upgrades from that source version to source version + 1.
+        /// </para>
+        /// <note type="implement">
+        /// The default implementation returns the value of  the <see cref="ISupportVersionUpgradeNameFormat.VersionUpgradeNameFormat"/> property from <see cref="Options"/>.
+        /// </note>
+        /// </remarks>
+        protected virtual string GetUpgradeBatchNamePattern() => (this.Options as ISupportVersionUpgradeNameFormat)?.VersionUpgradeNameFormat;
+
+        /// <summary>
+        /// Gets the default database creation commands.
+        /// </summary>
+        /// <returns>
+        /// The default database creation commands or null if none are available.
+        /// </returns>
+        /// <remarks>
+        /// <note type="implement">
+        /// The default implementation returns the value of  the <see cref="ISupportDatabaseCreation.GetDefaultSetupScript"/> property from <see cref="Options"/>.
+        /// </note>
+        /// </remarks>
+        protected virtual string[] GetDefaultCreationCommands() => (this.Options as ISupportDatabaseCreation)?.GetDefaultSetupScript();
+
         /// <inheritdoc />
         int IDbVersionUpgrader.GetMaxVersion (IDbManager manager)
         {
@@ -97,7 +251,24 @@ namespace RI.DatabaseManager.Upgrading
         }
 
         /// <inheritdoc />
-        public abstract int GetMaxVersion (IDbManager<TConnection, TTransaction, TParameterTypes> manager);
+        public virtual int GetMaxVersion (IDbManager<TConnection, TTransaction, TParameterTypes> manager)
+        {
+            if (manager == null)
+            {
+                throw new ArgumentNullException(nameof(manager));
+            }
+
+            Dictionary<int, IDbBatch<TConnection, TTransaction, TParameterTypes>> steps = new Dictionary<int, IDbBatch<TConnection, TTransaction, TParameterTypes>>();
+            this.GetUpgradeSteps(manager, steps);
+
+            if (steps.Count == 0)
+            {
+                return -1;
+            }
+
+            return steps.Keys.OrderByDescending(x => x)
+                        .First() + 1;
+        }
 
         /// <inheritdoc />
         int IDbVersionUpgrader.GetMinVersion (IDbManager manager)
@@ -106,10 +277,113 @@ namespace RI.DatabaseManager.Upgrading
         }
 
         /// <inheritdoc />
-        public abstract int GetMinVersion (IDbManager<TConnection, TTransaction, TParameterTypes> manager);
+        public virtual int GetMinVersion (IDbManager<TConnection, TTransaction, TParameterTypes> manager)
+        {
+            if (manager == null)
+            {
+                throw new ArgumentNullException(nameof(manager));
+            }
+
+            Dictionary<int, IDbBatch<TConnection, TTransaction, TParameterTypes>> steps = new Dictionary<int, IDbBatch<TConnection, TTransaction, TParameterTypes>>();
+            this.GetUpgradeSteps(manager, steps);
+
+            if (steps.Count == 0)
+            {
+                return -1;
+            }
+
+            return steps.Keys.OrderBy(x => x)
+                        .First();
+        }
 
         /// <inheritdoc />
-        public abstract bool Upgrade (IDbManager<TConnection, TTransaction, TParameterTypes> manager, int sourceVersion);
+        public virtual bool Upgrade (IDbManager<TConnection, TTransaction, TParameterTypes> manager, int sourceVersion)
+        {
+            if (manager == null)
+            {
+                throw new ArgumentNullException(nameof(manager));
+            }
+
+            List<IDbBatch<TConnection, TTransaction, TParameterTypes>> creationSteps = new List<IDbBatch<TConnection, TTransaction, TParameterTypes>>();
+            bool creationStepsResult = this.GetCreationSteps(manager, creationSteps);
+
+            Dictionary<int, IDbBatch<TConnection, TTransaction, TParameterTypes>> upgradeSteps = new Dictionary<int, IDbBatch<TConnection, TTransaction, TParameterTypes>>();
+            bool upgradeStepsResult = this.GetUpgradeSteps(manager, upgradeSteps);
+
+            if ((!creationStepsResult) || (creationSteps.Count == 0))
+            {
+                this.Log(LogLevel.Information, "No dedicated creation steps available to create database (might be part of first upgrade step).");
+                creationStepsResult = false;
+            }
+
+            if ((!upgradeStepsResult) || (upgradeSteps.Count == 0))
+            {
+                this.Log(LogLevel.Error, "No upgrade steps available to create or upgrade database.");
+                return false;
+            }
+
+            int minVersion = upgradeSteps.Keys.OrderBy(x => x)
+                                         .First();
+
+            int maxVersion = upgradeSteps.Keys.OrderByDescending(x => x)
+                                         .First() + 1;
+
+            if ((sourceVersion < minVersion) || (sourceVersion > (maxVersion - 1)))
+            {
+                throw new ArgumentOutOfRangeException(nameof(sourceVersion), $"The specified source version ({sourceVersion}) is not within the supported range ({minVersion}...{maxVersion - 1}).");
+            }
+            
+            if ((manager.State == DbState.New) && creationStepsResult)
+            {
+                try
+                {
+                    this.Log(LogLevel.Information, "Beginning database creation");
+
+                    foreach (IDbBatch<TConnection, TTransaction, TParameterTypes> step in creationSteps)
+                    {
+                        bool result = manager.ExecuteBatch(step, false, false);
+
+                        if (!result)
+                        {
+                            this.Log(LogLevel.Error, "Failed database creation");
+                            return false;
+                        }
+                    }
+
+                    this.Log(LogLevel.Information, "Finished database creation");
+                }
+                catch (Exception exception)
+                {
+                    this.Log(LogLevel.Error, "Failed database creation:{0}{1}", Environment.NewLine, exception.ToString());
+                    return false;
+                }
+            }
+            
+            try
+            {
+                this.Log(LogLevel.Information, "Beginning version upgrade step: {0} -> {1}", sourceVersion, sourceVersion + 1);
+
+                IDbBatch<TConnection, TTransaction, TParameterTypes> batch = upgradeSteps[sourceVersion];
+
+                bool result = manager.ExecuteBatch(batch, false, true);
+
+                if (result)
+                {
+                    this.Log(LogLevel.Information, "Finished version upgrade step: {0} -> {1}", sourceVersion, sourceVersion + 1);
+                }
+                else
+                {
+                    this.Log(LogLevel.Error, "Failed version upgrade step: {0} -> {1}", sourceVersion, sourceVersion + 1);
+                }
+
+                return result;
+            }
+            catch (Exception exception)
+            {
+                this.Log(LogLevel.Error, "Failed version upgrade step:{0} -> {1}{2}{3}", sourceVersion, sourceVersion + 1, Environment.NewLine, exception.ToString());
+                return false;
+            }
+        }
 
         /// <inheritdoc />
         bool IDbVersionUpgrader.Upgrade (IDbManager manager, int sourceVersion)

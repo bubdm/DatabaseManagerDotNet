@@ -28,8 +28,8 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="RI.Abstractions.Common" Version="1.2.0" />
-    <PackageReference Include="Microsoft.Data.SqlClient" Version="2.0.1" />
+    <PackageReference Include="RI.Abstractions.Common" Version="1.3.0" />
+    <PackageReference Include="Microsoft.Data.SqlClient" Version="2.1.2" />
   </ItemGroup>
 
   <ItemGroup>
