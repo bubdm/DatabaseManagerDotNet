@@ -54,6 +54,8 @@ namespace RI.DatabaseManager.Batches
             }
         }
 
+        public DbBatch () { }
+
         private CommandCollection CommandsInternal { get; } = new CommandCollection();
 
         /// <inheritdoc />

@@ -596,11 +596,99 @@ namespace RI.DatabaseManager.Batches
                 {
                     DbBatch<TConnection, TTransaction, TParameterTypes> splittedBatch = new DbBatch<TConnection, TTransaction, TParameterTypes>();
                     splittedBatch.Commands.Add(command);
+                    splittedBatch.Parameters.AddRange(batch.Parameters);
+                    splittedBatch.IsolationLevel = batch.IsolationLevel;
                     batches.Add(splittedBatch);
                 }
             }
 
             return batches;
+        }
+
+        /// <summary>
+        /// Merges multiple batches into one.
+        /// </summary>
+        /// <typeparam name="TConnection"> The database connection type. </typeparam>
+        /// <typeparam name="TTransaction"> The database transaction type. </typeparam>
+        /// <typeparam name="TParameterTypes"> The database command parameter type. </typeparam>
+        /// <param name="batches"> The sequence of batches to merge. </param>
+        /// <param name="filter">An optional predicate to filter the batches to merge. The default value merges all batches.</param>
+        /// <returns>
+        /// The single batch which contains all merged batches.
+        /// </returns>
+        /// <remarks>
+        /// <note type="note">
+        /// All batches in <paramref name="batches"/> must have the same isolation level, otherwise <see cref="ArgumentException"/> is thrown.
+        /// Batches without isolation level specified will not be checked for isolation level equality.
+        /// </note>
+        /// <para>
+        /// <paramref name="batches"/> is enumerated only once.
+        /// </para>
+        /// </remarks>
+        /// <exception cref="ArgumentNullException"> <paramref name="batches" /> is null. </exception>
+        /// <exception cref="ArgumentException"><paramref name="batches"/> contains batches with different isolation levels.</exception>
+        public static DbBatch<TConnection, TTransaction, TParameterTypes> MergeCommands <TConnection, TTransaction, TParameterTypes>(this IEnumerable<IDbBatch<TConnection, TTransaction, TParameterTypes>> batches, Predicate<IDbBatch<TConnection, TTransaction, TParameterTypes>> filter = null)
+            where TConnection : DbConnection
+            where TTransaction : DbTransaction
+            where TParameterTypes : Enum
+        {
+            if (batches == null)
+            {
+                throw new ArgumentNullException(nameof(batches));
+            }
+
+            filter ??= _ => true;
+            IDbBatch<TConnection, TTransaction, TParameterTypes>[] array = batches.ToArray();
+            DbBatch < TConnection, TTransaction, TParameterTypes > merged = new DbBatch<TConnection, TTransaction, TParameterTypes>();
+
+            for (int i1 = 0; i1 < array.Length; i1++)
+            {
+                IDbBatch<TConnection, TTransaction, TParameterTypes> batch = array[i1];
+
+                if (!filter(batch))
+                {
+                    continue;
+                }
+
+                if (merged.IsolationLevel == null)
+                {
+                    merged.IsolationLevel = array[i1]
+                        .IsolationLevel;
+                }
+                else if (i1 >= 1)
+                {
+                    if (array[i1]
+                            .IsolationLevel != null)
+                    {
+                        if (array[i1]
+                                .IsolationLevel != array[i1 - 1]
+                                .IsolationLevel)
+                        {
+                            throw new ArgumentException("Sequence of batches contains different isolation levels.", nameof(batches));
+                        }
+                    }
+                }
+
+                foreach (IDbBatchCommand<TConnection, TTransaction, TParameterTypes> command in array[i1]
+                    .Commands)
+                {
+                    merged.Commands.Add(command);
+                }
+
+                foreach (IDbBatchCommandParameter<TParameterTypes> parameter in array[i1]
+                    .Parameters)
+                {
+                    if (merged.Parameters.Contains(parameter.Name))
+                    {
+                        merged.Parameters.Remove(parameter.Name);
+
+                    }
+
+                    merged.Parameters.Add(parameter);
+                }
+            }
+
+            return merged;
         }
 
         /// <summary>

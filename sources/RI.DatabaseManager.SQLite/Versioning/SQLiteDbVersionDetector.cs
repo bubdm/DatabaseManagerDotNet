@@ -175,6 +175,7 @@ namespace RI.DatabaseManager.Versioning
                 }
                 else
                 {
+                    //TODO: Specify isolation level
                     batch = new DbBatch<SQLiteConnection, SQLiteTransaction, DbType>();
 
                     foreach (string command in this.Options.GetDefaultVersionDetectionScript())

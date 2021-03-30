@@ -74,6 +74,7 @@ namespace RI.DatabaseManager.Cleanup
                 }
                 else
                 {
+                    //TODO: Specify isolation level
                     batch = new DbBatch<SqlConnection, SqlTransaction, SqlDbType>();
 
                     foreach (string command in this.Options.GetDefaultCleanupScript())

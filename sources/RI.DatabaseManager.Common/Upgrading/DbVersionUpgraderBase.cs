@@ -161,6 +161,7 @@ namespace RI.DatabaseManager.Upgrading
 
                     }
 
+                    //TODO: Specify isolation level
                     steps.Add(sourceVersionValue, manager.GetBatch(candidate));
                 }
             }
@@ -207,6 +208,7 @@ namespace RI.DatabaseManager.Upgrading
 
             foreach (string command in commands)
             {
+                //TODO: Specify isolation level
                 IDbBatch<TConnection, TTransaction, TParameterTypes> batch = manager.CreateBatch();
                 batch.AddScript(command);
                 steps.Add(batch);

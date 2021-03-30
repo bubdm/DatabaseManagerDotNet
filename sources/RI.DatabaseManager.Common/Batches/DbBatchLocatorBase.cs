@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Data;
 using System.Data.Common;
 using System.Linq;
 using System.Text.RegularExpressions;
@@ -313,6 +314,56 @@ namespace RI.DatabaseManager.Batches
             }
 
             return DbBatchTransactionRequirement.DontCare;
+        }
+
+        /// <summary>
+        ///     Gets the isolation level of a command based on its options.
+        /// </summary>
+        /// <param name="command"> The command. </param>
+        /// <returns>
+        ///     One of the <see cref="IsolationLevel" /> values if the option <c> IsolationLevel </c> was specified and has a valid value, null otherwise.
+        ///     If command is null or empty, null is returned.
+        /// </returns>
+        protected virtual IsolationLevel? GetIsolationLevelFromCommandOptions(string command)
+        {
+            if (string.IsNullOrWhiteSpace(command))
+            {
+                return null;
+            }
+
+            Dictionary<string, string> options = this.GetOptionsFromCommand(command);
+
+            return this.GetIsolationLevelFromCommandOptions(options);
+        }
+
+        /// <summary>
+        ///     Gets the transaction requirement of a command based on its options.
+        /// </summary>
+        /// <param name="options"> The already extracted command options (e.g. by <see cref="GetOptionsFromCommand" />). </param>
+        /// <returns>
+        ///     One of the <see cref="IsolationLevel" /> values if the option <c> IsolationLevel </c> was specified and has a valid value, null otherwise.
+        ///     If command is null or empty, null is returned.
+        /// </returns>
+        protected virtual IsolationLevel? GetIsolationLevelFromCommandOptions(IDictionary<string, string> options)
+        {
+            if (options == null)
+            {
+                return null;
+            }
+
+            const string key = "IsolationLevel";
+
+            if (options.ContainsKey(key))
+            {
+                string value = options[key];
+
+                if (Enum.TryParse(value, true, out IsolationLevel il))
+                {
+                    return il;
+                }
+            }
+
+            return null;
         }
 
         /// <summary>

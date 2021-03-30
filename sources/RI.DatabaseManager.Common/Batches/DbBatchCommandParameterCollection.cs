@@ -175,6 +175,20 @@ namespace RI.DatabaseManager.Batches
         public bool IsReadOnly => ((ICollection<IDbBatchCommandParameter<TParameterTypes>>)this.InternalSet).IsReadOnly;
 
         /// <inheritdoc />
+        public void AddRange (IEnumerable<IDbBatchCommandParameter<TParameterTypes>> parameters)
+        {
+            if (parameters == null)
+            {
+                return;
+            }
+
+            foreach (IDbBatchCommandParameter<TParameterTypes> parameter in parameters)
+            {
+                this.InternalSet.Add(parameter);
+            }
+        }
+
+        /// <inheritdoc />
         public DbBatchCommandParameterCollection<TParameterTypes> Clone ()
         {
             DbBatchCommandParameterCollection<TParameterTypes> clone = new DbBatchCommandParameterCollection<TParameterTypes>();
