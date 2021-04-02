@@ -114,8 +114,6 @@ namespace RI.DatabaseManager.Backup
                     postprocessingBatch = manager.GetBatch(this.Options.BackupPostprocessingBatchName);
                 }
 
-                //TODO: Specify isolation level (2x)
-
                 SQLiteConnectionStringBuilder targetConnectionString = connectionStringBuilder ?? new SQLiteConnectionStringBuilder(this.Options.GetConnectionString());
                 if (file != null)
                 {

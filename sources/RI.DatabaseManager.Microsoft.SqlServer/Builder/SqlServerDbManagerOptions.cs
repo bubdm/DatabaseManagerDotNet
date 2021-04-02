@@ -362,14 +362,24 @@ namespace RI.DatabaseManager.Builder
         /// <summary>
         /// Gets the default cleanup script.
         /// </summary>
+        /// <param name="transactionRequirement">The transaction requirement.</param>
+        /// <param name="isolationLevel">The isolation level requirement.</param>
         /// <returns>
         /// The array with the commands of the default cleanup script.
         /// </returns>
-        public string[] GetDefaultCleanupScript() => (string[])this.DefaultCleanupScript.Clone();
+        public string[] GetDefaultCleanupScript(out DbBatchTransactionRequirement transactionRequirement, out IsolationLevel? isolationLevel)
+        {
+            transactionRequirement = DbBatchTransactionRequirement.Disallowed;
+            isolationLevel = IsolationLevel.Serializable;
+
+            return (string[])this.DefaultCleanupScript.Clone();
+        }
 
         /// <summary>
         /// Gets the default version detection script.
         /// </summary>
+        /// <param name="transactionRequirement">The transaction requirement.</param>
+        /// <param name="isolationLevel">The isolation level requirement.</param>
         /// <returns>
         /// The array with the commands of the default version detection script.
         /// </returns>
@@ -378,8 +388,11 @@ namespace RI.DatabaseManager.Builder
         /// The placeholders in the default script are replaced as follows: <c>__@TableName</c> = <see cref="DefaultVersionDetectionTable"/>, <c>__@NameColumnName</c> = <see cref="DefaultVersionDetectionNameColumn"/>, <c>__@ValueColumnName</c> = <see cref="DefaultVersionDetectionValueColumn"/>, <c>__@KeyName</c> = <see cref="DefaultVersionDetectionKey"/>.
         /// </para>
         /// </remarks>
-        public string[] GetDefaultVersionDetectionScript()
+        public string[] GetDefaultVersionDetectionScript(out DbBatchTransactionRequirement transactionRequirement, out IsolationLevel? isolationLevel)
         {
+            transactionRequirement = DbBatchTransactionRequirement.Required;
+            isolationLevel = IsolationLevel.Serializable;
+
             List<string> commands = new List<string>();
 
             foreach (string command in this.DefaultVersionDetectionScript)
@@ -396,6 +409,8 @@ namespace RI.DatabaseManager.Builder
         /// <summary>
         /// Gets the default setup script.
         /// </summary>
+        /// <param name="transactionRequirement">The transaction requirement.</param>
+        /// <param name="isolationLevel">The isolation level requirement.</param>
         /// <returns>
         /// The array with the commands of the default setup script or null or an empty array if a default setup script is not available.
         /// </returns>
@@ -404,8 +419,11 @@ namespace RI.DatabaseManager.Builder
         /// The placeholders in the default script are replaced as follows: <c>__@TableName</c> = <see cref="DefaultVersionDetectionTable"/>, <c>__@NameColumnName</c> = <see cref="DefaultVersionDetectionNameColumn"/>, <c>__@ValueColumnName</c> = <see cref="DefaultVersionDetectionValueColumn"/>, <c>__@KeyName</c> = <see cref="DefaultVersionDetectionKey"/>.
         /// </para>
         /// </remarks>
-        public string[] GetDefaultSetupScript()
+        public string[] GetDefaultSetupScript(out DbBatchTransactionRequirement transactionRequirement, out IsolationLevel? isolationLevel)
         {
+            transactionRequirement = DbBatchTransactionRequirement.Disallowed;
+            isolationLevel = IsolationLevel.Serializable;
+
             List<string> commands = new List<string>();
 
             foreach (string command in this.DefaultSetupScript)

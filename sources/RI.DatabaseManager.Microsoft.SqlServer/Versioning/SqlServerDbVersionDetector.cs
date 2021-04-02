@@ -177,12 +177,11 @@ namespace RI.DatabaseManager.Versioning
                 }
                 else
                 {
-                    //TODO: Specify isolation level
                     batch = new DbBatch<SqlConnection, SqlTransaction, SqlDbType>();
 
-                    foreach (string command in this.Options.GetDefaultVersionDetectionScript())
+                    foreach (string command in this.Options.GetDefaultVersionDetectionScript(out DbBatchTransactionRequirement transactionRequirement, out IsolationLevel? isolationLevel))
                     {
-                        batch.AddScript(command, DbBatchTransactionRequirement.Disallowed);
+                        batch.AddScript(command, transactionRequirement, isolationLevel);
                     }
                 }
 

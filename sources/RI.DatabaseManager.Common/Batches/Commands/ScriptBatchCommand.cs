@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Data;
 using System.Data.Common;
 
 
@@ -22,10 +23,12 @@ namespace RI.DatabaseManager.Batches.Commands
         /// </summary>
         /// <param name="script"> The database script. </param>
         /// <param name="transactionRequirement"> The optional transaction requirement specification. Default values is <see cref="DbBatchTransactionRequirement.DontCare" />. </param>
-        public ScriptBatchCommand (string script, DbBatchTransactionRequirement transactionRequirement = DbBatchTransactionRequirement.DontCare)
+        /// <param name="isolationLevel"> The optional isolation level requirement specification. Default value is null.</param>
+        public ScriptBatchCommand (string script, DbBatchTransactionRequirement transactionRequirement = DbBatchTransactionRequirement.DontCare, IsolationLevel? isolationLevel = null)
         {
             this.Script = string.IsNullOrWhiteSpace(script) ? null : script;
             this.TransactionRequirement = transactionRequirement;
+            this.IsolationLevel = isolationLevel;
         }
 
         #endregion
@@ -60,6 +63,9 @@ namespace RI.DatabaseManager.Batches.Commands
         public DbBatchTransactionRequirement TransactionRequirement { get; }
 
         /// <inheritdoc />
+        public IsolationLevel? IsolationLevel { get; }
+
+        /// <inheritdoc />
         public bool WasExecuted { get; set; }
 
         /// <inheritdoc />
@@ -76,7 +82,7 @@ namespace RI.DatabaseManager.Batches.Commands
         /// <inheritdoc cref="ICloneable.Clone"/>
         public ScriptBatchCommand<TConnection, TTransaction, TParameterTypes> Clone()
         {
-            ScriptBatchCommand<TConnection, TTransaction, TParameterTypes> clone = new ScriptBatchCommand<TConnection, TTransaction, TParameterTypes>(this.Script, this.TransactionRequirement);
+            ScriptBatchCommand<TConnection, TTransaction, TParameterTypes> clone = new ScriptBatchCommand<TConnection, TTransaction, TParameterTypes>(this.Script, this.TransactionRequirement, this.IsolationLevel);
             clone.Result = this.Result;
             clone.Exception = this.Exception;
             clone.Error = this.Error;

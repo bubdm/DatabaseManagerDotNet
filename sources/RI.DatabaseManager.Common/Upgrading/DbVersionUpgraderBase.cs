@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Data;
 using System.Data.Common;
 using System.Globalization;
 using System.Linq;
@@ -134,6 +135,7 @@ namespace RI.DatabaseManager.Upgrading
             }
 
             ISet<string> candidates = manager.GetBatchNames();
+            Dictionary<int, List<IDbBatch<TConnection, TTransaction, TParameterTypes>>> candidateSteps = new Dictionary<int, List<IDbBatch<TConnection, TTransaction, TParameterTypes>>>();
 
             foreach (string candidate in candidates)
             {
@@ -154,16 +156,19 @@ namespace RI.DatabaseManager.Upgrading
 
                 if (int.TryParse(sourceVersion, NumberStyles.None, CultureInfo.InvariantCulture, out int sourceVersionValue))
                 {
-                    if (steps.ContainsKey(sourceVersionValue))
+                    if (!candidateSteps.ContainsKey(sourceVersionValue))
                     {
-                        //TODO: #14: Use merging here
-                        throw new InvalidOperationException($"Multiple batches provided to {this.GetType().Name} apply to the same source version {sourceVersion} using the name pattern \"{namePattern}\".");
+                        candidateSteps.Add(sourceVersionValue, new List<IDbBatch<TConnection, TTransaction, TParameterTypes>>());
 
                     }
 
-                    //TODO: Specify isolation level
-                    steps.Add(sourceVersionValue, manager.GetBatch(candidate));
+                    candidateSteps[sourceVersionValue].Add(manager.GetBatch(candidate));
                 }
+            }
+
+            foreach (KeyValuePair<int, List<IDbBatch<TConnection, TTransaction, TParameterTypes>>> candidate in candidateSteps)
+            {
+                steps.Add(candidate.Key, candidate.Value.MergeCommands());
             }
 
             if (steps.Count < 2)
@@ -199,7 +204,7 @@ namespace RI.DatabaseManager.Upgrading
         /// </remarks>
         protected virtual bool GetCreationSteps (IDbManager<TConnection, TTransaction, TParameterTypes> manager, IList<IDbBatch<TConnection, TTransaction, TParameterTypes>> steps)
         {
-            string[] commands = this.GetDefaultCreationCommands() ?? new string[0];
+            string[] commands = this.GetDefaultCreationCommands(out DbBatchTransactionRequirement transactionRequirement, out IsolationLevel? isolationLevel) ?? new string[0];
 
             if (commands.Length == 0)
             {
@@ -208,9 +213,8 @@ namespace RI.DatabaseManager.Upgrading
 
             foreach (string command in commands)
             {
-                //TODO: Specify isolation level
                 IDbBatch<TConnection, TTransaction, TParameterTypes> batch = manager.CreateBatch();
-                batch.AddScript(command);
+                batch.AddScript(command, transactionRequirement, isolationLevel);
                 steps.Add(batch);
             }
 
@@ -236,6 +240,8 @@ namespace RI.DatabaseManager.Upgrading
         /// <summary>
         /// Gets the default database creation commands.
         /// </summary>
+        /// <param name="transactionRequirement">The transaction requirement.</param>
+        /// <param name="isolationLevel">The isolation level requirement.</param>
         /// <returns>
         /// The default database creation commands or null if none are available.
         /// </returns>
@@ -244,7 +250,12 @@ namespace RI.DatabaseManager.Upgrading
         /// The default implementation returns the value of  the <see cref="ISupportDatabaseCreation.GetDefaultSetupScript"/> property from <see cref="Options"/>.
         /// </note>
         /// </remarks>
-        protected virtual string[] GetDefaultCreationCommands() => (this.Options as ISupportDatabaseCreation)?.GetDefaultSetupScript();
+        protected virtual string[] GetDefaultCreationCommands(out DbBatchTransactionRequirement transactionRequirement, out IsolationLevel? isolationLevel)
+        {
+            transactionRequirement = DbBatchTransactionRequirement.DontCare;
+            isolationLevel = null;
+            return (this.Options as ISupportDatabaseCreation)?.GetDefaultSetupScript(out transactionRequirement, out isolationLevel);
+        }
 
         /// <inheritdoc />
         int IDbVersionUpgrader.GetMaxVersion (IDbManager manager)

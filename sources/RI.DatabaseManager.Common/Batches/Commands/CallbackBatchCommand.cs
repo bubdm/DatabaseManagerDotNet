@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Data;
 using System.Data.Common;
 
 
@@ -25,8 +26,9 @@ namespace RI.DatabaseManager.Batches.Commands
         /// </summary>
         /// <param name="callback"> The delegate to the callback which is called when the command is executed. </param>
         /// <param name="transactionRequirement"> The optional transaction requirement specification. Default values is <see cref="DbBatchTransactionRequirement.DontCare" />. </param>
+        /// <param name="isolationLevel"> The optional isolation level requirement specification. Default value is null.</param>
         /// <exception cref="ArgumentNullException"> <paramref name="callback" /> is null. </exception>
-        public CallbackBatchCommand (CallbackBatchCommandDelegate<TConnection, TTransaction, TParameterTypes> callback, DbBatchTransactionRequirement transactionRequirement = DbBatchTransactionRequirement.DontCare)
+        public CallbackBatchCommand (CallbackBatchCommandDelegate<TConnection, TTransaction, TParameterTypes> callback, DbBatchTransactionRequirement transactionRequirement = DbBatchTransactionRequirement.DontCare, IsolationLevel? isolationLevel = null)
         {
             if (callback == null)
             {
@@ -35,6 +37,7 @@ namespace RI.DatabaseManager.Batches.Commands
 
             this.Code = callback;
             this.TransactionRequirement = transactionRequirement;
+            this.IsolationLevel = isolationLevel;
         }
 
         #endregion
@@ -71,6 +74,9 @@ namespace RI.DatabaseManager.Batches.Commands
         public DbBatchTransactionRequirement TransactionRequirement { get; }
 
         /// <inheritdoc />
+        public IsolationLevel? IsolationLevel { get; }
+
+        /// <inheritdoc />
         public bool WasExecuted { get; set; }
 
         /// <inheritdoc />
@@ -87,7 +93,7 @@ namespace RI.DatabaseManager.Batches.Commands
         /// <inheritdoc cref="ICloneable.Clone"/>
         public CallbackBatchCommand<TConnection, TTransaction, TParameterTypes> Clone ()
         {
-            CallbackBatchCommand<TConnection, TTransaction, TParameterTypes> clone = new CallbackBatchCommand<TConnection, TTransaction, TParameterTypes>(this.Code, this.TransactionRequirement);
+            CallbackBatchCommand<TConnection, TTransaction, TParameterTypes> clone = new CallbackBatchCommand<TConnection, TTransaction, TParameterTypes>(this.Code, this.TransactionRequirement, this.IsolationLevel);
             clone.Result = this.Result;
             clone.Exception = this.Exception;
             clone.Error = this.Error;

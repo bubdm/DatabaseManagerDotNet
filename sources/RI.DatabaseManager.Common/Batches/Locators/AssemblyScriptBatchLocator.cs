@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Data;
 using System.Data.Common;
 using System.IO;
 using System.Reflection;
@@ -234,7 +235,9 @@ namespace RI.DatabaseManager.Batches.Locators
                             if (!string.IsNullOrWhiteSpace(command))
                             {
                                 DbBatchTransactionRequirement transactionRequirement = this.GetTransactionRequirementFromCommandOptions(command);
-                                batch.AddScript(command, transactionRequirement);
+                                IsolationLevel? isolationLevel = this.GetIsolationLevelFromCommandOptions(command);
+
+                                batch.AddScript(command, transactionRequirement, isolationLevel);
                             }
                         }
 

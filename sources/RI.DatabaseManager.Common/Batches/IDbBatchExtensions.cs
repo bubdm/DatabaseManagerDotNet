@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Data;
 using System.Data.Common;
 using System.IO;
 using System.Linq;
@@ -31,6 +32,7 @@ namespace RI.DatabaseManager.Batches
         /// <param name="batch"> The batch. </param>
         /// <param name="callback"> The callback. </param>
         /// <param name="transactionRequirement"> The optional transaction requirement specification. Default values is <see cref="DbBatchTransactionRequirement.DontCare" />. </param>
+        /// <param name="isolationLevel"> The optional isolation level requirement specification. Default value is null.</param>
         /// <returns>
         ///     The index in the list of commands the callback was added.
         /// </returns>
@@ -40,7 +42,7 @@ namespace RI.DatabaseManager.Batches
         ///     </note>
         /// </remarks>
         /// <exception cref="ArgumentNullException"> <paramref name="batch" /> is null. </exception>
-        public static IDbBatchCommand<TConnection, TTransaction, TParameterTypes> AddCode <TConnection, TTransaction, TParameterTypes> (this IDbBatch<TConnection,TTransaction, TParameterTypes> batch, CallbackBatchCommandDelegate<TConnection, TTransaction, TParameterTypes> callback, DbBatchTransactionRequirement transactionRequirement = DbBatchTransactionRequirement.DontCare)
+        public static IDbBatchCommand<TConnection, TTransaction, TParameterTypes> AddCode <TConnection, TTransaction, TParameterTypes> (this IDbBatch<TConnection,TTransaction, TParameterTypes> batch, CallbackBatchCommandDelegate<TConnection, TTransaction, TParameterTypes> callback, DbBatchTransactionRequirement transactionRequirement = DbBatchTransactionRequirement.DontCare, IsolationLevel? isolationLevel = null)
             where TConnection : DbConnection
             where TTransaction : DbTransaction
             where TParameterTypes : Enum
@@ -50,7 +52,7 @@ namespace RI.DatabaseManager.Batches
                 throw new ArgumentNullException(nameof(batch));
             }
 
-            CallbackBatchCommand<TConnection, TTransaction, TParameterTypes> command = callback == null ? null : new CallbackBatchCommand<TConnection, TTransaction, TParameterTypes>(callback, transactionRequirement);
+            CallbackBatchCommand<TConnection, TTransaction, TParameterTypes> command = callback == null ? null : new CallbackBatchCommand<TConnection, TTransaction, TParameterTypes>(callback, transactionRequirement, isolationLevel);
 
             batch.Commands.Add(command);
 
@@ -66,6 +68,7 @@ namespace RI.DatabaseManager.Batches
         /// <param name="batch"> The batch. </param>
         /// <param name="script"> The script. </param>
         /// <param name="transactionRequirement"> The optional transaction requirement specification. Default values is <see cref="DbBatchTransactionRequirement.DontCare" />. </param>
+        /// <param name="isolationLevel"> The optional isolation level requirement specification. Default value is null.</param>
         /// <returns>
         ///     The index in the list of commands the script was added.
         /// </returns>
@@ -75,7 +78,7 @@ namespace RI.DatabaseManager.Batches
         ///     </note>
         /// </remarks>
         /// <exception cref="ArgumentNullException"> <paramref name="batch" /> is null. </exception>
-        public static IDbBatchCommand<TConnection, TTransaction, TParameterTypes> AddScript<TConnection, TTransaction, TParameterTypes>(this IDbBatch<TConnection, TTransaction, TParameterTypes> batch, string script, DbBatchTransactionRequirement transactionRequirement = DbBatchTransactionRequirement.DontCare)
+        public static IDbBatchCommand<TConnection, TTransaction, TParameterTypes> AddScript<TConnection, TTransaction, TParameterTypes>(this IDbBatch<TConnection, TTransaction, TParameterTypes> batch, string script, DbBatchTransactionRequirement transactionRequirement = DbBatchTransactionRequirement.DontCare, IsolationLevel? isolationLevel = null)
             where TConnection : DbConnection
             where TTransaction : DbTransaction
             where TParameterTypes : Enum
@@ -85,7 +88,7 @@ namespace RI.DatabaseManager.Batches
                 throw new ArgumentNullException(nameof(batch));
             }
 
-            ScriptBatchCommand<TConnection, TTransaction, TParameterTypes> command = script == null ? null : new ScriptBatchCommand<TConnection, TTransaction, TParameterTypes>(script, transactionRequirement);
+            ScriptBatchCommand<TConnection, TTransaction, TParameterTypes> command = script == null ? null : new ScriptBatchCommand<TConnection, TTransaction, TParameterTypes>(script, transactionRequirement, isolationLevel);
 
             batch.Commands.Add(command);
 
@@ -101,11 +104,12 @@ namespace RI.DatabaseManager.Batches
         /// <param name="batch"> The batch. </param>
         /// <param name="reader"> The text reader from which the script is read. </param>
         /// <param name="transactionRequirement"> The optional transaction requirement specification. Default values is <see cref="DbBatchTransactionRequirement.DontCare" />. </param>
+        /// <param name="isolationLevel"> The optional isolation level requirement specification. Default value is null.</param>
         /// <returns>
         ///     The index in the list of commands the script was added.
         /// </returns>
         /// <exception cref="ArgumentNullException"> <paramref name="batch" /> or <paramref name="reader"/> is null. </exception>
-        public static IDbBatchCommand<TConnection, TTransaction, TParameterTypes> AddScriptFromReader<TConnection, TTransaction, TParameterTypes>(this IDbBatch<TConnection, TTransaction, TParameterTypes> batch, TextReader reader, DbBatchTransactionRequirement transactionRequirement = DbBatchTransactionRequirement.DontCare)
+        public static IDbBatchCommand<TConnection, TTransaction, TParameterTypes> AddScriptFromReader<TConnection, TTransaction, TParameterTypes>(this IDbBatch<TConnection, TTransaction, TParameterTypes> batch, TextReader reader, DbBatchTransactionRequirement transactionRequirement = DbBatchTransactionRequirement.DontCare, IsolationLevel? isolationLevel = null)
             where TConnection : DbConnection
             where TTransaction : DbTransaction
             where TParameterTypes : Enum
@@ -120,7 +124,7 @@ namespace RI.DatabaseManager.Batches
                 throw new ArgumentNullException(nameof(reader));
             }
 
-            return batch.AddScript(reader.ReadToEnd(), transactionRequirement);
+            return batch.AddScript(reader.ReadToEnd(), transactionRequirement, isolationLevel);
         }
 
         /// <summary>
@@ -133,12 +137,13 @@ namespace RI.DatabaseManager.Batches
         /// <param name="stream"> The stream from which the script is read. </param>
         /// <param name="encoding"> The optional encoding to read the script. Default value is null, using <see cref="Encoding.UTF8"/>. </param>
         /// <param name="transactionRequirement"> The optional transaction requirement specification. Default values is <see cref="DbBatchTransactionRequirement.DontCare" />. </param>
+        /// <param name="isolationLevel"> The optional isolation level requirement specification. Default value is null.</param>
         /// <returns>
         ///     The index in the list of commands the script was added.
         /// </returns>
         /// <exception cref="ArgumentNullException"> <paramref name="batch" /> or <paramref name="stream"/> is null. </exception>
         /// <exception cref="ArgumentException"><paramref name="stream"/> is not readable.</exception>
-        public static IDbBatchCommand<TConnection, TTransaction, TParameterTypes> AddScriptFromStream<TConnection, TTransaction, TParameterTypes>(this IDbBatch<TConnection, TTransaction, TParameterTypes> batch, Stream stream, Encoding encoding = null, DbBatchTransactionRequirement transactionRequirement = DbBatchTransactionRequirement.DontCare)
+        public static IDbBatchCommand<TConnection, TTransaction, TParameterTypes> AddScriptFromStream<TConnection, TTransaction, TParameterTypes>(this IDbBatch<TConnection, TTransaction, TParameterTypes> batch, Stream stream, Encoding encoding = null, DbBatchTransactionRequirement transactionRequirement = DbBatchTransactionRequirement.DontCare, IsolationLevel? isolationLevel = null)
             where TConnection : DbConnection
             where TTransaction : DbTransaction
             where TParameterTypes : Enum
@@ -160,7 +165,7 @@ namespace RI.DatabaseManager.Batches
 
             using (StreamReader sr = new StreamReader(stream, encoding ?? Encoding.UTF8))
             {
-                return batch.AddScriptFromReader(sr, transactionRequirement);
+                return batch.AddScriptFromReader(sr, transactionRequirement, isolationLevel);
             }
         }
 
@@ -174,11 +179,12 @@ namespace RI.DatabaseManager.Batches
         /// <param name="file"> The file from which the script is read. </param>
         /// <param name="encoding"> The optional encoding to read the script. Default value is null, using <see cref="Encoding.UTF8"/>. </param>
         /// <param name="transactionRequirement"> The optional transaction requirement specification. Default values is <see cref="DbBatchTransactionRequirement.DontCare" />. </param>
+        /// <param name="isolationLevel"> The optional isolation level requirement specification. Default value is null.</param>
         /// <returns>
         ///     The index in the list of commands the script was added.
         /// </returns>
         /// <exception cref="ArgumentNullException"> <paramref name="batch" /> or <paramref name="file"/> is null. </exception>
-        public static IDbBatchCommand<TConnection, TTransaction, TParameterTypes> AddScriptFromFile<TConnection, TTransaction, TParameterTypes>(this IDbBatch<TConnection, TTransaction, TParameterTypes> batch, string file, Encoding encoding = null, DbBatchTransactionRequirement transactionRequirement = DbBatchTransactionRequirement.DontCare)
+        public static IDbBatchCommand<TConnection, TTransaction, TParameterTypes> AddScriptFromFile<TConnection, TTransaction, TParameterTypes>(this IDbBatch<TConnection, TTransaction, TParameterTypes> batch, string file, Encoding encoding = null, DbBatchTransactionRequirement transactionRequirement = DbBatchTransactionRequirement.DontCare, IsolationLevel? isolationLevel = null)
             where TConnection : DbConnection
             where TTransaction : DbTransaction
             where TParameterTypes : Enum
@@ -195,7 +201,7 @@ namespace RI.DatabaseManager.Batches
 
             using (FileStream fs = new FileStream(file, FileMode.Open, FileAccess.Read, FileShare.Read))
             {
-                return batch.AddScriptFromStream(fs, encoding, transactionRequirement);
+                return batch.AddScriptFromStream(fs, encoding, transactionRequirement, isolationLevel);
             }
         }
 
@@ -210,12 +216,13 @@ namespace RI.DatabaseManager.Batches
         /// <param name="name"> The embedded assembly resource name of the script. </param>
         /// <param name="encoding"> The optional encoding to read the script. Default value is null, using <see cref="Encoding.UTF8"/>. </param>
         /// <param name="transactionRequirement"> The optional transaction requirement specification. Default values is <see cref="DbBatchTransactionRequirement.DontCare" />. </param>
+        /// <param name="isolationLevel"> The optional isolation level requirement specification. Default value is null.</param>
         /// <returns>
         ///     The index in the list of commands the script was added.
         /// </returns>
         /// <exception cref="ArgumentNullException"> <paramref name="batch" />, <paramref name="assembly"/>, or <paramref name="name"/> is null. </exception>
         /// <exception cref="ArgumentException"><paramref name="name"/> is an empty string.</exception>
-        public static IDbBatchCommand<TConnection, TTransaction, TParameterTypes> AddScriptFromAssemblyResource<TConnection, TTransaction, TParameterTypes>(this IDbBatch<TConnection, TTransaction, TParameterTypes> batch, Assembly assembly, string name, Encoding encoding = null, DbBatchTransactionRequirement transactionRequirement = DbBatchTransactionRequirement.DontCare)
+        public static IDbBatchCommand<TConnection, TTransaction, TParameterTypes> AddScriptFromAssemblyResource<TConnection, TTransaction, TParameterTypes>(this IDbBatch<TConnection, TTransaction, TParameterTypes> batch, Assembly assembly, string name, Encoding encoding = null, DbBatchTransactionRequirement transactionRequirement = DbBatchTransactionRequirement.DontCare, IsolationLevel? isolationLevel = null)
             where TConnection : DbConnection
             where TTransaction : DbTransaction
             where TParameterTypes : Enum
@@ -242,7 +249,7 @@ namespace RI.DatabaseManager.Batches
 
             using (Stream stream = assembly.GetManifestResourceStream(name))
             {
-                return batch.AddScriptFromStream(stream, encoding, transactionRequirement);
+                return batch.AddScriptFromStream(stream, encoding, transactionRequirement, isolationLevel);
             }
         }
 
@@ -458,6 +465,47 @@ namespace RI.DatabaseManager.Batches
         }
 
         /// <summary>
+        ///     Determines the required isolation level of a batch.
+        /// </summary>
+        /// <param name="batch"> The batch. </param>
+        /// <returns>
+        ///     The isolation level of the batch or null if none is specified.
+        /// </returns>
+        /// <exception cref="ArgumentNullException"> <paramref name="batch" /> is null. </exception>
+        /// <exception cref="InvalidOperationException"> Conflicting isolation level requirements are used (e.g. one command uses <see cref="IsolationLevel.ReadCommitted" /> while another uses <see cref="IsolationLevel.Serializable" />). </exception>
+        public static IsolationLevel? GetRequiredIsolationLevel (this IDbBatch batch)
+        {
+            if (batch == null)
+            {
+                throw new ArgumentNullException(nameof(batch));
+            }
+
+            IsolationLevel? isolationLevel = null;
+
+            for (int i1 = 0; i1 < batch.Commands.Count; i1++)
+            {
+                IDbBatchCommand command = batch.Commands[i1];
+
+                if (isolationLevel == null)
+                {
+                    isolationLevel = command.IsolationLevel;
+                }
+                else if (i1 >= 1)
+                {
+                    if (command.IsolationLevel != null)
+                    {
+                        if (command.IsolationLevel != batch.Commands[i1 - 1].IsolationLevel)
+                        {
+                            throw new InvalidOperationException("Conflicting isolation level requirements.");
+                        }
+                    }
+                }
+            }
+
+            return isolationLevel;
+        }
+
+        /// <summary>
         ///     Resets the states of all commands of the last execution of this batch.
         /// </summary>
         /// <param name="batch"> The batch. </param>
@@ -595,9 +643,19 @@ namespace RI.DatabaseManager.Batches
                 if (filter(command))
                 {
                     DbBatch<TConnection, TTransaction, TParameterTypes> splittedBatch = new DbBatch<TConnection, TTransaction, TParameterTypes>();
-                    splittedBatch.Commands.Add(command);
-                    splittedBatch.Parameters.AddRange(batch.Parameters);
-                    splittedBatch.IsolationLevel = batch.IsolationLevel;
+                    splittedBatch.Commands.Add((IDbBatchCommand<TConnection, TTransaction, TParameterTypes>)command.Clone());
+
+                    foreach (IDbBatchCommandParameter<TParameterTypes> parameter in batch.Parameters)
+                    {
+                        if (splittedBatch.Parameters.Contains(parameter.Name))
+                        {
+                            splittedBatch.Parameters.Remove(parameter.Name);
+
+                        }
+
+                        splittedBatch.Parameters.Add((IDbBatchCommandParameter<TParameterTypes>)parameter.Clone());
+                    }
+
                     batches.Add(splittedBatch);
                 }
             }
@@ -650,29 +708,10 @@ namespace RI.DatabaseManager.Batches
                     continue;
                 }
 
-                if (merged.IsolationLevel == null)
-                {
-                    merged.IsolationLevel = array[i1]
-                        .IsolationLevel;
-                }
-                else if (i1 >= 1)
-                {
-                    if (array[i1]
-                            .IsolationLevel != null)
-                    {
-                        if (array[i1]
-                                .IsolationLevel != array[i1 - 1]
-                                .IsolationLevel)
-                        {
-                            throw new ArgumentException("Sequence of batches contains different isolation levels.", nameof(batches));
-                        }
-                    }
-                }
-
                 foreach (IDbBatchCommand<TConnection, TTransaction, TParameterTypes> command in array[i1]
                     .Commands)
                 {
-                    merged.Commands.Add(command);
+                    merged.Commands.Add((IDbBatchCommand<TConnection, TTransaction, TParameterTypes>)command.Clone());
                 }
 
                 foreach (IDbBatchCommandParameter<TParameterTypes> parameter in array[i1]
@@ -684,7 +723,7 @@ namespace RI.DatabaseManager.Batches
 
                     }
 
-                    merged.Parameters.Add(parameter);
+                    merged.Parameters.Add((IDbBatchCommandParameter<TParameterTypes>)parameter.Clone());
                 }
             }
 

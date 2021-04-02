@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Data;
 using System.Data.Common;
 
 
@@ -54,8 +53,6 @@ namespace RI.DatabaseManager.Batches
             }
         }
 
-        public DbBatch () { }
-
         private CommandCollection CommandsInternal { get; } = new CommandCollection();
 
         /// <inheritdoc />
@@ -63,9 +60,6 @@ namespace RI.DatabaseManager.Batches
 
         /// <inheritdoc />
         public IDbBatchCommandParameterCollection<TParameterTypes> Parameters { get; private set; } = new DbBatchCommandParameterCollection<TParameterTypes>();
-
-        /// <inheritdoc />
-        public IsolationLevel? IsolationLevel { get; set; } = System.Data.IsolationLevel.ReadCommitted;
 
         /// <inheritdoc />
         IDbBatchCommandParameterCollection IDbBatch.Parameters => this.Parameters;
@@ -90,7 +84,6 @@ namespace RI.DatabaseManager.Batches
             }
 
             clone.Parameters = (DbBatchCommandParameterCollection<TParameterTypes>)this.Parameters.Clone();
-            clone.IsolationLevel = this.IsolationLevel;
 
             return clone;
         }

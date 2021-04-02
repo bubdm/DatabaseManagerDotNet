@@ -105,17 +105,24 @@ namespace RI.DatabaseManager.Batches.Locators
                 throw new ArgumentNullException(nameof(batchCreator));
             }
 
+            List< IDbBatch < TConnection, TTransaction, TParameterTypes >> candidates = new List<IDbBatch<TConnection, TTransaction, TParameterTypes>>();
+
             foreach (IDbBatchLocator<TConnection, TTransaction, TParameterTypes> batchLocator in this.BatchLocators)
             {
                 IDbBatch<TConnection, TTransaction, TParameterTypes> currentBatch = batchLocator.GetBatch(name, commandSeparator, batchCreator);
 
                 if (currentBatch != null)
                 {
-                    return currentBatch;
+                    candidates.Add(currentBatch);
                 }
             }
 
-            return null;
+            if (candidates.Count == 0)
+            {
+                return null;
+            }
+
+            return candidates.MergeCommands();
         }
 
         /// <inheritdoc />

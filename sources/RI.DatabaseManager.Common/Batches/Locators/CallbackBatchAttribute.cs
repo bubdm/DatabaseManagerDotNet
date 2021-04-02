@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Data;
 
 
 
@@ -33,6 +34,14 @@ namespace RI.DatabaseManager.Batches.Locators
         ///     The transaction requirement.
         /// </value>
         public DbBatchTransactionRequirement TransactionRequirement { get; set; } = DbBatchTransactionRequirement.DontCare;
+
+        /// <summary>
+        ///     Gets or sets the isolation level requirement.
+        /// </summary>
+        /// <value>
+        ///     The isolation level requirement.
+        /// </value>
+        public IsolationLevel? IsolationLevel { get; set; } = null;
 
         #endregion
     }

@@ -74,12 +74,11 @@ namespace RI.DatabaseManager.Cleanup
                 }
                 else
                 {
-                    //TODO: Specify isolation level
                     batch = new DbBatch<SqlConnection, SqlTransaction, SqlDbType>();
 
-                    foreach (string command in this.Options.GetDefaultCleanupScript())
+                    foreach (string command in this.Options.GetDefaultCleanupScript(out DbBatchTransactionRequirement transactionRequirement, out IsolationLevel? isolationLevel))
                     {
-                        batch.AddScript(command, DbBatchTransactionRequirement.Disallowed);
+                        batch.AddScript(command, transactionRequirement, isolationLevel);
                     }
                 }
 

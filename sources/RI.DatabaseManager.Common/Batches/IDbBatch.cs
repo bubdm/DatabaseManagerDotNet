@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Data;
 using System.Data.Common;
 
 
@@ -41,19 +40,6 @@ namespace RI.DatabaseManager.Batches
         ///     </note>
         /// </remarks>
         IDbBatchCommandParameterCollection Parameters { get; }
-
-        /// <summary>
-        /// Gets the used isolation level, if any.
-        /// </summary>
-        /// <value>
-        /// The used isolation level or null if none is provided or used.
-        /// </value>
-        /// <remarks>
-        /// <para>
-        /// <see cref="IsolationLevel"/> is only used with transactions.
-        /// </para>
-        /// </remarks>
-        IsolationLevel? IsolationLevel { get; }
     }
 
     /// <inheritdoc cref="IDbBatch" />

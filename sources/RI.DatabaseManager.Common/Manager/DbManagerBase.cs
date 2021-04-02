@@ -445,7 +445,7 @@ namespace RI.DatabaseManager.Manager
 
             if (batch.RequiresTransaction() || (!batch.DisallowsTransaction()))
             {
-                transaction = this.CreateTransaction(readOnly, batch.IsolationLevel.GetValueOrDefault(this.GetDefaultIsolationLevel()));
+                transaction = this.CreateTransaction(readOnly, batch.GetRequiredIsolationLevel().GetValueOrDefault(this.GetDefaultIsolationLevel()));
 
                 if (transaction == null)
                 {

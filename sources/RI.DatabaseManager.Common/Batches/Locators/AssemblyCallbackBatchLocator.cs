@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
+using System.Data;
 using System.Data.Common;
 using System.Linq;
 using System.Reflection;
@@ -93,9 +93,9 @@ namespace RI.DatabaseManager.Batches.Locators
 
         #region Instance Methods
 
-        private CallbackTypeCollection GetCallbackTypes ()
+        private Dictionary<string, List<CallbackType>> GetCallbackTypes ()
         {
-            CallbackTypeCollection callbackTypes = new CallbackTypeCollection();
+            Dictionary<string, List<CallbackType>> callbackTypes = new Dictionary<string, List<CallbackType>>(this.DefaultNameComparer);
 
             foreach (Assembly assembly in this.Assemblies)
             {
@@ -111,15 +111,22 @@ namespace RI.DatabaseManager.Batches.Locators
                 {
                     string name = type.Name;
                     DbBatchTransactionRequirement transactionRequirement = DbBatchTransactionRequirement.DontCare;
+                    IsolationLevel? isolationLevel = null;
                     CallbackBatchAttribute attribute = type.GetCustomAttribute<CallbackBatchAttribute>(true);
 
                     if (attribute != null)
                     {
                         name = (string.IsNullOrWhiteSpace(attribute.Name) ? null : attribute.Name) ?? name;
                         transactionRequirement = attribute.TransactionRequirement;
+                        isolationLevel = attribute.IsolationLevel;
                     }
 
-                    callbackTypes.Add(new CallbackType(type, name, transactionRequirement));
+                    if (!callbackTypes.ContainsKey(name))
+                    {
+                        callbackTypes.Add(name, new List<CallbackType>());
+                    }
+
+                    callbackTypes[name].Add(new CallbackType(type, name, transactionRequirement, isolationLevel));
                 }
             }
 
@@ -136,26 +143,27 @@ namespace RI.DatabaseManager.Batches.Locators
         /// <inheritdoc />
         protected override bool FillBatch (IDbBatch<TConnection, TTransaction, TParameterTypes> batch, string name, string commandSeparator)
         {
-            CallbackTypeCollection callbackTypes = this.GetCallbackTypes();
+            Dictionary<string, List<CallbackType>> callbackTypes = this.GetCallbackTypes();
 
-            if (!callbackTypes.Contains(name))
+            if (!callbackTypes.ContainsKey(name))
             {
                 return false;
             }
 
-            CallbackType callbackType = callbackTypes[name];
-
-            batch.AddCode(callbackType.CreateCallback(), callbackType.TransactionRequirement);
-
+            foreach (CallbackType callback in callbackTypes[name])
+            {
+                batch.AddCode(callback.CreateCallback(), callback.TransactionRequirement, callback.IsolationLevel);
+            }
+            
             return true;
         }
 
         /// <inheritdoc />
         protected override IEnumerable<string> GetNames ()
         {
-            CallbackTypeCollection callbackTypes = this.GetCallbackTypes();
+            Dictionary<string, List<CallbackType>> callbackTypes = this.GetCallbackTypes();
 
-            return callbackTypes.Select(x => x.Name);
+            return callbackTypes.Keys;
         }
 
         /// <inheritdoc />
@@ -175,7 +183,7 @@ namespace RI.DatabaseManager.Batches.Locators
         {
             #region Instance Constructor/Destructor
 
-            public CallbackType (Type type, string name, DbBatchTransactionRequirement transactionRequirement)
+            public CallbackType (Type type, string name, DbBatchTransactionRequirement transactionRequirement, IsolationLevel? isolationLevel)
             {
                 if (type == null)
                 {
@@ -195,6 +203,7 @@ namespace RI.DatabaseManager.Batches.Locators
                 this.Type = type;
                 this.Name = name;
                 this.TransactionRequirement = transactionRequirement;
+                this.IsolationLevel = isolationLevel;
             }
 
             #endregion
@@ -210,6 +219,8 @@ namespace RI.DatabaseManager.Batches.Locators
 
             public Type Type { get; }
 
+            public IsolationLevel? IsolationLevel { get; }
+
             #endregion
 
 
@@ -223,36 +234,6 @@ namespace RI.DatabaseManager.Batches.Locators
             {
                 ICallbackBatch<TConnection, TTransaction, TParameterTypes> instance = (ICallbackBatch<TConnection, TTransaction, TParameterTypes>)Activator.CreateInstance(this.Type, false);
                 return instance.Execute(connection, transaction, parameters, out error, out exception);
-            }
-
-            #endregion
-        }
-
-        #endregion
-
-
-
-
-        #region Type: CallbackTypeCollection
-
-        private sealed class CallbackTypeCollection : KeyedCollection<string, CallbackType>
-        {
-            #region Instance Constructor/Destructor
-
-            public CallbackTypeCollection ()
-                : base(StringComparer.InvariantCultureIgnoreCase) { }
-
-            #endregion
-
-
-
-
-            #region Overrides
-
-            /// <inheritdoc />
-            protected override string GetKeyForItem (CallbackType item)
-            {
-                return item.Name;
             }
 
             #endregion
