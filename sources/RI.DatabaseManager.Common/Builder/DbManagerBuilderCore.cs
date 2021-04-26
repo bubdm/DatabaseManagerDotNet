@@ -1,6 +1,7 @@
 ﻿using System;
 
 using RI.Abstractions.Builder;
+using RI.Abstractions.Composition;
 using RI.Abstractions.Logging;
 
 
@@ -24,13 +25,17 @@ namespace RI.DatabaseManager.Builder
 
         #region Overrides
 
-        protected override void PrepareRegistrations (ILogger logger)
+        /// <inheritdoc />
+        protected override void PrepareRegistrations (ILogger logger, ICompositionContainer compositionContainer)
         {
-            base.PrepareRegistrations(logger);
+            base.PrepareRegistrations(logger, compositionContainer);
 
             (Type connection, Type transaction, Type parameterTypes, Type manager, Type versionDetector, Type backupCreator, Type cleanupProcessor, Type versionUpgrader, Type batchLocator) = this.DetectDbManagerTypes();
+            Type temporaryBatchLogatorRegistration = typeof(IDbManagerBuilderExtensions.TemporaryBatchLocatorRegistration<,,>).MakeGenericType(connection, transaction, parameterTypes);
 
-            this.MergeBatchLocators(connection, transaction);
+            this.ThrowIfNotMinContractCount(temporaryBatchLogatorRegistration, 1);
+
+            this.MergeBatchLocators(connection, transaction, parameterTypes, manager);
 
             this.ThrowIfNotExactContractCount(manager, 1);
             this.ThrowIfNotExactContractCount(versionDetector, 1);

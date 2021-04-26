@@ -8,6 +8,10 @@
   <HelpKINode Title="AddCode(Of TConnection, TTransaction, TParameterTypes) method" Url="html/D5515314.htm" />
   <HelpKINode Title="AddCode&lt;TConnection, TTransaction, TParameterTypes&gt; method" Url="html/D5515314.htm" />
   <HelpKINode Title="AddDbManager method" Url="html/2E809800.htm" />
+  <HelpKINode Title="AddRange method">
+    <HelpKINode Title="DbBatchCommandParameterCollection(TParameterTypes).AddRange Method " Url="html/378B31B.htm" />
+    <HelpKINode Title="IDbBatchCommandParameterCollection(TParameterTypes).AddRange Method " Url="html/D48F7B3C.htm" />
+  </HelpKINode>
   <HelpKINode Title="AddScript method" Url="html/F5CD6E41.htm" />
   <HelpKINode Title="AddScript(Of TConnection, TTransaction, TParameterTypes) method" Url="html/EBEF1BFE.htm" />
   <HelpKINode Title="AddScript&lt;TConnection, TTransaction, TParameterTypes&gt; method" Url="html/EBEF1BFE.htm" />
@@ -142,38 +146,14 @@
   <HelpKINode Title="BackupPostprocessingBatchName property" Url="html/B14BFFDD.htm" />
   <HelpKINode Title="BackupPreprocessingBatch property" Url="html/CF912DC6.htm" />
   <HelpKINode Title="BackupPreprocessingBatchName property" Url="html/E1757999.htm" />
-  <HelpKINode Title="BatchNameBasedDbVersionUpgrader(Of TConnection, TTransaction, TParameterTypes) class">
-    <HelpKINode Title="BatchNameBasedDbVersionUpgrader(TConnection, TTransaction, TParameterTypes) Class" Url="html/B2074F16.htm" />
-    <HelpKINode Title="constructor" Url="html/6C3B1D9B.htm" />
-    <HelpKINode Title="methods" Url="html/41255554.htm" />
-    <HelpKINode Title="properties" Url="html/944A8577.htm" />
-  </HelpKINode>
-  <HelpKINode Title="BatchNameBasedDbVersionUpgrader(Of TConnection, TTransaction, TParameterTypes).BatchNameBasedDbVersionUpgrader constructor" Url="html/6C3B1D9B.htm" />
-  <HelpKINode Title="BatchNameBasedDbVersionUpgrader(Of TConnection, TTransaction, TParameterTypes).GetBatchNamePattern method" Url="html/81B9B1BB.htm" />
-  <HelpKINode Title="BatchNameBasedDbVersionUpgrader(Of TConnection, TTransaction, TParameterTypes).GetMaxVersion method" Url="html/A5316637.htm" />
-  <HelpKINode Title="BatchNameBasedDbVersionUpgrader(Of TConnection, TTransaction, TParameterTypes).GetMinVersion method" Url="html/DA4722A5.htm" />
-  <HelpKINode Title="BatchNameBasedDbVersionUpgrader(Of TConnection, TTransaction, TParameterTypes).GetSteps method" Url="html/EE90E004.htm" />
-  <HelpKINode Title="BatchNameBasedDbVersionUpgrader(Of TConnection, TTransaction, TParameterTypes).Options property" Url="html/BB4717E8.htm" />
-  <HelpKINode Title="BatchNameBasedDbVersionUpgrader(Of TConnection, TTransaction, TParameterTypes).Upgrade method" Url="html/92E9F49D.htm" />
-  <HelpKINode Title="BatchNameBasedDbVersionUpgrader&lt;TConnection, TTransaction, TParameterTypes&gt; class">
-    <HelpKINode Title="BatchNameBasedDbVersionUpgrader(TConnection, TTransaction, TParameterTypes) Class" Url="html/B2074F16.htm" />
-    <HelpKINode Title="constructor" Url="html/6C3B1D9B.htm" />
-    <HelpKINode Title="methods" Url="html/41255554.htm" />
-    <HelpKINode Title="properties" Url="html/944A8577.htm" />
-  </HelpKINode>
-  <HelpKINode Title="BatchNameBasedDbVersionUpgrader&lt;TConnection, TTransaction, TParameterTypes&gt;.BatchNameBasedDbVersionUpgrader constructor" Url="html/6C3B1D9B.htm" />
-  <HelpKINode Title="BatchNameBasedDbVersionUpgrader&lt;TConnection, TTransaction, TParameterTypes&gt;.GetBatchNamePattern method" Url="html/81B9B1BB.htm" />
-  <HelpKINode Title="BatchNameBasedDbVersionUpgrader&lt;TConnection, TTransaction, TParameterTypes&gt;.GetMaxVersion method" Url="html/A5316637.htm" />
-  <HelpKINode Title="BatchNameBasedDbVersionUpgrader&lt;TConnection, TTransaction, TParameterTypes&gt;.GetMinVersion method" Url="html/DA4722A5.htm" />
-  <HelpKINode Title="BatchNameBasedDbVersionUpgrader&lt;TConnection, TTransaction, TParameterTypes&gt;.GetSteps method" Url="html/EE90E004.htm" />
-  <HelpKINode Title="BatchNameBasedDbVersionUpgrader&lt;TConnection, TTransaction, TParameterTypes&gt;.Options property" Url="html/BB4717E8.htm" />
-  <HelpKINode Title="BatchNameBasedDbVersionUpgrader&lt;TConnection, TTransaction, TParameterTypes&gt;.Upgrade method" Url="html/92E9F49D.htm" />
   <HelpKINode Title="Build method">
     <HelpKINode Title="DbManagerBuilder(TConnection, TTransaction, TParameterTypes, TManager).Build Method " Url="html/DF10B476.htm" />
     <HelpKINode Title="DbManagerBuilder.Build Method " Url="html/76F89C9D.htm" />
   </HelpKINode>
+  <HelpKINode Title="BuildDbManager(Of TBuilder) method" Url="html/AB503607.htm" />
   <HelpKINode Title="BuildDbManager(Of TBuilder, TConnection, TTransaction, TParameterTypes, TManager) method" Url="html/429C73FF.htm" />
   <HelpKINode Title="BuildDbManager&lt;TBuilder, TConnection, TTransaction, TParameterTypes, TManager&gt; method" Url="html/429C73FF.htm" />
+  <HelpKINode Title="BuildDbManager&lt;TBuilder&gt; method" Url="html/AB503607.htm" />
   <HelpKINode Title="CallbackBatchAttribute class">
     <HelpKINode Title="CallbackBatchAttribute Class" Url="html/F02C8E7F.htm" />
     <HelpKINode Title="constructor" Url="html/4B4145D5.htm" />
@@ -181,6 +161,7 @@
     <HelpKINode Title="properties" Url="html/64AB4850.htm" />
   </HelpKINode>
   <HelpKINode Title="CallbackBatchAttribute.CallbackBatchAttribute constructor" Url="html/4B4145D5.htm" />
+  <HelpKINode Title="CallbackBatchAttribute.IsolationLevel property" Url="html/5ADA3147.htm" />
   <HelpKINode Title="CallbackBatchAttribute.Name property" Url="html/AF46A6DB.htm" />
   <HelpKINode Title="CallbackBatchAttribute.TransactionRequirement property" Url="html/5862DD6.htm" />
   <HelpKINode Title="CallbackBatchCommand(Of TConnection, TTransaction, TParameterTypes) class">
@@ -192,10 +173,13 @@
   <HelpKINode Title="CallbackBatchCommand(Of TConnection, TTransaction, TParameterTypes).CallbackBatchCommand constructor" Url="html/E38274CD.htm" />
   <HelpKINode Title="CallbackBatchCommand(Of TConnection, TTransaction, TParameterTypes).Clone method" Url="html/C2FD0033.htm" />
   <HelpKINode Title="CallbackBatchCommand(Of TConnection, TTransaction, TParameterTypes).Code property" Url="html/1C62D401.htm" />
+  <HelpKINode Title="CallbackBatchCommand(Of TConnection, TTransaction, TParameterTypes).Error property" Url="html/783D64AE.htm" />
+  <HelpKINode Title="CallbackBatchCommand(Of TConnection, TTransaction, TParameterTypes).Exception property" Url="html/61A0CB12.htm" />
   <HelpKINode Title="CallbackBatchCommand(Of TConnection, TTransaction, TParameterTypes).ICloneable.Clone explicitly implemented method" Url="html/47443D19.htm" />
   <HelpKINode Title="CallbackBatchCommand(Of TConnection, TTransaction, TParameterTypes).IDbBatchCommand.Code explicitly implemented property" Url="html/B92634F5.htm" />
   <HelpKINode Title="CallbackBatchCommand(Of TConnection, TTransaction, TParameterTypes).IDbBatchCommand.Parameters explicitly implemented property" Url="html/9793E026.htm" />
   <HelpKINode Title="CallbackBatchCommand(Of TConnection, TTransaction, TParameterTypes).IDbBatchCommand.Script explicitly implemented property" Url="html/7B958BC7.htm" />
+  <HelpKINode Title="CallbackBatchCommand(Of TConnection, TTransaction, TParameterTypes).IsolationLevel property" Url="html/CB488D83.htm" />
   <HelpKINode Title="CallbackBatchCommand(Of TConnection, TTransaction, TParameterTypes).Parameters property" Url="html/EC442274.htm" />
   <HelpKINode Title="CallbackBatchCommand(Of TConnection, TTransaction, TParameterTypes).Result property" Url="html/CE3E6960.htm" />
   <HelpKINode Title="CallbackBatchCommand(Of TConnection, TTransaction, TParameterTypes).TransactionRequirement property" Url="html/4C801737.htm" />
@@ -209,14 +193,20 @@
   <HelpKINode Title="CallbackBatchCommand&lt;TConnection, TTransaction, TParameterTypes&gt;.CallbackBatchCommand constructor" Url="html/E38274CD.htm" />
   <HelpKINode Title="CallbackBatchCommand&lt;TConnection, TTransaction, TParameterTypes&gt;.Clone method" Url="html/C2FD0033.htm" />
   <HelpKINode Title="CallbackBatchCommand&lt;TConnection, TTransaction, TParameterTypes&gt;.Code property" Url="html/1C62D401.htm" />
+  <HelpKINode Title="CallbackBatchCommand&lt;TConnection, TTransaction, TParameterTypes&gt;.Error property" Url="html/783D64AE.htm" />
+  <HelpKINode Title="CallbackBatchCommand&lt;TConnection, TTransaction, TParameterTypes&gt;.Exception property" Url="html/61A0CB12.htm" />
   <HelpKINode Title="CallbackBatchCommand&lt;TConnection, TTransaction, TParameterTypes&gt;.ICloneable.Clone explicitly implemented method" Url="html/47443D19.htm" />
   <HelpKINode Title="CallbackBatchCommand&lt;TConnection, TTransaction, TParameterTypes&gt;.IDbBatchCommand.Code explicitly implemented property" Url="html/B92634F5.htm" />
   <HelpKINode Title="CallbackBatchCommand&lt;TConnection, TTransaction, TParameterTypes&gt;.IDbBatchCommand.Parameters explicitly implemented property" Url="html/9793E026.htm" />
   <HelpKINode Title="CallbackBatchCommand&lt;TConnection, TTransaction, TParameterTypes&gt;.IDbBatchCommand.Script explicitly implemented property" Url="html/7B958BC7.htm" />
+  <HelpKINode Title="CallbackBatchCommand&lt;TConnection, TTransaction, TParameterTypes&gt;.IsolationLevel property" Url="html/CB488D83.htm" />
   <HelpKINode Title="CallbackBatchCommand&lt;TConnection, TTransaction, TParameterTypes&gt;.Parameters property" Url="html/EC442274.htm" />
   <HelpKINode Title="CallbackBatchCommand&lt;TConnection, TTransaction, TParameterTypes&gt;.Result property" Url="html/CE3E6960.htm" />
   <HelpKINode Title="CallbackBatchCommand&lt;TConnection, TTransaction, TParameterTypes&gt;.TransactionRequirement property" Url="html/4C801737.htm" />
   <HelpKINode Title="CallbackBatchCommand&lt;TConnection, TTransaction, TParameterTypes&gt;.WasExecuted property" Url="html/EEB5C54E.htm" />
+  <HelpKINode Title="CallbackBatchCommandDelegate delegate" Url="html/51B9F012.htm" />
+  <HelpKINode Title="CallbackBatchCommandDelegate(Of TConnection, TTransaction, TParameterTypes) delegate" Url="html/83248D74.htm" />
+  <HelpKINode Title="CallbackBatchCommandDelegate&lt;TConnection, TTransaction, TParameterTypes&gt; delegate" Url="html/83248D74.htm" />
   <HelpKINode Title="Callbacks property" Url="html/7A56E420.htm" />
   <HelpKINode Title="CanUpgrade method" Url="html/876A6DF5.htm" />
   <HelpKINode Title="Cleanup method">
@@ -264,6 +254,7 @@
   <HelpKINode Title="Contains method">
     <HelpKINode Title="AggregateBatchLocator(TConnection, TTransaction, TParameterTypes).Contains Method " Url="html/CA342A29.htm" />
     <HelpKINode Title="DbBatchCommandParameterCollection(TParameterTypes).Contains Method " Url="html/E0CAD621.htm" />
+    <HelpKINode Title="IDbBatchCommandParameterCollection.Contains Method " Url="html/6ADD2C18.htm" />
   </HelpKINode>
   <HelpKINode Title="CopyTo method" Url="html/88D77806.htm" />
   <HelpKINode Title="Count property" Url="html/898A0B69.htm" />
@@ -410,6 +401,7 @@
     <HelpKINode Title="properties" Url="html/479B9422.htm" />
   </HelpKINode>
   <HelpKINode Title="DbBatchCommandParameterCollection(Of TParameterTypes).Add method" Url="html/6A1474A2.htm" />
+  <HelpKINode Title="DbBatchCommandParameterCollection(Of TParameterTypes).AddRange method" Url="html/378B31B.htm" />
   <HelpKINode Title="DbBatchCommandParameterCollection(Of TParameterTypes).Clone method" Url="html/A4EE9F4A.htm" />
   <HelpKINode Title="DbBatchCommandParameterCollection(Of TParameterTypes).Contains method" Url="html/E0CAD621.htm" />
   <HelpKINode Title="DbBatchCommandParameterCollection(Of TParameterTypes).CopyTo method" Url="html/88D77806.htm" />
@@ -418,6 +410,8 @@
   <HelpKINode Title="DbBatchCommandParameterCollection(Of TParameterTypes).GetEnumerator method" Url="html/F56D6F15.htm" />
   <HelpKINode Title="DbBatchCommandParameterCollection(Of TParameterTypes).GetKeyForItem method" Url="html/69F98ACB.htm" />
   <HelpKINode Title="DbBatchCommandParameterCollection(Of TParameterTypes).ICloneable.Clone explicitly implemented method" Url="html/2E6D3A97.htm" />
+  <HelpKINode Title="DbBatchCommandParameterCollection(Of TParameterTypes).IDbBatchCommandParameterCollection.Contains explicitly implemented method" Url="html/68599EB4.htm" />
+  <HelpKINode Title="DbBatchCommandParameterCollection(Of TParameterTypes).IDbBatchCommandParameterCollection.Remove explicitly implemented method" Url="html/6F7EE0.htm" />
   <HelpKINode Title="DbBatchCommandParameterCollection(Of TParameterTypes).IntersectWith method" Url="html/B9C7C261.htm" />
   <HelpKINode Title="DbBatchCommandParameterCollection(Of TParameterTypes).IsProperSubsetOf method" Url="html/319EB757.htm" />
   <HelpKINode Title="DbBatchCommandParameterCollection(Of TParameterTypes).IsProperSupersetOf method" Url="html/BE31F7D5.htm" />
@@ -436,6 +430,7 @@
     <HelpKINode Title="properties" Url="html/479B9422.htm" />
   </HelpKINode>
   <HelpKINode Title="DbBatchCommandParameterCollection&lt;TParameterTypes&gt;.Add method" Url="html/6A1474A2.htm" />
+  <HelpKINode Title="DbBatchCommandParameterCollection&lt;TParameterTypes&gt;.AddRange method" Url="html/378B31B.htm" />
   <HelpKINode Title="DbBatchCommandParameterCollection&lt;TParameterTypes&gt;.Clone method" Url="html/A4EE9F4A.htm" />
   <HelpKINode Title="DbBatchCommandParameterCollection&lt;TParameterTypes&gt;.Contains method" Url="html/E0CAD621.htm" />
   <HelpKINode Title="DbBatchCommandParameterCollection&lt;TParameterTypes&gt;.CopyTo method" Url="html/88D77806.htm" />
@@ -444,6 +439,8 @@
   <HelpKINode Title="DbBatchCommandParameterCollection&lt;TParameterTypes&gt;.GetEnumerator method" Url="html/F56D6F15.htm" />
   <HelpKINode Title="DbBatchCommandParameterCollection&lt;TParameterTypes&gt;.GetKeyForItem method" Url="html/69F98ACB.htm" />
   <HelpKINode Title="DbBatchCommandParameterCollection&lt;TParameterTypes&gt;.ICloneable.Clone explicitly implemented method" Url="html/2E6D3A97.htm" />
+  <HelpKINode Title="DbBatchCommandParameterCollection&lt;TParameterTypes&gt;.IDbBatchCommandParameterCollection.Contains explicitly implemented method" Url="html/68599EB4.htm" />
+  <HelpKINode Title="DbBatchCommandParameterCollection&lt;TParameterTypes&gt;.IDbBatchCommandParameterCollection.Remove explicitly implemented method" Url="html/6F7EE0.htm" />
   <HelpKINode Title="DbBatchCommandParameterCollection&lt;TParameterTypes&gt;.IntersectWith method" Url="html/B9C7C261.htm" />
   <HelpKINode Title="DbBatchCommandParameterCollection&lt;TParameterTypes&gt;.IsProperSubsetOf method" Url="html/319EB757.htm" />
   <HelpKINode Title="DbBatchCommandParameterCollection&lt;TParameterTypes&gt;.IsProperSupersetOf method" Url="html/BE31F7D5.htm" />
@@ -455,6 +452,14 @@
   <HelpKINode Title="DbBatchCommandParameterCollection&lt;TParameterTypes&gt;.SetEquals method" Url="html/5EB4BCE1.htm" />
   <HelpKINode Title="DbBatchCommandParameterCollection&lt;TParameterTypes&gt;.SymmetricExceptWith method" Url="html/B2BA07F6.htm" />
   <HelpKINode Title="DbBatchCommandParameterCollection&lt;TParameterTypes&gt;.UnionWith method" Url="html/45F8043E.htm" />
+  <HelpKINode Title="DbBatchErrorException class">
+    <HelpKINode Title="DbBatchErrorException Class" Url="html/42984668.htm" />
+    <HelpKINode Title="constructor" Url="html/58A82CA6.htm" />
+    <HelpKINode Title="events" Url="html/C34B8B81.htm" />
+    <HelpKINode Title="methods" Url="html/773F4B3E.htm" />
+    <HelpKINode Title="properties" Url="html/940931C7.htm" />
+  </HelpKINode>
+  <HelpKINode Title="DbBatchErrorException.DbBatchErrorException constructor" Url="html/58A82CA6.htm" />
   <HelpKINode Title="DbBatchLocatorBase(Of TConnection, TTransaction, TParameterTypes) class">
     <HelpKINode Title="DbBatchLocatorBase(TConnection, TTransaction, TParameterTypes) Class" Url="html/98FB52B7.htm" />
     <HelpKINode Title="constructor" Url="html/B1E2E677.htm" />
@@ -465,6 +470,7 @@
   <HelpKINode Title="DbBatchLocatorBase(Of TConnection, TTransaction, TParameterTypes).DbBatchLocatorBase constructor" Url="html/B1E2E677.htm" />
   <HelpKINode Title="DbBatchLocatorBase(Of TConnection, TTransaction, TParameterTypes).DefaultNameComparer property" Url="html/C0801403.htm" />
   <HelpKINode Title="DbBatchLocatorBase(Of TConnection, TTransaction, TParameterTypes).FillBatch method" Url="html/EB920AD9.htm" />
+  <HelpKINode Title="DbBatchLocatorBase(Of TConnection, TTransaction, TParameterTypes).GetIsolationLevelFromCommandOptions method" Url="html/F8A5D2AD.htm" />
   <HelpKINode Title="DbBatchLocatorBase(Of TConnection, TTransaction, TParameterTypes).GetNames method" Url="html/7DA0AAA6.htm" />
   <HelpKINode Title="DbBatchLocatorBase(Of TConnection, TTransaction, TParameterTypes).GetOptionsFromCommand method" Url="html/618F1B94.htm" />
   <HelpKINode Title="DbBatchLocatorBase(Of TConnection, TTransaction, TParameterTypes).GetTransactionRequirementFromCommandOptions method" Url="html/9A9BFABB.htm" />
@@ -485,6 +491,7 @@
   <HelpKINode Title="DbBatchLocatorBase&lt;TConnection, TTransaction, TParameterTypes&gt;.DbBatchLocatorBase constructor" Url="html/B1E2E677.htm" />
   <HelpKINode Title="DbBatchLocatorBase&lt;TConnection, TTransaction, TParameterTypes&gt;.DefaultNameComparer property" Url="html/C0801403.htm" />
   <HelpKINode Title="DbBatchLocatorBase&lt;TConnection, TTransaction, TParameterTypes&gt;.FillBatch method" Url="html/EB920AD9.htm" />
+  <HelpKINode Title="DbBatchLocatorBase&lt;TConnection, TTransaction, TParameterTypes&gt;.GetIsolationLevelFromCommandOptions method" Url="html/F8A5D2AD.htm" />
   <HelpKINode Title="DbBatchLocatorBase&lt;TConnection, TTransaction, TParameterTypes&gt;.GetNames method" Url="html/7DA0AAA6.htm" />
   <HelpKINode Title="DbBatchLocatorBase&lt;TConnection, TTransaction, TParameterTypes&gt;.GetOptionsFromCommand method" Url="html/618F1B94.htm" />
   <HelpKINode Title="DbBatchLocatorBase&lt;TConnection, TTransaction, TParameterTypes&gt;.GetTransactionRequirementFromCommandOptions method" Url="html/9A9BFABB.htm" />
@@ -549,6 +556,7 @@
   <HelpKINode Title="DbManagerBase(Of TConnection, TTransaction, TParameterTypes, TParameters, TParameter).GetBatchImpl method" Url="html/847D4CB.htm" />
   <HelpKINode Title="DbManagerBase(Of TConnection, TTransaction, TParameterTypes, TParameters, TParameter).GetBatchNames method" Url="html/7ED4A72E.htm" />
   <HelpKINode Title="DbManagerBase(Of TConnection, TTransaction, TParameterTypes, TParameters, TParameter).GetBatchNamesImpl method" Url="html/23E38054.htm" />
+  <HelpKINode Title="DbManagerBase(Of TConnection, TTransaction, TParameterTypes, TParameters, TParameter).GetDefaultIsolationLevel method" Url="html/5B1409C1.htm" />
   <HelpKINode Title="DbManagerBase(Of TConnection, TTransaction, TParameterTypes, TParameters, TParameter).IDbManager.CreateBatch explicitly implemented method" Url="html/24D172C5.htm" />
   <HelpKINode Title="DbManagerBase(Of TConnection, TTransaction, TParameterTypes, TParameters, TParameter).IDbManager.CreateConnection explicitly implemented method" Url="html/3366E0CC.htm" />
   <HelpKINode Title="DbManagerBase(Of TConnection, TTransaction, TParameterTypes, TParameters, TParameter).IDbManager.CreateTransaction explicitly implemented method" Url="html/60B3E7AD.htm" />
@@ -617,6 +625,7 @@
   <HelpKINode Title="DbManagerBase&lt;TConnection, TTransaction, TParameterTypes, TParameters, TParameter&gt;.GetBatchImpl method" Url="html/847D4CB.htm" />
   <HelpKINode Title="DbManagerBase&lt;TConnection, TTransaction, TParameterTypes, TParameters, TParameter&gt;.GetBatchNames method" Url="html/7ED4A72E.htm" />
   <HelpKINode Title="DbManagerBase&lt;TConnection, TTransaction, TParameterTypes, TParameters, TParameter&gt;.GetBatchNamesImpl method" Url="html/23E38054.htm" />
+  <HelpKINode Title="DbManagerBase&lt;TConnection, TTransaction, TParameterTypes, TParameters, TParameter&gt;.GetDefaultIsolationLevel method" Url="html/5B1409C1.htm" />
   <HelpKINode Title="DbManagerBase&lt;TConnection, TTransaction, TParameterTypes, TParameters, TParameter&gt;.IDbManager.CreateBatch explicitly implemented method" Url="html/24D172C5.htm" />
   <HelpKINode Title="DbManagerBase&lt;TConnection, TTransaction, TParameterTypes, TParameters, TParameter&gt;.IDbManager.CreateConnection explicitly implemented method" Url="html/3366E0CC.htm" />
   <HelpKINode Title="DbManagerBase&lt;TConnection, TTransaction, TParameterTypes, TParameters, TParameter&gt;.IDbManager.CreateTransaction explicitly implemented method" Url="html/60B3E7AD.htm" />
@@ -754,13 +763,18 @@
     <HelpKINode Title="properties" Url="html/7FC04F14.htm" />
   </HelpKINode>
   <HelpKINode Title="DbVersionUpgraderBase(Of TConnection, TTransaction, TParameterTypes).DbVersionUpgraderBase constructor" Url="html/7ABC6B14.htm" />
+  <HelpKINode Title="DbVersionUpgraderBase(Of TConnection, TTransaction, TParameterTypes).GetCreationSteps method" Url="html/C907C65.htm" />
+  <HelpKINode Title="DbVersionUpgraderBase(Of TConnection, TTransaction, TParameterTypes).GetDefaultCreationCommands method" Url="html/87E820C2.htm" />
   <HelpKINode Title="DbVersionUpgraderBase(Of TConnection, TTransaction, TParameterTypes).GetMaxVersion method" Url="html/8343FECF.htm" />
   <HelpKINode Title="DbVersionUpgraderBase(Of TConnection, TTransaction, TParameterTypes).GetMinVersion method" Url="html/746C0185.htm" />
+  <HelpKINode Title="DbVersionUpgraderBase(Of TConnection, TTransaction, TParameterTypes).GetUpgradeBatchNamePattern method" Url="html/441480E8.htm" />
+  <HelpKINode Title="DbVersionUpgraderBase(Of TConnection, TTransaction, TParameterTypes).GetUpgradeSteps method" Url="html/5734744B.htm" />
   <HelpKINode Title="DbVersionUpgraderBase(Of TConnection, TTransaction, TParameterTypes).IDbVersionUpgrader.GetMaxVersion explicitly implemented method" Url="html/2F948C51.htm" />
   <HelpKINode Title="DbVersionUpgraderBase(Of TConnection, TTransaction, TParameterTypes).IDbVersionUpgrader.GetMinVersion explicitly implemented method" Url="html/170C8A1F.htm" />
   <HelpKINode Title="DbVersionUpgraderBase(Of TConnection, TTransaction, TParameterTypes).IDbVersionUpgrader.Upgrade explicitly implemented method" Url="html/C2511408.htm" />
   <HelpKINode Title="DbVersionUpgraderBase(Of TConnection, TTransaction, TParameterTypes).Log method" Url="html/3080E88C.htm" />
   <HelpKINode Title="DbVersionUpgraderBase(Of TConnection, TTransaction, TParameterTypes).Logger property" Url="html/5B12501F.htm" />
+  <HelpKINode Title="DbVersionUpgraderBase(Of TConnection, TTransaction, TParameterTypes).Options property" Url="html/97643AFC.htm" />
   <HelpKINode Title="DbVersionUpgraderBase(Of TConnection, TTransaction, TParameterTypes).Upgrade method" Url="html/FB5EFABD.htm" />
   <HelpKINode Title="DbVersionUpgraderBase&lt;TConnection, TTransaction, TParameterTypes&gt; class">
     <HelpKINode Title="DbVersionUpgraderBase(TConnection, TTransaction, TParameterTypes) Class" Url="html/3D55AF29.htm" />
@@ -769,13 +783,18 @@
     <HelpKINode Title="properties" Url="html/7FC04F14.htm" />
   </HelpKINode>
   <HelpKINode Title="DbVersionUpgraderBase&lt;TConnection, TTransaction, TParameterTypes&gt;.DbVersionUpgraderBase constructor" Url="html/7ABC6B14.htm" />
+  <HelpKINode Title="DbVersionUpgraderBase&lt;TConnection, TTransaction, TParameterTypes&gt;.GetCreationSteps method" Url="html/C907C65.htm" />
+  <HelpKINode Title="DbVersionUpgraderBase&lt;TConnection, TTransaction, TParameterTypes&gt;.GetDefaultCreationCommands method" Url="html/87E820C2.htm" />
   <HelpKINode Title="DbVersionUpgraderBase&lt;TConnection, TTransaction, TParameterTypes&gt;.GetMaxVersion method" Url="html/8343FECF.htm" />
   <HelpKINode Title="DbVersionUpgraderBase&lt;TConnection, TTransaction, TParameterTypes&gt;.GetMinVersion method" Url="html/746C0185.htm" />
+  <HelpKINode Title="DbVersionUpgraderBase&lt;TConnection, TTransaction, TParameterTypes&gt;.GetUpgradeBatchNamePattern method" Url="html/441480E8.htm" />
+  <HelpKINode Title="DbVersionUpgraderBase&lt;TConnection, TTransaction, TParameterTypes&gt;.GetUpgradeSteps method" Url="html/5734744B.htm" />
   <HelpKINode Title="DbVersionUpgraderBase&lt;TConnection, TTransaction, TParameterTypes&gt;.IDbVersionUpgrader.GetMaxVersion explicitly implemented method" Url="html/2F948C51.htm" />
   <HelpKINode Title="DbVersionUpgraderBase&lt;TConnection, TTransaction, TParameterTypes&gt;.IDbVersionUpgrader.GetMinVersion explicitly implemented method" Url="html/170C8A1F.htm" />
   <HelpKINode Title="DbVersionUpgraderBase&lt;TConnection, TTransaction, TParameterTypes&gt;.IDbVersionUpgrader.Upgrade explicitly implemented method" Url="html/C2511408.htm" />
   <HelpKINode Title="DbVersionUpgraderBase&lt;TConnection, TTransaction, TParameterTypes&gt;.Log method" Url="html/3080E88C.htm" />
   <HelpKINode Title="DbVersionUpgraderBase&lt;TConnection, TTransaction, TParameterTypes&gt;.Logger property" Url="html/5B12501F.htm" />
+  <HelpKINode Title="DbVersionUpgraderBase&lt;TConnection, TTransaction, TParameterTypes&gt;.Options property" Url="html/97643AFC.htm" />
   <HelpKINode Title="DbVersionUpgraderBase&lt;TConnection, TTransaction, TParameterTypes&gt;.Upgrade method" Url="html/FB5EFABD.htm" />
   <HelpKINode Title="DefaultNameComparer property" Url="html/C0801403.htm" />
   <HelpKINode Title="DefaultVersionDetectionKey property">
@@ -822,6 +841,7 @@
   <HelpKINode Title="DictionaryBatchLocator(Of TConnection, TTransaction, TParameterTypes).DictionaryBatchLocator constructor" Url="html/D484D8F6.htm" />
   <HelpKINode Title="DictionaryBatchLocator(Of TConnection, TTransaction, TParameterTypes).FillBatch method" Url="html/E81FED83.htm" />
   <HelpKINode Title="DictionaryBatchLocator(Of TConnection, TTransaction, TParameterTypes).GetNames method" Url="html/CC1DE811.htm" />
+  <HelpKINode Title="DictionaryBatchLocator(Of TConnection, TTransaction, TParameterTypes).IsolationLevels property" Url="html/3BB30F2B.htm" />
   <HelpKINode Title="DictionaryBatchLocator(Of TConnection, TTransaction, TParameterTypes).Scripts property" Url="html/8A4182FC.htm" />
   <HelpKINode Title="DictionaryBatchLocator(Of TConnection, TTransaction, TParameterTypes).SupportsCallbacks property" Url="html/9859CB5C.htm" />
   <HelpKINode Title="DictionaryBatchLocator(Of TConnection, TTransaction, TParameterTypes).SupportsScripts property" Url="html/3E7678A6.htm" />
@@ -842,6 +862,7 @@
   <HelpKINode Title="DictionaryBatchLocator&lt;TConnection, TTransaction, TParameterTypes&gt;.DictionaryBatchLocator constructor" Url="html/D484D8F6.htm" />
   <HelpKINode Title="DictionaryBatchLocator&lt;TConnection, TTransaction, TParameterTypes&gt;.FillBatch method" Url="html/E81FED83.htm" />
   <HelpKINode Title="DictionaryBatchLocator&lt;TConnection, TTransaction, TParameterTypes&gt;.GetNames method" Url="html/CC1DE811.htm" />
+  <HelpKINode Title="DictionaryBatchLocator&lt;TConnection, TTransaction, TParameterTypes&gt;.IsolationLevels property" Url="html/3BB30F2B.htm" />
   <HelpKINode Title="DictionaryBatchLocator&lt;TConnection, TTransaction, TParameterTypes&gt;.Scripts property" Url="html/8A4182FC.htm" />
   <HelpKINode Title="DictionaryBatchLocator&lt;TConnection, TTransaction, TParameterTypes&gt;.SupportsCallbacks property" Url="html/9859CB5C.htm" />
   <HelpKINode Title="DictionaryBatchLocator&lt;TConnection, TTransaction, TParameterTypes&gt;.SupportsScripts property" Url="html/3E7678A6.htm" />
@@ -853,6 +874,16 @@
   <HelpKINode Title="DontCare enumeration member" Url="html/E311A970.htm" />
   <HelpKINode Title="Encoding property" Url="html/9AA04228.htm" />
   <HelpKINode Title="Equals method" Url="html/49BA7D59.htm" />
+  <HelpKINode Title="Error property">
+    <HelpKINode Title="CallbackBatchCommand(TConnection, TTransaction, TParameterTypes).Error Property " Url="html/783D64AE.htm" />
+    <HelpKINode Title="IDbBatchCommand.Error Property " Url="html/6D5D069A.htm" />
+    <HelpKINode Title="ScriptBatchCommand(TConnection, TTransaction, TParameterTypes).Error Property " Url="html/53C0CAA2.htm" />
+  </HelpKINode>
+  <HelpKINode Title="Exception property">
+    <HelpKINode Title="CallbackBatchCommand(TConnection, TTransaction, TParameterTypes).Exception Property " Url="html/61A0CB12.htm" />
+    <HelpKINode Title="IDbBatchCommand.Exception Property " Url="html/B5B493A2.htm" />
+    <HelpKINode Title="ScriptBatchCommand(TConnection, TTransaction, TParameterTypes).Exception Property " Url="html/F383474E.htm" />
+  </HelpKINode>
   <HelpKINode Title="ExceptWith method" Url="html/97E718BF.htm" />
   <HelpKINode Title="Execute method" Url="html/4EF3B841.htm" />
   <HelpKINode Title="ExecuteBatch method">
@@ -885,7 +916,6 @@
   </HelpKINode>
   <HelpKINode Title="GetBatches method" Url="html/7E2337CA.htm" />
   <HelpKINode Title="GetBatchImpl method" Url="html/847D4CB.htm" />
-  <HelpKINode Title="GetBatchNamePattern method" Url="html/81B9B1BB.htm" />
   <HelpKINode Title="GetBatchNames method">
     <HelpKINode Title="DbManagerBase(TConnection, TTransaction, TParameterTypes, TParameters, TParameter).GetBatchNames Method " Url="html/7ED4A72E.htm" />
     <HelpKINode Title="IDbManager.GetBatchNames Method " Url="html/1C4CE3FF.htm" />
@@ -896,9 +926,21 @@
     <HelpKINode Title="SQLiteDbManagerOptions.GetConnectionString Method " Url="html/B299769E.htm" />
     <HelpKINode Title="SqlServerDbManagerOptions.GetConnectionString Method " Url="html/B8FBA93F.htm" />
   </HelpKINode>
+  <HelpKINode Title="GetCreationSteps method" Url="html/C907C65.htm" />
   <HelpKINode Title="GetDefaultCleanupScript method">
     <HelpKINode Title="SQLiteDbManagerOptions.GetDefaultCleanupScript Method " Url="html/C21C3B17.htm" />
     <HelpKINode Title="SqlServerDbManagerOptions.GetDefaultCleanupScript Method " Url="html/C8D5217A.htm" />
+  </HelpKINode>
+  <HelpKINode Title="GetDefaultCreationCommands method" Url="html/87E820C2.htm" />
+  <HelpKINode Title="GetDefaultIsolationLevel method">
+    <HelpKINode Title="DbManagerBase(TConnection, TTransaction, TParameterTypes, TParameters, TParameter).GetDefaultIsolationLevel Method " Url="html/5B1409C1.htm" />
+    <HelpKINode Title="SQLiteDbManager.GetDefaultIsolationLevel Method " Url="html/EBF9FAB2.htm" />
+    <HelpKINode Title="SqlServerDbManager.GetDefaultIsolationLevel Method " Url="html/6699F0E4.htm" />
+  </HelpKINode>
+  <HelpKINode Title="GetDefaultSetupScript method">
+    <HelpKINode Title="ISupportDatabaseCreation.GetDefaultSetupScript Method " Url="html/B1D61965.htm" />
+    <HelpKINode Title="SQLiteDbManagerOptions.GetDefaultSetupScript Method " Url="html/3778C6DD.htm" />
+    <HelpKINode Title="SqlServerDbManagerOptions.GetDefaultSetupScript Method " Url="html/FBC0DA98.htm" />
   </HelpKINode>
   <HelpKINode Title="GetDefaultVersionDetectionScript method">
     <HelpKINode Title="SQLiteDbManagerOptions.GetDefaultVersionDetectionScript Method " Url="html/9CFEB56B.htm" />
@@ -908,17 +950,19 @@
     <HelpKINode Title="AggregateBatchLocator(TConnection, TTransaction, TParameterTypes).GetEnumerator Method " Url="html/1DECA877.htm" />
     <HelpKINode Title="DbBatchCommandParameterCollection(TParameterTypes).GetEnumerator Method " Url="html/F56D6F15.htm" />
   </HelpKINode>
+  <HelpKINode Title="GetError method" Url="html/809454CE.htm" />
+  <HelpKINode Title="GetErrors method" Url="html/CEAD18B0.htm" />
+  <HelpKINode Title="GetException method" Url="html/CBE0567.htm" />
+  <HelpKINode Title="GetExceptions method" Url="html/EB2F6E56.htm" />
   <HelpKINode Title="GetHashCode method" Url="html/A6906C8A.htm" />
+  <HelpKINode Title="GetIsolationLevelFromCommandOptions method" Url="html/F8A5D2AD.htm" />
   <HelpKINode Title="GetKeyForItem method" Url="html/69F98ACB.htm" />
-  <HelpKINode Title="GetLastResult method" Url="html/3075E252.htm" />
   <HelpKINode Title="GetMaxVersion method">
-    <HelpKINode Title="BatchNameBasedDbVersionUpgrader(TConnection, TTransaction, TParameterTypes).GetMaxVersion Method " Url="html/A5316637.htm" />
     <HelpKINode Title="DbVersionUpgraderBase(TConnection, TTransaction, TParameterTypes).GetMaxVersion Method " Url="html/8343FECF.htm" />
     <HelpKINode Title="IDbVersionUpgrader(TConnection, TTransaction, TParameterTypes).GetMaxVersion Method " Url="html/E68DF710.htm" />
     <HelpKINode Title="IDbVersionUpgrader.GetMaxVersion Method " Url="html/FC726A9D.htm" />
   </HelpKINode>
   <HelpKINode Title="GetMinVersion method">
-    <HelpKINode Title="BatchNameBasedDbVersionUpgrader(TConnection, TTransaction, TParameterTypes).GetMinVersion Method " Url="html/DA4722A5.htm" />
     <HelpKINode Title="DbVersionUpgraderBase(TConnection, TTransaction, TParameterTypes).GetMinVersion Method " Url="html/746C0185.htm" />
     <HelpKINode Title="IDbVersionUpgrader(TConnection, TTransaction, TParameterTypes).GetMinVersion Method " Url="html/6415F842.htm" />
     <HelpKINode Title="IDbVersionUpgrader.GetMinVersion Method " Url="html/EE7AEFC5.htm" />
@@ -931,8 +975,13 @@
     <HelpKINode Title="IDbBatchLocator.GetNames Method " Url="html/9019F0D9.htm" />
   </HelpKINode>
   <HelpKINode Title="GetOptionsFromCommand method" Url="html/618F1B94.htm" />
-  <HelpKINode Title="GetSteps method" Url="html/EE90E004.htm" />
+  <HelpKINode Title="GetRequiredIsolationLevel method" Url="html/D52D626E.htm" />
+  <HelpKINode Title="GetResult method" Url="html/1A05FDC.htm" />
+  <HelpKINode Title="GetResults method" Url="html/1CF5FDC.htm" />
   <HelpKINode Title="GetTransactionRequirementFromCommandOptions method" Url="html/9A9BFABB.htm" />
+  <HelpKINode Title="GetUpgradeBatchNamePattern method" Url="html/441480E8.htm" />
+  <HelpKINode Title="GetUpgradeSteps method" Url="html/5734744B.htm" />
+  <HelpKINode Title="HasFailed method" Url="html/B90FAE0B.htm" />
   <HelpKINode Title="ICallbackBatch(Of TConnection, TTransaction, TParameterTypes) interface">
     <HelpKINode Title="ICallbackBatch(TConnection, TTransaction, TParameterTypes) Interface" Url="html/EAB176ED.htm" />
     <HelpKINode Title="methods" Url="html/A28AD610.htm" />
@@ -1034,6 +1083,9 @@
     <HelpKINode Title="ScriptBatchCommand(TConnection, TTransaction, TParameterTypes).IDbBatchCommand.Code Property " Url="html/66F85ED3.htm" />
   </HelpKINode>
   <HelpKINode Title="IDbBatchCommand.Code property" Url="html/E8CD5F1F.htm" />
+  <HelpKINode Title="IDbBatchCommand.Error property" Url="html/6D5D069A.htm" />
+  <HelpKINode Title="IDbBatchCommand.Exception property" Url="html/B5B493A2.htm" />
+  <HelpKINode Title="IDbBatchCommand.IsolationLevel property" Url="html/5869B27.htm" />
   <HelpKINode Title="IDbBatchCommand.Parameters explicitly implemented property">
     <HelpKINode Title="CallbackBatchCommand(TConnection, TTransaction, TParameterTypes).IDbBatchCommand.Parameters Property " Url="html/9793E026.htm" />
     <HelpKINode Title="ScriptBatchCommand(TConnection, TTransaction, TParameterTypes).IDbBatchCommand.Parameters Property " Url="html/71AFBAB4.htm" />
@@ -1089,11 +1141,17 @@
     <HelpKINode Title="methods" Url="html/8D023FA9.htm" />
     <HelpKINode Title="properties" Url="html/41D5CB2E.htm" />
   </HelpKINode>
+  <HelpKINode Title="IDbBatchCommandParameterCollection(Of TParameterTypes).AddRange method" Url="html/D48F7B3C.htm" />
+  <HelpKINode Title="IDbBatchCommandParameterCollection.Contains explicitly implemented method" Url="html/68599EB4.htm" />
+  <HelpKINode Title="IDbBatchCommandParameterCollection.Contains method" Url="html/6ADD2C18.htm" />
+  <HelpKINode Title="IDbBatchCommandParameterCollection.Remove explicitly implemented method" Url="html/6F7EE0.htm" />
+  <HelpKINode Title="IDbBatchCommandParameterCollection.Remove method" Url="html/6C9148B0.htm" />
   <HelpKINode Title="IDbBatchCommandParameterCollection&lt;TParameterTypes&gt; interface">
     <HelpKINode Title="IDbBatchCommandParameterCollection(TParameterTypes) Interface" Url="html/FD1421E6.htm" />
     <HelpKINode Title="methods" Url="html/8D023FA9.htm" />
     <HelpKINode Title="properties" Url="html/41D5CB2E.htm" />
   </HelpKINode>
+  <HelpKINode Title="IDbBatchCommandParameterCollection&lt;TParameterTypes&gt;.AddRange method" Url="html/D48F7B3C.htm" />
   <HelpKINode Title="IDbBatchExtensions class">
     <HelpKINode Title="IDbBatchExtensions Class" Url="html/5D46C1C7.htm" />
     <HelpKINode Title="methods" Url="html/1F9C5118.htm" />
@@ -1112,10 +1170,23 @@
   <HelpKINode Title="IDbBatchExtensions.AddScriptFromStream&lt;TConnection, TTransaction, TParameterTypes&gt; method" Url="html/DD52CDEC.htm" />
   <HelpKINode Title="IDbBatchExtensions.Clear method" Url="html/E3EE18B3.htm" />
   <HelpKINode Title="IDbBatchExtensions.DisallowsTransaction method" Url="html/E42C7A42.htm" />
-  <HelpKINode Title="IDbBatchExtensions.GetLastResult method" Url="html/3075E252.htm" />
+  <HelpKINode Title="IDbBatchExtensions.GetError method" Url="html/809454CE.htm" />
+  <HelpKINode Title="IDbBatchExtensions.GetErrors method" Url="html/CEAD18B0.htm" />
+  <HelpKINode Title="IDbBatchExtensions.GetException method" Url="html/CBE0567.htm" />
+  <HelpKINode Title="IDbBatchExtensions.GetExceptions method" Url="html/EB2F6E56.htm" />
+  <HelpKINode Title="IDbBatchExtensions.GetRequiredIsolationLevel method" Url="html/D52D626E.htm" />
+  <HelpKINode Title="IDbBatchExtensions.GetResult method" Url="html/1A05FDC.htm" />
+  <HelpKINode Title="IDbBatchExtensions.GetResults method" Url="html/1CF5FDC.htm" />
+  <HelpKINode Title="IDbBatchExtensions.HasFailed method" Url="html/B90FAE0B.htm" />
   <HelpKINode Title="IDbBatchExtensions.IsEmpty method" Url="html/E96684DD.htm" />
+  <HelpKINode Title="IDbBatchExtensions.MergeCommands(Of TConnection, TTransaction, TParameterTypes) method" Url="html/E279EBE5.htm" />
+  <HelpKINode Title="IDbBatchExtensions.MergeCommands&lt;TConnection, TTransaction, TParameterTypes&gt; method" Url="html/E279EBE5.htm" />
   <HelpKINode Title="IDbBatchExtensions.RequiresTransaction method" Url="html/55C9E752.htm" />
   <HelpKINode Title="IDbBatchExtensions.Reset method" Url="html/822F49C2.htm" />
+  <HelpKINode Title="IDbBatchExtensions.RethrowErrorOrException method" Url="html/27F69A48.htm" />
+  <HelpKINode Title="IDbBatchExtensions.RethrowErrorsOrExceptions method" Url="html/1B61A543.htm" />
+  <HelpKINode Title="IDbBatchExtensions.RethrowException method" Url="html/BA79895D.htm" />
+  <HelpKINode Title="IDbBatchExtensions.RethrowExceptions method" Url="html/CD8558AE.htm" />
   <HelpKINode Title="IDbBatchExtensions.SplitCommands(Of TConnection, TTransaction, TParameterTypes) method" Url="html/F76EA9C2.htm" />
   <HelpKINode Title="IDbBatchExtensions.SplitCommands&lt;TConnection, TTransaction, TParameterTypes&gt; method" Url="html/F76EA9C2.htm" />
   <HelpKINode Title="IDbBatchExtensions.WasFullyExecuted method" Url="html/45B44443.htm" />
@@ -1350,12 +1421,24 @@
   <HelpKINode Title="Insert method" Url="html/5A15346E.htm" />
   <HelpKINode Title="IntersectWith method" Url="html/B9C7C261.htm" />
   <HelpKINode Title="IsEmpty method" Url="html/E96684DD.htm" />
+  <HelpKINode Title="IsolationLevel property">
+    <HelpKINode Title="CallbackBatchAttribute.IsolationLevel Property " Url="html/5ADA3147.htm" />
+    <HelpKINode Title="CallbackBatchCommand(TConnection, TTransaction, TParameterTypes).IsolationLevel Property " Url="html/CB488D83.htm" />
+    <HelpKINode Title="IDbBatchCommand.IsolationLevel Property " Url="html/5869B27.htm" />
+    <HelpKINode Title="ScriptBatchCommand(TConnection, TTransaction, TParameterTypes).IsolationLevel Property " Url="html/E6E03117.htm" />
+  </HelpKINode>
+  <HelpKINode Title="IsolationLevels property" Url="html/3BB30F2B.htm" />
   <HelpKINode Title="IsProperSubsetOf method" Url="html/319EB757.htm" />
   <HelpKINode Title="IsProperSupersetOf method" Url="html/BE31F7D5.htm" />
   <HelpKINode Title="IsReadOnly property" Url="html/EB05E339.htm" />
   <HelpKINode Title="IsReady method" Url="html/5F984BEA.htm" />
   <HelpKINode Title="IsSubsetOf method" Url="html/B33FEC9C.htm" />
   <HelpKINode Title="IsSupersetOf method" Url="html/215FE81F.htm" />
+  <HelpKINode Title="ISupportDatabaseCreation interface">
+    <HelpKINode Title="ISupportDatabaseCreation Interface" Url="html/39000B9A.htm" />
+    <HelpKINode Title="methods" Url="html/B43E8FBF.htm" />
+  </HelpKINode>
+  <HelpKINode Title="ISupportDatabaseCreation.GetDefaultSetupScript method" Url="html/B1D61965.htm" />
   <HelpKINode Title="ISupportVersionUpgradeNameFormat interface">
     <HelpKINode Title="ISupportVersionUpgradeNameFormat Interface" Url="html/E81C1154.htm" />
     <HelpKINode Title="methods" Url="html/6E9D5DF0.htm" />
@@ -1381,6 +1464,8 @@
     <HelpKINode Title="DbManagerBase(TConnection, TTransaction, TParameterTypes, TParameters, TParameter).MaxVersion Property " Url="html/D75067C4.htm" />
     <HelpKINode Title="IDbManager.MaxVersion Property " Url="html/F1B8FF1F.htm" />
   </HelpKINode>
+  <HelpKINode Title="MergeCommands(Of TConnection, TTransaction, TParameterTypes) method" Url="html/E279EBE5.htm" />
+  <HelpKINode Title="MergeCommands&lt;TConnection, TTransaction, TParameterTypes&gt; method" Url="html/E279EBE5.htm" />
   <HelpKINode Title="MergeParameters(Of TConnection, TTransaction, TParameterTypes) method" Url="html/54709D95.htm" />
   <HelpKINode Title="MergeParameters&lt;TConnection, TTransaction, TParameterTypes&gt; method" Url="html/54709D95.htm" />
   <HelpKINode Title="MinVersion property">
@@ -1408,7 +1493,7 @@
   <HelpKINode Title="OnStateChanged method" Url="html/D066BDBA.htm" />
   <HelpKINode Title="OnTransactionCreated method" Url="html/63252289.htm" />
   <HelpKINode Title="OnVersionChanged method" Url="html/677DB11C.htm" />
-  <HelpKINode Title="Options property" Url="html/BB4717E8.htm" />
+  <HelpKINode Title="Options property" Url="html/97643AFC.htm" />
   <HelpKINode Title="OptionsFormat property" Url="html/8078A20F.htm" />
   <HelpKINode Title="Overlaps method" Url="html/C3F39B7D.htm" />
   <HelpKINode Title="Parameters property">
@@ -1430,6 +1515,7 @@
   <HelpKINode Title="Remove method">
     <HelpKINode Title="AggregateBatchLocator(TConnection, TTransaction, TParameterTypes).Remove Method " Url="html/567CAA87.htm" />
     <HelpKINode Title="DbBatchCommandParameterCollection(TParameterTypes).Remove Method " Url="html/3EDEC654.htm" />
+    <HelpKINode Title="IDbBatchCommandParameterCollection.Remove Method " Url="html/6C9148B0.htm" />
   </HelpKINode>
   <HelpKINode Title="RemoveAt method" Url="html/83FA755B.htm" />
   <HelpKINode Title="Required enumeration member" Url="html/E311A970.htm" />
@@ -1452,6 +1538,10 @@
     <HelpKINode Title="IDbBatchCommand.Result Property " Url="html/73DBCC1B.htm" />
     <HelpKINode Title="ScriptBatchCommand(TConnection, TTransaction, TParameterTypes).Result Property " Url="html/D7E7096F.htm" />
   </HelpKINode>
+  <HelpKINode Title="RethrowErrorOrException method" Url="html/27F69A48.htm" />
+  <HelpKINode Title="RethrowErrorsOrExceptions method" Url="html/1B61A543.htm" />
+  <HelpKINode Title="RethrowException method" Url="html/BA79895D.htm" />
+  <HelpKINode Title="RethrowExceptions method" Url="html/CD8558AE.htm" />
   <HelpKINode Title="RI.DatabaseManager.Backup namespace" Url="html/21241FED.htm" />
   <HelpKINode Title="RI.DatabaseManager.Backup.DbBackupCreatorBase(Of TConnection, TTransaction, TParameterTypes) class" Url="html/3B5130B4.htm" />
   <HelpKINode Title="RI.DatabaseManager.Backup.DbBackupCreatorBase&lt;TConnection, TTransaction, TParameterTypes&gt; class" Url="html/3B5130B4.htm" />
@@ -1463,6 +1553,9 @@
   <HelpKINode Title="RI.DatabaseManager.Batches.Commands namespace" Url="html/431BBA43.htm" />
   <HelpKINode Title="RI.DatabaseManager.Batches.Commands.CallbackBatchCommand(Of TConnection, TTransaction, TParameterTypes) class" Url="html/3D8F8D0E.htm" />
   <HelpKINode Title="RI.DatabaseManager.Batches.Commands.CallbackBatchCommand&lt;TConnection, TTransaction, TParameterTypes&gt; class" Url="html/3D8F8D0E.htm" />
+  <HelpKINode Title="RI.DatabaseManager.Batches.Commands.CallbackBatchCommandDelegate delegate" Url="html/51B9F012.htm" />
+  <HelpKINode Title="RI.DatabaseManager.Batches.Commands.CallbackBatchCommandDelegate(Of TConnection, TTransaction, TParameterTypes) delegate" Url="html/83248D74.htm" />
+  <HelpKINode Title="RI.DatabaseManager.Batches.Commands.CallbackBatchCommandDelegate&lt;TConnection, TTransaction, TParameterTypes&gt; delegate" Url="html/83248D74.htm" />
   <HelpKINode Title="RI.DatabaseManager.Batches.Commands.ScriptBatchCommand(Of TConnection, TTransaction, TParameterTypes) class" Url="html/BC5D378D.htm" />
   <HelpKINode Title="RI.DatabaseManager.Batches.Commands.ScriptBatchCommand&lt;TConnection, TTransaction, TParameterTypes&gt; class" Url="html/BC5D378D.htm" />
   <HelpKINode Title="RI.DatabaseManager.Batches.DbBatch(Of TConnection, TTransaction, TParameterTypes) class" Url="html/94538750.htm" />
@@ -1471,6 +1564,7 @@
   <HelpKINode Title="RI.DatabaseManager.Batches.DbBatchCommandParameter&lt;TParameterTypes&gt; class" Url="html/4A2B9C63.htm" />
   <HelpKINode Title="RI.DatabaseManager.Batches.DbBatchCommandParameterCollection(Of TParameterTypes) class" Url="html/1962DB7F.htm" />
   <HelpKINode Title="RI.DatabaseManager.Batches.DbBatchCommandParameterCollection&lt;TParameterTypes&gt; class" Url="html/1962DB7F.htm" />
+  <HelpKINode Title="RI.DatabaseManager.Batches.DbBatchErrorException class" Url="html/42984668.htm" />
   <HelpKINode Title="RI.DatabaseManager.Batches.DbBatchLocatorBase(Of TConnection, TTransaction, TParameterTypes) class" Url="html/98FB52B7.htm" />
   <HelpKINode Title="RI.DatabaseManager.Batches.DbBatchLocatorBase&lt;TConnection, TTransaction, TParameterTypes&gt; class" Url="html/98FB52B7.htm" />
   <HelpKINode Title="RI.DatabaseManager.Batches.DbBatchTransactionRequirement enumeration" Url="html/E311A970.htm" />
@@ -1515,6 +1609,7 @@
   <HelpKINode Title="RI.DatabaseManager.Builder.IDbManagerBuilderExtensions class" Url="html/71E5A0F2.htm" />
   <HelpKINode Title="RI.DatabaseManager.Builder.Options namespace" Url="html/FBF6CA80.htm" />
   <HelpKINode Title="RI.DatabaseManager.Builder.Options.IDbManagerOptions interface" Url="html/63310046.htm" />
+  <HelpKINode Title="RI.DatabaseManager.Builder.Options.ISupportDatabaseCreation interface" Url="html/39000B9A.htm" />
   <HelpKINode Title="RI.DatabaseManager.Builder.Options.ISupportVersionUpgradeNameFormat interface" Url="html/E81C1154.htm" />
   <HelpKINode Title="RI.DatabaseManager.Builder.ServiceCollectionDbManagerBuilderExtensions class" Url="html/BA5F4596.htm" />
   <HelpKINode Title="RI.DatabaseManager.Builder.SQLiteDbManagerBuilderExtensions class" Url="html/1B4A5D77.htm" />
@@ -1540,8 +1635,6 @@
   <HelpKINode Title="RI.DatabaseManager.Manager.SQLiteDbManager class" Url="html/E3BEB43F.htm" />
   <HelpKINode Title="RI.DatabaseManager.Manager.SqlServerDbManager class" Url="html/A526D50A.htm" />
   <HelpKINode Title="RI.DatabaseManager.Upgrading namespace" Url="html/FF94F270.htm" />
-  <HelpKINode Title="RI.DatabaseManager.Upgrading.BatchNameBasedDbVersionUpgrader(Of TConnection, TTransaction, TParameterTypes) class" Url="html/B2074F16.htm" />
-  <HelpKINode Title="RI.DatabaseManager.Upgrading.BatchNameBasedDbVersionUpgrader&lt;TConnection, TTransaction, TParameterTypes&gt; class" Url="html/B2074F16.htm" />
   <HelpKINode Title="RI.DatabaseManager.Upgrading.DbVersionUpgraderBase(Of TConnection, TTransaction, TParameterTypes) class" Url="html/3D55AF29.htm" />
   <HelpKINode Title="RI.DatabaseManager.Upgrading.DbVersionUpgraderBase&lt;TConnection, TTransaction, TParameterTypes&gt; class" Url="html/3D55AF29.htm" />
   <HelpKINode Title="RI.DatabaseManager.Upgrading.IDbVersionUpgrader interface" Url="html/E0F45290.htm" />
@@ -1568,10 +1661,13 @@
     <HelpKINode Title="properties" Url="html/6B3D1E65.htm" />
   </HelpKINode>
   <HelpKINode Title="ScriptBatchCommand(Of TConnection, TTransaction, TParameterTypes).Clone method" Url="html/E52A1AA8.htm" />
+  <HelpKINode Title="ScriptBatchCommand(Of TConnection, TTransaction, TParameterTypes).Error property" Url="html/53C0CAA2.htm" />
+  <HelpKINode Title="ScriptBatchCommand(Of TConnection, TTransaction, TParameterTypes).Exception property" Url="html/F383474E.htm" />
   <HelpKINode Title="ScriptBatchCommand(Of TConnection, TTransaction, TParameterTypes).ICloneable.Clone explicitly implemented method" Url="html/3271C307.htm" />
   <HelpKINode Title="ScriptBatchCommand(Of TConnection, TTransaction, TParameterTypes).IDbBatchCommand(Of TConnection, TTransaction, TParameterTypes).Code explicitly implemented property" Url="html/87406C4C.htm" />
   <HelpKINode Title="ScriptBatchCommand(Of TConnection, TTransaction, TParameterTypes).IDbBatchCommand.Code explicitly implemented property" Url="html/66F85ED3.htm" />
   <HelpKINode Title="ScriptBatchCommand(Of TConnection, TTransaction, TParameterTypes).IDbBatchCommand.Parameters explicitly implemented property" Url="html/71AFBAB4.htm" />
+  <HelpKINode Title="ScriptBatchCommand(Of TConnection, TTransaction, TParameterTypes).IsolationLevel property" Url="html/E6E03117.htm" />
   <HelpKINode Title="ScriptBatchCommand(Of TConnection, TTransaction, TParameterTypes).Parameters property" Url="html/464ABCAF.htm" />
   <HelpKINode Title="ScriptBatchCommand(Of TConnection, TTransaction, TParameterTypes).Result property" Url="html/D7E7096F.htm" />
   <HelpKINode Title="ScriptBatchCommand(Of TConnection, TTransaction, TParameterTypes).Script property" Url="html/809C25C1.htm" />
@@ -1585,10 +1681,13 @@
     <HelpKINode Title="properties" Url="html/6B3D1E65.htm" />
   </HelpKINode>
   <HelpKINode Title="ScriptBatchCommand&lt;TConnection, TTransaction, TParameterTypes&gt;.Clone method" Url="html/E52A1AA8.htm" />
+  <HelpKINode Title="ScriptBatchCommand&lt;TConnection, TTransaction, TParameterTypes&gt;.Error property" Url="html/53C0CAA2.htm" />
+  <HelpKINode Title="ScriptBatchCommand&lt;TConnection, TTransaction, TParameterTypes&gt;.Exception property" Url="html/F383474E.htm" />
   <HelpKINode Title="ScriptBatchCommand&lt;TConnection, TTransaction, TParameterTypes&gt;.ICloneable.Clone explicitly implemented method" Url="html/3271C307.htm" />
   <HelpKINode Title="ScriptBatchCommand&lt;TConnection, TTransaction, TParameterTypes&gt;.IDbBatchCommand.Code explicitly implemented property" Url="html/66F85ED3.htm" />
   <HelpKINode Title="ScriptBatchCommand&lt;TConnection, TTransaction, TParameterTypes&gt;.IDbBatchCommand.Parameters explicitly implemented property" Url="html/71AFBAB4.htm" />
   <HelpKINode Title="ScriptBatchCommand&lt;TConnection, TTransaction, TParameterTypes&gt;.IDbBatchCommand&lt;TConnection, TTransaction, TParameterTypes&gt;.Code explicitly implemented property" Url="html/87406C4C.htm" />
+  <HelpKINode Title="ScriptBatchCommand&lt;TConnection, TTransaction, TParameterTypes&gt;.IsolationLevel property" Url="html/E6E03117.htm" />
   <HelpKINode Title="ScriptBatchCommand&lt;TConnection, TTransaction, TParameterTypes&gt;.Parameters property" Url="html/464ABCAF.htm" />
   <HelpKINode Title="ScriptBatchCommand&lt;TConnection, TTransaction, TParameterTypes&gt;.Result property" Url="html/D7E7096F.htm" />
   <HelpKINode Title="ScriptBatchCommand&lt;TConnection, TTransaction, TParameterTypes&gt;.Script property" Url="html/809C25C1.htm" />
@@ -1634,6 +1733,7 @@
   <HelpKINode Title="SQLiteDbManager.CreateTransactionImpl method" Url="html/D14BD7B2.htm" />
   <HelpKINode Title="SQLiteDbManager.DetectStateAndVersionImpl method" Url="html/CC136581.htm" />
   <HelpKINode Title="SQLiteDbManager.ExecuteCommandScriptImpl method" Url="html/E1096D42.htm" />
+  <HelpKINode Title="SQLiteDbManager.GetDefaultIsolationLevel method" Url="html/EBF9FAB2.htm" />
   <HelpKINode Title="SQLiteDbManager.SQLiteDbManager constructor" Url="html/F798F5C8.htm" />
   <HelpKINode Title="SQLiteDbManager.SupportsBackupImpl property" Url="html/C986AA7D.htm" />
   <HelpKINode Title="SQLiteDbManager.SupportsCleanupImpl property" Url="html/B21A84C9.htm" />
@@ -1644,6 +1744,8 @@
     <HelpKINode Title="SQLiteDbManagerBuilderExtensions Class" Url="html/1B4A5D77.htm" />
     <HelpKINode Title="methods" Url="html/F308756D.htm" />
   </HelpKINode>
+  <HelpKINode Title="SQLiteDbManagerBuilderExtensions.BuildDbManager(Of TBuilder) method" Url="html/AB503607.htm" />
+  <HelpKINode Title="SQLiteDbManagerBuilderExtensions.BuildDbManager&lt;TBuilder&gt; method" Url="html/AB503607.htm" />
   <HelpKINode Title="SQLiteDbManagerBuilderExtensions.UseSQLite method" Url="html/7AA22B6B.htm" />
   <HelpKINode Title="SQLiteDbManagerOptions class">
     <HelpKINode Title="SQLiteDbManagerOptions Class" Url="html/97604D4.htm" />
@@ -1670,6 +1772,7 @@
   <HelpKINode Title="SQLiteDbManagerOptions.DefaultVersionDetectionValueColumn property" Url="html/CEE9D24E.htm" />
   <HelpKINode Title="SQLiteDbManagerOptions.GetConnectionString method" Url="html/B299769E.htm" />
   <HelpKINode Title="SQLiteDbManagerOptions.GetDefaultCleanupScript method" Url="html/C21C3B17.htm" />
+  <HelpKINode Title="SQLiteDbManagerOptions.GetDefaultSetupScript method" Url="html/3778C6DD.htm" />
   <HelpKINode Title="SQLiteDbManagerOptions.GetDefaultVersionDetectionScript method" Url="html/9CFEB56B.htm" />
   <HelpKINode Title="SQLiteDbManagerOptions.ICloneable.Clone explicitly implemented method" Url="html/7700E7EB.htm" />
   <HelpKINode Title="SQLiteDbManagerOptions.SQLiteDbManagerOptions constructor" Url="html/173AC4BE.htm" />
@@ -1706,6 +1809,7 @@
   <HelpKINode Title="SqlServerDbManager.CreateConnectionImpl method" Url="html/4222B3DE.htm" />
   <HelpKINode Title="SqlServerDbManager.CreateTransactionImpl method" Url="html/76FB6222.htm" />
   <HelpKINode Title="SqlServerDbManager.ExecuteCommandScriptImpl method" Url="html/E1C426E6.htm" />
+  <HelpKINode Title="SqlServerDbManager.GetDefaultIsolationLevel method" Url="html/6699F0E4.htm" />
   <HelpKINode Title="SqlServerDbManager.SqlServerDbManager constructor" Url="html/37B1A1C1.htm" />
   <HelpKINode Title="SqlServerDbManager.SupportsBackupImpl property" Url="html/B81E6C1D.htm" />
   <HelpKINode Title="SqlServerDbManager.SupportsCleanupImpl property" Url="html/109FA8FC.htm" />
@@ -1735,6 +1839,7 @@
   <HelpKINode Title="SqlServerDbManagerOptions.DefaultVersionDetectionValueColumn property" Url="html/32E141E5.htm" />
   <HelpKINode Title="SqlServerDbManagerOptions.GetConnectionString method" Url="html/B8FBA93F.htm" />
   <HelpKINode Title="SqlServerDbManagerOptions.GetDefaultCleanupScript method" Url="html/C8D5217A.htm" />
+  <HelpKINode Title="SqlServerDbManagerOptions.GetDefaultSetupScript method" Url="html/FBC0DA98.htm" />
   <HelpKINode Title="SqlServerDbManagerOptions.GetDefaultVersionDetectionScript method" Url="html/6D0C951E.htm" />
   <HelpKINode Title="SqlServerDbManagerOptions.ICloneable.Clone explicitly implemented method" Url="html/24E94048.htm" />
   <HelpKINode Title="SqlServerDbManagerOptions.SqlServerDbManagerOptions constructor" Url="html/D9BF19BD.htm" />
@@ -1844,7 +1949,6 @@
   <HelpKINode Title="Uninitialized enumeration member" Url="html/204B2759.htm" />
   <HelpKINode Title="UnionWith method" Url="html/45F8043E.htm" />
   <HelpKINode Title="Upgrade method">
-    <HelpKINode Title="BatchNameBasedDbVersionUpgrader(TConnection, TTransaction, TParameterTypes).Upgrade Method " Url="html/92E9F49D.htm" />
     <HelpKINode Title="DbManagerBase(TConnection, TTransaction, TParameterTypes, TParameters, TParameter).Upgrade Method " Url="html/FA473408.htm" />
     <HelpKINode Title="DbVersionUpgraderBase(TConnection, TTransaction, TParameterTypes).Upgrade Method " Url="html/FB5EFABD.htm" />
     <HelpKINode Title="IDbManager.Upgrade Method " Url="html/1AE3DDFE.htm" />

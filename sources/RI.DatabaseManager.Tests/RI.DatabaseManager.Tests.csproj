@@ -9,9 +9,9 @@
   <ItemGroup>
     <PackageReference Include="Microsoft.Data.SqlClient" Version="2.1.2" />
     <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="5.0.1" />
-    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="16.9.1" />
-    <PackageReference Include="RI.Abstractions.Common" Version="1.3.0" />
-    <PackageReference Include="RI.Abstractions.Microsoft.DependencyInjection" Version="1.3.0" />
+    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="16.9.4" />
+    <PackageReference Include="RI.Abstractions.Common" Version="1.4.0" />
+    <PackageReference Include="RI.Abstractions.Microsoft.DependencyInjection" Version="1.4.0" />
     <PackageReference Include="System.Data.SQLite.Core" Version="1.0.113.7" />
     <PackageReference Include="xunit" Version="2.4.1" />
     <PackageReference Include="xunit.runner.visualstudio" Version="2.4.3">
@@ -32,7 +32,11 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="SQLite\" />
+    <Folder Include="SQLite\Backup\" />
+    <Folder Include="SQLite\Cleanup\" />
+    <Folder Include="SQLite\Manager\" />
+    <Folder Include="SQLite\Versioning\" />
+    <Folder Include="SQLite\Upgrading\" />
   </ItemGroup>
 
 </Project>

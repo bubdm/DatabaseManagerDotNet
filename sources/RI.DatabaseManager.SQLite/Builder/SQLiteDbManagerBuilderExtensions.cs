@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Data;
+using System.Data.Common;
 using System.Data.SQLite;
 
 using RI.Abstractions.Builder;
@@ -145,6 +146,25 @@ namespace RI.DatabaseManager.Builder
             builder.AddSingleton(typeof(IDbVersionUpgrader<SQLiteConnection, SQLiteTransaction, DbType>), typeof(SQLiteDbVersionUpgrader));
 
             return new DbManagerBuilder<SQLiteConnection, SQLiteTransaction, DbType, SQLiteDbManager>(builder);
+        }
+
+        /// <summary>
+        ///     Finishes the configuration and registers all necessary objects/services in an independent and standalone container to construct the intended database manager and its dependencies.
+        /// </summary>
+        /// <typeparam name="TBuilder"> The type of the used database manager builder. </typeparam>
+        /// <typeparam name="TConnection"> The database connection type. </typeparam>
+        /// <typeparam name="TTransaction"> The database transaction type. </typeparam>
+        /// <typeparam name="TParameterTypes"> The database command parameter type. </typeparam>
+        /// <typeparam name="TManager"> The type of the database manager. </typeparam>
+        /// <param name="builder"> The used database manager builder. </param>
+        /// <returns> The built database manager instance. </returns>
+        /// <exception cref="ArgumentNullException"><paramref name="builder"/> is null.</exception>
+        /// <exception cref="InvalidOperationException"> This builder has already been used to build the database manager. </exception>
+        /// <exception cref="BuilderException"> Configuration or registration of objects/services failed. </exception>
+        public static IDbManager<SQLiteConnection, SQLiteTransaction, DbType> BuildDbManager <TBuilder> (this TBuilder builder)
+            where TBuilder : IDbManagerBuilder<SQLiteConnection, SQLiteTransaction, DbType, SQLiteDbManager>
+        {
+            return builder.BuildDbManager<TBuilder, SQLiteConnection, SQLiteTransaction, DbType, SQLiteDbManager>();
         }
     }
 }
