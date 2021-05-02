@@ -18,10 +18,12 @@ namespace RI.DatabaseManager.Tests.SQLite.Builder
         [Fact]
         public static void UseSQLite_ConnectionStringNull_ArgumentNullException ()
         {
-            //Arrange
+            // Arrange
+
             DbManagerBuilder builder = new DbManagerBuilder();
 
-            //Act + Assert
+            // Act + Assert
+
             Assert.Throws<ArgumentNullException>(() => builder.UseSQLite((string)null));
             Assert.Throws<ArgumentNullException>(() => builder.UseSQLite((SQLiteConnectionStringBuilder)null));
         }
@@ -29,51 +31,61 @@ namespace RI.DatabaseManager.Tests.SQLite.Builder
         [Fact]
         public static void UseSQLite_ConnectionStringEmpty_ArgumentException()
         {
-            //Arrange
+            // Arrange
+
             DbManagerBuilder builder = new DbManagerBuilder();
 
-            //Act + Assert
+            // Act + Assert
+
             Assert.Throws<ArgumentException>(() => builder.UseSQLite(string.Empty));
         }
 
         [Fact]
         public static void UseSQLite_ConnectionStringInvalid_ArgumentException()
         {
-            //Arrange
+            // Arrange
+
             DbManagerBuilder builder = new DbManagerBuilder();
 
-            //Act + Assert
+            // Act + Assert
+
             Assert.Throws<ArgumentException>(() => builder.UseSQLite("abc"));
         }
 
         [Fact]
         public static void UseSQLite_ConnectionStringValid_Success()
         {
-            //Arrange
+            // Arrange
+
             using TemporaryFile tempFile = new TemporaryFile();
             DbManagerBuilder builder = new DbManagerBuilder();
 
-            //Act
+            // Act
+
             IDbManagerBuilder<SQLiteConnection, SQLiteTransaction, DbType, SQLiteDbManager> realBuilder = builder.UseSQLite($"Data Source={tempFile.FullPath}");
 
-            //Assert
+            // Assert
+
             Assert.NotNull(realBuilder);
         }
 
         [Fact]
         public static void UseSQLite_Options_Success()
         {
-            //Arrange
+            // Arrange
+
             using TemporaryFile tempFile = new TemporaryFile();
             DbManagerBuilder builder = new DbManagerBuilder();
 
-            //Act
+            // Act
+
             IDbManagerBuilder<SQLiteConnection, SQLiteTransaction, DbType, SQLiteDbManager> realBuilder = builder.UseSQLite(options =>
             {
                 options.ConnectionString.DataSource = tempFile.FullPath;
             });
 
             //Assert
+
             Assert.NotNull(realBuilder);
         }
     }

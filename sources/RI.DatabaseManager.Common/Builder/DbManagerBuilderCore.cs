@@ -34,7 +34,6 @@ namespace RI.DatabaseManager.Builder
             Type temporaryBatchLogatorRegistration = typeof(IDbManagerBuilderExtensions.TemporaryBatchLocatorRegistration<,,>).MakeGenericType(connection, transaction, parameterTypes);
 
             this.ThrowIfNotMinContractCount(temporaryBatchLogatorRegistration, 1);
-
             this.MergeBatchLocators(connection, transaction, parameterTypes, manager);
 
             this.ThrowIfNotExactContractCount(manager, 1);

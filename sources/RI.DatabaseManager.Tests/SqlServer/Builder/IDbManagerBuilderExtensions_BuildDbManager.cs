@@ -1,5 +1,4 @@
 ﻿using System.Data;
-using System.Data.SQLite;
 using System.Reflection;
 
 using Microsoft.Data.SqlClient;
@@ -14,17 +13,17 @@ using Xunit;
 
 
 
-namespace RI.DatabaseManager.Tests.SQLite.Builder
+namespace RI.DatabaseManager.Tests.SqlServer.Builder
 {
     public sealed class IDbManagerBuilderExtensions_BuildDbManager
     {
         [Fact]
-        public static void SQLite_NoBatchLocator_BuilderException()
+        public static void SqlServer_NoBatchLocator_BuilderException()
         {
             // Arrange
 
             using TemporaryFile tempFile = new TemporaryFile();
-            IDbManager<SQLiteConnection, SQLiteTransaction, DbType> dbManager = null;
+            IDbManager<SqlConnection, SqlTransaction, SqlDbType> dbManager = null;
 
             // Act + Assert
 
@@ -32,7 +31,7 @@ namespace RI.DatabaseManager.Tests.SQLite.Builder
             {
 
 
-                dbManager = new DbManagerBuilder().UseSQLite(options =>
+                dbManager = new DbManagerBuilder().UseSqlServer(options =>
                                                   {
                                                       options.ConnectionString.DataSource = tempFile.FullPath;
                                                   })
@@ -41,16 +40,16 @@ namespace RI.DatabaseManager.Tests.SQLite.Builder
         }
 
         [Fact]
-        public static void SQLite_WithBatchLocator_Success()
+        public static void SqlServer_WithBatchLocator_Success()
         {
             // Arrange
 
             using TemporaryFile tempFile = new TemporaryFile();
-            IDbManager<SQLiteConnection, SQLiteTransaction, DbType> dbManager = null;
+            IDbManager<SqlConnection, SqlTransaction, SqlDbType> dbManager = null;
 
             // Act
 
-            dbManager = new DbManagerBuilder().UseSQLite(options =>
+            dbManager = new DbManagerBuilder().UseSqlServer(options =>
                                               {
                                                   options.ConnectionString.DataSource = tempFile.FullPath;
                                               }).UseAssemblyScriptBatches(assemblies: Assembly.GetExecutingAssembly())

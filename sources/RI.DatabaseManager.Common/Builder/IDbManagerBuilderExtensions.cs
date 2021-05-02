@@ -92,7 +92,6 @@ namespace RI.DatabaseManager.Builder
         /// <summary>
         /// Uses a specified batch locator to locate batches.
         /// </summary>
-        /// <typeparam name="TBuilder"> The type of the used database manager builder. </typeparam>
         /// <typeparam name="TConnection"> The database connection type. </typeparam>
         /// <typeparam name="TTransaction"> The database transaction type. </typeparam>
         /// <typeparam name="TParameterTypes"> The database command parameter type. </typeparam>
@@ -130,7 +129,6 @@ namespace RI.DatabaseManager.Builder
         /// <summary>
         /// Uses scripts from assembly resources as batches.
         /// </summary>
-        /// <typeparam name="TBuilder"> The type of the used database manager builder. </typeparam>
         /// <typeparam name="TConnection"> The database connection type. </typeparam>
         /// <typeparam name="TTransaction"> The database transaction type. </typeparam>
         /// <typeparam name="TParameterTypes"> The database command parameter type. </typeparam>
@@ -146,7 +144,7 @@ namespace RI.DatabaseManager.Builder
         /// </returns>
         /// <remarks>
         /// <note type="important">
-        /// <see cref="UseAssemblyScriptBatches{TBuilder,TConnection,TTransaction,TParameterTypes,TManager}"/> creates an <see cref="AssemblyScriptBatchLocator{TConnection,TTransaction,TParameterTypes}"/>. See <see cref="AssemblyScriptBatchLocator{TConnection,TTransaction,TParameterTypes}"/> for more details.
+        /// <see cref="UseAssemblyScriptBatches{TConnection,TTransaction,TParameterTypes,TManager}"/> creates an <see cref="AssemblyScriptBatchLocator{TConnection,TTransaction,TParameterTypes}"/>. See <see cref="AssemblyScriptBatchLocator{TConnection,TTransaction,TParameterTypes}"/> for more details.
         /// </note>
         /// </remarks>
         /// <exception cref="ArgumentNullException"><paramref name="builder"/> is null.</exception>
@@ -198,7 +196,6 @@ namespace RI.DatabaseManager.Builder
         /// <summary>
         /// Uses callback implementations from assemblies as batches.
         /// </summary>
-        /// <typeparam name="TBuilder"> The type of the used database manager builder. </typeparam>
         /// <typeparam name="TConnection"> The database connection type. </typeparam>
         /// <typeparam name="TTransaction"> The database transaction type. </typeparam>
         /// <typeparam name="TParameterTypes"> The database command parameter type. </typeparam>
@@ -210,7 +207,7 @@ namespace RI.DatabaseManager.Builder
         /// </returns>
         /// <remarks>
         /// <note type="important">
-        /// <see cref="UseAssemblyCallbackBatches{TBuilder,TConnection,TTransaction,TParameterTypes,TManager}"/> creates an <see cref="AssemblyCallbackBatchLocator{TConnection,TTransaction,TParameterTypes}"/>. See <see cref="AssemblyCallbackBatchLocator{TConnection,TTransaction,TParameterTypes}"/> for more details.
+        /// <see cref="UseAssemblyCallbackBatches{TConnection,TTransaction,TParameterTypes,TManager}"/> creates an <see cref="AssemblyCallbackBatchLocator{TConnection,TTransaction,TParameterTypes}"/>. See <see cref="AssemblyCallbackBatchLocator{TConnection,TTransaction,TParameterTypes}"/> for more details.
         /// </note>
         /// </remarks>
         /// <exception cref="ArgumentNullException"><paramref name="builder"/> is null.</exception>
@@ -241,7 +238,6 @@ namespace RI.DatabaseManager.Builder
         /// <summary>
         /// Uses programmatically defined scripts and/or callbacks as batches.
         /// </summary>
-        /// <typeparam name="TBuilder"> The type of the used database manager builder. </typeparam>
         /// <typeparam name="TConnection"> The database connection type. </typeparam>
         /// <typeparam name="TTransaction"> The database transaction type. </typeparam>
         /// <typeparam name="TParameterTypes"> The database command parameter type. </typeparam>
@@ -251,6 +247,11 @@ namespace RI.DatabaseManager.Builder
         /// <returns>
         /// The used database manager builder.
         /// </returns>
+        /// <remarks>
+        /// <note type="important">
+        /// <see cref="UseBatches{TConnection,TTransaction,TParameterTypes,TManager}"/> creates a <see cref="DictionaryBatchLocator{TConnection,TTransaction,TParameterTypes}"/>. See <see cref="DictionaryBatchLocator{TConnection,TTransaction,TParameterTypes}"/> for more details.
+        /// </note>
+        /// </remarks>
         /// <exception cref="ArgumentNullException"><paramref name="builder"/> or <paramref name="dictionary"/> is null.</exception>
         public static IDbManagerBuilder<TConnection, TTransaction, TParameterTypes, TManager> UseBatches<TConnection, TTransaction, TParameterTypes, TManager>(this IDbManagerBuilder<TConnection, TTransaction, TParameterTypes, TManager> builder, Action<DictionaryBatchLocator<TConnection, TTransaction, TParameterTypes>> dictionary)
             where TConnection : DbConnection
@@ -270,6 +271,40 @@ namespace RI.DatabaseManager.Builder
             
             DictionaryBatchLocator<TConnection, TTransaction, TParameterTypes> locator = new DictionaryBatchLocator<TConnection, TTransaction, TParameterTypes>();
             dictionary(locator);
+            builder.UseBatchLocator<TConnection, TTransaction, TParameterTypes, TManager>(locator);
+
+            return builder;
+        }
+
+        /// <summary>
+        /// Uses a batch locator which does not use batches.
+        /// </summary>
+        /// <typeparam name="TConnection"> The database connection type. </typeparam>
+        /// <typeparam name="TTransaction"> The database transaction type. </typeparam>
+        /// <typeparam name="TParameterTypes"> The database command parameter type. </typeparam>
+        /// <typeparam name="TManager"> The type of the database manager. </typeparam>
+        /// <param name="builder"> The used database manager builder. </param>
+        /// <returns>
+        /// The used database manager builder.
+        /// </returns>
+        /// <remarks>
+        /// <note type="important">
+        /// <see cref="UseNoBatches{TConnection,TTransaction,TParameterTypes,TManager}"/> creates a <see cref="NullBatchLocator{TConnection,TTransaction,TParameterTypes}"/>. See <see cref="NullBatchLocator{TConnection,TTransaction,TParameterTypes}"/> for more details.
+        /// </note>
+        /// </remarks>
+        /// <exception cref="ArgumentNullException"><paramref name="builder"/> is null.</exception>
+        public static IDbManagerBuilder<TConnection, TTransaction, TParameterTypes, TManager> UseNoBatches<TConnection, TTransaction, TParameterTypes, TManager>(this IDbManagerBuilder<TConnection, TTransaction, TParameterTypes, TManager> builder)
+            where TConnection : DbConnection
+            where TTransaction : DbTransaction
+            where TParameterTypes : Enum
+            where TManager : class, IDbManager<TConnection, TTransaction, TParameterTypes>
+        {
+            if (builder == null)
+            {
+                throw new ArgumentNullException(nameof(builder));
+            }
+
+            NullBatchLocator<TConnection, TTransaction, TParameterTypes> locator = new NullBatchLocator<TConnection, TTransaction, TParameterTypes>();
             builder.UseBatchLocator<TConnection, TTransaction, TParameterTypes, TManager>(locator);
 
             return builder;

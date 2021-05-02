@@ -145,5 +145,24 @@ namespace RI.DatabaseManager.Builder
 
             return new DbManagerBuilder<SqlConnection, SqlTransaction, SqlDbType, SqlServerDbManager>(builder);
         }
+
+        /// <summary>
+        ///     Finishes the configuration and registers all necessary objects/services in an independent and standalone container to construct the intended database manager and its dependencies.
+        /// </summary>
+        /// <typeparam name="TBuilder"> The type of the used database manager builder. </typeparam>
+        /// <typeparam name="TConnection"> The database connection type. </typeparam>
+        /// <typeparam name="TTransaction"> The database transaction type. </typeparam>
+        /// <typeparam name="TParameterTypes"> The database command parameter type. </typeparam>
+        /// <typeparam name="TManager"> The type of the database manager. </typeparam>
+        /// <param name="builder"> The used database manager builder. </param>
+        /// <returns> The built database manager instance. </returns>
+        /// <exception cref="ArgumentNullException"><paramref name="builder"/> is null.</exception>
+        /// <exception cref="InvalidOperationException"> This builder has already been used to build the database manager. </exception>
+        /// <exception cref="BuilderException"> Configuration or registration of objects/services failed. </exception>
+        public static IDbManager<SqlConnection, SqlTransaction, SqlDbType> BuildDbManager<TBuilder>(this TBuilder builder)
+            where TBuilder : IDbManagerBuilder<SqlConnection, SqlTransaction, SqlDbType, SqlServerDbManager>
+        {
+            return builder.BuildDbManager<TBuilder, SqlConnection, SqlTransaction, SqlDbType, SqlServerDbManager>();
+        }
     }
 }
