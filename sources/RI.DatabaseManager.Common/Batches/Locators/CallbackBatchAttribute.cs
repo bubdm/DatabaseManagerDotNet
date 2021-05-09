@@ -41,7 +41,13 @@ namespace RI.DatabaseManager.Batches.Locators
         /// <value>
         ///     The isolation level requirement.
         /// </value>
-        public IsolationLevel? IsolationLevel { get; set; } = null;
+        public IsolationLevel IsolationLevel
+        {
+            get => this.IsolationLevelInternal.GetValueOrDefault(IsolationLevel.Unspecified);
+            set => this.IsolationLevelInternal = value == IsolationLevel.Unspecified ? null : value;
+        }
+
+        internal IsolationLevel? IsolationLevelInternal { get; set; } = null;
 
         #endregion
     }

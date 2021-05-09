@@ -384,6 +384,8 @@ namespace RI.DatabaseManager.Batches
             commandSeparator = commandSeparator?.Replace("\r", "")
                                                .Replace("\n", Environment.NewLine);
 
+            string lastLineSeparator = commandSeparator?.TrimEnd();
+
             if (string.IsNullOrWhiteSpace(script))
             {
                 return new List<string>();
@@ -400,7 +402,7 @@ namespace RI.DatabaseManager.Batches
                                         {
                                             commandSeparator,
                                         }, StringSplitOptions.None)
-                                        .Select(x => x.Trim())
+                                        .Select(x => x.Trim().Replace(lastLineSeparator, string.Empty).Trim())
                                         .Where(x => !string.IsNullOrWhiteSpace(x))
                                         .ToList();
 

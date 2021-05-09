@@ -210,8 +210,9 @@ namespace RI.DatabaseManager.Batches.Locators
                 foreach (string resource in resources)
                 {
                     string candidate = this.GetBatchNameFromResourceName(resource);
+                    string nameOnlyCandidate = candidate.Substring(candidate.LastIndexOf('.') + 1);
 
-                    if (this.DefaultNameComparer.Equals(name, candidate))
+                    if (this.DefaultNameComparer.Equals(name, candidate) || this.DefaultNameComparer.Equals(name, nameOnlyCandidate))
                     {
                         string script;
 
