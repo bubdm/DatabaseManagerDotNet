@@ -1024,7 +1024,7 @@ namespace RI.DatabaseManager.Manager
 
             if (this.State != DbState.Uninitialized)
             {
-                this.Close();
+                throw new InvalidOperationException("The database manager is already initialized.");
             }
 
             GC.ReRegisterForFinalize(this);

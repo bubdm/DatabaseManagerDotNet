@@ -325,15 +325,10 @@ namespace RI.DatabaseManager.Manager
         ///         <see cref="State" />, <see cref="Version" />, <see cref="InitialState" />, <see cref="InitialVersion" /> are updated to reflect the current state and version of the database after initialization.
         ///     </note>
         ///     <note type="implement">
-        ///         <see cref="Initialize" /> should be callable multiple times and independent of the current state and version.
-        ///     </note>
-        ///     <note type="implement">
         ///         Details about failures should be written to logs.
         ///     </note>
-        ///     <note type="implement">
-        ///         If the database is already initialized, it will be closed first (calling <see cref="Close" />).
-        ///     </note>
         /// </remarks>
+        /// <exception cref="InvalidOperationException">The database manager is already initialized.</exception>
         void Initialize ();
 
         /// <summary>

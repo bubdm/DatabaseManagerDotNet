@@ -189,6 +189,9 @@ namespace RI.DatabaseManager.Batches
         }
 
         /// <inheritdoc />
+        public void Add (string name, TParameterTypes type, object value = null) => this.InternalSet.Add(new DbBatchCommandParameter<TParameterTypes>(name, type, value));
+
+        /// <inheritdoc />
         public DbBatchCommandParameterCollection<TParameterTypes> Clone ()
         {
             DbBatchCommandParameterCollection<TParameterTypes> clone = new DbBatchCommandParameterCollection<TParameterTypes>();

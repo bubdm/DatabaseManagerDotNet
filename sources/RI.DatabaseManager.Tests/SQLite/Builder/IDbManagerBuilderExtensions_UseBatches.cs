@@ -75,6 +75,10 @@ namespace RI.DatabaseManager.Tests.SQLite.Builder
 
             // Assert
 
+            Assert.Contains("Test1", names);
+            Assert.Contains("Test2", names);
+            Assert.Contains("Test3", names);
+
             Assert.Null(dbManager.GetBatch("Test"));
 
             Assert.NotNull(batch1);

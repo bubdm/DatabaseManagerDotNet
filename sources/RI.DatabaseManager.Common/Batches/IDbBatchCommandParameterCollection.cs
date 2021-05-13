@@ -50,5 +50,13 @@ namespace RI.DatabaseManager.Batches
         /// </para>
         /// </remarks>
         void AddRange (IEnumerable<IDbBatchCommandParameter<TParameterTypes>> parameters);
+
+        /// <summary>
+        /// Adds a parameter to the collection.
+        /// </summary>
+        /// <param name="name">The name of the parameter.</param>
+        /// <param name="type">The database type of the parameter.</param>
+        /// <param name="value">The optional parameter value. Default value is null.</param>
+        void Add(string name, TParameterTypes type, object value = null);
     }
 }

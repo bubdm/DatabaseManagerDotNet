@@ -538,6 +538,11 @@ namespace RI.DatabaseManager.Batches
                 throw new ArgumentNullException(nameof(batch));
             }
 
+            if (batch.Commands.Count == 0)
+            {
+                return false;
+            }
+
             return batch.Commands.All(x => x?.WasExecuted ?? true);
         }
 
@@ -554,6 +559,11 @@ namespace RI.DatabaseManager.Batches
             if (batch == null)
             {
                 throw new ArgumentNullException(nameof(batch));
+            }
+
+            if (batch.Commands.Count == 0)
+            {
+                return false;
             }
 
             return batch.Commands.Any(x => x?.WasExecuted ?? true);

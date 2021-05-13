@@ -42,9 +42,9 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Folder Include="Resources\SQLite\" />
     <Folder Include="SQLite\Backup\" />
     <Folder Include="SQLite\Cleanup\" />
-    <Folder Include="SQLite\Manager\" />
     <Folder Include="SQLite\Versioning\" />
     <Folder Include="SQLite\Upgrading\" />
   </ItemGroup>
