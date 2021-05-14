@@ -33,6 +33,20 @@ namespace RI.DatabaseManager.Batches
         /// true if the collection contained a parameter with the given name (which was removed), false otherwise.
         /// </returns>
         bool Remove(string name);
+
+        /// <summary>
+        /// Gets all command parameters of the collection.
+        /// </summary>
+        /// <returns>
+        /// The enumerator for all parameters.
+        /// If there are no parameters, an empty enumerator is returned.
+        /// </returns>
+        IEnumerable<IDbBatchCommandParameter> GetAll ();
+
+        /// <summary>
+        /// Clears the collection of all parameters.
+        /// </summary>
+        void Clear ();
     }
 
     /// <inheritdoc cref="IDbBatchCommandParameterCollection" />
@@ -57,6 +71,9 @@ namespace RI.DatabaseManager.Batches
         /// <param name="name">The name of the parameter.</param>
         /// <param name="type">The database type of the parameter.</param>
         /// <param name="value">The optional parameter value. Default value is null.</param>
-        void Add(string name, TParameterTypes type, object value = null);
+        /// <returns>
+        /// The created and added parameter.
+        /// </returns>
+        IDbBatchCommandParameter<TParameterTypes> Add(string name, TParameterTypes type, object value = null);
     }
 }

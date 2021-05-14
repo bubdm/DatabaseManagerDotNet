@@ -270,7 +270,7 @@ namespace RI.DatabaseManager.Batches
 
             object result = null;
 
-            foreach (IDbBatchCommand command in batch.Commands)
+            foreach (IDbBatchCommand command in batch.Commands.GetAll())
             {
                 if (command?.WasExecuted ?? false)
                 {
@@ -297,7 +297,7 @@ namespace RI.DatabaseManager.Batches
                 throw new ArgumentNullException(nameof(batch));
             }
 
-            return batch.Commands.Where(x => x.WasExecuted)
+            return batch.Commands.GetAll().Where(x => x.WasExecuted)
                         .Select(x => x.Result)
                         .ToList();
         }
@@ -319,7 +319,7 @@ namespace RI.DatabaseManager.Batches
 
             string result = null;
 
-            foreach (IDbBatchCommand command in batch.Commands)
+            foreach (IDbBatchCommand command in batch.Commands.GetAll())
             {
                 if (command?.WasExecuted ?? false)
                 {
@@ -351,7 +351,7 @@ namespace RI.DatabaseManager.Batches
                 throw new ArgumentNullException(nameof(batch));
             }
 
-            return batch.Commands.Where(x => x.WasExecuted)
+            return batch.Commands.GetAll().Where(x => x.WasExecuted)
                         .Select(x => x.Error)
                         .ToList();
         }
@@ -373,7 +373,7 @@ namespace RI.DatabaseManager.Batches
 
             Exception result = null;
 
-            foreach (IDbBatchCommand command in batch.Commands)
+            foreach (IDbBatchCommand command in batch.Commands.GetAll())
             {
                 if (command?.WasExecuted ?? false)
                 {
@@ -405,7 +405,7 @@ namespace RI.DatabaseManager.Batches
                 throw new ArgumentNullException(nameof(batch));
             }
 
-            return batch.Commands.Where(x => x.WasExecuted)
+            return batch.Commands.GetAll().Where(x => x.WasExecuted)
                         .Select(x => x.Exception)
                         .ToList();
         }
@@ -426,8 +426,8 @@ namespace RI.DatabaseManager.Batches
                 throw new ArgumentNullException(nameof(batch));
             }
 
-            bool required = batch.Commands.Any(x => (x?.TransactionRequirement ?? DbBatchTransactionRequirement.DontCare) == DbBatchTransactionRequirement.Required);
-            bool disallowed = batch.Commands.Any(x => (x?.TransactionRequirement ?? DbBatchTransactionRequirement.DontCare) == DbBatchTransactionRequirement.Disallowed);
+            bool required = batch.Commands.GetAll().Any(x => (x?.TransactionRequirement ?? DbBatchTransactionRequirement.DontCare) == DbBatchTransactionRequirement.Required);
+            bool disallowed = batch.Commands.GetAll().Any(x => (x?.TransactionRequirement ?? DbBatchTransactionRequirement.DontCare) == DbBatchTransactionRequirement.Disallowed);
 
             if (required && disallowed)
             {
@@ -453,8 +453,8 @@ namespace RI.DatabaseManager.Batches
                 throw new ArgumentNullException(nameof(batch));
             }
 
-            bool required = batch.Commands.Any(x => (x?.TransactionRequirement ?? DbBatchTransactionRequirement.DontCare) == DbBatchTransactionRequirement.Required);
-            bool disallowed = batch.Commands.Any(x => (x?.TransactionRequirement ?? DbBatchTransactionRequirement.DontCare) == DbBatchTransactionRequirement.Disallowed);
+            bool required = batch.Commands.GetAll().Any(x => (x?.TransactionRequirement ?? DbBatchTransactionRequirement.DontCare) == DbBatchTransactionRequirement.Required);
+            bool disallowed = batch.Commands.GetAll().Any(x => (x?.TransactionRequirement ?? DbBatchTransactionRequirement.DontCare) == DbBatchTransactionRequirement.Disallowed);
 
             if (required && disallowed)
             {
@@ -482,9 +482,9 @@ namespace RI.DatabaseManager.Batches
 
             IsolationLevel? isolationLevel = null;
 
-            for (int i1 = 0; i1 < batch.Commands.Count; i1++)
+            for (int i1 = 0; i1 < batch.Commands.GetAll().Count; i1++)
             {
-                IDbBatchCommand command = batch.Commands[i1];
+                IDbBatchCommand command = batch.Commands.GetAll()[i1];
 
                 if (isolationLevel == null)
                 {
@@ -494,7 +494,7 @@ namespace RI.DatabaseManager.Batches
                 {
                     if (command.IsolationLevel != null)
                     {
-                        if (command.IsolationLevel != batch.Commands[i1 - 1].IsolationLevel)
+                        if (command.IsolationLevel != batch.Commands.GetAll()[i1 - 1].IsolationLevel)
                         {
                             throw new InvalidOperationException("Conflicting isolation level requirements.");
                         }
@@ -517,7 +517,7 @@ namespace RI.DatabaseManager.Batches
                 throw new ArgumentNullException(nameof(batch));
             }
 
-            foreach (IDbBatchCommand command in batch.Commands)
+            foreach (IDbBatchCommand command in batch.Commands.GetAll())
             {
                 command?.Reset();
             }
@@ -538,12 +538,12 @@ namespace RI.DatabaseManager.Batches
                 throw new ArgumentNullException(nameof(batch));
             }
 
-            if (batch.Commands.Count == 0)
+            if (batch.Commands.GetAll().Count == 0)
             {
                 return false;
             }
 
-            return batch.Commands.All(x => x?.WasExecuted ?? true);
+            return batch.Commands.GetAll().All(x => x?.WasExecuted ?? true);
         }
 
         /// <summary>
@@ -561,12 +561,12 @@ namespace RI.DatabaseManager.Batches
                 throw new ArgumentNullException(nameof(batch));
             }
 
-            if (batch.Commands.Count == 0)
+            if (batch.Commands.GetAll().Count == 0)
             {
                 return false;
             }
 
-            return batch.Commands.Any(x => x?.WasExecuted ?? true);
+            return batch.Commands.GetAll().Any(x => x?.WasExecuted ?? true);
         }
 
         /// <summary>
@@ -584,7 +584,7 @@ namespace RI.DatabaseManager.Batches
                 throw new ArgumentNullException(nameof(batch));
             }
 
-            return batch.Commands.Any(x => (!string.IsNullOrWhiteSpace(x.Error)) || (x.Exception != null));
+            return batch.Commands.GetAll().Any(x => (!string.IsNullOrWhiteSpace(x.Error)) || (x.Exception != null));
         }
 
         /// <summary>
@@ -602,7 +602,7 @@ namespace RI.DatabaseManager.Batches
                 throw new ArgumentNullException(nameof(batch));
             }
 
-            return batch.Commands.Count == 0;
+            return batch.Commands.GetAll().Count == 0;
         }
 
         /// <summary>

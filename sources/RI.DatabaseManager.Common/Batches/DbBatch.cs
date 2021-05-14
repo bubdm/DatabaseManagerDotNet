@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Data.Common;
 
 
@@ -19,44 +18,8 @@ namespace RI.DatabaseManager.Batches
         where TTransaction : DbTransaction
         where TParameterTypes : Enum
     {
-        private sealed class CommandCollection : List<IDbBatchCommand<TConnection, TTransaction, TParameterTypes>>, IList<IDbBatchCommand>
-        {
-            /// <inheritdoc />
-            IEnumerator<IDbBatchCommand> IEnumerable<IDbBatchCommand>.GetEnumerator () => this.GetEnumerator();
-
-            /// <inheritdoc />
-            void ICollection<IDbBatchCommand>.Add (IDbBatchCommand item) => this.Add((IDbBatchCommand<TConnection, TTransaction, TParameterTypes>)item);
-
-            /// <inheritdoc />
-            bool ICollection<IDbBatchCommand>.Contains (IDbBatchCommand item) => this.Contains((IDbBatchCommand<TConnection, TTransaction, TParameterTypes>)item);
-
-            /// <inheritdoc />
-            void ICollection<IDbBatchCommand>.CopyTo (IDbBatchCommand[] array, int arrayIndex) => this.CopyTo((IDbBatchCommand<TConnection, TTransaction, TParameterTypes>[])array, arrayIndex);
-
-            /// <inheritdoc />
-            bool ICollection<IDbBatchCommand>.Remove (IDbBatchCommand item) => this.Remove((IDbBatchCommand<TConnection, TTransaction, TParameterTypes>)item);
-
-            /// <inheritdoc />
-            bool ICollection<IDbBatchCommand>.IsReadOnly => ((IList<IDbBatchCommand<TConnection, TTransaction, TParameterTypes>>)this).IsReadOnly;
-
-            /// <inheritdoc />
-            int IList<IDbBatchCommand>.IndexOf (IDbBatchCommand item) => this.IndexOf((IDbBatchCommand<TConnection, TTransaction, TParameterTypes>)item);
-
-            /// <inheritdoc />
-            void IList<IDbBatchCommand>.Insert(int index, IDbBatchCommand item) => this.Insert(index, (IDbBatchCommand<TConnection, TTransaction, TParameterTypes>)item);
-
-            /// <inheritdoc />
-            IDbBatchCommand IList<IDbBatchCommand>.this [int index]
-            {
-                get => this[index];
-                set => this[index] = (IDbBatchCommand<TConnection, TTransaction, TParameterTypes>)value;
-            }
-        }
-
-        private CommandCollection CommandsInternal { get; } = new CommandCollection();
-
         /// <inheritdoc />
-        public IList<IDbBatchCommand<TConnection, TTransaction, TParameterTypes>> Commands => this.CommandsInternal;
+        public IDbBatchCommandCollection<TConnection, TTransaction, TParameterTypes> Commands { get; private set; } = new DbBatchCommandCollection<TConnection, TTransaction, TParameterTypes>();
 
         /// <inheritdoc />
         public IDbBatchCommandParameterCollection<TParameterTypes> Parameters { get; private set; } = new DbBatchCommandParameterCollection<TParameterTypes>();
@@ -65,7 +28,7 @@ namespace RI.DatabaseManager.Batches
         IDbBatchCommandParameterCollection IDbBatch.Parameters => this.Parameters;
 
         /// <inheritdoc />
-        IList<IDbBatchCommand> IDbBatch.Commands => this.CommandsInternal;
+        IDbBatchCommandCollection IDbBatch.Commands => this.Commands;
 
         /// <inheritdoc />
         object ICloneable.Clone()
@@ -78,11 +41,7 @@ namespace RI.DatabaseManager.Batches
         {
             DbBatch<TConnection, TTransaction, TParameterTypes> clone = new DbBatch<TConnection, TTransaction, TParameterTypes>();
 
-            foreach (IDbBatchCommand<TConnection, TTransaction, TParameterTypes> command in this.CommandsInternal)
-            {
-                clone.CommandsInternal.Add((IDbBatchCommand<TConnection, TTransaction, TParameterTypes>)command.Clone());
-            }
-
+            clone.Commands = (IDbBatchCommandCollection<TConnection, TTransaction, TParameterTypes>)this.Commands.Clone();
             clone.Parameters = (DbBatchCommandParameterCollection<TParameterTypes>)this.Parameters.Clone();
 
             return clone;

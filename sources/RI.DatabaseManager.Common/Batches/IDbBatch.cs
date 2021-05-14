@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Data.Common;
 
 
@@ -26,7 +25,7 @@ namespace RI.DatabaseManager.Batches
         ///         This property should never be null.
         ///     </note>
         /// </remarks>
-        IList<IDbBatchCommand> Commands { get; }
+        IDbBatchCommandCollection Commands { get; }
 
         /// <summary>
         ///     Gets the collection of parameters which are applied to all commands.
@@ -52,7 +51,7 @@ namespace RI.DatabaseManager.Batches
         where TParameterTypes : Enum
     {
         /// <inheritdoc cref="IDbBatch.Commands" />
-        new IList<IDbBatchCommand<TConnection, TTransaction, TParameterTypes>> Commands { get; }
+        new IDbBatchCommandCollection<TConnection, TTransaction, TParameterTypes> Commands { get; }
 
         /// <inheritdoc cref="IDbBatch.Parameters" />
         new IDbBatchCommandParameterCollection<TParameterTypes> Parameters { get; }

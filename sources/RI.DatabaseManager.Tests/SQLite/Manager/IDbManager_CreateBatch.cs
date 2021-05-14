@@ -451,7 +451,7 @@ namespace RI.DatabaseManager.Tests.SQLite.Manager
             batch.Clear();
 
             Assert.Empty(batch.Commands);
-            Assert.Empty(batch.Parameters);
+            Assert.NotEmpty(batch.Parameters);
             Assert.True(batch.IsEmpty());
         }
     }
