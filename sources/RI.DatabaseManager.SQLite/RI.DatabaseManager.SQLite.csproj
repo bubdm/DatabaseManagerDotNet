@@ -36,4 +36,8 @@
     <ProjectReference Include="..\RI.DatabaseManager.Common\RI.DatabaseManager.Common.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Creating\" />
+  </ItemGroup>
+
 </Project>

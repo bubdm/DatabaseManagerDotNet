@@ -137,6 +137,7 @@ namespace RI.DatabaseManager.Builder
                 throw new ArgumentNullException(nameof(options));
             }
 
+            //TODO
             builder.AddSingleton(typeof(SqlServerDbManagerOptions), options.Clone());
             builder.AddSingleton(typeof(IDbManager<SqlConnection, SqlTransaction, SqlDbType>), typeof(SqlServerDbManager));
             builder.AddSingleton(typeof(IDbVersionDetector<SqlConnection, SqlTransaction, SqlDbType>), typeof(SqlServerDbVersionDetector));

@@ -11,16 +11,16 @@ namespace RI.DatabaseManager.Builder.Options
     /// <summary>
     /// Stores general database manager options and also provides the means to create the database if it does not yet exist (is in the <see cref="DbState.New"/> state).
     /// </summary>
-    public interface ISupportDatabaseCreation : IDbManagerOptions
+    public interface ISupportDefaultDatabaseCreation : IDbManagerOptions
     {
         /// <summary>
-        /// Gets the default setup script.
+        /// Gets the default create script.
         /// </summary>
         /// <param name="transactionRequirement">The transaction requirement.</param>
         /// <param name="isolationLevel">The isolation level requirement.</param>
         /// <returns>
-        /// The array with the commands of the default setup script or null or an empty array if a default setup script is not available.
+        /// The array with the commands of the default create script or null or an empty array if a default create script is not available.
         /// </returns>
-        string[] GetDefaultSetupScript (out DbBatchTransactionRequirement transactionRequirement, out IsolationLevel? isolationLevel);
+        string[] GetDefaultCreationScript (out DbBatchTransactionRequirement transactionRequirement, out IsolationLevel? isolationLevel);
     }
 }

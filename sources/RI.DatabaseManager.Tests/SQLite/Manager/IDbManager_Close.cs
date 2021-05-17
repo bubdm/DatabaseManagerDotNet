@@ -43,7 +43,7 @@ namespace RI.DatabaseManager.Tests.SQLite.Manager
 
             Assert.Equal(true, manager.SupportsBackup);
             Assert.Equal(true, manager.SupportsCleanup);
-            Assert.Equal(true, manager.SupportsReadOnly);
+            Assert.Equal(true, manager.SupportsReadOnlyConnections);
             Assert.Equal(false, manager.SupportsRestore);
             Assert.Equal(true, manager.SupportsUpgrade);
         }

@@ -71,7 +71,7 @@ namespace RI.DatabaseManager.Builder
     ///  ]]>
     ///  </code>
     ///     <para>
-    ///         The default setup script (as shown above) can be obtained using <see cref="GetDefaultSetupScript"/>.
+    ///         The default setup script (as shown above) can be obtained using <see cref="GetDefaultCreationScript"/>.
     ///     </para>
     ///     <para>
     ///         If commands are added to <see cref="BackupPreprocessingBatch" />/<see cref="BackupPostprocessingBatch"/>, <see cref="BackupPreprocessingBatch" />/<see cref="BackupPostprocessingBatch"/> is used for preprocessing/postprocessing instead of the batch named by <see cref="BackupPreprocessingBatchName" />/<see cref="BackupPostprocessingBatchName" />.
@@ -84,7 +84,7 @@ namespace RI.DatabaseManager.Builder
     ///     </para>
     /// </remarks>
     /// <threadsafety static="false" instance="false" />
-    public sealed class SQLiteDbManagerOptions : IDbManagerOptions, ISupportVersionUpgradeNameFormat, ISupportDatabaseCreation, ICloneable
+    public sealed class SQLiteDbManagerOptions : IDbManagerOptions, ISupportBatchNameFormatUpgrading, ISupportDefaultDatabaseCreation, ICloneable
     {
         #region Instance Constructor/Destructor
 
@@ -560,7 +560,7 @@ namespace RI.DatabaseManager.Builder
         /// The placeholders in the default script are replaced as follows: <c>__@TableName</c> = <see cref="DefaultVersionDetectionTable"/>, <c>__@NameColumnName</c> = <see cref="DefaultVersionDetectionNameColumn"/>, <c>__@ValueColumnName</c> = <see cref="DefaultVersionDetectionValueColumn"/>, <c>__@KeyName</c> = <see cref="DefaultVersionDetectionKey"/>.
         /// </para>
         /// </remarks>
-        public string[] GetDefaultSetupScript(out DbBatchTransactionRequirement transactionRequirement, out IsolationLevel? isolationLevel)
+        public string[] GetDefaultCreationScript(out DbBatchTransactionRequirement transactionRequirement, out IsolationLevel? isolationLevel)
         {
             transactionRequirement = DbBatchTransactionRequirement.Disallowed;
             isolationLevel = IsolationLevel.Serializable;
@@ -661,7 +661,7 @@ namespace RI.DatabaseManager.Builder
         public string GetConnectionString () => this.ConnectionString?.ToString();
 
         /// <inheritdoc />
-        public string VersionUpgradeNameFormat
+        public string BatchNameFormat
         {
             get => this._versionUpgradeNameFormat;
             set

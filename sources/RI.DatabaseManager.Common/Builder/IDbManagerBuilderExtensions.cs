@@ -12,6 +12,7 @@ using RI.DatabaseManager.Backup;
 using RI.DatabaseManager.Batches;
 using RI.DatabaseManager.Batches.Locators;
 using RI.DatabaseManager.Cleanup;
+using RI.DatabaseManager.Creation;
 using RI.DatabaseManager.Manager;
 using RI.DatabaseManager.Upgrading;
 using RI.DatabaseManager.Versioning;
@@ -56,7 +57,7 @@ namespace RI.DatabaseManager.Builder
 
             builder.ThrowIfAlreadyBuilt();
 
-            (Type connection, Type transaction, Type parameterTypes, Type manager, Type _, Type _, Type _, Type _, Type _) = builder.DetectDbManagerTypes();
+            (Type connection, Type transaction, Type parameterTypes, Type manager, Type _, Type _, Type _, Type _, Type _, Type _) = builder.DetectDbManagerTypes();
 
             if (!manager.IsAssignableFrom(typeof(TManager)))
             {
@@ -310,7 +311,7 @@ namespace RI.DatabaseManager.Builder
             return builder;
         }
 
-        internal static (Type Connection, Type Transaction, Type ParameterTypes, Type Manager, Type VersionDetector, Type BackupCreator, Type CleanupProcessor, Type VersionUpgrader, Type BatchLocator) DetectDbManagerTypes (this IDbManagerBuilder builder)
+        internal static (Type Connection, Type Transaction, Type ParameterTypes, Type Manager, Type VersionDetector, Type BackupCreator, Type CleanupProcessor, Type VersionUpgrader, Type BatchLocator, Type Creator) DetectDbManagerTypes (this IDbManagerBuilder builder)
         {
             if (builder == null)
             {
@@ -354,8 +355,9 @@ namespace RI.DatabaseManager.Builder
             Type cleanupProcessor = typeof(IDbCleanupProcessor<,,>).MakeGenericType(genericArguments);
             Type versionUpgrader = typeof(IDbVersionUpgrader<,,>).MakeGenericType(genericArguments);
             Type batchLocator = typeof(IDbBatchLocator<,,>).MakeGenericType(genericArguments);
+            Type creator = typeof(IDbCreator<,,>).MakeGenericType(genericArguments);
 
-            return (connection, transaction, parameterTypes, manager, versionDetector, backupCreator, cleanupProcessor, versionUpgrader, batchLocator);
+            return (connection, transaction, parameterTypes, manager, versionDetector, backupCreator, cleanupProcessor, versionUpgrader, batchLocator, creator);
         }
 
         [SuppressMessage("ReSharper", "CoVariantArrayConversion")]

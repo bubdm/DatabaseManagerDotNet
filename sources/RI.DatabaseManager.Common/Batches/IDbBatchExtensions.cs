@@ -606,7 +606,7 @@ namespace RI.DatabaseManager.Batches
         }
 
         /// <summary>
-        ///     Clears all commands of a batch.
+        ///     Clears all commands and parameters of a batch.
         /// </summary>
         /// <param name="batch"> The batch. </param>
         /// <exception cref="ArgumentNullException"> <paramref name="batch" /> is null. </exception>
@@ -618,7 +618,7 @@ namespace RI.DatabaseManager.Batches
             }
 
             batch.Commands.Clear();
-            batch.Reset();
+            batch.Parameters.Clear();
         }
 
         /// <summary>

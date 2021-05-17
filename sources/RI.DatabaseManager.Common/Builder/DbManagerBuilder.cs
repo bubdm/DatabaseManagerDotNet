@@ -6,6 +6,7 @@ using RI.Abstractions.Composition;
 using RI.DatabaseManager.Backup;
 using RI.DatabaseManager.Batches;
 using RI.DatabaseManager.Cleanup;
+using RI.DatabaseManager.Creation;
 using RI.DatabaseManager.Manager;
 using RI.DatabaseManager.Upgrading;
 
@@ -84,7 +85,7 @@ namespace RI.DatabaseManager.Builder
         ///     Null object used if no registration for <see cref="IDbBackupCreator{TConnection,TTransaction,TParameterTypes}" />, <see cref="IDbCleanupProcessor{TConnection,TTransaction,TParameterTypes}" />, <see cref="IDbVersionUpgrader{TConnection,TTransaction,TParameterTypes}" />, or <see cref="IDbBatchLocator" /> is provided.
         /// </summary>
         /// <threadsafety static="false" instance="false" />
-        public sealed class NullInstance <TConnection, TTransaction, TParameterTypes> : IDbBackupCreator<TConnection, TTransaction, TParameterTypes>, IDbCleanupProcessor<TConnection, TTransaction, TParameterTypes>, IDbVersionUpgrader<TConnection, TTransaction, TParameterTypes>, IDbBatchLocator<TConnection, TTransaction, TParameterTypes>
+        public sealed class NullInstance <TConnection, TTransaction, TParameterTypes> : IDbBackupCreator<TConnection, TTransaction, TParameterTypes>, IDbCleanupProcessor<TConnection, TTransaction, TParameterTypes>, IDbVersionUpgrader<TConnection, TTransaction, TParameterTypes>, IDbBatchLocator<TConnection, TTransaction, TParameterTypes>, IDbCreator<TConnection, TTransaction, TParameterTypes>
             where TConnection : DbConnection
             where TTransaction : DbTransaction
             where TParameterTypes : Enum
@@ -169,6 +170,12 @@ namespace RI.DatabaseManager.Builder
 
             /// <inheritdoc />
             ISet<string> IDbBatchLocator.GetNames () => null;
+
+            /// <inheritdoc />
+            public bool Create (IDbManager<TConnection, TTransaction, TParameterTypes> manager) => false;
+
+            /// <inheritdoc />
+            public bool Create (IDbManager manager) => false;
         }
 
         #endregion

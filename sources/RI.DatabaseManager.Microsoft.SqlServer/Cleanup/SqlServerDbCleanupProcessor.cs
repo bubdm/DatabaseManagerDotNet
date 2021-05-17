@@ -35,7 +35,7 @@ namespace RI.DatabaseManager.Cleanup
         /// <param name="options"> The used SQL Server database manager options.</param>
         /// <param name="logger"> The used logger. </param>
         /// <exception cref="ArgumentNullException"> <paramref name="options" /> or <paramref name="logger" /> is null. </exception>
-        public SqlServerDbCleanupProcessor (SqlServerDbManagerOptions options, ILogger logger) : base(logger)
+        public SqlServerDbCleanupProcessor (SqlServerDbManagerOptions options, ILogger logger) : base(options, logger)
         {
             if (options == null)
             {

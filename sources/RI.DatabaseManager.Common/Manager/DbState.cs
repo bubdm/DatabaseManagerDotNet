@@ -12,47 +12,47 @@ namespace RI.DatabaseManager.Manager
     public enum DbState
     {
         /// <summary>
-        ///     The database is not initialized or has been closed.
+        ///     The database manager is not initialized or has been closed.
         /// </summary>
         Uninitialized = 0,
 
         /// <summary>
-        ///     The database is initialized and ready for use, using the newest known/supported version.
+        ///     The database manager is initialized and ready for use, using the newest known/supported version of the database.
         /// </summary>
         ReadyNew = 1,
 
         /// <summary>
-        ///     The database is initialized and ready for use, using an older known/supported version.
+        ///     The database manager is initialized and ready for use, using an older known/supported version of the database.
         /// </summary>
         ReadyOld = 2,
 
         /// <summary>
-        ///     The database is initialized and ready for use, using an unknown/unsupported version (therefore, upgrading is not available).
+        ///     The database manager is initialized and ready for use, using an unknown/unsupported version of the database.
         /// </summary>
         ReadyUnknown = 3,
 
         /// <summary>
-        ///     The database is initialized but is not ready for use because it is not available/created and requires an upgrade to create the database.
+        ///     The database manager is initialized but is not ready for use because the database is not created.
         /// </summary>
         New = 4,
 
         /// <summary>
-        ///     The database is initialized but is not ready for use because it is not available/accessible.
+        ///     The database manager is initialized but is not ready for use because the database is not available/accessible.
         /// </summary>
         Unavailable = 5,
 
         /// <summary>
-        ///     The database is initialized but is not ready for use because its version is newer than the newest version known/supported.
+        ///     The database manager is initialized but is not ready for use because the database version is newer than the newest version known/supported.
         /// </summary>
         TooNew = 6,
 
         /// <summary>
-        ///     The database is initialized but is not ready for use because its version is too old and cannot be upgraded.
+        ///     The database manager is initialized but is not ready for use because the database version is too old and cannot be upgraded.
         /// </summary>
         TooOld = 7,
 
         /// <summary>
-        ///     The database is initialized but is not ready for use because it is damaged or invalid.
+        ///     The database manager is initialized but is not ready for use because the database is damaged or in an invalid state.
         /// </summary>
         DamagedOrInvalid = 8,
     }

@@ -40,7 +40,7 @@ namespace RI.DatabaseManager.Upgrading
         /// </summary>
         /// <param name="options"> The used database manager options. </param>
         /// <param name="logger"> The used logger. </param>
-        /// <exception cref="ArgumentNullException"> <paramref name="logger" /> is null. </exception>
+        /// <exception cref="ArgumentNullException"> <paramref name="options" /> or <paramref name="logger" /> is null. </exception>
         protected DbVersionUpgraderBase (IDbManagerOptions options, ILogger logger)
         {
             if (options == null)
@@ -232,10 +232,10 @@ namespace RI.DatabaseManager.Upgrading
         /// The extracted version must be the source version, meaning that the corresponding batch upgrades from that source version to source version + 1.
         /// </para>
         /// <note type="implement">
-        /// The default implementation returns the value of  the <see cref="ISupportVersionUpgradeNameFormat.VersionUpgradeNameFormat"/> property from <see cref="Options"/>.
+        /// The default implementation returns the value of  the <see cref="ISupportBatchNameFormatUpgrading.BatchNameFormat"/> property from <see cref="Options"/>.
         /// </note>
         /// </remarks>
-        protected virtual string GetUpgradeBatchNamePattern() => (this.Options as ISupportVersionUpgradeNameFormat)?.VersionUpgradeNameFormat;
+        protected virtual string GetUpgradeBatchNamePattern() => (this.Options as ISupportBatchNameFormatUpgrading)?.BatchNameFormat;
 
         /// <summary>
         /// Gets the default database creation commands.
@@ -247,21 +247,19 @@ namespace RI.DatabaseManager.Upgrading
         /// </returns>
         /// <remarks>
         /// <note type="implement">
-        /// The default implementation returns the value of  the <see cref="ISupportDatabaseCreation.GetDefaultSetupScript"/> property from <see cref="Options"/>.
+        /// The default implementation returns the value of  the <see cref="ISupportDefaultDatabaseCreation.GetDefaultCreationScript"/> property from <see cref="Options"/>.
         /// </note>
         /// </remarks>
+        /// TODO: Do not use in upgrader
         protected virtual string[] GetDefaultCreationCommands(out DbBatchTransactionRequirement transactionRequirement, out IsolationLevel? isolationLevel)
         {
             transactionRequirement = DbBatchTransactionRequirement.DontCare;
             isolationLevel = null;
-            return (this.Options as ISupportDatabaseCreation)?.GetDefaultSetupScript(out transactionRequirement, out isolationLevel);
+            return (this.Options as ISupportDefaultDatabaseCreation)?.GetDefaultCreationScript(out transactionRequirement, out isolationLevel);
         }
 
         /// <inheritdoc />
-        int IDbVersionUpgrader.GetMaxVersion (IDbManager manager)
-        {
-            return this.GetMaxVersion((IDbManager<TConnection, TTransaction, TParameterTypes>)manager);
-        }
+        int IDbVersionUpgrader.GetMaxVersion (IDbManager manager) => this.GetMaxVersion((IDbManager<TConnection, TTransaction, TParameterTypes>)manager);
 
         /// <inheritdoc />
         public virtual int GetMaxVersion (IDbManager<TConnection, TTransaction, TParameterTypes> manager)
@@ -284,10 +282,7 @@ namespace RI.DatabaseManager.Upgrading
         }
 
         /// <inheritdoc />
-        int IDbVersionUpgrader.GetMinVersion (IDbManager manager)
-        {
-            return this.GetMinVersion((IDbManager<TConnection, TTransaction, TParameterTypes>)manager);
-        }
+        int IDbVersionUpgrader.GetMinVersion (IDbManager manager) => this.GetMinVersion((IDbManager<TConnection, TTransaction, TParameterTypes>)manager);
 
         /// <inheritdoc />
         public virtual int GetMinVersion (IDbManager<TConnection, TTransaction, TParameterTypes> manager)
@@ -317,6 +312,7 @@ namespace RI.DatabaseManager.Upgrading
                 throw new ArgumentNullException(nameof(manager));
             }
 
+            //TODO: Remove creation and move to separate component
             List<IDbBatch<TConnection, TTransaction, TParameterTypes>> creationSteps = new List<IDbBatch<TConnection, TTransaction, TParameterTypes>>();
             bool creationStepsResult = this.GetCreationSteps(manager, creationSteps);
 
@@ -399,10 +395,7 @@ namespace RI.DatabaseManager.Upgrading
         }
 
         /// <inheritdoc />
-        bool IDbVersionUpgrader.Upgrade (IDbManager manager, int sourceVersion)
-        {
-            return this.Upgrade((IDbManager<TConnection, TTransaction, TParameterTypes>)manager, sourceVersion);
-        }
+        bool IDbVersionUpgrader.Upgrade (IDbManager manager, int sourceVersion) => this.Upgrade((IDbManager<TConnection, TTransaction, TParameterTypes>)manager, sourceVersion);
 
         #endregion
     }

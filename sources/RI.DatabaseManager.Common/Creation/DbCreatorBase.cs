@@ -3,26 +3,27 @@ using System.Data.Common;
 
 using RI.Abstractions.Logging;
 using RI.DatabaseManager.Builder.Options;
+using RI.DatabaseManager.Cleanup;
 using RI.DatabaseManager.Manager;
 
 
 
 
-namespace RI.DatabaseManager.Cleanup
+namespace RI.DatabaseManager.Creation
 {
     /// <summary>
-    ///     Boilerplate implementation of <see cref="IDbCleanupProcessor" /> and <see cref="IDbCleanupProcessor{TConnection,TTransaction,TParameterTypes}" />.
+    ///     Boilerplate implementation of <see cref="IDbCreator" /> and <see cref="IDbCreator{TConnection,TTransaction,TParameterTypes}" />.
     /// </summary>
     /// <typeparam name="TConnection"> The database connection type. </typeparam>
     /// <typeparam name="TTransaction"> The database transaction type. </typeparam>
     /// <typeparam name="TParameterTypes"> The database command parameter type. </typeparam>
     /// <remarks>
     ///     <note type="implement">
-    ///         It is recommended that database cleanup processor implementations use this base class as it already implements most of the database-independent logic defined by <see cref="IDbCleanupProcessor" /> and <see cref="IDbCleanupProcessor{TConnection,TTransaction,TParameterTypes}" />.
+    ///         It is recommended that database creator implementations use this base class as it already implements most of the database-independent logic defined by <see cref="IDbCreator" /> and <see cref="IDbCreator{TConnection,TTransaction,TParameterTypes}" />.
     ///     </note>
     /// </remarks>
     /// <threadsafety static="false" instance="false" />
-    public abstract class DbCleanupProcessorBase <TConnection, TTransaction, TParameterTypes> : IDbCleanupProcessor<TConnection, TTransaction, TParameterTypes>
+    public abstract class DbCreatorBase <TConnection, TTransaction, TParameterTypes> : IDbCreator<TConnection, TTransaction, TParameterTypes>
         where TConnection : DbConnection
         where TTransaction : DbTransaction
         where TParameterTypes : Enum
@@ -30,12 +31,12 @@ namespace RI.DatabaseManager.Cleanup
         #region Instance Constructor/Destructor
 
         /// <summary>
-        ///     Creates a new instance of <see cref="DbCleanupProcessorBase{TConnection,TTransaction,TParameterTypes}" />.
+        ///     Creates a new instance of <see cref="DbCreatorBase{TConnection,TTransaction,TParameterTypes}" />.
         /// </summary>
         /// <param name="options"> The used database manager options. </param>
         /// <param name="logger"> The used logger. </param>
         /// <exception cref="ArgumentNullException"> <paramref name="options" /> or <paramref name="logger" /> is null. </exception>
-        protected DbCleanupProcessorBase (IDbManagerOptions options, ILogger logger)
+        protected DbCreatorBase(IDbManagerOptions options, ILogger logger)
         {
             if (options == null)
             {
@@ -108,10 +109,10 @@ namespace RI.DatabaseManager.Cleanup
 
         /// <inheritdoc />
         /// TODO: Make base implementation
-        public abstract bool Cleanup (IDbManager<TConnection, TTransaction, TParameterTypes> manager);
+        public abstract bool Create (IDbManager<TConnection, TTransaction, TParameterTypes> manager);
 
         /// <inheritdoc />
-        bool IDbCleanupProcessor.Cleanup (IDbManager manager) => this.Cleanup((IDbManager<TConnection, TTransaction, TParameterTypes>)manager);
+        bool IDbCreator.Create (IDbManager manager) => this.Create((IDbManager<TConnection, TTransaction, TParameterTypes>)manager);
 
         #endregion
     }

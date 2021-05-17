@@ -94,6 +94,22 @@ namespace RI.DatabaseManager.Manager
         int MinVersion { get; }
 
         /// <summary>
+        ///     Gets the current version of the database.
+        /// </summary>
+        /// <value>
+        ///     The current version of the database.
+        /// </value>
+        /// <remarks>
+        ///     <note type="implement">
+        ///         A version of 0 indicates that the database does not yet exist and must be created before it can be used.
+        ///     </note>
+        ///     <note type="implement">
+        ///         A version of -1 indicates an invalid version or a damaged database respectively.
+        ///     </note>
+        /// </remarks>
+        int Version { get; }
+
+        /// <summary>
         ///     Gets the current state of the database.
         /// </summary>
         /// <value>
@@ -115,6 +131,19 @@ namespace RI.DatabaseManager.Manager
         bool SupportsBackup { get; }
 
         /// <summary>
+        ///     Gets whether the database manager supports the restore functionality.
+        /// </summary>
+        /// <value>
+        ///     true if the database manager supports restore, false otherwise.
+        /// </value>
+        /// <remarks>
+        ///     <note type="implement">
+        ///         <see cref="SupportsRestore" /> should be set during the construction of the database manager and then remain unchanged and independent of the current database state or version (only depending on the database manager configuration).
+        ///     </note>
+        /// </remarks>
+        bool SupportsRestore { get; }
+
+        /// <summary>
         ///     Gets whether the database manager supports the cleanup functionality.
         /// </summary>
         /// <value>
@@ -128,30 +157,17 @@ namespace RI.DatabaseManager.Manager
         bool SupportsCleanup { get; }
 
         /// <summary>
-        ///     Gets whether the database manager supports read-only connections.
+        ///     Gets whether the database manager supports creating the database.
         /// </summary>
         /// <value>
-        ///     true if the database manager supports read-only connections, false otherwise.
+        ///     true if the database manager supports database creation, false otherwise.
         /// </value>
         /// <remarks>
         ///     <note type="implement">
-        ///         <see cref="SupportsReadOnly" /> should be set during the construction of the database manager and then remain unchanged and independent of the current database state or version (only depending on the database manager configuration).
+        ///         <see cref="SupportsCreate" /> should be set during the construction of the database manager and then remain unchanged and independent of the current database state or version (only depending on the database manager configuration).
         ///     </note>
         /// </remarks>
-        bool SupportsReadOnly { get; }
-
-        /// <summary>
-        ///     Gets whether the database manager supports the restore functionality.
-        /// </summary>
-        /// <value>
-        ///     true if the database manager supports restore, false otherwise.
-        /// </value>
-        /// <remarks>
-        ///     <note type="implement">
-        ///         <see cref="SupportsRestore" /> should be set during the construction of the database manager and then remain unchanged and independent of the current database state or version (only depending on the database manager configuration).
-        ///     </note>
-        /// </remarks>
-        bool SupportsRestore { get; }
+        bool SupportsCreate { get; }
 
         /// <summary>
         ///     Gets whether the database manager supports the upgrade functionality.
@@ -167,20 +183,17 @@ namespace RI.DatabaseManager.Manager
         bool SupportsUpgrade { get; }
 
         /// <summary>
-        ///     Gets the current version of the database.
+        ///     Gets whether the database manager supports read-only connections.
         /// </summary>
         /// <value>
-        ///     The current version of the database.
+        ///     true if the database manager supports read-only connections, false otherwise.
         /// </value>
         /// <remarks>
         ///     <note type="implement">
-        ///         A version of 0 indicates that the database does not yet exist and must be created before it can be used.
-        ///     </note>
-        ///     <note type="implement">
-        ///         A version of -1 indicates an invalid version or a damaged database respectively.
+        ///         <see cref="SupportsReadOnlyConnections" /> should be set during the construction of the database manager and then remain unchanged and independent of the current database state or version (only depending on the database manager configuration).
         ///     </note>
         /// </remarks>
-        int Version { get; }
+        bool SupportsReadOnlyConnections { get; }
 
         /// <summary>
         ///     Performs a backup using the configured <see cref="IDbBackupCreator" />.
@@ -202,6 +215,25 @@ namespace RI.DatabaseManager.Manager
         bool Backup (object backupTarget);
 
         /// <summary>
+        ///     Performs a restore using the configured <see cref="IDbBackupCreator" />.
+        /// </summary>
+        /// <param name="backupSource"> The backup creator specific object which abstracts the backup source (e.g. a stream or a path to a file). </param>
+        /// <returns>
+        ///     true if the restore was successful, false otherwise.
+        ///     Details about failures should be written to logs.
+        /// </returns>
+        /// <remarks>
+        ///     <note type="implement">
+        ///         <see cref="State" /> and <see cref="Version" /> are updated to reflect the state and version of the database after restore.
+        ///     </note>
+        /// </remarks>
+        /// <exception cref="ArgumentNullException"> <paramref name="backupSource" /> is null. </exception>
+        /// <exception cref="ArgumentException"> <paramref name="backupSource" /> is of a type which is not supported by the configured <see cref="IDbBackupCreator" />. </exception>
+        /// <exception cref="InvalidOperationException"> The database is not initialized. </exception>
+        /// <exception cref="NotSupportedException"> Restore is not supported by the database manager or no <see cref="IDbBackupCreator" /> is configured. </exception>
+        bool Restore (object backupSource);
+
+        /// <summary>
         ///     Performs a database cleanup using the configured <see cref="IDbCleanupProcessor" />.
         /// </summary>
         /// <returns>
@@ -213,38 +245,49 @@ namespace RI.DatabaseManager.Manager
         ///         <see cref="State" /> and <see cref="Version" /> are updated to reflect the state and version of the database after cleanup.
         ///     </note>
         /// </remarks>
-        /// <exception cref="InvalidOperationException"> The database is not in a ready or the new state. </exception>
+        /// <exception cref="InvalidOperationException"> The database is not in a ready state. </exception>
         /// <exception cref="NotSupportedException"> Cleanup is not supported by the database manager or no <see cref="IDbCleanupProcessor" /> is configured. </exception>
         bool Cleanup ();
 
         /// <summary>
-        ///     Closes the database manager.
-        /// </summary>
-        /// <remarks>
-        ///     <note type="implement">
-        ///         <see cref="State" /> and <see cref="InitialState" /> are set to <see cref="DbState.Uninitialized" />, <see cref="Version" /> and <see cref="InitialVersion" /> are set to -1.
-        ///     </note>
-        ///     <note type="implement">
-        ///         <see cref="Close" /> should be callable multiple times and independent of the current state and version.
-        ///     </note>
-        ///     <note type="implement">
-        ///         Details about failures should be written to logs.
-        ///     </note>
-        /// </remarks>
-        void Close ();
-
-        /// <summary>
-        ///     Creates a new empty batch which can be used to perform database actions.
+        ///     Creates the database if it does not already exist.
         /// </summary>
         /// <returns>
-        ///     The newly created empty batch.
+        ///     true if the creation was successful, false otherwise.
+        ///     Details about failures should be written to logs.
         /// </returns>
         /// <remarks>
         ///     <note type="implement">
-        ///         <see cref="CreateBatch" /> should be callable at any time.
+        ///         <see cref="State" /> and <see cref="Version" /> are updated to reflect the state and version of the database after creation.
         ///     </note>
         /// </remarks>
-        IDbBatch CreateBatch ();
+        /// <exception cref="InvalidOperationException"> The database is not in the new state. </exception>
+        /// <exception cref="NotSupportedException"> Creation is not supported by the database manager or no <see cref="IdbCreator" /> is configured. </exception>
+        bool Create ();
+
+        /// <summary>
+        ///     Performs an upgrade to a specific database target version using the configured <see cref="IDbVersionUpgrader" />.
+        /// </summary>
+        /// <param name="version"> The target version to upgrade the database to. </param>
+        /// <returns>
+        ///     true if the upgrade was successful, false otherwise.
+        ///     Details about failures should be written to logs.
+        /// </returns>
+        /// <remarks>
+        ///     <note type="implement">
+        ///         <see cref="State" /> and <see cref="Version" /> are updated to reflect the state and version of the database after upgrade.
+        ///     </note>
+        ///     <note type="implement">
+        ///         If <paramref name="version" /> is the same as <see cref="Version" />, nothing should be done.
+        ///     </note>
+        ///     <note type="implement">
+        ///         Upgrading is to be performed incrementally, upgrading from n to n+1 until the desired target version, as specified by <paramref name="version" />, is reached.
+        ///     </note>
+        /// </remarks>
+        /// <exception cref="ArgumentOutOfRangeException"> <paramref name="version" /> is less than <see cref="MinVersion" />, greater than <see cref="MaxVersion" />, or less than <see cref="Version" />. </exception>
+        /// <exception cref="InvalidOperationException"> The database is not in a ready state. </exception>
+        /// <exception cref="NotSupportedException"> Upgrading is not supported by the database manager or no <see cref="IDbVersionUpgrader" /> is configured. </exception>
+        bool Upgrade (int version);
 
         /// <summary>
         ///     Creates a new connection which can be used to work with the database.
@@ -272,19 +315,30 @@ namespace RI.DatabaseManager.Manager
         DbTransaction CreateTransaction (bool readOnly, IsolationLevel isolationLevel);
 
         /// <summary>
-        ///     Executes a batch.
+        ///     Creates a new empty batch which can be used to perform database actions.
         /// </summary>
-        /// <param name="batch"> The batch to execute. </param>
-        /// <param name="readOnly"> Specifies whether the connection, used to execute the batch, should be read-only. </param>
-        /// <param name="detectVersionAndStateAfterExecution"> Specifies whether the databases version and state (<see cref="Version" /> and <see cref="State" />) should be updated after execution of the batch. </param>
         /// <returns>
-        ///     true if the batch was executed successfully, false otherwise.
-        ///     Details about failures should be written to logs and/or into properties of the executed batch.
+        ///     The newly created empty batch.
         /// </returns>
-        /// <exception cref="ArgumentNullException"> <paramref name="batch" /> is null </exception>
-        /// <exception cref="InvalidOperationException"> The database is not in a ready state or the batch has conflicting transaction requirements (e.g. one command uses <see cref="DbBatchTransactionRequirement.Required" /> while another uses <see cref="DbBatchTransactionRequirement.Disallowed" />). </exception>
-        /// <exception cref="NotSupportedException"> <paramref name="readOnly" /> is true but read-only connections are not supported. </exception>
-        bool ExecuteBatch (IDbBatch batch, bool readOnly, bool detectVersionAndStateAfterExecution);
+        /// <remarks>
+        ///     <note type="implement">
+        ///         <see cref="CreateBatch" /> should be callable at any time.
+        ///     </note>
+        /// </remarks>
+        IDbBatch CreateBatch ();
+
+        /// <summary>
+        ///     Gets the names of all available batches using the configured <see cref="IDbBatchLocator" />.
+        /// </summary>
+        /// <returns>
+        ///     The set with the names of all available batches.
+        /// </returns>
+        /// <remarks>
+        ///     <note type="implement">
+        ///         <see cref="GetBatchNames" /> should be callable at any time.
+        ///     </note>
+        /// </remarks>
+        ISet<string> GetBatchNames ();
 
         /// <summary>
         ///     Gets a batch (for later execution) of a specified name using the configured <see cref="IDbBatchLocator" />.
@@ -302,20 +356,22 @@ namespace RI.DatabaseManager.Manager
         /// </remarks>
         /// <exception cref="ArgumentNullException"> <paramref name="name" /> is null. </exception>
         /// <exception cref="ArgumentException"> <paramref name="name" /> or <paramref name="commandSeparator" /> is an empty string. </exception>
-        IDbBatch GetBatch (string name, string commandSeparator);
+        IDbBatch GetBatch(string name, string commandSeparator);
 
         /// <summary>
-        ///     Gets the names of all available batches using the configured <see cref="IDbBatchLocator" />.
+        ///     Executes a batch.
         /// </summary>
+        /// <param name="batch"> The batch to execute. </param>
+        /// <param name="readOnly"> Specifies whether the connection, used to execute the batch, should be read-only. </param>
+        /// <param name="detectVersionAndStateAfterExecution"> Specifies whether the databases version and state (<see cref="Version" /> and <see cref="State" />) should be updated after execution of the batch. </param>
         /// <returns>
-        ///     The set with the names of all available batches.
+        ///     true if the batch was executed successfully, false otherwise.
+        ///     Details about failures should be written to logs and/or into properties of the executed batch.
         /// </returns>
-        /// <remarks>
-        ///     <note type="implement">
-        ///         <see cref="GetBatchNames" /> should be callable at any time.
-        ///     </note>
-        /// </remarks>
-        ISet<string> GetBatchNames ();
+        /// <exception cref="ArgumentNullException"> <paramref name="batch" /> is null </exception>
+        /// <exception cref="InvalidOperationException"> The database is not in a ready state or the batch has conflicting transaction requirements or isolation levels (e.g. one command uses <see cref="DbBatchTransactionRequirement.Required" /> while another uses <see cref="DbBatchTransactionRequirement.Disallowed" />). </exception>
+        /// <exception cref="NotSupportedException"> <paramref name="readOnly" /> is true but read-only connections are not supported. </exception>
+        bool ExecuteBatch (IDbBatch batch, bool readOnly, bool detectVersionAndStateAfterExecution);
 
         /// <summary>
         ///     Initializes the database manager.
@@ -332,47 +388,20 @@ namespace RI.DatabaseManager.Manager
         void Initialize ();
 
         /// <summary>
-        ///     Performs a restore using the configured <see cref="IDbBackupCreator" />.
+        ///     Closes the database manager.
         /// </summary>
-        /// <param name="backupSource"> The backup creator specific object which abstracts the backup source (e.g. a stream or a path to a file). </param>
-        /// <returns>
-        ///     true if the restore was successful, false otherwise.
-        ///     Details about failures should be written to logs.
-        /// </returns>
         /// <remarks>
         ///     <note type="implement">
-        ///         <see cref="State" /> and <see cref="Version" /> are updated to reflect the state and version of the database after restore.
+        ///         <see cref="State" /> and <see cref="InitialState" /> are set to <see cref="DbState.Uninitialized" />, <see cref="Version" /> and <see cref="InitialVersion" /> are set to -1.
+        ///     </note>
+        ///     <note type="implement">
+        ///         <see cref="Close" /> should be callable multiple times and independent of the current state and version.
+        ///     </note>
+        ///     <note type="implement">
+        ///         Details about failures should be written to logs.
         ///     </note>
         /// </remarks>
-        /// <exception cref="ArgumentNullException"> <paramref name="backupSource" /> is null. </exception>
-        /// <exception cref="ArgumentException"> <paramref name="backupSource" /> is of a type which is not supported by the configured <see cref="IDbBackupCreator" />. </exception>
-        /// <exception cref="InvalidOperationException"> The database is not initialized. </exception>
-        /// <exception cref="NotSupportedException"> Restore is not supported by the database manager or no <see cref="IDbBackupCreator" /> is configured. </exception>
-        bool Restore (object backupSource);
-
-        /// <summary>
-        ///     Performs an upgrade to a specific database target version using the configured <see cref="IDbVersionUpgrader" />.
-        /// </summary>
-        /// <param name="version"> The target version to upgrade the database to. </param>
-        /// <returns>
-        ///     true if the upgrade was successful, false otherwise.
-        ///     Details about failures should be written to logs.
-        /// </returns>
-        /// <remarks>
-        ///     <note type="implement">
-        ///         <see cref="State" /> and <see cref="Version" /> are updated to reflect the state and version of the database after upgrade.
-        ///     </note>
-        ///     <note type="implement">
-        ///         If <paramref name="version" /> is the same as <see cref="Version" />, nothing should be done.
-        ///     </note>
-        ///     <note type="implement">
-        ///         Upgrading is to be performed incrementally, upgrading from n to n+1 until the desired target version, as specified by <paramref name="version" />, is reached.
-        ///     </note>
-        /// </remarks>
-        /// <exception cref="ArgumentOutOfRangeException"> <paramref name="version" /> is less than <see cref="MinVersion" />, greater than <see cref="MaxVersion" />, or less than <see cref="Version" />. </exception>
-        /// <exception cref="InvalidOperationException"> The database is not in a ready or the new state. </exception>
-        /// <exception cref="NotSupportedException"> Upgrading is not supported by the database manager or no <see cref="IDbVersionUpgrader" /> is configured. </exception>
-        bool Upgrade (int version);
+        void Close ();
     }
 
     /// <inheritdoc cref="IDbManager" />
@@ -393,10 +422,10 @@ namespace RI.DatabaseManager.Manager
         /// <inheritdoc cref="IDbManager.CreateBatch" />
         new IDbBatch<TConnection, TTransaction, TParameterTypes> CreateBatch();
 
-        /// <inheritdoc cref="IDbManager.ExecuteBatch" />
-        bool ExecuteBatch(IDbBatch<TConnection, TTransaction, TParameterTypes> batch, bool readOnly, bool detectVersionAndStateAfterExecution);
-
         /// <inheritdoc cref="IDbManager.GetBatch" />
         new IDbBatch<TConnection, TTransaction, TParameterTypes> GetBatch(string name, string commandSeparator);
+
+        /// <inheritdoc cref="IDbManager.ExecuteBatch" />
+        bool ExecuteBatch(IDbBatch<TConnection, TTransaction, TParameterTypes> batch, bool readOnly, bool detectVersionAndStateAfterExecution);
     }
 }

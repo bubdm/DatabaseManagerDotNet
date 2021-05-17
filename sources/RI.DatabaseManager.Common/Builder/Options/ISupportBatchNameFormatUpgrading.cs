@@ -8,13 +8,13 @@ namespace RI.DatabaseManager.Builder.Options
     /// <summary>
     /// Stores general database manager options and also provides a version upgrade RegEx pattern for version upgrader implementations.
     /// </summary>
-    public interface ISupportVersionUpgradeNameFormat : IDbManagerOptions
+    public interface ISupportBatchNameFormatUpgrading : IDbManagerOptions
     {
         /// <summary>
         ///     Gets or sets the used version upgrader batch name format as a regular expression (RegEx) used to lookup batches using their names.
         /// </summary>
         /// <value>
-        ///     The used version upgrader batch name format as a regular expression (RegEx) used to lookup batches using their names.
+        ///     The used version upgrader batch name format as a regular expression (RegEx) used to lookup batches using their names or null if a name format is not available.
         /// </value>
         /// <remarks>
         ///     <note type="implement">
@@ -27,6 +27,6 @@ namespace RI.DatabaseManager.Builder.Options
         /// </remarks>
         /// <exception cref="ArgumentNullException"> <paramref name="value" /> is null. </exception>
         /// <exception cref="ArgumentException"> <paramref name="value" /> is an empty string. </exception>
-        string VersionUpgradeNameFormat { get; set; }
+        string BatchNameFormat { get; set; }
     }
 }

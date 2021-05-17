@@ -2,6 +2,7 @@
 using System.Data.Common;
 
 using RI.Abstractions.Logging;
+using RI.DatabaseManager.Builder.Options;
 using RI.DatabaseManager.Manager;
 
 
@@ -31,15 +32,22 @@ namespace RI.DatabaseManager.Versioning
         /// <summary>
         ///     Creates a new instance of <see cref="DbVersionDetectorBase{TConnection,TTransaction,TParameterTypes}" />.
         /// </summary>
+        /// <param name="options"> The used database manager options. </param>
         /// <param name="logger"> The used logger. </param>
-        /// <exception cref="ArgumentNullException"> <paramref name="logger" /> is null. </exception>
-        protected DbVersionDetectorBase (ILogger logger)
+        /// <exception cref="ArgumentNullException"> <paramref name="options" /> or <paramref name="logger" /> is null. </exception>
+        protected DbVersionDetectorBase (IDbManagerOptions options, ILogger logger)
         {
+            if (options == null)
+            {
+                throw new ArgumentNullException(nameof(options));
+            }
+
             if (logger == null)
             {
                 throw new ArgumentNullException(nameof(logger));
             }
 
+            this.Options = options;
             this.Logger = logger;
         }
 
@@ -49,6 +57,14 @@ namespace RI.DatabaseManager.Versioning
 
 
         #region Instance Properties/Indexer
+
+        /// <summary>
+        ///     Gets the used database manager options.
+        /// </summary>
+        /// <value>
+        ///     The used database manager options.
+        /// </value>
+        protected IDbManagerOptions Options { get; }
 
         /// <summary>
         ///     Gets the used logger.
@@ -91,13 +107,11 @@ namespace RI.DatabaseManager.Versioning
         #region Interface: IDbVersionDetector<TConnection,TTransaction>
 
         /// <inheritdoc />
+        /// TODO: Make base implementation
         public abstract bool Detect (IDbManager<TConnection, TTransaction, TParameterTypes> manager, out DbState? state, out int version);
 
         /// <inheritdoc />
-        bool IDbVersionDetector.Detect (IDbManager manager, out DbState? state, out int version)
-        {
-            return this.Detect((IDbManager<TConnection, TTransaction, TParameterTypes>)manager, out state, out version);
-        }
+        bool IDbVersionDetector.Detect (IDbManager manager, out DbState? state, out int version) => this.Detect((IDbManager<TConnection, TTransaction, TParameterTypes>)manager, out state, out version);
 
         #endregion
     }

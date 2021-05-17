@@ -111,7 +111,7 @@ namespace RI.DatabaseManager.Manager
         protected override bool SupportsCleanupImpl => true;
 
         /// <inheritdoc />
-        protected override bool SupportsReadOnlyImpl => true;
+        protected override bool SupportsReadOnlyConnectionsImpl => true;
 
         /// <inheritdoc />
         protected override bool SupportsRestoreImpl => true;

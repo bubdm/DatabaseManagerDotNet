@@ -24,7 +24,7 @@ namespace RI.DatabaseManager.Manager
         /// </summary>
         /// <param name="manager"> The used database manager. </param>
         /// <returns>
-        ///     true if the database supports upgrading, is in a ready or the new state, and the current version is less than the maximum supported version, false otherwise.
+        ///     true if the database supports upgrading, is in a ready state, and the current version is less than the maximum supported version, false otherwise.
         /// </returns>
         /// <exception cref="ArgumentNullException"> <paramref name="manager" /> is null </exception>
         public static bool CanUpgrade (this IDbManager manager)
@@ -34,9 +34,45 @@ namespace RI.DatabaseManager.Manager
                 throw new ArgumentNullException(nameof(manager));
             }
 
-            return manager.SupportsUpgrade && (manager.IsReady() || (manager.State == DbState.New)) && (manager.Version >= 0) && (manager.Version < manager.MaxVersion);
+            return manager.SupportsUpgrade && manager.IsReady() && (manager.Version > 0) && (manager.Version < manager.MaxVersion);
         }
-        
+
+        /// <summary>
+        ///     Gets whether the database is in a state where it can be created to its initial version.
+        /// </summary>
+        /// <param name="manager"> The used database manager. </param>
+        /// <returns>
+        ///     true if the database supports creation, is in the new state, and the current version is zero, false otherwise.
+        /// </returns>
+        /// <exception cref="ArgumentNullException"> <paramref name="manager" /> is null </exception>
+        public static bool CanCreate(this IDbManager manager)
+        {
+            if (manager == null)
+            {
+                throw new ArgumentNullException(nameof(manager));
+            }
+
+            return manager.SupportsCreate && (manager.State  == DbState.New) && (manager.Version == 0);
+        }
+
+        /// <summary>
+        ///     Gets whether the database is in a state where it can be cleaned up.
+        /// </summary>
+        /// <param name="manager"> The used database manager. </param>
+        /// <returns>
+        ///     true if the database supports upgrading and is in a ready state.
+        /// </returns>
+        /// <exception cref="ArgumentNullException"> <paramref name="manager" /> is null </exception>
+        public static bool CanCleanup(this IDbManager manager)
+        {
+            if (manager == null)
+            {
+                throw new ArgumentNullException(nameof(manager));
+            }
+
+            return manager.SupportsUpgrade && manager.IsReady();
+        }
+
         /// <summary>
         ///     Creates a new connection which can be used to work with the database.
         /// </summary>
@@ -309,7 +345,7 @@ namespace RI.DatabaseManager.Manager
         ///     </note>
         /// </remarks>
         /// <exception cref="ArgumentNullException"> <paramref name="manager" /> is null </exception>
-        /// <exception cref="InvalidOperationException"> The database is not in a ready or the new state. </exception>
+        /// <exception cref="InvalidOperationException"> The database is not in a ready state. </exception>
         /// <exception cref="NotSupportedException"> Upgrading is not supported by the database manager or no <see cref="IDbVersionUpgrader" /> is configured. </exception>
         public static bool Upgrade (this IDbManager manager)
         {
@@ -319,6 +355,46 @@ namespace RI.DatabaseManager.Manager
             }
 
             return manager.Upgrade(manager.MaxVersion);
+        }
+
+        /// <summary>
+        ///     Creates the database and performs an upgrade to highest supported version using the configured <see cref="IDbCreator"/> and <see cref="IDbVersionUpgrader" />.
+        /// </summary>
+        /// <returns>
+        ///     true if the creation and upgrade was successful, false otherwise.
+        ///     Details about failures should be written to logs.
+        /// </returns>
+        /// <param name="manager"> The used database manager. </param>
+        /// <remarks>
+        ///     <note type="implement">
+        ///         <see cref="IDbManager.State" /> and <see cref="IDbManager.Version" /> are updated to reflect the state and version of the database after upgrade.
+        ///     </note>
+        ///     <note type="implement">
+        ///         If the database already exists, only the upgrade shall be performed (if necessary).
+        ///     </note>
+        ///     <note type="implement">
+        ///         If <see cref="IDbManager.MaxVersion" /> is the same as <see cref="Version" />, no upgrade should be done.
+        ///     </note>
+        ///     <note type="implement">
+        ///         Upgrading is to be performed incrementally, upgrading from n to n+1 until the desired target version, as specified by <see cref="IDbManager.MaxVersion" />, is reached.
+        ///     </note>
+        /// </remarks>
+        /// <exception cref="ArgumentNullException"> <paramref name="manager" /> is null </exception>
+        /// <exception cref="InvalidOperationException"> The database is not in a ready or the new state. </exception>
+        /// <exception cref="NotSupportedException"> Creating or upgrading is not supported by the database manager or no <see cref="IDbCreator"/> or <see cref="IDbVersionUpgrader" /> is configured. </exception>
+        public static bool CreateAndUpgrade(this IDbManager manager)
+        {
+            if (manager == null)
+            {
+                throw new ArgumentNullException(nameof(manager));
+            }
+
+            if (!manager.Create())
+            {
+                return false;
+            }
+
+            return manager.Upgrade();
         }
 
         #endregion

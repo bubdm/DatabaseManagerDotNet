@@ -30,7 +30,7 @@ namespace RI.DatabaseManager.Builder
         {
             base.PrepareRegistrations(logger, compositionContainer);
 
-            (Type connection, Type transaction, Type parameterTypes, Type manager, Type versionDetector, Type backupCreator, Type cleanupProcessor, Type versionUpgrader, Type batchLocator) = this.DetectDbManagerTypes();
+            (Type connection, Type transaction, Type parameterTypes, Type manager, Type versionDetector, Type backupCreator, Type cleanupProcessor, Type versionUpgrader, Type batchLocator, Type creator) = this.DetectDbManagerTypes();
             Type temporaryBatchLogatorRegistration = typeof(IDbManagerBuilderExtensions.TemporaryBatchLocatorRegistration<,,>).MakeGenericType(connection, transaction, parameterTypes);
 
             this.ThrowIfNotMinContractCount(temporaryBatchLogatorRegistration, 1);
@@ -47,14 +47,17 @@ namespace RI.DatabaseManager.Builder
             this.ThrowIfNotMaxContractCount(backupCreator, 1);
             this.ThrowIfNotMaxContractCount(cleanupProcessor, 1);
             this.ThrowIfNotMaxContractCount(versionUpgrader, 1);
+            this.ThrowIfNotMaxContractCount(creator, 1);
 
             this.AddDefaultSingleton(backupCreator, this.CreateNullInstance(connection, transaction, parameterTypes));
             this.AddDefaultSingleton(cleanupProcessor, this.CreateNullInstance(connection, transaction, parameterTypes));
             this.AddDefaultSingleton(versionUpgrader, this.CreateNullInstance(connection, transaction, parameterTypes));
+            this.AddDefaultSingleton(creator, this.CreateNullInstance(connection, transaction, parameterTypes));
 
             this.ThrowIfTemporary(backupCreator);
             this.ThrowIfTemporary(cleanupProcessor);
             this.ThrowIfTemporary(versionUpgrader);
+            this.ThrowIfTemporary(creator);
         }
 
         #endregion

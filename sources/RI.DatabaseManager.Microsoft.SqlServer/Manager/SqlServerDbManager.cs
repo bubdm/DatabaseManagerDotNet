@@ -80,7 +80,7 @@ namespace RI.DatabaseManager.Manager
         protected override bool SupportsCleanupImpl => true;
 
         /// <inheritdoc />
-        protected override bool SupportsReadOnlyImpl => false;
+        protected override bool SupportsReadOnlyConnectionsImpl => false;
 
         /// <inheritdoc />
         protected override bool SupportsRestoreImpl => false;
