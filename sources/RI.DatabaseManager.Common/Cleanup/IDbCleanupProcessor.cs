@@ -9,12 +9,12 @@ using RI.DatabaseManager.Manager;
 namespace RI.DatabaseManager.Cleanup
 {
     /// <summary>
-    ///     Database cleanup processor.
+    ///     Database cleanup processor to cleanup a database.
     /// </summary>
     /// <remarks>
     ///     <para>
     ///         Database cleanup processors are used to cleanup a database.
-    ///         What the cleanup does in detail depends on the database type and the implementation of <see cref="IDbCleanupProcessor" /> but is usually something like &quot;vacuum&quot;, recreate indices, etc.
+    ///         What the cleanup does in detail depends on the database type and the implementation of <see cref="IDbCleanupProcessor" />.
     ///     </para>
     ///     <para>
     ///         Implementations of <see cref="IDbCleanupProcessor" /> are always specific for a particular type of database (or particular implementation of <see cref="IDbManager" /> respectively).

@@ -1,7 +1,9 @@
 ﻿using System;
+using System.Data;
 using System.Data.Common;
 
 using RI.Abstractions.Logging;
+using RI.DatabaseManager.Batches;
 using RI.DatabaseManager.Builder.Options;
 using RI.DatabaseManager.Manager;
 
@@ -101,14 +103,94 @@ namespace RI.DatabaseManager.Cleanup
 
         #endregion
 
+        /// <summary>
+        /// Gets the cleanup step as batch.
+        /// </summary>
+        /// <param name="manager"> The used database manager. </param>
+        /// <param name="steps">The available step (batch). </param>
+        /// <returns>
+        /// true if the cleanup step could be retrieved, false otherwise.
+        /// </returns>
+        /// <remarks>
+        /// <note type="implement">
+        /// The default implementation uses <see cref="ISupportDefaultDatabaseCleanup.GetDefaultCleanupScript"/> to retrieve all cleanup commands which are converted to a batch.
+        /// </note>
+        /// </remarks>
+        protected virtual bool GetCleanupSteps(IDbManager<TConnection, TTransaction, TParameterTypes> manager, out IDbBatch<TConnection, TTransaction, TParameterTypes> steps)
+        {
+            steps = null;
+            DbBatchTransactionRequirement transactionRequirement = DbBatchTransactionRequirement.DontCare;
+            IsolationLevel? isolationLevel = null;
+
+            string[] commands = (this.Options as ISupportDefaultDatabaseCleanup)?.GetDefaultCleanupScript(out transactionRequirement, out isolationLevel);
+
+            if (commands == null)
+            {
+                return false;
+            }
+
+            if (commands.Length == 0)
+            {
+                return false;
+            }
+
+            IDbBatch<TConnection, TTransaction, TParameterTypes> batch = manager.CreateBatch();
+
+            foreach (string command in commands)
+            {
+                batch.AddScript(command, transactionRequirement, isolationLevel);
+            }
+
+            steps = batch;
+
+            return true;
+        }
+
 
 
 
         #region Interface: IDbCleanupProcessor<TConnection,TTransaction>
 
         /// <inheritdoc />
-        /// TODO: Make base implementation
-        public abstract bool Cleanup (IDbManager<TConnection, TTransaction, TParameterTypes> manager);
+        public virtual bool Cleanup (IDbManager<TConnection, TTransaction, TParameterTypes> manager)
+        {
+            if (manager == null)
+            {
+                throw new ArgumentNullException(nameof(manager));
+            }
+
+            IDbBatch<TConnection, TTransaction, TParameterTypes> steps = null;
+            bool result = this.GetCleanupSteps(manager, out steps);
+
+            if ((!result) || (steps == null))
+            {
+                this.Log(LogLevel.Error, "No cleanup steps available to create database.");
+                return false;
+            }
+
+            try
+            {
+                this.Log(LogLevel.Information, "Beginning cleanup database");
+
+                result = manager.ExecuteBatch(steps, false, true);
+
+                if (result)
+                {
+                    this.Log(LogLevel.Information, "Finished cleanup database.");
+                }
+                else
+                {
+                    this.Log(LogLevel.Error, "Failed cleanup database.");
+                }
+
+                return result;
+            }
+            catch (Exception exception)
+            {
+                this.Log(LogLevel.Error, "Failed cleanup database:{0}{1}", Environment.NewLine, exception.ToString());
+                return false;
+            }
+        }
 
         /// <inheritdoc />
         bool IDbCleanupProcessor.Cleanup (IDbManager manager) => this.Cleanup((IDbManager<TConnection, TTransaction, TParameterTypes>)manager);

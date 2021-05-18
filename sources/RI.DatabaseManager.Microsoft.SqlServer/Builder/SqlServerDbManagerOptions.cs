@@ -74,7 +74,7 @@ namespace RI.DatabaseManager.Builder
     ///     </para>
     /// </remarks>
     /// <threadsafety static="false" instance="false" />
-    public sealed class SqlServerDbManagerOptions : IDbManagerOptions, ISupportBatchNameFormatUpgrading, ISupportDefaultDatabaseCreation, ICloneable
+    public sealed class SqlServerDbManagerOptions : IDbManagerOptions, ISupportDefaultDatabaseUpgrading, ISupportDefaultDatabaseCreation, ICloneable
     {
         #region Instance Constructor/Destructor
 

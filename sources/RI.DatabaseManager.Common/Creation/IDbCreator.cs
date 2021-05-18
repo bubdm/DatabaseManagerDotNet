@@ -9,7 +9,7 @@ using RI.DatabaseManager.Manager;
 namespace RI.DatabaseManager.Creation
 {
     /// <summary>
-    ///     Database creator.
+    ///     Database creator to create a non-existing database.
     /// </summary>
     /// <remarks>
     ///     <para>

@@ -9,7 +9,7 @@ using RI.DatabaseManager.Manager;
 namespace RI.DatabaseManager.Upgrading
 {
     /// <summary>
-    ///     Database version upgrader to upgrade database schemas to newer versions.
+    ///     Database version upgrader to upgrade the database schema to a newer version.
     /// </summary>
     /// <remarks>
     ///     <para>
@@ -22,7 +22,7 @@ namespace RI.DatabaseManager.Upgrading
     ///     <para>
     ///         <see cref="IDbVersionUpgrader" /> performs upgrades incrementally through multiple calls to <see cref="Upgrade" />.
     ///         <see cref="Upgrade" /> is always called for the current/source version and then upgrades to the current/source version + 1.
-    ///         Therefore, database managers must call <see cref="Upgrade" /> as many times as necessary to upgrade incrementally from the current version to the desired version.
+    ///         Therefore, database managers must call <see cref="Upgrade" /> as many times as necessary to upgrade incrementally from the current version to the desired version, advancing the schema version version by version.
     ///     </para>
     ///     <note type="note">
     ///         Database version upgraders are optional.

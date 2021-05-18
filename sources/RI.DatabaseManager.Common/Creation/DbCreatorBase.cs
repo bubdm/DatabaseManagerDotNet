@@ -1,7 +1,11 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Data;
 using System.Data.Common;
+using System.Linq;
 
 using RI.Abstractions.Logging;
+using RI.DatabaseManager.Batches;
 using RI.DatabaseManager.Builder.Options;
 using RI.DatabaseManager.Cleanup;
 using RI.DatabaseManager.Manager;
@@ -102,14 +106,94 @@ namespace RI.DatabaseManager.Creation
 
         #endregion
 
+        /// <summary>
+        /// Gets the creation step as batch.
+        /// </summary>
+        /// <param name="manager"> The used database manager. </param>
+        /// <param name="steps">The available step (batch). </param>
+        /// <returns>
+        /// true if the creation step could be retrieved, false otherwise.
+        /// </returns>
+        /// <remarks>
+        /// <note type="implement">
+        /// The default implementation uses <see cref="ISupportDefaultDatabaseCreation.GetDefaultCreationScript"/> to retrieve all creation commands which are converted to batches (one batch per command).
+        /// </note>
+        /// </remarks>
+        protected virtual bool GetCreationSteps(IDbManager<TConnection, TTransaction, TParameterTypes> manager, out IDbBatch<TConnection, TTransaction, TParameterTypes> steps)
+        {
+            steps = null;
+            DbBatchTransactionRequirement transactionRequirement = DbBatchTransactionRequirement.DontCare;
+            IsolationLevel? isolationLevel = null;
+
+            string[] commands = (this.Options as ISupportDefaultDatabaseCreation)?.GetDefaultCreationScript(out transactionRequirement, out isolationLevel);
+
+            if (commands == null)
+            {
+                return false;
+            }
+
+            if (commands.Length == 0)
+            {
+                return false;
+            }
+
+            IDbBatch<TConnection, TTransaction, TParameterTypes> batch = manager.CreateBatch();
+
+            foreach (string command in commands)
+            {
+                batch.AddScript(command, transactionRequirement, isolationLevel);
+            }
+
+            steps = batch;
+
+            return true;
+        }
+
 
 
 
         #region Interface: IDbCleanupProcessor<TConnection,TTransaction>
 
         /// <inheritdoc />
-        /// TODO: Make base implementation
-        public abstract bool Create (IDbManager<TConnection, TTransaction, TParameterTypes> manager);
+        public virtual bool Create (IDbManager<TConnection, TTransaction, TParameterTypes> manager)
+        {
+            if (manager == null)
+            {
+                throw new ArgumentNullException(nameof(manager));
+            }
+
+            IDbBatch<TConnection, TTransaction, TParameterTypes> steps = null;
+            bool result = this.GetCreationSteps(manager, out steps);
+
+            if ((!result) || (steps == null))
+            {
+                this.Log(LogLevel.Error, "No create steps available to create database.");
+                return false;
+            }
+
+            try
+            {
+                this.Log(LogLevel.Information, "Beginning create database.");
+
+                result = manager.ExecuteBatch(steps, false, true);
+
+                if (result)
+                {
+                    this.Log(LogLevel.Information, "Finished create database.");
+                }
+                else
+                {
+                    this.Log(LogLevel.Error, "Failed create database.");
+                }
+
+                return result;
+            }
+            catch (Exception exception)
+            {
+                this.Log(LogLevel.Error, "Failed create database:{0}{1}", Environment.NewLine, exception.ToString());
+                return false;
+            }
+        }
 
         /// <inheritdoc />
         bool IDbCreator.Create (IDbManager manager) => this.Create((IDbManager<TConnection, TTransaction, TParameterTypes>)manager);

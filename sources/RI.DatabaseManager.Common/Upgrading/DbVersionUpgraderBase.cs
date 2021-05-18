@@ -122,12 +122,12 @@ namespace RI.DatabaseManager.Upgrading
         /// </returns>
         /// <remarks>
         /// <note type="implement">
-        /// The default implementation searches all available batch names for matches using <see cref="GetUpgradeBatchNamePattern"/> which then are used as upgrade step batches.
+        /// The default implementation searches all available batch names for matches using <see cref="ISupportDefaultDatabaseUpgrading.GetDefaultUpgradingBatchNameFormat"/>.
         /// </note>
         /// </remarks>
         protected virtual bool GetUpgradeSteps(IDbManager<TConnection, TTransaction, TParameterTypes> manager, IDictionary<int, IDbBatch<TConnection, TTransaction, TParameterTypes>> steps)
         {
-            string namePattern = this.GetUpgradeBatchNamePattern();
+            string namePattern = (this.Options as ISupportDefaultDatabaseUpgrading)?.GetDefaultUpgradingBatchNameFormat();
 
             if (string.IsNullOrWhiteSpace(namePattern))
             {
@@ -189,75 +189,6 @@ namespace RI.DatabaseManager.Upgrading
             return true;
         }
 
-        /// <summary>
-        /// Gets the creation steps as batches.
-        /// </summary>
-        /// <param name="manager"> The used database manager. </param>
-        /// <param name="steps">The list which is to be filled with the available steps (batches). </param>
-        /// <returns>
-        /// true if the creation steps could be retrieved, false otherwise.
-        /// </returns>
-        /// <remarks>
-        /// <note type="implement">
-        /// The default implementation uses <see cref="GetDefaultCreationCommands"/> to retrieve all creation commands which are converted to batches (one batch per command).
-        /// </note>
-        /// </remarks>
-        protected virtual bool GetCreationSteps (IDbManager<TConnection, TTransaction, TParameterTypes> manager, IList<IDbBatch<TConnection, TTransaction, TParameterTypes>> steps)
-        {
-            string[] commands = this.GetDefaultCreationCommands(out DbBatchTransactionRequirement transactionRequirement, out IsolationLevel? isolationLevel) ?? new string[0];
-
-            if (commands.Length == 0)
-            {
-                return false;
-            }
-
-            foreach (string command in commands)
-            {
-                IDbBatch<TConnection, TTransaction, TParameterTypes> batch = manager.CreateBatch();
-                batch.AddScript(command, transactionRequirement, isolationLevel);
-                steps.Add(batch);
-            }
-
-            return steps.Count > 0;
-        }
-
-        /// <summary>
-        /// Gets the RegEx pattern used to filter batches used as version upgrade steps and to extract their source version.
-        /// </summary>
-        /// <returns>
-        /// The used RegEx pattern or null if none is available.
-        /// </returns>
-        /// <remarks>
-        /// <para>
-        /// The extracted version must be the source version, meaning that the corresponding batch upgrades from that source version to source version + 1.
-        /// </para>
-        /// <note type="implement">
-        /// The default implementation returns the value of  the <see cref="ISupportBatchNameFormatUpgrading.BatchNameFormat"/> property from <see cref="Options"/>.
-        /// </note>
-        /// </remarks>
-        protected virtual string GetUpgradeBatchNamePattern() => (this.Options as ISupportBatchNameFormatUpgrading)?.BatchNameFormat;
-
-        /// <summary>
-        /// Gets the default database creation commands.
-        /// </summary>
-        /// <param name="transactionRequirement">The transaction requirement.</param>
-        /// <param name="isolationLevel">The isolation level requirement.</param>
-        /// <returns>
-        /// The default database creation commands or null if none are available.
-        /// </returns>
-        /// <remarks>
-        /// <note type="implement">
-        /// The default implementation returns the value of  the <see cref="ISupportDefaultDatabaseCreation.GetDefaultCreationScript"/> property from <see cref="Options"/>.
-        /// </note>
-        /// </remarks>
-        /// TODO: Do not use in upgrader
-        protected virtual string[] GetDefaultCreationCommands(out DbBatchTransactionRequirement transactionRequirement, out IsolationLevel? isolationLevel)
-        {
-            transactionRequirement = DbBatchTransactionRequirement.DontCare;
-            isolationLevel = null;
-            return (this.Options as ISupportDefaultDatabaseCreation)?.GetDefaultCreationScript(out transactionRequirement, out isolationLevel);
-        }
-
         /// <inheritdoc />
         int IDbVersionUpgrader.GetMaxVersion (IDbManager manager) => this.GetMaxVersion((IDbManager<TConnection, TTransaction, TParameterTypes>)manager);
 
@@ -305,6 +236,9 @@ namespace RI.DatabaseManager.Upgrading
         }
 
         /// <inheritdoc />
+        bool IDbVersionUpgrader.Upgrade(IDbManager manager, int sourceVersion) => this.Upgrade((IDbManager<TConnection, TTransaction, TParameterTypes>)manager, sourceVersion);
+
+        /// <inheritdoc />
         public virtual bool Upgrade (IDbManager<TConnection, TTransaction, TParameterTypes> manager, int sourceVersion)
         {
             if (manager == null)
@@ -312,22 +246,12 @@ namespace RI.DatabaseManager.Upgrading
                 throw new ArgumentNullException(nameof(manager));
             }
 
-            //TODO: Remove creation and move to separate component
-            List<IDbBatch<TConnection, TTransaction, TParameterTypes>> creationSteps = new List<IDbBatch<TConnection, TTransaction, TParameterTypes>>();
-            bool creationStepsResult = this.GetCreationSteps(manager, creationSteps);
-
             Dictionary<int, IDbBatch<TConnection, TTransaction, TParameterTypes>> upgradeSteps = new Dictionary<int, IDbBatch<TConnection, TTransaction, TParameterTypes>>();
             bool upgradeStepsResult = this.GetUpgradeSteps(manager, upgradeSteps);
 
-            if ((!creationStepsResult) || (creationSteps.Count == 0))
-            {
-                this.Log(LogLevel.Information, "No dedicated creation steps available to create database (might be part of first upgrade step).");
-                creationStepsResult = false;
-            }
-
             if ((!upgradeStepsResult) || (upgradeSteps.Count == 0))
             {
-                this.Log(LogLevel.Error, "No upgrade steps available to create or upgrade database.");
+                this.Log(LogLevel.Error, "No upgrade steps available to upgrade database.");
                 return false;
             }
 
@@ -342,35 +266,9 @@ namespace RI.DatabaseManager.Upgrading
                 throw new ArgumentOutOfRangeException(nameof(sourceVersion), $"The specified source version ({sourceVersion}) is not within the supported range ({minVersion}...{maxVersion - 1}).");
             }
             
-            if ((manager.State == DbState.New) && creationStepsResult)
-            {
-                try
-                {
-                    this.Log(LogLevel.Information, "Beginning database creation");
-
-                    foreach (IDbBatch<TConnection, TTransaction, TParameterTypes> step in creationSteps)
-                    {
-                        bool result = manager.ExecuteBatch(step, false, false);
-
-                        if (!result)
-                        {
-                            this.Log(LogLevel.Error, "Failed database creation");
-                            return false;
-                        }
-                    }
-
-                    this.Log(LogLevel.Information, "Finished database creation");
-                }
-                catch (Exception exception)
-                {
-                    this.Log(LogLevel.Error, "Failed database creation:{0}{1}", Environment.NewLine, exception.ToString());
-                    return false;
-                }
-            }
-            
             try
             {
-                this.Log(LogLevel.Information, "Beginning version upgrade step: {0} -> {1}", sourceVersion, sourceVersion + 1);
+                this.Log(LogLevel.Information, "Beginning version upgrade step: {0} -> {1}.", sourceVersion, sourceVersion + 1);
 
                 IDbBatch<TConnection, TTransaction, TParameterTypes> batch = upgradeSteps[sourceVersion];
 
@@ -378,11 +276,11 @@ namespace RI.DatabaseManager.Upgrading
 
                 if (result)
                 {
-                    this.Log(LogLevel.Information, "Finished version upgrade step: {0} -> {1}", sourceVersion, sourceVersion + 1);
+                    this.Log(LogLevel.Information, "Finished version upgrade step: {0} -> {1}.", sourceVersion, sourceVersion + 1);
                 }
                 else
                 {
-                    this.Log(LogLevel.Error, "Failed version upgrade step: {0} -> {1}", sourceVersion, sourceVersion + 1);
+                    this.Log(LogLevel.Error, "Failed version upgrade step: {0} -> {1}.", sourceVersion, sourceVersion + 1);
                 }
 
                 return result;
@@ -393,9 +291,6 @@ namespace RI.DatabaseManager.Upgrading
                 return false;
             }
         }
-
-        /// <inheritdoc />
-        bool IDbVersionUpgrader.Upgrade (IDbManager manager, int sourceVersion) => this.Upgrade((IDbManager<TConnection, TTransaction, TParameterTypes>)manager, sourceVersion);
 
         #endregion
     }
