@@ -4,6 +4,7 @@ using System.Data;
 using Microsoft.Data.SqlClient;
 
 using RI.Abstractions.Builder;
+using RI.DatabaseManager.Backup;
 using RI.DatabaseManager.Cleanup;
 using RI.DatabaseManager.Manager;
 using RI.DatabaseManager.Upgrading;
@@ -137,12 +138,13 @@ namespace RI.DatabaseManager.Builder
                 throw new ArgumentNullException(nameof(options));
             }
 
-            //TODO
             builder.AddSingleton(typeof(SqlServerDbManagerOptions), options.Clone());
             builder.AddSingleton(typeof(IDbManager<SqlConnection, SqlTransaction, SqlDbType>), typeof(SqlServerDbManager));
             builder.AddSingleton(typeof(IDbVersionDetector<SqlConnection, SqlTransaction, SqlDbType>), typeof(SqlServerDbVersionDetector));
+
             builder.AddSingleton(typeof(IDbCleanupProcessor<SqlConnection, SqlTransaction, SqlDbType>), typeof(SqlServerDbCleanupProcessor));
             builder.AddSingleton(typeof(IDbVersionUpgrader<SqlConnection, SqlTransaction, SqlDbType>), typeof(SqlServerDbVersionUpgrader));
+            builder.AddSingleton(typeof(IDbBackupCreator<SqlConnection, SqlTransaction, SqlDbType>), typeof(SqlServerDbCreator));
 
             return new DbManagerBuilder<SqlConnection, SqlTransaction, SqlDbType, SqlServerDbManager>(builder);
         }
@@ -151,10 +153,6 @@ namespace RI.DatabaseManager.Builder
         ///     Finishes the configuration and registers all necessary objects/services in an independent and standalone container to construct the intended database manager and its dependencies.
         /// </summary>
         /// <typeparam name="TBuilder"> The type of the used database manager builder. </typeparam>
-        /// <typeparam name="TConnection"> The database connection type. </typeparam>
-        /// <typeparam name="TTransaction"> The database transaction type. </typeparam>
-        /// <typeparam name="TParameterTypes"> The database command parameter type. </typeparam>
-        /// <typeparam name="TManager"> The type of the database manager. </typeparam>
         /// <param name="builder"> The used database manager builder. </param>
         /// <returns> The built database manager instance. </returns>
         /// <exception cref="ArgumentNullException"><paramref name="builder"/> is null.</exception>

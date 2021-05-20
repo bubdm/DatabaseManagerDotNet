@@ -14,11 +14,6 @@ namespace RI.DatabaseManager.Upgrading
     /// <summary>
     ///     Implements a database version upgrader for Microsoft SQL Server databases.
     /// </summary>
-    /// <remarks>
-    ///     <para>
-    ///         See <see cref="SqlServerDbManagerOptions" /> for more information.
-    ///     </para>
-    /// </remarks>
     /// <threadsafety static="false" instance="false" />
     public sealed class SqlServerDbVersionUpgrader : DbVersionUpgraderBase<SqlConnection,SqlTransaction, SqlDbType>
     {
@@ -32,15 +27,7 @@ namespace RI.DatabaseManager.Upgrading
         /// <exception cref="ArgumentNullException"> <paramref name="options" /> or <paramref name="logger" /> is null. </exception>
         public SqlServerDbVersionUpgrader(SqlServerDbManagerOptions options, ILogger logger) : base(options, logger)
         {
-            if (options == null)
-            {
-                throw new ArgumentNullException(nameof(options));
-            }
-
-            this.Options = options;
         }
-
-        private new SqlServerDbManagerOptions Options { get; }
 
         #endregion
     }

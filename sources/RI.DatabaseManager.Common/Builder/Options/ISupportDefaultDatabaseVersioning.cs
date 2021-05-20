@@ -10,6 +10,18 @@ namespace RI.DatabaseManager.Builder.Options
     /// <summary>
     /// Stores general database manager options and also provides the means to detect the version the database.
     /// </summary>
+    /// <remarks>
+    /// TODO: Check
+    ///     <para>
+    ///         The script must return a scalar value which indicates the current version of the database.
+    ///         The script must return -1 to indicate when the database is damaged or in an invalid state or 0 to indicate that the database does not yet exist and needs to be created.
+    ///     </para>
+    ///     <para>
+    ///         If the script contains multiple batches, each batch is executed consecutively.
+    ///         The execution stops on the first batch which returns -1.
+    ///         If no batch returns -1, the last batch determines the version.
+    ///     </para>
+    /// </remarks>
     public interface ISupportDefaultDatabaseVersioning : IDbManagerOptions
     {
         /// <summary>

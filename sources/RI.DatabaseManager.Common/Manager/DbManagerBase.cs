@@ -9,6 +9,7 @@ using RI.DatabaseManager.Backup;
 using RI.DatabaseManager.Batches;
 using RI.DatabaseManager.Batches.Commands;
 using RI.DatabaseManager.Builder;
+using RI.DatabaseManager.Builder.Options;
 using RI.DatabaseManager.Cleanup;
 using RI.DatabaseManager.Upgrading;
 using RI.DatabaseManager.Versioning;
@@ -51,14 +52,15 @@ namespace RI.DatabaseManager.Manager
         /// <param name="backupCreator"> The used backup creator, if any. </param>
         /// <param name="cleanupProcessor"> The used cleanup processor, if any. </param>
         /// <param name="versionUpgrader"> The used version upgrader, if any. </param>
+        /// <param name="options"> The used database manager options.</param>
         /// <remarks>
         ///     <note type="important">
-        ///         <paramref name="backupCreator" />, <paramref name="cleanupProcessor" />, <paramref name="versionUpgrader" /> can be null or <see cref="DbManagerBuilder.NullInstance{TConnection,TTransaction,TParameterTypes}" />, depending on how the database manager was build and which (if any) dependency injection library is used.
+        ///         <paramref name="backupCreator" />, <paramref name="cleanupProcessor" />, <paramref name="versionUpgrader" />, <paramref name="options" /> can be null or <see cref="DbManagerBuilder.NullInstance{TConnection,TTransaction,TParameterTypes}" />, depending on how the database manager was build and which (if any) dependency injection library is used.
         ///         Some dependency injection libraries are not properly able to provide null as a constructor-injected dependency for optional dependencies. In such cases, <see cref="DbManagerBuilder.NullInstance{TConnection,TTransaction,TParameterTypes}" /> is passed as parameter value.
         ///     </note>
         /// </remarks>
         /// <exception cref="ArgumentNullException"> <paramref name="logger" />, <paramref name="batchLocator" />, or <paramref name="versionDetector" /> is null. </exception>
-        protected DbManagerBase (ILogger logger, IDbBatchLocator<TConnection, TTransaction, TParameterTypes> batchLocator, IDbVersionDetector<TConnection, TTransaction, TParameterTypes> versionDetector, IDbBackupCreator<TConnection, TTransaction, TParameterTypes> backupCreator, IDbCleanupProcessor<TConnection, TTransaction, TParameterTypes> cleanupProcessor, IDbVersionUpgrader<TConnection, TTransaction, TParameterTypes> versionUpgrader, IDbCreator<TConnection, TTransaction, TParameterTypes> creator)
+        protected DbManagerBase (ILogger logger, IDbBatchLocator<TConnection, TTransaction, TParameterTypes> batchLocator, IDbVersionDetector<TConnection, TTransaction, TParameterTypes> versionDetector, IDbBackupCreator<TConnection, TTransaction, TParameterTypes> backupCreator, IDbCleanupProcessor<TConnection, TTransaction, TParameterTypes> cleanupProcessor, IDbVersionUpgrader<TConnection, TTransaction, TParameterTypes> versionUpgrader, IDbCreator<TConnection, TTransaction, TParameterTypes> creator, IDbManagerOptions options)
         {
             if (logger == null)
             {
@@ -83,6 +85,7 @@ namespace RI.DatabaseManager.Manager
             this.CleanupProcessor = cleanupProcessor == null ? null : cleanupProcessor is DbManagerBuilder.NullInstance<TConnection, TTransaction, TParameterTypes> ? null : cleanupProcessor;
             this.VersionUpgrader = versionUpgrader == null ? null : versionUpgrader is DbManagerBuilder.NullInstance<TConnection, TTransaction, TParameterTypes> ? null : versionUpgrader;
             this.Creator = creator == null ? null : creator is DbManagerBuilder.NullInstance<TConnection, TTransaction, TParameterTypes> ? null : creator;
+            this.Options = options == null ? null : options is DbManagerBuilder.NullInstance<TConnection, TTransaction, TParameterTypes> ? null : options;
 
             this.InitialState = DbState.Uninitialized;
             this.InitialVersion = -1;
@@ -115,6 +118,14 @@ namespace RI.DatabaseManager.Manager
         ///     The used logger.
         /// </value>
         protected ILogger Logger { get; }
+
+        /// <summary>
+        /// Gets the used options.
+        /// </summary>
+        /// <value>
+        /// The used options or null if no options are used.
+        /// </value>
+        protected IDbManagerOptions Options { get; }
 
         private IDbCreator<TConnection, TTransaction, TParameterTypes> Creator { get; }
 
@@ -782,6 +793,9 @@ namespace RI.DatabaseManager.Manager
         #region Interface: IDbManager<TConnection,TTransaction>
 
         /// <inheritdoc />
+        public IDbManagerOptions GetOptions () => this.Options;
+
+        /// <inheritdoc />
         public DbState InitialState { get; private set; }
 
         /// <inheritdoc />
@@ -1168,5 +1182,28 @@ namespace RI.DatabaseManager.Manager
         }
 
         #endregion
+    }
+
+    public abstract class DbManagerBase <TConnection, TTransaction, TParameterTypes, TParameters, TParameter, TOptions> : DbManagerBase<TConnection, TTransaction, TParameterTypes, TParameters, TParameter>
+        where TConnection : DbConnection
+        where TTransaction : DbTransaction
+        where TParameterTypes : Enum
+        where TParameters : DbParameterCollection
+        where TParameter : DbParameter, new()
+        where TOptions : IDbManagerOptions
+    {
+        /// <inheritdoc />
+        protected DbManagerBase (ILogger logger, IDbBatchLocator<TConnection, TTransaction, TParameterTypes> batchLocator, IDbVersionDetector<TConnection, TTransaction, TParameterTypes> versionDetector, IDbBackupCreator<TConnection, TTransaction, TParameterTypes> backupCreator, IDbCleanupProcessor<TConnection, TTransaction, TParameterTypes> cleanupProcessor, IDbVersionUpgrader<TConnection, TTransaction, TParameterTypes> versionUpgrader, IDbCreator<TConnection, TTransaction, TParameterTypes> creator, TOptions options) : base(logger, batchLocator, versionDetector, backupCreator, cleanupProcessor, versionUpgrader, creator, (TOptions)options.Clone()) { }
+
+        /// <summary>
+        /// Gets the used options.
+        /// </summary>
+        /// <value>
+        /// The used options or null if no options are used.
+        /// </value>
+        protected new TOptions Options => (TOptions)base.Options;
+
+        /// <inheritdoc cref="IDbManager.GetOptions"/>
+        public new TOptions GetOptions() => this.Options;
     }
 }

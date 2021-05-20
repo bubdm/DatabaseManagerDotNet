@@ -18,8 +18,6 @@ namespace RI.DatabaseManager.Backup
     /// <remarks>
     ///     <para>
     ///         <see cref="SQLiteDbBackupCreator" /> performs a backup using the SQLite online backup API.
-    ///         It also supports additional pre-processing and post-processing batches which are executed on the source database.
-    ///         See <see cref="SQLiteDbManagerOptions"/> for more information.
     ///     </para>
     ///     <para>
     ///         <see cref="SQLiteDbBackupCreator" /> supports the following types for backup targets:
@@ -36,22 +34,14 @@ namespace RI.DatabaseManager.Backup
     {
         #region Instance Constructor/Destructor
 
-        private SQLiteDbManagerOptions Options { get; }
-
         /// <summary>
         ///     Creates a new instance of <see cref="SQLiteDbBackupCreator" />.
         /// </summary>
         /// <param name="options"> The used SQLite database manager options.</param>
         /// <param name="logger"> The used logger. </param>
         /// <exception cref="ArgumentNullException"> <paramref name="options" /> or <paramref name="logger" /> is null. </exception>
-        public SQLiteDbBackupCreator (SQLiteDbManagerOptions options, ILogger logger) : base(logger)
+        public SQLiteDbBackupCreator (SQLiteDbManagerOptions options, ILogger logger) : base(options, logger)
         {
-            if (options == null)
-            {
-                throw new ArgumentNullException(nameof(options));
-            }
-
-            this.Options = options;
         }
 
         #endregion
@@ -93,45 +83,13 @@ namespace RI.DatabaseManager.Backup
             {
                 this.Log(LogLevel.Information, "Beginning SQLite database backup");
 
-                IDbBatch<SQLiteConnection, SQLiteTransaction, DbType> preprocessingBatch = null;
-                IDbBatch<SQLiteConnection, SQLiteTransaction, DbType> postprocessingBatch = null;
-
-                if (!this.Options.BackupPreprocessingBatch.IsEmpty())
-                {
-                    preprocessingBatch = this.Options.BackupPreprocessingBatch;
-                }
-                else if (!string.IsNullOrWhiteSpace(this.Options.BackupPreprocessingBatchName))
-                {
-                    preprocessingBatch = manager.GetBatch(this.Options.BackupPreprocessingBatchName);
-                }
-
-                if (!this.Options.BackupPostprocessingBatch.IsEmpty())
-                {
-                    postprocessingBatch = this.Options.BackupPostprocessingBatch;
-                }
-                else if (!string.IsNullOrWhiteSpace(this.Options.BackupPostprocessingBatchName))
-                {
-                    postprocessingBatch = manager.GetBatch(this.Options.BackupPostprocessingBatchName);
-                }
-
                 SQLiteConnectionStringBuilder targetConnectionString = connectionStringBuilder ?? new SQLiteConnectionStringBuilder(this.Options.GetConnectionString());
                 if (file != null)
                 {
                     targetConnectionString.DataSource = file;
                 }
 
-                if (preprocessingBatch != null)
-                {
-                    bool result = manager.ExecuteBatch(preprocessingBatch, false, false);
-
-                    if (!result)
-                    {
-                        this.Log(LogLevel.Error, "SQLite database backup preprocessing failed.");
-                        return false;
-                    }
-                }
-
-                using (SQLiteConnection source = manager.CreateConnection(false))
+                using (SQLiteConnection source = manager.CreateConnection(true))
                 {
                     using (SQLiteConnection target = connection ?? ((SQLiteDbManager)manager).CreateInternalConnection(targetConnectionString.ConnectionString, false))
                     {
@@ -147,17 +105,7 @@ namespace RI.DatabaseManager.Backup
                     }
                 }
 
-                if (postprocessingBatch != null)
-                {
-                    bool result = manager.ExecuteBatch(postprocessingBatch, false, false);
-
-                    if (!result)
-                    {
-                        this.Log(LogLevel.Error, "SQLite database backup postprocessing failed.");
-                        return false;
-                    }
-                }
-
+                this.Log(LogLevel.Information, "Finished SQLite database backup");
                 return true;
             }
             catch (Exception exception)

@@ -5,6 +5,7 @@ using System.Data.Common;
 using RI.Abstractions.Composition;
 using RI.DatabaseManager.Backup;
 using RI.DatabaseManager.Batches;
+using RI.DatabaseManager.Builder.Options;
 using RI.DatabaseManager.Cleanup;
 using RI.DatabaseManager.Creation;
 using RI.DatabaseManager.Manager;
@@ -85,7 +86,7 @@ namespace RI.DatabaseManager.Builder
         ///     Null object used if no registration for <see cref="IDbBackupCreator{TConnection,TTransaction,TParameterTypes}" />, <see cref="IDbCleanupProcessor{TConnection,TTransaction,TParameterTypes}" />, <see cref="IDbVersionUpgrader{TConnection,TTransaction,TParameterTypes}" />, or <see cref="IDbBatchLocator" /> is provided.
         /// </summary>
         /// <threadsafety static="false" instance="false" />
-        public sealed class NullInstance <TConnection, TTransaction, TParameterTypes> : IDbBackupCreator<TConnection, TTransaction, TParameterTypes>, IDbCleanupProcessor<TConnection, TTransaction, TParameterTypes>, IDbVersionUpgrader<TConnection, TTransaction, TParameterTypes>, IDbBatchLocator<TConnection, TTransaction, TParameterTypes>, IDbCreator<TConnection, TTransaction, TParameterTypes>
+        public sealed class NullInstance <TConnection, TTransaction, TParameterTypes> : IDbBackupCreator<TConnection, TTransaction, TParameterTypes>, IDbCleanupProcessor<TConnection, TTransaction, TParameterTypes>, IDbVersionUpgrader<TConnection, TTransaction, TParameterTypes>, IDbBatchLocator<TConnection, TTransaction, TParameterTypes>, IDbCreator<TConnection, TTransaction, TParameterTypes>, IDbManagerOptions
             where TConnection : DbConnection
             where TTransaction : DbTransaction
             where TParameterTypes : Enum
@@ -176,6 +177,12 @@ namespace RI.DatabaseManager.Builder
 
             /// <inheritdoc />
             public bool Create (IDbManager manager) => false;
+
+            /// <inheritdoc />
+            public object Clone () => new NullInstance<TConnection, TTransaction, TParameterTypes>();
+
+            /// <inheritdoc />
+            public string GetConnectionString () => null;
         }
 
         #endregion

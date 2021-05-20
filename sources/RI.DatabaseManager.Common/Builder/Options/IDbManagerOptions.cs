@@ -1,9 +1,14 @@
-﻿namespace RI.DatabaseManager.Builder.Options
+﻿using System;
+
+
+
+
+namespace RI.DatabaseManager.Builder.Options
 {
     /// <summary>
     /// Stores general database manager options.
     /// </summary>
-    public interface IDbManagerOptions
+    public interface IDbManagerOptions : ICloneable
     {
         /// <summary>
         /// Gets the configured connection string.

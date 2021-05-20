@@ -5,6 +5,7 @@ using System.Data.Common;
 
 using RI.DatabaseManager.Backup;
 using RI.DatabaseManager.Batches;
+using RI.DatabaseManager.Builder.Options;
 using RI.DatabaseManager.Cleanup;
 using RI.DatabaseManager.Upgrading;
 
@@ -41,6 +42,20 @@ namespace RI.DatabaseManager.Manager
     /// </remarks>
     public interface IDbManager : IDisposable
     {
+        /// <summary>
+        /// Gets a copy of the used database options.
+        /// </summary>
+        /// <returns>
+        /// The copy of the used database options or null if no options are used.
+        /// </returns>
+        /// <remarks>
+        ///<note type="note">
+        /// The returned options is a copy.
+        /// Changing its values will not have any effect to the database managers operations.
+        /// </note>
+        /// </remarks>
+        IDbManagerOptions GetOptions ();
+
         /// <summary>
         ///     Gets the state of the database after initialization.
         /// </summary>

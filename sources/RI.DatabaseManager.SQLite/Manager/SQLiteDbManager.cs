@@ -9,6 +9,7 @@ using RI.DatabaseManager.Backup;
 using RI.DatabaseManager.Batches;
 using RI.DatabaseManager.Builder;
 using RI.DatabaseManager.Cleanup;
+using RI.DatabaseManager.Creation;
 using RI.DatabaseManager.Upgrading;
 using RI.DatabaseManager.Versioning;
 
@@ -21,13 +22,8 @@ namespace RI.DatabaseManager.Manager
     ///     Implements a database manager for SQLite databases.
     /// </summary>
     /// <threadsafety static="false" instance="false" />
-    public sealed class SQLiteDbManager : DbManagerBase<SQLiteConnection, SQLiteTransaction, DbType, SQLiteParameterCollection, SQLiteParameter>
+    public sealed class SQLiteDbManager : DbManagerBase<SQLiteConnection, SQLiteTransaction, DbType, SQLiteParameterCollection, SQLiteParameter, SQLiteDbManagerOptions>
     {
-        private SQLiteDbManagerOptions Options { get; }
-
-
-
-
         #region Instance Properties/Indexer
 
         /// <summary>
@@ -40,15 +36,10 @@ namespace RI.DatabaseManager.Manager
         /// <param name="backupCreator"> The used backup creator, if any. </param>
         /// <param name="cleanupProcessor"> The used cleanup processor, if any. </param>
         /// <param name="versionUpgrader"> The used version upgrader, if any. </param>
+        /// <param name="creator"> The used database creator, if any. </param>
         /// <exception cref="ArgumentNullException"> <paramref name="options" />, <paramref name="logger" />, <paramref name="batchLocator" />, or <paramref name="versionDetector" /> is null. </exception>
-        public SQLiteDbManager (SQLiteDbManagerOptions options, ILogger logger, IDbBatchLocator<SQLiteConnection, SQLiteTransaction, DbType> batchLocator, IDbVersionDetector<SQLiteConnection, SQLiteTransaction, DbType> versionDetector, IDbBackupCreator<SQLiteConnection, SQLiteTransaction, DbType> backupCreator, IDbCleanupProcessor<SQLiteConnection, SQLiteTransaction, DbType> cleanupProcessor, IDbVersionUpgrader<SQLiteConnection, SQLiteTransaction, DbType> versionUpgrader) : base(logger, batchLocator, versionDetector, backupCreator, cleanupProcessor, versionUpgrader)
+        public SQLiteDbManager (SQLiteDbManagerOptions options, ILogger logger, IDbBatchLocator<SQLiteConnection, SQLiteTransaction, DbType> batchLocator, IDbVersionDetector<SQLiteConnection, SQLiteTransaction, DbType> versionDetector, IDbBackupCreator<SQLiteConnection, SQLiteTransaction, DbType> backupCreator, IDbCleanupProcessor<SQLiteConnection, SQLiteTransaction, DbType> cleanupProcessor, IDbVersionUpgrader<SQLiteConnection, SQLiteTransaction, DbType> versionUpgrader, IDbCreator<SQLiteConnection, SQLiteTransaction, DbType> creator) : base(logger, batchLocator, versionDetector, backupCreator, cleanupProcessor, versionUpgrader, creator, options)
         {
-            if (options == null)
-            {
-                throw new ArgumentNullException(nameof(options));
-            }
-
-            this.Options = options;
         }
 
         #endregion
@@ -111,10 +102,13 @@ namespace RI.DatabaseManager.Manager
         protected override bool SupportsCleanupImpl => true;
 
         /// <inheritdoc />
+        protected override bool SupportsCreateImpl => true;
+
+        /// <inheritdoc />
         protected override bool SupportsReadOnlyConnectionsImpl => true;
 
         /// <inheritdoc />
-        protected override bool SupportsRestoreImpl => true;
+        protected override bool SupportsRestoreImpl => false;
 
         /// <inheritdoc />
         protected override bool SupportsUpgradeImpl => true;
@@ -151,7 +145,7 @@ namespace RI.DatabaseManager.Manager
         /// <inheritdoc />
         protected override bool DetectStateAndVersionImpl (out DbState? state, out int version)
         {
-            FileInfo databaseFileInfo = new FileInfo(this.Options.DatabaseFile);
+            FileInfo databaseFileInfo = new FileInfo(((SQLiteDbManagerOptions)this.Options).ConnectionString.DataSource);
 
             if (!databaseFileInfo.Exists)
             {

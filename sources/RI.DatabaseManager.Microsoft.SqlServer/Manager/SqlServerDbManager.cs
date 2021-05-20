@@ -8,6 +8,7 @@ using RI.DatabaseManager.Backup;
 using RI.DatabaseManager.Batches;
 using RI.DatabaseManager.Builder;
 using RI.DatabaseManager.Cleanup;
+using RI.DatabaseManager.Creation;
 using RI.DatabaseManager.Upgrading;
 using RI.DatabaseManager.Versioning;
 
@@ -20,13 +21,8 @@ namespace RI.DatabaseManager.Manager
     ///     Implements a database manager for Microsoft SQL Server databases.
     /// </summary>
     /// <threadsafety static="false" instance="false" />
-    public sealed class SqlServerDbManager : DbManagerBase<SqlConnection, SqlTransaction, SqlDbType, SqlParameterCollection, SqlParameter>
+    public sealed class SqlServerDbManager : DbManagerBase<SqlConnection, SqlTransaction, SqlDbType, SqlParameterCollection, SqlParameter, SqlServerDbManagerOptions>
     {
-        private SqlServerDbManagerOptions Options { get; }
-
-
-
-
         #region Instance Methods
 
         /// <summary>
@@ -39,15 +35,10 @@ namespace RI.DatabaseManager.Manager
         /// <param name="backupCreator"> The used backup creator, if any. </param>
         /// <param name="cleanupProcessor"> The used cleanup processor, if any. </param>
         /// <param name="versionUpgrader"> The used version upgrader, if any. </param>
+        /// <param name="creator"> The used database creator, if any. </param>
         /// <exception cref="ArgumentNullException"> <paramref name="options" />, <paramref name="logger" />, <paramref name="batchLocator" />, or <paramref name="versionDetector" /> is null. </exception>
-        public SqlServerDbManager (SqlServerDbManagerOptions options, ILogger logger, IDbBatchLocator<SqlConnection, SqlTransaction, SqlDbType> batchLocator, IDbVersionDetector<SqlConnection, SqlTransaction, SqlDbType> versionDetector, IDbBackupCreator<SqlConnection, SqlTransaction, SqlDbType> backupCreator, IDbCleanupProcessor<SqlConnection, SqlTransaction, SqlDbType> cleanupProcessor, IDbVersionUpgrader<SqlConnection, SqlTransaction, SqlDbType> versionUpgrader) : base(logger, batchLocator, versionDetector, backupCreator, cleanupProcessor, versionUpgrader)
+        public SqlServerDbManager (SqlServerDbManagerOptions options, ILogger logger, IDbBatchLocator<SqlConnection, SqlTransaction, SqlDbType> batchLocator, IDbVersionDetector<SqlConnection, SqlTransaction, SqlDbType> versionDetector, IDbBackupCreator<SqlConnection, SqlTransaction, SqlDbType> backupCreator, IDbCleanupProcessor<SqlConnection, SqlTransaction, SqlDbType> cleanupProcessor, IDbVersionUpgrader<SqlConnection, SqlTransaction, SqlDbType> versionUpgrader, IDbCreator<SqlConnection, SqlTransaction, SqlDbType> creator) : base(logger, batchLocator, versionDetector, backupCreator, cleanupProcessor, versionUpgrader, creator, options)
         {
-            if (options == null)
-            {
-                throw new ArgumentNullException(nameof(options));
-            }
-
-            this.Options = options;
         }
 
         internal SqlConnection CreateInternalConnection (string connectionStringOverride)
@@ -78,6 +69,9 @@ namespace RI.DatabaseManager.Manager
 
         /// <inheritdoc />
         protected override bool SupportsCleanupImpl => true;
+
+        /// <inheritdoc />
+        protected override bool SupportsCreateImpl => true;
 
         /// <inheritdoc />
         protected override bool SupportsReadOnlyConnectionsImpl => false;
