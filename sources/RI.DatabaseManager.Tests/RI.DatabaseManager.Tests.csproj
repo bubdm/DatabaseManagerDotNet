@@ -45,7 +45,7 @@
     <Folder Include="Resources\SQLite\" />
     <Folder Include="SQLite\Backup\" />
     <Folder Include="SQLite\Cleanup\" />
-    <Folder Include="SQLite\Creating\" />
+    <Folder Include="SQLite\Creation\" />
     <Folder Include="SQLite\Versioning\" />
     <Folder Include="SQLite\Upgrading\" />
   </ItemGroup>

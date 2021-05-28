@@ -3,7 +3,6 @@ using System.Data;
 using System.Data.SQLite;
 
 using RI.Abstractions.Logging;
-using RI.DatabaseManager.Batches;
 using RI.DatabaseManager.Builder;
 using RI.DatabaseManager.Manager;
 

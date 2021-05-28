@@ -159,7 +159,7 @@ namespace RI.DatabaseManager.Cleanup
                 throw new ArgumentNullException(nameof(manager));
             }
 
-            IDbBatch<TConnection, TTransaction, TParameterTypes> steps = null;
+            IDbBatch<TConnection, TTransaction, TParameterTypes> steps;
             bool result = this.GetCleanupSteps(manager, out steps);
 
             if ((!result) || (steps == null))

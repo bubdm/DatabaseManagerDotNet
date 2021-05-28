@@ -2,8 +2,6 @@
 using System.Data.SQLite;
 using System.Reflection;
 
-using Microsoft.Data.SqlClient;
-
 using RI.Abstractions.Builder;
 using RI.DatabaseManager.Builder;
 using RI.DatabaseManager.Manager;
@@ -24,7 +22,6 @@ namespace RI.DatabaseManager.Tests.SQLite.Builder
             // Arrange
 
             using TemporaryFile tempFile = new TemporaryFile();
-            IDbManager<SQLiteConnection, SQLiteTransaction, DbType> dbManager = null;
 
             // Act + Assert
 
@@ -32,7 +29,7 @@ namespace RI.DatabaseManager.Tests.SQLite.Builder
             {
 
 
-                dbManager = new DbManagerBuilder().UseSQLite(options =>
+                new DbManagerBuilder().UseSQLite(options =>
                                                   {
                                                       options.ConnectionString.DataSource = tempFile.FullPath;
                                                   })
@@ -46,7 +43,7 @@ namespace RI.DatabaseManager.Tests.SQLite.Builder
             // Arrange
 
             using TemporaryFile tempFile = new TemporaryFile();
-            IDbManager<SQLiteConnection, SQLiteTransaction, DbType> dbManager = null;
+            IDbManager<SQLiteConnection, SQLiteTransaction, DbType> dbManager;
 
             // Act
 

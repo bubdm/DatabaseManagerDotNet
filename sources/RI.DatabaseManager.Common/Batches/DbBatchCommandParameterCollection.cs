@@ -1,9 +1,7 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
 using System.Linq;
-using System.Runtime.CompilerServices;
 
 
 
@@ -130,6 +128,9 @@ namespace RI.DatabaseManager.Batches
         public IEnumerable<IDbBatchCommandParameter> GetAll () =>
             this.InternalSet.Cast<IDbBatchCommandParameter>()
                 .ToList();
+
+        /// <inheritdoc />
+        void IDbBatchCommandParameterCollection.ClearParameters () => this.Clear();
 
         /// <inheritdoc />
         void ICollection<IDbBatchCommandParameter<TParameterTypes>>.Add (IDbBatchCommandParameter<TParameterTypes> item) => this.InternalSet.Add(item);

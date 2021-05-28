@@ -2,7 +2,6 @@
 using System.Data;
 using System.Data.SQLite;
 
-using RI.DatabaseManager.Batches;
 using RI.DatabaseManager.Builder;
 using RI.DatabaseManager.Manager;
 using RI.DatabaseManager.Tests.Utilities;
@@ -71,9 +70,9 @@ namespace RI.DatabaseManager.Tests.SQLite.Manager
 
             manager.Initialize();
 
-            Assert.True(manager.CanUpgrade());
+            Assert.True(manager.CanCreate());
 
-            manager.Upgrade();
+            manager.Create();
 
             SQLiteConnection connection = manager.CreateConnection();
 

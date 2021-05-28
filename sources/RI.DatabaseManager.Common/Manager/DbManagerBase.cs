@@ -53,6 +53,7 @@ namespace RI.DatabaseManager.Manager
         /// <param name="cleanupProcessor"> The used cleanup processor, if any. </param>
         /// <param name="versionUpgrader"> The used version upgrader, if any. </param>
         /// <param name="options"> The used database manager options.</param>
+        /// <param name="creator"> The used database creator, if any. </param>
         /// <remarks>
         ///     <note type="important">
         ///         <paramref name="backupCreator" />, <paramref name="cleanupProcessor" />, <paramref name="versionUpgrader" />, <paramref name="options" /> can be null or <see cref="DbManagerBuilder.NullInstance{TConnection,TTransaction,TParameterTypes}" />, depending on how the database manager was build and which (if any) dependency injection library is used.
@@ -1184,6 +1185,13 @@ namespace RI.DatabaseManager.Manager
         #endregion
     }
 
+    /// <inheritdoc cref="DbManagerBase{TConnection, TTransaction, TParameterTypes, TParameters, TParameter}" />
+    /// <typeparam name="TConnection"> The database connection type. </typeparam>
+    /// <typeparam name="TTransaction"> The database transaction type. </typeparam>
+    /// <typeparam name="TParameterTypes"> The database command parameter type. </typeparam>
+    /// <typeparam name="TParameters"> The database command parameter collection type. </typeparam>
+    /// <typeparam name="TParameter"> The database command parameter type. </typeparam>
+    /// <typeparam name="TOptions"> The database option type. </typeparam>
     public abstract class DbManagerBase <TConnection, TTransaction, TParameterTypes, TParameters, TParameter, TOptions> : DbManagerBase<TConnection, TTransaction, TParameterTypes, TParameters, TParameter>
         where TConnection : DbConnection
         where TTransaction : DbTransaction

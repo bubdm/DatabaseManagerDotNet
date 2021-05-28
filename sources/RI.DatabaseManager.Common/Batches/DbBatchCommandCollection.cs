@@ -57,6 +57,9 @@ namespace RI.DatabaseManager.Batches
                 .ToList();
 
         /// <inheritdoc />
+        void IDbBatchCommandCollection.ClearCommands () => this.Clear();
+
+        /// <inheritdoc />
         public void Clear () => this.InternalList.Clear();
 
         /// <inheritdoc />

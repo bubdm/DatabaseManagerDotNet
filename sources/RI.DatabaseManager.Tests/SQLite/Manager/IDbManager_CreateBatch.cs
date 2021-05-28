@@ -105,8 +105,8 @@ namespace RI.DatabaseManager.Tests.SQLite.Manager
 
             IDbBatch<SQLiteConnection, SQLiteTransaction, DbType> batch = manager.CreateBatch();
 
-            batch.AddScript("Test", DbBatchTransactionRequirement.DontCare, null);
-            batch.AddScript("Test", DbBatchTransactionRequirement.DontCare, null);
+            batch.AddScript("Test");
+            batch.AddScript("Test");
 
             // Assert
 
@@ -137,8 +137,8 @@ namespace RI.DatabaseManager.Tests.SQLite.Manager
 
             IDbBatch<SQLiteConnection, SQLiteTransaction, DbType> batch = manager.CreateBatch();
 
-            batch.AddScript("Test", DbBatchTransactionRequirement.DontCare, null);
-            batch.AddScript("Test", DbBatchTransactionRequirement.Required, null);
+            batch.AddScript("Test");
+            batch.AddScript("Test", DbBatchTransactionRequirement.Required);
 
             // Assert
 
@@ -169,8 +169,8 @@ namespace RI.DatabaseManager.Tests.SQLite.Manager
 
             IDbBatch<SQLiteConnection, SQLiteTransaction, DbType> batch = manager.CreateBatch();
 
-            batch.AddScript("Test", DbBatchTransactionRequirement.DontCare, null);
-            batch.AddScript("Test", DbBatchTransactionRequirement.Disallowed, null);
+            batch.AddScript("Test");
+            batch.AddScript("Test", DbBatchTransactionRequirement.Disallowed);
 
             // Assert
 
@@ -201,8 +201,8 @@ namespace RI.DatabaseManager.Tests.SQLite.Manager
 
             IDbBatch<SQLiteConnection, SQLiteTransaction, DbType> batch = manager.CreateBatch();
 
-            batch.AddScript("Test", DbBatchTransactionRequirement.Required, null);
-            batch.AddScript("Test", DbBatchTransactionRequirement.Disallowed, null);
+            batch.AddScript("Test", DbBatchTransactionRequirement.Required);
+            batch.AddScript("Test", DbBatchTransactionRequirement.Disallowed);
 
             // Assert
 
@@ -217,12 +217,12 @@ namespace RI.DatabaseManager.Tests.SQLite.Manager
 
             Assert.Throws<InvalidOperationException>(() =>
             {
-                var value = batch.RequiresTransaction();
+                batch.RequiresTransaction();
             });
 
             Assert.Throws<InvalidOperationException>(() =>
             {
-                var value = batch.DisallowsTransaction();
+                batch.DisallowsTransaction();
             });
         }
 
@@ -241,8 +241,8 @@ namespace RI.DatabaseManager.Tests.SQLite.Manager
 
             IDbBatch<SQLiteConnection, SQLiteTransaction, DbType> batch = manager.CreateBatch();
 
-            batch.AddScript("Test", DbBatchTransactionRequirement.Required, null);
-            batch.AddScript("Test", DbBatchTransactionRequirement.Required, null);
+            batch.AddScript("Test", DbBatchTransactionRequirement.Required);
+            batch.AddScript("Test", DbBatchTransactionRequirement.Required);
 
             // Assert
 
@@ -273,8 +273,8 @@ namespace RI.DatabaseManager.Tests.SQLite.Manager
 
             IDbBatch<SQLiteConnection, SQLiteTransaction, DbType> batch = manager.CreateBatch();
 
-            batch.AddScript("Test", DbBatchTransactionRequirement.DontCare, null);
-            batch.AddScript("Test", DbBatchTransactionRequirement.DontCare, null);
+            batch.AddScript("Test");
+            batch.AddScript("Test");
 
             // Assert
 
@@ -337,7 +337,7 @@ namespace RI.DatabaseManager.Tests.SQLite.Manager
 
             IDbBatch<SQLiteConnection, SQLiteTransaction, DbType> batch = manager.CreateBatch();
 
-            batch.AddScript("Test", DbBatchTransactionRequirement.DontCare, null);
+            batch.AddScript("Test");
             batch.AddScript("Test", DbBatchTransactionRequirement.DontCare, IsolationLevel.ReadCommitted);
 
             // Assert
@@ -386,7 +386,7 @@ namespace RI.DatabaseManager.Tests.SQLite.Manager
 
             Assert.Throws<InvalidOperationException>(() =>
             {
-                var value = batch.GetRequiredIsolationLevel();
+                batch.GetRequiredIsolationLevel();
             });
         }
 

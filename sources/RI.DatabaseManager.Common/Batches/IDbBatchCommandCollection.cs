@@ -27,7 +27,7 @@ namespace RI.DatabaseManager.Batches
         /// <summary>
         /// Clears the collection of all commands.
         /// </summary>
-        void Clear();
+        void ClearCommands();
     }
 
     /// <inheritdoc cref="RI.DatabaseManager.Batches.IDbBatchCommandCollection" />

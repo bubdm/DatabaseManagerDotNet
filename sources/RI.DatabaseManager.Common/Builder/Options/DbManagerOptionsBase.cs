@@ -123,7 +123,7 @@ namespace RI.DatabaseManager.Builder.Options
         public virtual string GetConnectionString () => this.ConnectionString.ConnectionString;
 
         /// <inheritdoc />
-        public virtual string GetDefaultUpgradingBatchNameFormat () => @".+?(?&lt;sourceVersion&gt;\d{4}).*";
+        public virtual string GetDefaultUpgradingBatchNameFormat () => @".+?(?<sourceVersion>;\d{4}).*";
 
         /// <inheritdoc />
         public virtual string[] GetDefaultVersioningScript (out DbBatchTransactionRequirement transactionRequirement, out IsolationLevel? isolationLevel)

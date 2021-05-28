@@ -189,7 +189,7 @@ namespace RI.DatabaseManager.Builder
                 locator.OptionsFormat = optionsFormat;
             }
 
-            builder.UseBatchLocator<TConnection, TTransaction, TParameterTypes, TManager>(locator);
+            builder.UseBatchLocator(locator);
 
             return builder;
         }
@@ -231,7 +231,7 @@ namespace RI.DatabaseManager.Builder
             }
 
             AssemblyCallbackBatchLocator<TConnection, TTransaction, TParameterTypes> locator = new AssemblyCallbackBatchLocator<TConnection, TTransaction, TParameterTypes>(assemblies);
-            builder.UseBatchLocator<TConnection, TTransaction, TParameterTypes, TManager>(locator);
+            builder.UseBatchLocator(locator);
 
             return builder;
         }
@@ -272,7 +272,7 @@ namespace RI.DatabaseManager.Builder
             
             DictionaryBatchLocator<TConnection, TTransaction, TParameterTypes> locator = new DictionaryBatchLocator<TConnection, TTransaction, TParameterTypes>();
             dictionary(locator);
-            builder.UseBatchLocator<TConnection, TTransaction, TParameterTypes, TManager>(locator);
+            builder.UseBatchLocator(locator);
 
             return builder;
         }
@@ -306,7 +306,7 @@ namespace RI.DatabaseManager.Builder
             }
 
             NullBatchLocator<TConnection, TTransaction, TParameterTypes> locator = new NullBatchLocator<TConnection, TTransaction, TParameterTypes>();
-            builder.UseBatchLocator<TConnection, TTransaction, TParameterTypes, TManager>(locator);
+            builder.UseBatchLocator(locator);
 
             return builder;
         }
@@ -369,10 +369,10 @@ namespace RI.DatabaseManager.Builder
             }
 
             MethodInfo genericMethod = typeof(IDbManagerBuilderExtensions).GetMethod(nameof(IDbManagerBuilderExtensions.MergeBatchLocatorsInternal), BindingFlags.Static | BindingFlags.NonPublic);
-            MethodInfo concreteMethod = genericMethod.MakeGenericMethod(connectionType, transactionType, parameterTypes, manager);
+            MethodInfo concreteMethod = genericMethod?.MakeGenericMethod(connectionType, transactionType, parameterTypes, manager);
 
 
-            concreteMethod.Invoke(null, new object[]
+            concreteMethod?.Invoke(null, new object[]
                                       { builder });
         }
 

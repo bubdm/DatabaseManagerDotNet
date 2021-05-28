@@ -46,7 +46,7 @@ namespace RI.DatabaseManager.Batches
         /// <summary>
         /// Clears the collection of all parameters.
         /// </summary>
-        void Clear ();
+        void ClearParameters ();
     }
 
     /// <inheritdoc cref="IDbBatchCommandParameterCollection" />

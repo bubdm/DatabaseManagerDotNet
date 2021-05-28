@@ -21,7 +21,7 @@ namespace RI.DatabaseManager.Tests.SQLite.Builder
             // Arrange
 
             using TemporaryFile tempFile = new TemporaryFile();
-            IDbManager<SQLiteConnection, SQLiteTransaction, DbType> dbManager = null;
+            IDbManager<SQLiteConnection, SQLiteTransaction, DbType> dbManager;
 
             // Act
 

@@ -617,8 +617,8 @@ namespace RI.DatabaseManager.Batches
                 throw new ArgumentNullException(nameof(batch));
             }
 
-            batch.Commands.Clear();
-            batch.Parameters.Clear();
+            batch.Commands.ClearCommands();
+            batch.Parameters.ClearParameters();
         }
 
         /// <summary>

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Data;
 using System.Data.SQLite;
+using System.Diagnostics.CodeAnalysis;
 
 using RI.DatabaseManager.Builder;
 using RI.DatabaseManager.Manager;
@@ -13,6 +14,7 @@ using Xunit;
 
 namespace RI.DatabaseManager.Tests.SQLite.Builder
 {
+    [SuppressMessage("ReSharper", "InconsistentNaming")]
     public sealed class SQLiteDbManagerBuilderExtensions_UseSQLite
     {
         [Fact]

@@ -4,7 +4,6 @@ using System.Data;
 using System.Data.SQLite;
 using System.Reflection;
 
-using RI.Abstractions.Builder;
 using RI.DatabaseManager.Batches;
 using RI.DatabaseManager.Builder;
 using RI.DatabaseManager.Manager;
@@ -25,7 +24,7 @@ namespace RI.DatabaseManager.Tests.SQLite.Builder
             // Arrange
 
             using TemporaryFile tempFile = new TemporaryFile();
-            IDbManager<SQLiteConnection, SQLiteTransaction, DbType> dbManager = null;
+            IDbManager<SQLiteConnection, SQLiteTransaction, DbType> dbManager;
 
             // Act
 
@@ -46,7 +45,7 @@ namespace RI.DatabaseManager.Tests.SQLite.Builder
             // Arrange
 
             using TemporaryFile tempFile = new TemporaryFile();
-            IDbManager<SQLiteConnection, SQLiteTransaction, DbType> dbManager = null;
+            IDbManager<SQLiteConnection, SQLiteTransaction, DbType> dbManager;
 
             // Act
 

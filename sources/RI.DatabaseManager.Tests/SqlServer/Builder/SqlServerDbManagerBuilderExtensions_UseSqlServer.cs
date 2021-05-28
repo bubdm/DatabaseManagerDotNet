@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Data;
-using System.Data.SQLite;
 
 using Microsoft.Data.SqlClient;
 
@@ -67,17 +66,20 @@ namespace RI.DatabaseManager.Tests.SqlServer.Builder
         [Fact]
         public static void UseSqlServer_Options_Success()
         {
-            //Arrange
+            // Arrange
+            
             using TemporaryFile tempFile = new TemporaryFile();
             DbManagerBuilder builder = new DbManagerBuilder();
 
-            //Act
+            // Act
+
             IDbManagerBuilder<SqlConnection, SqlTransaction, SqlDbType, SqlServerDbManager> realBuilder = builder.UseSqlServer(options =>
             {
                 options.ConnectionString.DataSource = tempFile.FullPath;
             });
 
-            //Assert
+            // Assert
+
             Assert.NotNull(realBuilder);
         }
     }

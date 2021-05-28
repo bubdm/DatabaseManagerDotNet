@@ -1,12 +1,4 @@
-﻿using System;
-using System.Data;
-
-using RI.DatabaseManager.Batches;
-
-
-
-
-namespace RI.DatabaseManager.Builder.Options
+﻿namespace RI.DatabaseManager.Builder.Options
 {
     /// <summary>
     /// Stores general database manager options and also provides the means to upgrade the database.

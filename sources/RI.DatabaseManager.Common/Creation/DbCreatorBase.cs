@@ -1,13 +1,10 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Data;
 using System.Data.Common;
-using System.Linq;
 
 using RI.Abstractions.Logging;
 using RI.DatabaseManager.Batches;
 using RI.DatabaseManager.Builder.Options;
-using RI.DatabaseManager.Cleanup;
 using RI.DatabaseManager.Manager;
 
 
@@ -162,7 +159,7 @@ namespace RI.DatabaseManager.Creation
                 throw new ArgumentNullException(nameof(manager));
             }
 
-            IDbBatch<TConnection, TTransaction, TParameterTypes> steps = null;
+            IDbBatch<TConnection, TTransaction, TParameterTypes> steps;
             bool result = this.GetCreationSteps(manager, out steps);
 
             if ((!result) || (steps == null))

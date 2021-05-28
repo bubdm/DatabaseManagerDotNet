@@ -7,6 +7,7 @@ using RI.DatabaseManager.Backup;
 using RI.DatabaseManager.Batches;
 using RI.DatabaseManager.Builder.Options;
 using RI.DatabaseManager.Cleanup;
+using RI.DatabaseManager.Creation;
 using RI.DatabaseManager.Upgrading;
 
 
@@ -277,7 +278,7 @@ namespace RI.DatabaseManager.Manager
         ///     </note>
         /// </remarks>
         /// <exception cref="InvalidOperationException"> The database is not in the new state. </exception>
-        /// <exception cref="NotSupportedException"> Creation is not supported by the database manager or no <see cref="IdbCreator" /> is configured. </exception>
+        /// <exception cref="NotSupportedException"> Creation is not supported by the database manager or no <see cref="IDbCreator" /> is configured. </exception>
         bool Create ();
 
         /// <summary>

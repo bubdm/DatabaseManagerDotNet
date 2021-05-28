@@ -5,6 +5,7 @@ using System.Data.SQLite;
 using RI.Abstractions.Builder;
 using RI.DatabaseManager.Backup;
 using RI.DatabaseManager.Cleanup;
+using RI.DatabaseManager.Creation;
 using RI.DatabaseManager.Manager;
 using RI.DatabaseManager.Upgrading;
 using RI.DatabaseManager.Versioning;
@@ -144,7 +145,7 @@ namespace RI.DatabaseManager.Builder
             builder.AddSingleton(typeof(IDbBackupCreator<SQLiteConnection, SQLiteTransaction, DbType>), typeof(SQLiteDbBackupCreator));
             builder.AddSingleton(typeof(IDbCleanupProcessor<SQLiteConnection, SQLiteTransaction, DbType>), typeof(SQLiteDbCleanupProcessor));
             builder.AddSingleton(typeof(IDbVersionUpgrader<SQLiteConnection, SQLiteTransaction, DbType>), typeof(SQLiteDbVersionUpgrader));
-            builder.AddSingleton(typeof(IDbBackupCreator<SQLiteConnection, SQLiteTransaction, DbType>), typeof(SQLiteDbCreator));
+            builder.AddSingleton(typeof(IDbCreator<SQLiteConnection, SQLiteTransaction, DbType>), typeof(SQLiteDbCreator));
 
             return new DbManagerBuilder<SQLiteConnection, SQLiteTransaction, DbType, SQLiteDbManager>(builder);
         }

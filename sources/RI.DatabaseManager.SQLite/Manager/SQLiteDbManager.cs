@@ -145,7 +145,7 @@ namespace RI.DatabaseManager.Manager
         /// <inheritdoc />
         protected override bool DetectStateAndVersionImpl (out DbState? state, out int version)
         {
-            FileInfo databaseFileInfo = new FileInfo(((SQLiteDbManagerOptions)this.Options).ConnectionString.DataSource);
+            FileInfo databaseFileInfo = new FileInfo(this.Options.ConnectionString.DataSource);
 
             if (!databaseFileInfo.Exists)
             {

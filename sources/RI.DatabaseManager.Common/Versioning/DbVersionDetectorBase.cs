@@ -195,37 +195,37 @@ namespace RI.DatabaseManager.Versioning
             if (value is uint)
             {
                 uint testValue = (uint)value;
-                return (testValue > int.MaxValue) ? (int?)null : (int)testValue;
+                return (testValue > int.MaxValue) ? null : (int)testValue;
             }
 
             if (value is long)
             {
                 long testValue = (long)value;
-                return (testValue < int.MinValue) || (testValue > int.MaxValue) ? (int?)null : (int)testValue;
+                return (testValue < int.MinValue) || (testValue > int.MaxValue) ? null : (int)testValue;
             }
 
             if (value is ulong)
             {
                 ulong testValue = (ulong)value;
-                return (testValue > int.MaxValue) ? (int?)null : (int)testValue;
+                return (testValue > int.MaxValue) ? null : (int)testValue;
             }
 
             if (value is float)
             {
                 float testValue = (float)value;
-                return (testValue < int.MinValue) || (testValue > int.MaxValue) ? (int?)null : (int)testValue;
+                return (testValue < int.MinValue) || (testValue > int.MaxValue) ? null : (int)testValue;
             }
 
             if (value is double)
             {
                 double testValue = (double)value;
-                return (testValue < int.MinValue) || (testValue > int.MaxValue) ? (int?)null : (int)testValue;
+                return (testValue < int.MinValue) || (testValue > int.MaxValue) ? null : (int)testValue;
             }
 
             if (value is decimal)
             {
                 decimal testValue = (decimal)value;
-                return (testValue < int.MinValue) || (testValue > int.MaxValue) ? (int?)null : (int)testValue;
+                return (testValue < int.MinValue) || (testValue > int.MaxValue) ? null : (int)testValue;
             }
 
             if (value is string)
@@ -252,7 +252,7 @@ namespace RI.DatabaseManager.Versioning
             state = null;
             version = -1;
 
-            IDbBatch<TConnection, TTransaction, TParameterTypes> steps = null;
+            IDbBatch<TConnection, TTransaction, TParameterTypes> steps;
             bool result = this.GetVersionDetectionSteps(manager, out steps);
 
             if ((!result) || (steps == null))

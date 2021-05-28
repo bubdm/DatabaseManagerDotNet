@@ -4,8 +4,8 @@ using System.Data;
 using Microsoft.Data.SqlClient;
 
 using RI.Abstractions.Builder;
-using RI.DatabaseManager.Backup;
 using RI.DatabaseManager.Cleanup;
+using RI.DatabaseManager.Creation;
 using RI.DatabaseManager.Manager;
 using RI.DatabaseManager.Upgrading;
 using RI.DatabaseManager.Versioning;
@@ -144,7 +144,7 @@ namespace RI.DatabaseManager.Builder
 
             builder.AddSingleton(typeof(IDbCleanupProcessor<SqlConnection, SqlTransaction, SqlDbType>), typeof(SqlServerDbCleanupProcessor));
             builder.AddSingleton(typeof(IDbVersionUpgrader<SqlConnection, SqlTransaction, SqlDbType>), typeof(SqlServerDbVersionUpgrader));
-            builder.AddSingleton(typeof(IDbBackupCreator<SqlConnection, SqlTransaction, SqlDbType>), typeof(SqlServerDbCreator));
+            builder.AddSingleton(typeof(IDbCreator<SqlConnection, SqlTransaction, SqlDbType>), typeof(SqlServerDbCreator));
 
             return new DbManagerBuilder<SqlConnection, SqlTransaction, SqlDbType, SqlServerDbManager>(builder);
         }

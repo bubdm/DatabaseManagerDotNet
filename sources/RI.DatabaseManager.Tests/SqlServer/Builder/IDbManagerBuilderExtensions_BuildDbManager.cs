@@ -23,7 +23,6 @@ namespace RI.DatabaseManager.Tests.SqlServer.Builder
             // Arrange
 
             using TemporaryFile tempFile = new TemporaryFile();
-            IDbManager<SqlConnection, SqlTransaction, SqlDbType> dbManager = null;
 
             // Act + Assert
 
@@ -31,11 +30,11 @@ namespace RI.DatabaseManager.Tests.SqlServer.Builder
             {
 
 
-                dbManager = new DbManagerBuilder().UseSqlServer(options =>
-                                                  {
-                                                      options.ConnectionString.DataSource = tempFile.FullPath;
-                                                  })
-                                                  .BuildDbManager();
+                new DbManagerBuilder().UseSqlServer(options =>
+                                                                                                       {
+                                                                                                           options.ConnectionString.DataSource = tempFile.FullPath;
+                                                                                                       })
+                                                                                                       .BuildDbManager();
             });
         }
 
@@ -45,7 +44,7 @@ namespace RI.DatabaseManager.Tests.SqlServer.Builder
             // Arrange
 
             using TemporaryFile tempFile = new TemporaryFile();
-            IDbManager<SqlConnection, SqlTransaction, SqlDbType> dbManager = null;
+            IDbManager<SqlConnection, SqlTransaction, SqlDbType> dbManager;
 
             // Act
 
