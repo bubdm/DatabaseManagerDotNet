@@ -313,7 +313,7 @@ namespace RI.DatabaseManager.Manager
         ///     The newly created and already opened connection or null if the connection could not be created.
         ///     Details about failures should be written to logs.
         /// </returns>
-        /// <exception cref="InvalidOperationException"> The database is not in a ready state. </exception>
+        /// <exception cref="InvalidOperationException"> The database manager is not initialized. </exception>
         /// <exception cref="NotSupportedException"> <paramref name="readOnly" /> is true but read-only connections are not supported. </exception>
         DbConnection CreateConnection (bool readOnly);
 
@@ -326,7 +326,7 @@ namespace RI.DatabaseManager.Manager
         ///     The newly created transaction with its underlying connection already opened or null if the transaction or connection could not be created.
         ///     Details about failures should be written to logs.
         /// </returns>
-        /// <exception cref="InvalidOperationException"> The database is not in a ready state. </exception>
+        /// <exception cref="InvalidOperationException"> The database manager is not initialized. </exception>
         /// <exception cref="NotSupportedException"> <paramref name="readOnly" /> is true but read-only connections are not supported or the specified <paramref name="isolationLevel"/> is not supported. </exception>
         DbTransaction CreateTransaction (bool readOnly, IsolationLevel isolationLevel);
 
@@ -385,7 +385,7 @@ namespace RI.DatabaseManager.Manager
         ///     Details about failures should be written to logs and/or into properties of the executed batch.
         /// </returns>
         /// <exception cref="ArgumentNullException"> <paramref name="batch" /> is null </exception>
-        /// <exception cref="InvalidOperationException"> The database is not in a ready state or the batch has conflicting transaction requirements or isolation levels (e.g. one command uses <see cref="DbBatchTransactionRequirement.Required" /> while another uses <see cref="DbBatchTransactionRequirement.Disallowed" />). </exception>
+        /// <exception cref="InvalidOperationException"> The database manager is not initialized. </exception>
         /// <exception cref="NotSupportedException"> <paramref name="readOnly" /> is true but read-only connections are not supported. </exception>
         bool ExecuteBatch (IDbBatch batch, bool readOnly, bool detectVersionAndStateAfterExecution);
 

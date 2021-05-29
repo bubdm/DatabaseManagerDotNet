@@ -985,10 +985,10 @@ namespace RI.DatabaseManager.Manager
         /// <inheritdoc />
         public TConnection CreateConnection (bool readOnly)
         {
-            if (!this.IsReady())
+            if (this.State == DbState.Uninitialized)
             {
                 throw new InvalidOperationException(this.GetType()
-                                                        .Name + " must be in a ready state to create a connection; current state is " + this.State + ".");
+                                                        .Name + " must be initialized to create a connection; current state is " + this.State + ".");
             }
 
             if (!this.SupportsReadOnlyConnections && readOnly)
@@ -1023,10 +1023,10 @@ namespace RI.DatabaseManager.Manager
         /// <inheritdoc />
         public TTransaction CreateTransaction (bool readOnly, IsolationLevel isolationLevel)
         {
-            if (!this.IsReady())
+            if (this.State == DbState.Uninitialized)
             {
                 throw new InvalidOperationException(this.GetType()
-                                                        .Name + " must be in a ready state to create a transaction; current state is " + this.State + ".");
+                                                        .Name + " must be initialized to create a transaction; current state is " + this.State + ".");
             }
 
             if (!this.SupportsReadOnlyConnections && readOnly)
@@ -1125,10 +1125,10 @@ namespace RI.DatabaseManager.Manager
                 throw new ArgumentNullException(nameof(batch));
             }
 
-            if (!this.IsReady())
+            if (this.State == DbState.Uninitialized)
             {
                 throw new InvalidOperationException(this.GetType()
-                                                        .Name + " must be in a ready state to execute a batch; current state is " + this.State + ".");
+                                                        .Name + " must be initialized to execute a batch; current state is " + this.State + ".");
             }
 
             if (!this.SupportsReadOnlyConnections && readOnly)

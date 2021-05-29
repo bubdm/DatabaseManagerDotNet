@@ -1,5 +1,6 @@
 ﻿using System;
 using System.IO;
+using System.Threading;
 
 
 
@@ -30,10 +31,22 @@ namespace RI.DatabaseManager.Tests.Utilities
 
         public void Delete ()
         {
-            if (this.File.Exists)
+            ThreadPool.QueueUserWorkItem((_) =>
             {
-                this.File.Delete();
-            }
+                while (this.File.Exists)
+                {
+                    try
+                    {
+                        Thread.Sleep(100);
+                        this.File.Delete();
+                        return;
+                    }
+                    catch (IOException)
+                    {
+
+                    }
+                }
+            });
         }
 
         private void Create ()

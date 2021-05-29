@@ -35,7 +35,7 @@ namespace RI.DatabaseManager.Tests.SQLite.Manager
         }
 
         [Fact]
-        public static void CreateConnection_NewState_InvalidOperationException()
+        public static void CreateConnection_InitializedNew_Success()
         {
             // Arrange
 
@@ -48,11 +48,7 @@ namespace RI.DatabaseManager.Tests.SQLite.Manager
             // Act + Assert
 
             manager.Initialize();
-
-            Assert.Throws<InvalidOperationException>(() =>
-            {
-                manager.CreateConnection();
-            });
+            manager.CreateConnection();
         }
 
         [Fact]
@@ -82,7 +78,6 @@ namespace RI.DatabaseManager.Tests.SQLite.Manager
             connection.Close();
 
             Assert.Equal(ConnectionState.Closed, connection.State);
-            Assert.Equal(false, connection.IsReadOnly(null));
         }
     }
 }
