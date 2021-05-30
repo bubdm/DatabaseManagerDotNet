@@ -15,7 +15,9 @@ namespace RI.DatabaseManager.Builder
 
         private object CreateNullInstance (Type connection, Type transaction, Type parameterTypes)
         {
-            return Activator.CreateInstance(typeof(DbManagerBuilder.NullInstance<,,>).MakeGenericType(connection, transaction, parameterTypes), true);
+            return
+                Activator.CreateInstance(typeof(DbManagerBuilder.NullInstance<,,>).MakeGenericType(connection, transaction, parameterTypes),
+                                         true);
         }
 
         #endregion
@@ -30,8 +32,13 @@ namespace RI.DatabaseManager.Builder
         {
             base.PrepareRegistrations(logger, compositionContainer);
 
-            (Type connection, Type transaction, Type parameterTypes, Type manager, Type versionDetector, Type backupCreator, Type cleanupProcessor, Type versionUpgrader, Type batchLocator, Type creator) = this.DetectDbManagerTypes();
-            Type temporaryBatchLogatorRegistration = typeof(IDbManagerBuilderExtensions.TemporaryBatchLocatorRegistration<,,>).MakeGenericType(connection, transaction, parameterTypes);
+            (Type connection, Type transaction, Type parameterTypes, Type manager, Type versionDetector,
+                    Type backupCreator, Type cleanupProcessor, Type versionUpgrader, Type batchLocator, Type creator) =
+                this.DetectDbManagerTypes();
+
+            Type temporaryBatchLogatorRegistration =
+                typeof(IDbManagerBuilderExtensions.TemporaryBatchLocatorRegistration<,,>)
+                    .MakeGenericType(connection, transaction, parameterTypes);
 
             this.ThrowIfNotMinContractCount(temporaryBatchLogatorRegistration, 1);
             this.MergeBatchLocators(connection, transaction, parameterTypes, manager);
@@ -50,7 +57,10 @@ namespace RI.DatabaseManager.Builder
             this.ThrowIfNotMaxContractCount(creator, 1);
 
             this.AddDefaultSingleton(backupCreator, this.CreateNullInstance(connection, transaction, parameterTypes));
-            this.AddDefaultSingleton(cleanupProcessor, this.CreateNullInstance(connection, transaction, parameterTypes));
+
+            this.AddDefaultSingleton(cleanupProcessor,
+                                     this.CreateNullInstance(connection, transaction, parameterTypes));
+
             this.AddDefaultSingleton(versionUpgrader, this.CreateNullInstance(connection, transaction, parameterTypes));
             this.AddDefaultSingleton(creator, this.CreateNullInstance(connection, transaction, parameterTypes));
 

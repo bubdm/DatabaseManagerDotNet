@@ -7,7 +7,8 @@ using System.Data;
 namespace RI.DatabaseManager.Batches.Locators
 {
     /// <summary>
-    ///     Optional attribute to override batch name and/or transaction requirement of <see cref="ICallbackBatch{TConnection,TTransaction,TParameterTypes}" /> implementations.
+    ///     Optional attribute to override batch name and/or transaction requirement of
+    ///     <see cref="ICallbackBatch{TConnection,TTransaction,TParameterTypes}" /> implementations.
     /// </summary>
     /// <remarks>
     ///     <para>
@@ -18,6 +19,18 @@ namespace RI.DatabaseManager.Batches.Locators
     public sealed class CallbackBatchAttribute : Attribute
     {
         #region Instance Properties/Indexer
+
+        /// <summary>
+        ///     Gets or sets the isolation level requirement.
+        /// </summary>
+        /// <value>
+        ///     The isolation level requirement.
+        /// </value>
+        public IsolationLevel IsolationLevel
+        {
+            get => this.IsolationLevelInternal.GetValueOrDefault(IsolationLevel.Unspecified);
+            set => this.IsolationLevelInternal = value == IsolationLevel.Unspecified ? null : value;
+        }
 
         /// <summary>
         ///     Gets or sets the name of the batch.
@@ -33,19 +46,8 @@ namespace RI.DatabaseManager.Batches.Locators
         /// <value>
         ///     The transaction requirement.
         /// </value>
-        public DbBatchTransactionRequirement TransactionRequirement { get; set; } = DbBatchTransactionRequirement.DontCare;
-
-        /// <summary>
-        ///     Gets or sets the isolation level requirement.
-        /// </summary>
-        /// <value>
-        ///     The isolation level requirement.
-        /// </value>
-        public IsolationLevel IsolationLevel
-        {
-            get => this.IsolationLevelInternal.GetValueOrDefault(IsolationLevel.Unspecified);
-            set => this.IsolationLevelInternal = value == IsolationLevel.Unspecified ? null : value;
-        }
+        public DbBatchTransactionRequirement TransactionRequirement { get; set; } =
+            DbBatchTransactionRequirement.DontCare;
 
         internal IsolationLevel? IsolationLevelInternal { get; set; } = null;
 

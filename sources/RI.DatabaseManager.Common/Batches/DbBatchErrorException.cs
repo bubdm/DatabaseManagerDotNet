@@ -28,14 +28,14 @@ namespace RI.DatabaseManager.Batches
         /// <summary>
         ///     Creates a new instance of <see cref="DbBatchErrorException" />.
         /// </summary>
-        public DbBatchErrorException()
+        public DbBatchErrorException ()
             : base(DbBatchErrorException.GenericExceptionMessage) { }
 
         /// <summary>
         ///     Creates a new instance of <see cref="DbBatchErrorException" />.
         /// </summary>
         /// <param name="message"> The message which describes the exception. </param>
-        public DbBatchErrorException(string message)
+        public DbBatchErrorException (string message)
             : base(string.Format(DbBatchErrorException.ErrorExceptionMessage, message)) { }
 
         /// <summary>
@@ -43,7 +43,7 @@ namespace RI.DatabaseManager.Batches
         /// </summary>
         /// <param name="message"> The message which describes the exception. </param>
         /// <param name="innerException"> The exception which triggered this exception. </param>
-        public DbBatchErrorException(string message, Exception innerException)
+        public DbBatchErrorException (string message, Exception innerException)
             : base(message, innerException) { }
 
         /// <summary>
@@ -51,7 +51,7 @@ namespace RI.DatabaseManager.Batches
         /// </summary>
         /// <param name="info"> The serialization data. </param>
         /// <param name="context"> The type of the source of the serialization data. </param>
-        private DbBatchErrorException(SerializationInfo info, StreamingContext context)
+        private DbBatchErrorException (SerializationInfo info, StreamingContext context)
             : base(info, context) { }
 
         #endregion

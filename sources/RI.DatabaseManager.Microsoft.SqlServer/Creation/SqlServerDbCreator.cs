@@ -22,12 +22,10 @@ namespace RI.DatabaseManager.Creation
         /// <summary>
         ///     Creates a new instance of <see cref="SqlServerDbCreator" />.
         /// </summary>
-        /// <param name="options"> The used SQL Server database manager options.</param>
+        /// <param name="options"> The used SQL Server database manager options. </param>
         /// <param name="logger"> The used logger. </param>
         /// <exception cref="ArgumentNullException"> <paramref name="options" /> or <paramref name="logger" /> is null. </exception>
-        public SqlServerDbCreator(SqlServerDbManagerOptions options, ILogger logger) : base(options, logger)
-        {
-        }
+        public SqlServerDbCreator (SqlServerDbManagerOptions options, ILogger logger) : base(options, logger) { }
 
         #endregion
     }

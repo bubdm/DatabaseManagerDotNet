@@ -10,20 +10,27 @@ using RI.DatabaseManager.Batches;
 namespace RI.DatabaseManager.Builder.Options
 {
     /// <summary>
-    ///     Boilerplate implementation of <see cref="IDbManagerOptions" />, <see cref="ISupportDefaultDatabaseCleanup"/>, <see cref="ISupportDefaultDatabaseCreation"/>, <see cref="ISupportDefaultDatabaseVersioning"/>, <see cref="ISupportDefaultDatabaseUpgrading"/>.
+    ///     Boilerplate implementation of <see cref="IDbManagerOptions" />, <see cref="ISupportDefaultDatabaseCleanup" />,
+    ///     <see cref="ISupportDefaultDatabaseCreation" />, <see cref="ISupportDefaultDatabaseVersioning" />,
+    ///     <see cref="ISupportDefaultDatabaseUpgrading" />.
     /// </summary>
     /// <remarks>
     ///     <note type="implement">
-    ///         It is recommended that database options implementations use this base class as it already implements most of the database-independent logic.
+    ///         It is recommended that database options implementations use this base class as it already implements most of
+    ///         the database-independent logic.
     ///     </note>
     /// </remarks>
     /// <threadsafety static="false" instance="false" />
-    public abstract class DbManagerOptionsBase<TOptions, TConnectionStringBuilder> : IDbManagerOptions, ISupportDefaultDatabaseCleanup, ISupportDefaultDatabaseCreation, ISupportDefaultDatabaseVersioning, ISupportDefaultDatabaseUpgrading
+    public abstract class DbManagerOptionsBase <TOptions, TConnectionStringBuilder> : IDbManagerOptions,
+                                                                                      ISupportDefaultDatabaseCleanup, ISupportDefaultDatabaseCreation, ISupportDefaultDatabaseVersioning,
+                                                                                      ISupportDefaultDatabaseUpgrading
         where TOptions : DbManagerOptionsBase<TOptions, TConnectionStringBuilder>, new()
         where TConnectionStringBuilder : DbConnectionStringBuilder, new()
     {
+        #region Instance Constructor/Destructor
+
         /// <summary>
-        /// Creates a new instance of <see cref="DbManagerOptionsBase{TOptions,TConnectionStringBuilder}"/>.
+        ///     Creates a new instance of <see cref="DbManagerOptionsBase{TOptions,TConnectionStringBuilder}" />.
         /// </summary>
         public DbManagerOptionsBase ()
         {
@@ -31,12 +38,12 @@ namespace RI.DatabaseManager.Builder.Options
         }
 
         /// <summary>
-        /// Creates a new instance of <see cref="DbManagerOptionsBase{TOptions,TConnectionStringBuilder}"/>.
+        ///     Creates a new instance of <see cref="DbManagerOptionsBase{TOptions,TConnectionStringBuilder}" />.
         /// </summary>
         /// <param name="connectionString"> The used connection string. </param>
         /// <exception cref="ArgumentNullException"> <paramref name="connectionString" /> is null. </exception>
         /// <exception cref="ArgumentException"> <paramref name="connectionString" /> is an empty string. </exception>
-        public DbManagerOptionsBase(string connectionString)
+        public DbManagerOptionsBase (string connectionString)
         {
             if (connectionString == null)
             {
@@ -53,11 +60,11 @@ namespace RI.DatabaseManager.Builder.Options
         }
 
         /// <summary>
-        /// Creates a new instance of <see cref="DbManagerOptionsBase{TOptions,TConnectionStringBuilder}"/>.
+        ///     Creates a new instance of <see cref="DbManagerOptionsBase{TOptions,TConnectionStringBuilder}" />.
         /// </summary>
         /// <param name="connectionString"> The used connection string. </param>
         /// <exception cref="ArgumentNullException"> <paramref name="connectionString" /> is null. </exception>
-        public DbManagerOptionsBase(TConnectionStringBuilder connectionString)
+        public DbManagerOptionsBase (TConnectionStringBuilder connectionString)
         {
             if (connectionString == null)
             {
@@ -68,7 +75,52 @@ namespace RI.DatabaseManager.Builder.Options
             this.ConnectionString.ConnectionString = connectionString.ConnectionString;
         }
 
+        #endregion
+
+
+
+
+        #region Instance Fields
+
         private TConnectionStringBuilder _connectionString;
+
+        #endregion
+
+
+
+
+        #region Instance Methods
+
+        /// <inheritdoc cref="ICloneable.Clone" />
+        public TOptions Clone ()
+        {
+            TOptions clone = new TOptions();
+
+            clone.ConnectionString.ConnectionString = this.ConnectionString.ConnectionString;
+
+            this.CustomClone(ref clone);
+
+            return clone;
+        }
+
+        /// <summary>
+        ///     Clones the options implemented by derivations from
+        ///     <see cref="DbManagerOptionsBase{TOptions,TConnectionStringBuilder}" />.
+        /// </summary>
+        /// <param name="clone"> The clone to be filled. </param>
+        /// <remarks>
+        ///     <para>
+        ///         The default implementation does nothing.
+        ///     </para>
+        /// </remarks>
+        protected void CustomClone (ref TOptions clone) { }
+
+        #endregion
+
+
+
+
+        #region Virtuals
 
         /// <summary>
         ///     Gets or sets the connection string builder.
@@ -91,62 +143,84 @@ namespace RI.DatabaseManager.Builder.Options
             }
         }
 
+        #endregion
+
+
+
+
+        #region Interface: ICloneable
+
         /// <inheritdoc />
         object ICloneable.Clone () => this.Clone();
 
-        /// <inheritdoc cref="ICloneable.Clone"/>
-        public TOptions Clone ()
-        {
-            TOptions clone = new TOptions();
+        #endregion
 
-            clone.ConnectionString.ConnectionString = this.ConnectionString.ConnectionString;
 
-            this.CustomClone(ref clone);
 
-            return clone;
-        }
 
-        /// <summary>
-        /// Clones the options implemented by derivations from <see cref="DbManagerOptionsBase{TOptions,TConnectionStringBuilder}"/>.
-        /// </summary>
-        /// <param name="clone">The clone to be filled.</param>
-        /// <remarks>
-        ///<para>
-        /// The default implementation does nothing.
-        /// </para>
-        /// </remarks>
-        protected void CustomClone (ref TOptions clone)
-        {
-        }
+        #region Interface: IDbManagerOptions
 
         /// <inheritdoc />
         public virtual string GetConnectionString () => this.ConnectionString.ConnectionString;
 
+        #endregion
+
+
+
+
+        #region Interface: ISupportDefaultDatabaseCleanup
+
+        /// <inheritdoc />
+        public virtual string[] GetDefaultCleanupScript (out DbBatchTransactionRequirement transactionRequirement,
+                                                         out IsolationLevel? isolationLevel)
+        {
+            transactionRequirement = DbBatchTransactionRequirement.DontCare;
+            isolationLevel = null;
+            return null;
+        }
+
+        #endregion
+
+
+
+
+        #region Interface: ISupportDefaultDatabaseCreation
+
+        /// <inheritdoc />
+        public virtual string[] GetDefaultCreationScript (out DbBatchTransactionRequirement transactionRequirement,
+                                                          out IsolationLevel? isolationLevel)
+        {
+            transactionRequirement = DbBatchTransactionRequirement.DontCare;
+            isolationLevel = null;
+            return null;
+        }
+
+        #endregion
+
+
+
+
+        #region Interface: ISupportDefaultDatabaseUpgrading
+
         /// <inheritdoc />
         public virtual string GetDefaultUpgradingBatchNameFormat () => @".+?(?<sourceVersion>;\d{4}).*";
 
+        #endregion
+
+
+
+
+        #region Interface: ISupportDefaultDatabaseVersioning
+
         /// <inheritdoc />
-        public virtual string[] GetDefaultVersioningScript (out DbBatchTransactionRequirement transactionRequirement, out IsolationLevel? isolationLevel)
+        public virtual string[] GetDefaultVersioningScript (out DbBatchTransactionRequirement transactionRequirement,
+                                                            out IsolationLevel? isolationLevel)
         {
             transactionRequirement = DbBatchTransactionRequirement.DontCare;
             isolationLevel = null;
             return null;
         }
 
-        /// <inheritdoc />
-        public virtual string[] GetDefaultCreationScript (out DbBatchTransactionRequirement transactionRequirement, out IsolationLevel? isolationLevel)
-        {
-            transactionRequirement = DbBatchTransactionRequirement.DontCare;
-            isolationLevel = null;
-            return null;
-        }
-
-        /// <inheritdoc />
-        public virtual string[] GetDefaultCleanupScript (out DbBatchTransactionRequirement transactionRequirement, out IsolationLevel? isolationLevel)
-        {
-            transactionRequirement = DbBatchTransactionRequirement.DontCare;
-            isolationLevel = null;
-            return null;
-        }
+        #endregion
     }
 }

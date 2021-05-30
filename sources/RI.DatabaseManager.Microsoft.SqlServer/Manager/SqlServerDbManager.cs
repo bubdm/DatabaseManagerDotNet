@@ -21,14 +21,15 @@ namespace RI.DatabaseManager.Manager
     ///     Implements a database manager for Microsoft SQL Server databases.
     /// </summary>
     /// <threadsafety static="false" instance="false" />
-    public sealed class SqlServerDbManager : DbManagerBase<SqlConnection, SqlTransaction, SqlDbType, SqlParameterCollection, SqlParameter, SqlServerDbManagerOptions>
+    public sealed class SqlServerDbManager : DbManagerBase<SqlConnection, SqlTransaction, SqlDbType,
+        SqlParameterCollection, SqlParameter, SqlServerDbManagerOptions>
     {
-        #region Instance Methods
+        #region Instance Constructor/Destructor
 
         /// <summary>
         ///     Creates a new instance of <see cref="SqlServerDbManager" />.
         /// </summary>
-        /// <param name="options"> The used SQL Server database manager options.</param>
+        /// <param name="options"> The used SQL Server database manager options. </param>
         /// <param name="logger"> The used logger. </param>
         /// <param name="batchLocator"> The used batch locator. </param>
         /// <param name="versionDetector"> The used version detector. </param>
@@ -36,14 +37,32 @@ namespace RI.DatabaseManager.Manager
         /// <param name="cleanupProcessor"> The used cleanup processor, if any. </param>
         /// <param name="versionUpgrader"> The used version upgrader, if any. </param>
         /// <param name="creator"> The used database creator, if any. </param>
-        /// <exception cref="ArgumentNullException"> <paramref name="options" />, <paramref name="logger" />, <paramref name="batchLocator" />, or <paramref name="versionDetector" /> is null. </exception>
-        public SqlServerDbManager (SqlServerDbManagerOptions options, ILogger logger, IDbBatchLocator<SqlConnection, SqlTransaction, SqlDbType> batchLocator, IDbVersionDetector<SqlConnection, SqlTransaction, SqlDbType> versionDetector, IDbBackupCreator<SqlConnection, SqlTransaction, SqlDbType> backupCreator, IDbCleanupProcessor<SqlConnection, SqlTransaction, SqlDbType> cleanupProcessor, IDbVersionUpgrader<SqlConnection, SqlTransaction, SqlDbType> versionUpgrader, IDbCreator<SqlConnection, SqlTransaction, SqlDbType> creator) : base(logger, batchLocator, versionDetector, backupCreator, cleanupProcessor, versionUpgrader, creator, options)
-        {
-        }
+        /// <exception cref="ArgumentNullException">
+        ///     <paramref name="options" />, <paramref name="logger" />,
+        ///     <paramref name="batchLocator" />, or <paramref name="versionDetector" /> is null.
+        /// </exception>
+        public SqlServerDbManager (SqlServerDbManagerOptions options, ILogger logger,
+                                   IDbBatchLocator<SqlConnection, SqlTransaction, SqlDbType> batchLocator,
+                                   IDbVersionDetector<SqlConnection, SqlTransaction, SqlDbType> versionDetector,
+                                   IDbBackupCreator<SqlConnection, SqlTransaction, SqlDbType> backupCreator,
+                                   IDbCleanupProcessor<SqlConnection, SqlTransaction, SqlDbType> cleanupProcessor,
+                                   IDbVersionUpgrader<SqlConnection, SqlTransaction, SqlDbType> versionUpgrader,
+                                   IDbCreator<SqlConnection, SqlTransaction, SqlDbType> creator) :
+            base(logger, batchLocator, versionDetector, backupCreator, cleanupProcessor, versionUpgrader, creator,
+                 options) { }
+
+        #endregion
+
+
+
+
+        #region Instance Methods
 
         internal SqlConnection CreateInternalConnection (string connectionStringOverride)
         {
-            SqlConnectionStringBuilder connectionString = new SqlConnectionStringBuilder(connectionStringOverride ?? this.Options.ConnectionString.ConnectionString);
+            SqlConnectionStringBuilder connectionString =
+                new SqlConnectionStringBuilder(connectionStringOverride ??
+                                               this.Options.ConnectionString.ConnectionString);
 
             SqlConnection connection = new SqlConnection(connectionString.ConnectionString);
             connection.Open();
@@ -51,7 +70,8 @@ namespace RI.DatabaseManager.Manager
             return connection;
         }
 
-        internal SqlTransaction CreateInternalTransaction (string connectionStringOverride, IsolationLevel isolationLevel)
+        internal SqlTransaction CreateInternalTransaction (string connectionStringOverride,
+                                                           IsolationLevel isolationLevel)
         {
             SqlConnection connection = this.CreateInternalConnection(connectionStringOverride);
             return connection.BeginTransaction(isolationLevel);
@@ -86,20 +106,23 @@ namespace RI.DatabaseManager.Manager
         protected override SqlConnection CreateConnectionImpl (bool readOnly) => this.CreateInternalConnection(null);
 
         /// <inheritdoc />
-        protected override SqlTransaction CreateTransactionImpl(bool readOnly, IsolationLevel isolationLevel) => this.CreateInternalTransaction(null, isolationLevel);
+        protected override SqlTransaction CreateTransactionImpl (bool readOnly, IsolationLevel isolationLevel) =>
+            this.CreateInternalTransaction(null, isolationLevel);
 
         /// <inheritdoc />
-        protected override IsolationLevel GetDefaultIsolationLevel () => IsolationLevel.ReadCommitted;
-
-        /// <inheritdoc />
-        protected override object ExecuteCommandScriptImpl (SqlConnection connection, SqlTransaction transaction, string script, IDbBatchCommandParameterCollection<SqlDbType> parameters, out string error, out Exception exception)
+        protected override object ExecuteCommandScriptImpl (SqlConnection connection, SqlTransaction transaction,
+                                                            string script,
+                                                            IDbBatchCommandParameterCollection<SqlDbType> parameters,
+                                                            out string error, out Exception exception)
         {
             error = null;
             exception = null;
 
-            this.Log(LogLevel.Debug, "Executing SQL Server database processing command script:{0}{1}", Environment.NewLine, script);
-            
-            using (SqlCommand command = transaction == null ? new SqlCommand(script, connection) : new SqlCommand(script, connection, transaction))
+            this.Log(LogLevel.Debug, "Executing SQL Server database processing command script:{0}{1}",
+                     Environment.NewLine, script);
+
+            using (SqlCommand command = transaction == null ? new SqlCommand(script, connection)
+                                            : new SqlCommand(script, connection, transaction))
             {
                 foreach (IDbBatchCommandParameter<SqlDbType> parameter in parameters)
                 {
@@ -110,6 +133,9 @@ namespace RI.DatabaseManager.Manager
                 return command.ExecuteScalar();
             }
         }
+
+        /// <inheritdoc />
+        protected override IsolationLevel GetDefaultIsolationLevel () => IsolationLevel.ReadCommitted;
 
         #endregion
     }

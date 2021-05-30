@@ -11,9 +11,9 @@ using RI.DatabaseManager.Batches.Commands;
 using RI.DatabaseManager.Builder;
 using RI.DatabaseManager.Builder.Options;
 using RI.DatabaseManager.Cleanup;
+using RI.DatabaseManager.Creation;
 using RI.DatabaseManager.Upgrading;
 using RI.DatabaseManager.Versioning;
-using RI.DatabaseManager.Creation;
 
 
 
@@ -21,7 +21,8 @@ using RI.DatabaseManager.Creation;
 namespace RI.DatabaseManager.Manager
 {
     /// <summary>
-    ///     Boilerplate implementation of <see cref="IDbManager" /> and <see cref="IDbManager{TConnection,TTransaction,TParameterTypes}" />.
+    ///     Boilerplate implementation of <see cref="IDbManager" /> and
+    ///     <see cref="IDbManager{TConnection,TTransaction,TParameterTypes}" />.
     /// </summary>
     /// <typeparam name="TConnection"> The database connection type. </typeparam>
     /// <typeparam name="TTransaction"> The database transaction type. </typeparam>
@@ -30,11 +31,15 @@ namespace RI.DatabaseManager.Manager
     /// <typeparam name="TParameter"> The database command parameter type. </typeparam>
     /// <remarks>
     ///     <note type="implement">
-    ///         It is recommended that database manager implementations use this base class as it already implements most of the database-independent logic defined by <see cref="IDbManager" /> and <see cref="IDbManager{TConnection,TTransaction,TParameterTypes}" />.
+    ///         It is recommended that database manager implementations use this base class as it already implements most of
+    ///         the database-independent logic defined by <see cref="IDbManager" /> and
+    ///         <see cref="IDbManager{TConnection,TTransaction,TParameterTypes}" />.
     ///     </note>
     /// </remarks>
     /// <threadsafety static="false" instance="false" />
-    public abstract class DbManagerBase <TConnection, TTransaction, TParameterTypes, TParameters, TParameter> : IDbManager<TConnection, TTransaction, TParameterTypes>
+    public abstract class
+        DbManagerBase <TConnection, TTransaction, TParameterTypes, TParameters, TParameter> : IDbManager<TConnection,
+            TTransaction, TParameterTypes>
         where TConnection : DbConnection
         where TTransaction : DbTransaction
         where TParameterTypes : Enum
@@ -44,7 +49,8 @@ namespace RI.DatabaseManager.Manager
         #region Instance Constructor/Destructor
 
         /// <summary>
-        ///     Creates a new instance of <see cref="DbManagerBase{TConnection,TTransaction,TParameterTypes,TParameters,TParameter}" />.
+        ///     Creates a new instance of
+        ///     <see cref="DbManagerBase{TConnection,TTransaction,TParameterTypes,TParameters,TParameter}" />.
         /// </summary>
         /// <param name="logger"> The used logger. </param>
         /// <param name="batchLocator"> The used batch locator. </param>
@@ -52,16 +58,32 @@ namespace RI.DatabaseManager.Manager
         /// <param name="backupCreator"> The used backup creator, if any. </param>
         /// <param name="cleanupProcessor"> The used cleanup processor, if any. </param>
         /// <param name="versionUpgrader"> The used version upgrader, if any. </param>
-        /// <param name="options"> The used database manager options.</param>
+        /// <param name="options"> The used database manager options. </param>
         /// <param name="creator"> The used database creator, if any. </param>
         /// <remarks>
         ///     <note type="important">
-        ///         <paramref name="backupCreator" />, <paramref name="cleanupProcessor" />, <paramref name="versionUpgrader" />, <paramref name="options" /> can be null or <see cref="DbManagerBuilder.NullInstance{TConnection,TTransaction,TParameterTypes}" />, depending on how the database manager was build and which (if any) dependency injection library is used.
-        ///         Some dependency injection libraries are not properly able to provide null as a constructor-injected dependency for optional dependencies. In such cases, <see cref="DbManagerBuilder.NullInstance{TConnection,TTransaction,TParameterTypes}" /> is passed as parameter value.
+        ///         <paramref name="backupCreator" />, <paramref name="cleanupProcessor" />, <paramref name="versionUpgrader" />,
+        ///         <paramref name="options" /> can be null or
+        ///         <see cref="DbManagerBuilder.NullInstance{TConnection,TTransaction,TParameterTypes}" />, depending on how the
+        ///         database manager was build and which (if any) dependency injection library is used.
+        ///         Some dependency injection libraries are not properly able to provide null as a constructor-injected dependency
+        ///         for optional dependencies. In such cases,
+        ///         <see cref="DbManagerBuilder.NullInstance{TConnection,TTransaction,TParameterTypes}" /> is passed as parameter
+        ///         value.
         ///     </note>
         /// </remarks>
-        /// <exception cref="ArgumentNullException"> <paramref name="logger" />, <paramref name="batchLocator" />, or <paramref name="versionDetector" /> is null. </exception>
-        protected DbManagerBase (ILogger logger, IDbBatchLocator<TConnection, TTransaction, TParameterTypes> batchLocator, IDbVersionDetector<TConnection, TTransaction, TParameterTypes> versionDetector, IDbBackupCreator<TConnection, TTransaction, TParameterTypes> backupCreator, IDbCleanupProcessor<TConnection, TTransaction, TParameterTypes> cleanupProcessor, IDbVersionUpgrader<TConnection, TTransaction, TParameterTypes> versionUpgrader, IDbCreator<TConnection, TTransaction, TParameterTypes> creator, IDbManagerOptions options)
+        /// <exception cref="ArgumentNullException">
+        ///     <paramref name="logger" />, <paramref name="batchLocator" />, or
+        ///     <paramref name="versionDetector" /> is null.
+        /// </exception>
+        protected DbManagerBase (ILogger logger,
+                                 IDbBatchLocator<TConnection, TTransaction, TParameterTypes> batchLocator,
+                                 IDbVersionDetector<TConnection, TTransaction, TParameterTypes> versionDetector,
+                                 IDbBackupCreator<TConnection, TTransaction, TParameterTypes> backupCreator,
+                                 IDbCleanupProcessor<TConnection, TTransaction, TParameterTypes> cleanupProcessor,
+                                 IDbVersionUpgrader<TConnection, TTransaction, TParameterTypes> versionUpgrader,
+                                 IDbCreator<TConnection, TTransaction, TParameterTypes> creator,
+                                 IDbManagerOptions options)
         {
             if (logger == null)
             {
@@ -82,11 +104,25 @@ namespace RI.DatabaseManager.Manager
             this.BatchLocator = batchLocator;
             this.VersionDetector = versionDetector;
 
-            this.BackupCreator = backupCreator == null ? null : backupCreator is DbManagerBuilder.NullInstance<TConnection, TTransaction, TParameterTypes> ? null : backupCreator;
-            this.CleanupProcessor = cleanupProcessor == null ? null : cleanupProcessor is DbManagerBuilder.NullInstance<TConnection, TTransaction, TParameterTypes> ? null : cleanupProcessor;
-            this.VersionUpgrader = versionUpgrader == null ? null : versionUpgrader is DbManagerBuilder.NullInstance<TConnection, TTransaction, TParameterTypes> ? null : versionUpgrader;
-            this.Creator = creator == null ? null : creator is DbManagerBuilder.NullInstance<TConnection, TTransaction, TParameterTypes> ? null : creator;
-            this.Options = options == null ? null : options is DbManagerBuilder.NullInstance<TConnection, TTransaction, TParameterTypes> ? null : options;
+            this.BackupCreator = backupCreator == null ? null :
+                                 backupCreator is DbManagerBuilder.NullInstance<TConnection, TTransaction,
+                                     TParameterTypes> ? null : backupCreator;
+
+            this.CleanupProcessor = cleanupProcessor == null ? null :
+                                    cleanupProcessor is DbManagerBuilder.NullInstance<TConnection, TTransaction,
+                                        TParameterTypes> ? null : cleanupProcessor;
+
+            this.VersionUpgrader = versionUpgrader == null ? null :
+                                   versionUpgrader is DbManagerBuilder.NullInstance<TConnection, TTransaction,
+                                       TParameterTypes> ? null : versionUpgrader;
+
+            this.Creator = creator == null ? null :
+                           creator is DbManagerBuilder.NullInstance<TConnection, TTransaction, TParameterTypes> ? null :
+                           creator;
+
+            this.Options = options == null ? null :
+                           options is DbManagerBuilder.NullInstance<TConnection, TTransaction, TParameterTypes> ? null :
+                           options;
 
             this.InitialState = DbState.Uninitialized;
             this.InitialVersion = -1;
@@ -95,14 +131,6 @@ namespace RI.DatabaseManager.Manager
             this.Version = -1;
 
             this.SetStateAndVersion(DbState.Uninitialized, -1);
-        }
-
-        /// <summary>
-        ///     Finalizes this instance of <see cref="DbManagerBase{TConnection,TTransaction,TParameterTypes,TParameters,TParameter}" />.
-        /// </summary>
-        ~DbManagerBase ()
-        {
-            this.Dispose(false);
         }
 
         #endregion
@@ -121,20 +149,20 @@ namespace RI.DatabaseManager.Manager
         protected ILogger Logger { get; }
 
         /// <summary>
-        /// Gets the used options.
+        ///     Gets the used options.
         /// </summary>
         /// <value>
-        /// The used options or null if no options are used.
+        ///     The used options or null if no options are used.
         /// </value>
         protected IDbManagerOptions Options { get; }
-
-        private IDbCreator<TConnection, TTransaction, TParameterTypes> Creator { get; }
 
         private IDbBackupCreator<TConnection, TTransaction, TParameterTypes> BackupCreator { get; }
 
         private IDbBatchLocator<TConnection, TTransaction, TParameterTypes> BatchLocator { get; }
 
         private IDbCleanupProcessor<TConnection, TTransaction, TParameterTypes> CleanupProcessor { get; }
+
+        private IDbCreator<TConnection, TTransaction, TParameterTypes> Creator { get; }
 
         private IDbVersionDetector<TConnection, TTransaction, TParameterTypes> VersionDetector { get; }
 
@@ -206,7 +234,10 @@ namespace RI.DatabaseManager.Manager
         /// <summary>
         ///     Disposes this database manager and frees all resources.
         /// </summary>
-        /// <param name="disposing"> true if called from <see cref="IDisposable.Dispose" /> or <see cref="Close" />, false if called from the destructor. </param>
+        /// <param name="disposing">
+        ///     true if called from <see cref="IDisposable.Dispose" /> or <see cref="Close" />, false if
+        ///     called from the destructor.
+        /// </param>
         protected void Dispose (bool disposing)
         {
             this.Log(LogLevel.Debug, "Closing database manager");
@@ -223,7 +254,10 @@ namespace RI.DatabaseManager.Manager
         ///     Writes a log message for this database manager.
         /// </summary>
         /// <param name="level"> The log level of the log message. </param>
-        /// <param name="format"> Log message (with optional string expansion arguments such as <c> {0} </c>, <c> {1} </c>, etc. which are expanded by <paramref name="args" />). </param>
+        /// <param name="format">
+        ///     Log message (with optional string expansion arguments such as <c> {0} </c>, <c> {1} </c>, etc.
+        ///     which are expanded by <paramref name="args" />).
+        /// </param>
         /// <param name="args"> Optional message arguments expanded into <paramref name="format" />. </param>
         protected void Log (LogLevel level, string format, params object[] args)
         {
@@ -236,7 +270,10 @@ namespace RI.DatabaseManager.Manager
         /// </summary>
         /// <param name="level"> The log level of the log message. </param>
         /// <param name="exception"> Exception associated with the log message. </param>
-        /// <param name="format"> Optional log message (with optional string expansion arguments such as <c> {0} </c>, <c> {1} </c>, etc. which are expanded by <paramref name="args" />). </param>
+        /// <param name="format">
+        ///     Optional log message (with optional string expansion arguments such as <c> {0} </c>, <c> {1} </c>
+        ///     , etc. which are expanded by <paramref name="args" />).
+        /// </param>
         /// <param name="args"> Optional message arguments expanded into <paramref name="format" />. </param>
         protected void Log (LogLevel level, Exception exception, string format, params object[] args)
         {
@@ -270,98 +307,23 @@ namespace RI.DatabaseManager.Manager
 
 
 
-        #region Abstracts
+        #region Overrides
+
+        /// <inheritdoc />
+        public override string ToString ()
+        {
+            return string.Format(CultureInfo.InvariantCulture, "{0}; State={1}; Version={2}", this.GetType()
+                                     .Name, this.State, this.Version);
+        }
 
         /// <summary>
-        ///     Gets whether this database manager implementation supports backup.
+        ///     Finalizes this instance of
+        ///     <see cref="DbManagerBase{TConnection,TTransaction,TParameterTypes,TParameters,TParameter}" />.
         /// </summary>
-        /// <value>
-        ///     true if backup is supported, false otherwise.
-        /// </value>
-        protected abstract bool SupportsBackupImpl { get; }
-
-        /// <summary>
-        ///     Gets whether this database manager implementation supports restore.
-        /// </summary>
-        /// <value>
-        ///     true if restore is supported, false otherwise.
-        /// </value>
-        protected abstract bool SupportsRestoreImpl { get; }
-
-        /// <summary>
-        ///     Gets whether this database manager implementation supports cleanup.
-        /// </summary>
-        /// <value>
-        ///     true if cleanup is supported, false otherwise.
-        /// </value>
-        protected abstract bool SupportsCleanupImpl { get; }
-
-        /// <summary>
-        ///     Gets whether this database manager implementation supports database creation.
-        /// </summary>
-        /// <value>
-        ///     true if creation is supported, false otherwise.
-        /// </value>
-        protected abstract bool SupportsCreateImpl { get; }
-
-        /// <summary>
-        ///     Gets whether this database manager implementation supports upgrading.
-        /// </summary>
-        /// <value>
-        ///     true if upgrading is supported, false otherwise.
-        /// </value>
-        protected abstract bool SupportsUpgradeImpl { get; }
-
-        /// <summary>
-        ///     Gets whether this database manager implementation supports read-only connections.
-        /// </summary>
-        /// <value>
-        ///     true if read-only connections are supported, false otherwise.
-        /// </value>
-        protected abstract bool SupportsReadOnlyConnectionsImpl { get; }
-
-        /// <summary>
-        ///     Creates a new database connection.
-        /// </summary>
-        /// <param name="readOnly"> Specifies whether the connection should be read-only. </param>
-        /// <returns>
-        ///     The newly created and already opened connection or null if the connection could not be created.
-        ///     Details about failures should be written to logs.
-        /// </returns>
-        protected abstract TConnection CreateConnectionImpl (bool readOnly);
-
-        /// <summary>
-        ///     Creates a new database transaction.
-        /// </summary>
-        /// <param name="readOnly"> Specifies whether the underlying connection should be read-only. </param>
-        /// <param name="isolationLevel"> Specifies the used isolation level for the transaction.</param>
-        /// <returns>
-        ///     The newly created transaction with its underlying connection already opened or null if the transaction or connection could not be created.
-        ///     Details about failures should be written to logs.
-        /// </returns>
-        protected abstract TTransaction CreateTransactionImpl (bool readOnly, IsolationLevel isolationLevel);
-
-        /// <summary>
-        /// Gets the default isolation level used by the database if none is provided.
-        /// </summary>
-        /// <returns>
-        /// The default isolation level used by the database.
-        /// </returns>
-        protected abstract IsolationLevel GetDefaultIsolationLevel ();
-
-        /// <summary>
-        ///     Executes database script code of a single batch command.
-        /// </summary>
-        /// <param name="connection"> The used database connection. </param>
-        /// <param name="transaction"> The used database transaction or null if no transaction is used. </param>
-        /// <param name="script"> The database script to execute. </param>
-        /// <param name="parameters"> The parameters used in the command. </param>
-        /// <param name="error"> The database specific error which occurred during execution (or null if none is available). </param>
-        /// <param name="exception"> The database specific exception which occurred during execution (or null if none is available). </param>
-        /// <returns>
-        ///     The result of the code callback.
-        /// </returns>
-        protected abstract object ExecuteCommandScriptImpl (TConnection connection, TTransaction transaction, string script, IDbBatchCommandParameterCollection<TParameterTypes> parameters, out string error, out Exception exception);
+        ~DbManagerBase ()
+        {
+            this.Dispose(false);
+        }
 
         #endregion
 
@@ -386,30 +348,9 @@ namespace RI.DatabaseManager.Manager
         protected virtual bool BackupImpl (object backupTarget)
         {
             this.Log(LogLevel.Information, "Performing database backup; Target=[{0}][{1}]", backupTarget.GetType()
-                                                                                                  .Name, backupTarget);
+                         .Name, backupTarget);
 
             return this.BackupCreator.Backup(this, backupTarget);
-        }
-
-        /// <summary>
-        ///     Performs a restore.
-        /// </summary>
-        /// <param name="backupSource"> The backup creator specific object which abstracts the backup source. </param>
-        /// <returns>
-        ///     true if the restore was successful, false otherwise.
-        ///     Details about failures should be written to logs.
-        /// </returns>
-        /// <remarks>
-        ///     <note type="implement">
-        ///         The default implementation calls <see cref="IDbBackupCreator.Restore" />.
-        ///     </note>
-        /// </remarks>
-        protected virtual bool RestoreImpl (object backupSource)
-        {
-            this.Log(LogLevel.Information, "Performing database restore; Source=[{0}][{1}]", backupSource.GetType()
-                                                                                                         .Name, backupSource);
-
-            return this.BackupCreator.Restore(this, backupSource);
         }
 
         /// <summary>
@@ -431,6 +372,23 @@ namespace RI.DatabaseManager.Manager
         }
 
         /// <summary>
+        ///     Creates a new empty batch.
+        /// </summary>
+        /// <returns>
+        ///     The newly created empty batch.
+        /// </returns>
+        /// <remarks>
+        ///     <note type="implement">
+        ///         The default implementation creates and returns a new instance of
+        ///         <see cref="DbBatch{TConnection,TTransaction,TParameterTypes}" />.
+        ///     </note>
+        /// </remarks>
+        protected virtual IDbBatch<TConnection, TTransaction, TParameterTypes> CreateBatchImpl ()
+        {
+            return new DbBatch<TConnection, TTransaction, TParameterTypes>();
+        }
+
+        /// <summary>
         ///     Performs a database creation.
         /// </summary>
         /// <returns>
@@ -449,78 +407,38 @@ namespace RI.DatabaseManager.Manager
         }
 
         /// <summary>
-        ///     Performs an upgrade from <paramref name="sourceVersion" /> to <paramref name="sourceVersion" /> + 1.
+        ///     Performs the actual state and version detection as required by this database manager implementation.
         /// </summary>
-        /// <param name="sourceVersion"> The current version to upgrade from. </param>
+        /// <param name="state">
+        ///     Returns the state of the database. Can be null to perform state detection based on
+        ///     <paramref name="version" /> as implemented in
+        ///     <see cref="DbManagerBase{TConnection,TTransaction,TParameterTypes, TParameters,TParameter}" />.
+        /// </param>
+        /// <param name="version"> Returns the version of the database. </param>
         /// <returns>
-        ///     true if the upgrade was successful, false otherwise.
+        ///     true if the state and version could be successfully determined, false if the database is damaged or in an invalid
+        ///     state.
         ///     Details about failures should be written to logs.
         /// </returns>
         /// <remarks>
         ///     <note type="implement">
-        ///         The default implementation calls <see cref="IDbVersionUpgrader.Upgrade" />.
-        ///     </note>
-        ///     <note type="implement">
-        ///         <see cref="UpgradeImpl" /> might be called multiple times for a single upgrade operation as the upgrading is performed incrementally, calling <see cref="UpgradeImpl" /> once for each version increment.
+        ///         The default implementation calls <see cref="IDbVersionDetector.Detect" />.
         ///     </note>
         /// </remarks>
-        protected virtual bool UpgradeImpl (int sourceVersion)
+        protected virtual bool DetectStateAndVersionImpl (out DbState? state, out int version)
         {
-            this.Log(LogLevel.Information, "Performing database upgrade: {0} -> {1}", sourceVersion, sourceVersion + 1);
-            return this.VersionUpgrader.Upgrade(this, sourceVersion);
+            return this.VersionDetector.Detect(this, out state, out version);
         }
 
         /// <summary>
-        ///     Creates a new empty batch.
+        ///     Performs disposing specific to this database manager implementation.
         /// </summary>
-        /// <returns>
-        ///     The newly created empty batch.
-        /// </returns>
         /// <remarks>
         ///     <note type="implement">
-        ///         The default implementation creates and returns a new instance of <see cref="DbBatch{TConnection,TTransaction,TParameterTypes}" />.
+        ///         The default implementation does nothing.
         ///     </note>
         /// </remarks>
-        protected virtual IDbBatch<TConnection, TTransaction, TParameterTypes> CreateBatchImpl ()
-        {
-            return new DbBatch<TConnection, TTransaction, TParameterTypes>();
-        }
-
-        /// <summary>
-        ///     Gets the names of all available batches.
-        /// </summary>
-        /// <returns>
-        ///     The set with the names of all available batches.
-        /// </returns>
-        /// <remarks>
-        ///     <note type="implement">
-        ///         The default implementation calls <see cref="IDbBatchLocator.GetNames" />.
-        ///     </note>
-        /// </remarks>
-        protected virtual ISet<string> GetBatchNamesImpl ()
-        {
-            return this.BatchLocator.GetNames();
-        }
-
-        /// <summary>
-        ///     Gets a batch of a specified name.
-        /// </summary>
-        /// <param name="name"> The name of the batch. </param>
-        /// <param name="commandSeparator"> The string which is used as the separator to separate commands within the batch or null if the batch locators default separators are to be used. </param>
-        /// <param name="batchCreator"> The batch creator provided by the used database manager which is used to create proper batch instances (implementations of <see cref="IDbBatch"/>). </param>
-        /// <returns>
-        ///     The batch or null if the batch of the specified name could not be found.
-        ///     Details about failures should be written to logs.
-        /// </returns>
-        /// <remarks>
-        ///     <note type="implement">
-        ///         The default implementation calls <see cref="IDbBatchLocator.GetBatch" />.
-        ///     </note>
-        /// </remarks>
-        protected virtual IDbBatch<TConnection, TTransaction, TParameterTypes> GetBatchImpl(string name, string commandSeparator, Func<IDbBatch<TConnection, TTransaction, TParameterTypes>> batchCreator)
-        {
-            return this.BatchLocator.GetBatch(name, commandSeparator, batchCreator);
-        }
+        protected virtual void DisposeImpl (bool disposing) { }
 
         /// <summary>
         ///     Executes a batch according to this database manager implementation.
@@ -533,17 +451,21 @@ namespace RI.DatabaseManager.Manager
         /// </returns>
         /// <remarks>
         ///     <note type="implement">
-        ///         The default implementation first resets all commands and then executes <see cref="ExecuteCommandScriptImpl" /> or <see cref="ExecuteCommandCodeImpl" /> for each command of the batch.
+        ///         The default implementation first resets all commands and then executes <see cref="ExecuteCommandScriptImpl" />
+        ///         or <see cref="ExecuteCommandCodeImpl" /> for each command of the batch.
         ///     </note>
         /// </remarks>
-        protected virtual bool ExecuteBatchImpl(IDbBatch<TConnection, TTransaction, TParameterTypes> batch, bool readOnly)
+        protected virtual bool ExecuteBatchImpl (IDbBatch<TConnection, TTransaction, TParameterTypes> batch,
+                                                 bool readOnly)
         {
             TConnection connection;
             TTransaction transaction;
 
             if (batch.RequiresTransaction() || (!batch.DisallowsTransaction()))
             {
-                transaction = this.CreateTransaction(readOnly, batch.GetRequiredIsolationLevel().GetValueOrDefault(this.GetDefaultIsolationLevel()));
+                transaction = this.CreateTransaction(readOnly, batch.GetRequiredIsolationLevel()
+                                                                    .GetValueOrDefault(this
+                                                                        .GetDefaultIsolationLevel()));
 
                 if (transaction == null)
                 {
@@ -584,7 +506,9 @@ namespace RI.DatabaseManager.Manager
                     try
                     {
                         command.WasExecuted = true;
-                        result = this.ExecuteCommandScriptImpl(connection, transaction, command.Script, parameters, out error, out exception);
+
+                        result = this.ExecuteCommandScriptImpl(connection, transaction, command.Script, parameters,
+                                                               out error, out exception);
                     }
                     catch (Exception ex)
                     {
@@ -598,7 +522,9 @@ namespace RI.DatabaseManager.Manager
                     try
                     {
                         command.WasExecuted = true;
-                        result = this.ExecuteCommandCodeImpl(connection, transaction, command.Code, parameters, out error, out exception);
+
+                        result = this.ExecuteCommandCodeImpl(connection, transaction, command.Code, parameters,
+                                                             out error, out exception);
                     }
                     catch (Exception ex)
                     {
@@ -609,11 +535,13 @@ namespace RI.DatabaseManager.Manager
                 }
                 else if ((command.Script != null) && (command.Code != null))
                 {
-                    throw new NotSupportedException($"The provided batch command is invalid (contains both script and code): {command.GetType().Name}.");
+                    throw new
+                        NotSupportedException($"The provided batch command is invalid (contains both script and code): {command.GetType().Name}.");
                 }
                 else
                 {
-                    throw new NotSupportedException($"The provided batch command is invalid (contains neither script nor code): {command.GetType().Name}.");
+                    throw new
+                        NotSupportedException($"The provided batch command is invalid (contains neither script nor code): {command.GetType().Name}.");
                 }
 
                 if (!string.IsNullOrWhiteSpace(error))
@@ -644,16 +572,24 @@ namespace RI.DatabaseManager.Manager
         /// <param name="code"> The callback to execute. </param>
         /// <param name="parameters"> The parameters used in the command. </param>
         /// <param name="error"> The database specific error which occurred during execution (or null if none is available). </param>
-        /// <param name="exception"> The database specific exception which occurred during execution (or null if none is available). </param>
+        /// <param name="exception">
+        ///     The database specific exception which occurred during execution (or null if none is
+        ///     available).
+        /// </param>
         /// <returns>
         ///     The result of the code callback.
         /// </returns>
         /// <remarks>
         ///     <note type="implement">
-        ///         The default implementation calls <paramref name="code" /> with <paramref name="connection" />, <paramref name="transaction" />, and <paramref name="parameters"/> as parameters.
+        ///         The default implementation calls <paramref name="code" /> with <paramref name="connection" />,
+        ///         <paramref name="transaction" />, and <paramref name="parameters" /> as parameters.
         ///     </note>
         /// </remarks>
-        protected virtual object ExecuteCommandCodeImpl(TConnection connection, TTransaction transaction, CallbackBatchCommandDelegate<TConnection, TTransaction, TParameterTypes> code, IDbBatchCommandParameterCollection<TParameterTypes> parameters, out string error, out Exception exception)
+        protected virtual object ExecuteCommandCodeImpl (TConnection connection, TTransaction transaction,
+                                                         CallbackBatchCommandDelegate<TConnection, TTransaction,
+                                                             TParameterTypes> code,
+                                                         IDbBatchCommandParameterCollection<TParameterTypes> parameters,
+                                                         out string error, out Exception exception)
         {
             error = null;
             exception = null;
@@ -662,33 +598,48 @@ namespace RI.DatabaseManager.Manager
         }
 
         /// <summary>
-        ///     Performs the actual state and version detection as required by this database manager implementation.
+        ///     Gets a batch of a specified name.
         /// </summary>
-        /// <param name="state"> Returns the state of the database. Can be null to perform state detection based on <paramref name="version" /> as implemented in <see cref="DbManagerBase{TConnection,TTransaction,TParameterTypes, TParameters,TParameter}" />. </param>
-        /// <param name="version"> Returns the version of the database. </param>
+        /// <param name="name"> The name of the batch. </param>
+        /// <param name="commandSeparator">
+        ///     The string which is used as the separator to separate commands within the batch or null
+        ///     if the batch locators default separators are to be used.
+        /// </param>
+        /// <param name="batchCreator">
+        ///     The batch creator provided by the used database manager which is used to create proper
+        ///     batch instances (implementations of <see cref="IDbBatch" />).
+        /// </param>
         /// <returns>
-        ///     true if the state and version could be successfully determined, false if the database is damaged or in an invalid state.
+        ///     The batch or null if the batch of the specified name could not be found.
         ///     Details about failures should be written to logs.
         /// </returns>
         /// <remarks>
         ///     <note type="implement">
-        ///         The default implementation calls <see cref="IDbVersionDetector.Detect" />.
+        ///         The default implementation calls <see cref="IDbBatchLocator.GetBatch" />.
         ///     </note>
         /// </remarks>
-        protected virtual bool DetectStateAndVersionImpl (out DbState? state, out int version)
+        protected virtual IDbBatch<TConnection, TTransaction, TParameterTypes> GetBatchImpl (
+            string name, string commandSeparator,
+            Func<IDbBatch<TConnection, TTransaction, TParameterTypes>> batchCreator)
         {
-            return this.VersionDetector.Detect(this, out state, out version);
+            return this.BatchLocator.GetBatch(name, commandSeparator, batchCreator);
         }
 
         /// <summary>
-        ///     Performs disposing specific to this database manager implementation.
+        ///     Gets the names of all available batches.
         /// </summary>
+        /// <returns>
+        ///     The set with the names of all available batches.
+        /// </returns>
         /// <remarks>
         ///     <note type="implement">
-        ///         The default implementation does nothing.
+        ///         The default implementation calls <see cref="IDbBatchLocator.GetNames" />.
         ///     </note>
         /// </remarks>
-        protected virtual void DisposeImpl (bool disposing) { }
+        protected virtual ISet<string> GetBatchNamesImpl ()
+        {
+            return this.BatchLocator.GetNames();
+        }
 
         /// <summary>
         ///     Performs initialization specific to this database manager implementation.
@@ -721,7 +672,8 @@ namespace RI.DatabaseManager.Manager
         ///         The default implementation does nothing.
         ///     </note>
         /// </remarks>
-        protected virtual void OnBatchRetrieved (IDbBatch<TConnection, TTransaction, TParameterTypes> batch, string name) { }
+        protected virtual void OnBatchRetrieved (IDbBatch<TConnection, TTransaction, TParameterTypes> batch,
+                                                 string name) { }
 
         /// <summary>
         ///     Called when a connection has been created.
@@ -752,13 +704,14 @@ namespace RI.DatabaseManager.Manager
         /// </summary>
         /// <param name="transaction"> The transaction. </param>
         /// <param name="readOnly"> Indicates whether the underlying connection is read-only. </param>
-        /// <param name="isolationLevel"> Specifies the used isolation level for the transaction.</param>
+        /// <param name="isolationLevel"> Specifies the used isolation level for the transaction. </param>
         /// <remarks>
         ///     <note type="implement">
         ///         The default implementation does nothing.
         ///     </note>
         /// </remarks>
-        protected virtual void OnTransactionCreated (TTransaction transaction, bool readOnly, IsolationLevel isolationLevel) { }
+        protected virtual void OnTransactionCreated (TTransaction transaction, bool readOnly,
+                                                     IsolationLevel isolationLevel) { }
 
         /// <summary>
         ///     Called when the current database version has changed.
@@ -772,18 +725,48 @@ namespace RI.DatabaseManager.Manager
         /// </remarks>
         protected virtual void OnVersionChanged (int oldVersion, int newVersion) { }
 
-        #endregion
-
-
-
-
-        #region Overrides
-
-        /// <inheritdoc />
-        public override string ToString ()
+        /// <summary>
+        ///     Performs a restore.
+        /// </summary>
+        /// <param name="backupSource"> The backup creator specific object which abstracts the backup source. </param>
+        /// <returns>
+        ///     true if the restore was successful, false otherwise.
+        ///     Details about failures should be written to logs.
+        /// </returns>
+        /// <remarks>
+        ///     <note type="implement">
+        ///         The default implementation calls <see cref="IDbBackupCreator.Restore" />.
+        ///     </note>
+        /// </remarks>
+        protected virtual bool RestoreImpl (object backupSource)
         {
-            return string.Format(CultureInfo.InvariantCulture, "{0}; State={1}; Version={2}", this.GetType()
-                                                                                                  .Name, this.State, this.Version);
+            this.Log(LogLevel.Information, "Performing database restore; Source=[{0}][{1}]", backupSource.GetType()
+                         .Name, backupSource);
+
+            return this.BackupCreator.Restore(this, backupSource);
+        }
+
+        /// <summary>
+        ///     Performs an upgrade from <paramref name="sourceVersion" /> to <paramref name="sourceVersion" /> + 1.
+        /// </summary>
+        /// <param name="sourceVersion"> The current version to upgrade from. </param>
+        /// <returns>
+        ///     true if the upgrade was successful, false otherwise.
+        ///     Details about failures should be written to logs.
+        /// </returns>
+        /// <remarks>
+        ///     <note type="implement">
+        ///         The default implementation calls <see cref="IDbVersionUpgrader.Upgrade" />.
+        ///     </note>
+        ///     <note type="implement">
+        ///         <see cref="UpgradeImpl" /> might be called multiple times for a single upgrade operation as the upgrading is
+        ///         performed incrementally, calling <see cref="UpgradeImpl" /> once for each version increment.
+        ///     </note>
+        /// </remarks>
+        protected virtual bool UpgradeImpl (int sourceVersion)
+        {
+            this.Log(LogLevel.Information, "Performing database upgrade: {0} -> {1}", sourceVersion, sourceVersion + 1);
+            return this.VersionUpgrader.Upgrade(this, sourceVersion);
         }
 
         #endregion
@@ -791,10 +774,112 @@ namespace RI.DatabaseManager.Manager
 
 
 
-        #region Interface: IDbManager<TConnection,TTransaction>
+        #region Abstracts
 
-        /// <inheritdoc />
-        public IDbManagerOptions GetOptions () => this.Options;
+        /// <summary>
+        ///     Gets whether this database manager implementation supports backup.
+        /// </summary>
+        /// <value>
+        ///     true if backup is supported, false otherwise.
+        /// </value>
+        protected abstract bool SupportsBackupImpl { get; }
+
+        /// <summary>
+        ///     Gets whether this database manager implementation supports cleanup.
+        /// </summary>
+        /// <value>
+        ///     true if cleanup is supported, false otherwise.
+        /// </value>
+        protected abstract bool SupportsCleanupImpl { get; }
+
+        /// <summary>
+        ///     Gets whether this database manager implementation supports database creation.
+        /// </summary>
+        /// <value>
+        ///     true if creation is supported, false otherwise.
+        /// </value>
+        protected abstract bool SupportsCreateImpl { get; }
+
+        /// <summary>
+        ///     Gets whether this database manager implementation supports read-only connections.
+        /// </summary>
+        /// <value>
+        ///     true if read-only connections are supported, false otherwise.
+        /// </value>
+        protected abstract bool SupportsReadOnlyConnectionsImpl { get; }
+
+        /// <summary>
+        ///     Gets whether this database manager implementation supports restore.
+        /// </summary>
+        /// <value>
+        ///     true if restore is supported, false otherwise.
+        /// </value>
+        protected abstract bool SupportsRestoreImpl { get; }
+
+        /// <summary>
+        ///     Gets whether this database manager implementation supports upgrading.
+        /// </summary>
+        /// <value>
+        ///     true if upgrading is supported, false otherwise.
+        /// </value>
+        protected abstract bool SupportsUpgradeImpl { get; }
+
+        /// <summary>
+        ///     Creates a new database connection.
+        /// </summary>
+        /// <param name="readOnly"> Specifies whether the connection should be read-only. </param>
+        /// <returns>
+        ///     The newly created and already opened connection or null if the connection could not be created.
+        ///     Details about failures should be written to logs.
+        /// </returns>
+        protected abstract TConnection CreateConnectionImpl (bool readOnly);
+
+        /// <summary>
+        ///     Creates a new database transaction.
+        /// </summary>
+        /// <param name="readOnly"> Specifies whether the underlying connection should be read-only. </param>
+        /// <param name="isolationLevel"> Specifies the used isolation level for the transaction. </param>
+        /// <returns>
+        ///     The newly created transaction with its underlying connection already opened or null if the transaction or
+        ///     connection could not be created.
+        ///     Details about failures should be written to logs.
+        /// </returns>
+        protected abstract TTransaction CreateTransactionImpl (bool readOnly, IsolationLevel isolationLevel);
+
+        /// <summary>
+        ///     Executes database script code of a single batch command.
+        /// </summary>
+        /// <param name="connection"> The used database connection. </param>
+        /// <param name="transaction"> The used database transaction or null if no transaction is used. </param>
+        /// <param name="script"> The database script to execute. </param>
+        /// <param name="parameters"> The parameters used in the command. </param>
+        /// <param name="error"> The database specific error which occurred during execution (or null if none is available). </param>
+        /// <param name="exception">
+        ///     The database specific exception which occurred during execution (or null if none is
+        ///     available).
+        /// </param>
+        /// <returns>
+        ///     The result of the code callback.
+        /// </returns>
+        protected abstract object ExecuteCommandScriptImpl (TConnection connection, TTransaction transaction,
+                                                            string script,
+                                                            IDbBatchCommandParameterCollection<TParameterTypes>
+                                                                parameters, out string error, out Exception exception);
+
+        /// <summary>
+        ///     Gets the default isolation level used by the database if none is provided.
+        /// </summary>
+        /// <returns>
+        ///     The default isolation level used by the database.
+        /// </returns>
+        protected abstract IsolationLevel GetDefaultIsolationLevel ();
+
+        #endregion
+
+
+
+
+        #region Interface: IDbManager
 
         /// <inheritdoc />
         public DbState InitialState { get; private set; }
@@ -812,13 +897,7 @@ namespace RI.DatabaseManager.Manager
         public DbState State { get; private set; }
 
         /// <inheritdoc />
-        public int Version { get; private set; }
-
-        /// <inheritdoc />
         public bool SupportsBackup => this.SupportsBackupImpl && (this.BackupCreator?.SupportsBackup ?? false);
-
-        /// <inheritdoc />
-        public bool SupportsRestore => this.SupportsRestoreImpl && (this.BackupCreator?.SupportsRestore ?? false);
 
         /// <inheritdoc />
         public bool SupportsCleanup => this.SupportsCleanupImpl && (this.CleanupProcessor != null);
@@ -827,10 +906,16 @@ namespace RI.DatabaseManager.Manager
         public bool SupportsCreate => this.SupportsCreateImpl && (this.Creator != null);
 
         /// <inheritdoc />
+        public bool SupportsReadOnlyConnections => this.SupportsReadOnlyConnectionsImpl;
+
+        /// <inheritdoc />
+        public bool SupportsRestore => this.SupportsRestoreImpl && (this.BackupCreator?.SupportsRestore ?? false);
+
+        /// <inheritdoc />
         public bool SupportsUpgrade => this.SupportsUpgradeImpl && (this.VersionUpgrader != null);
 
         /// <inheritdoc />
-        public bool SupportsReadOnlyConnections => this.SupportsReadOnlyConnectionsImpl;
+        public int Version { get; private set; }
 
         /// <inheritdoc />
         public bool Backup (object backupTarget)
@@ -843,7 +928,9 @@ namespace RI.DatabaseManager.Manager
             if (this.State == DbState.Uninitialized)
             {
                 throw new InvalidOperationException(this.GetType()
-                                                        .Name + " must be initialized to perform a backup; current state is " + this.State + ".");
+                                                        .Name +
+                                                    " must be initialized to perform a backup; current state is " +
+                                                    this.State + ".");
             }
 
             if (!this.SupportsBackup)
@@ -860,39 +947,14 @@ namespace RI.DatabaseManager.Manager
         }
 
         /// <inheritdoc />
-        public bool Restore (object backupSource)
-        {
-            if (backupSource == null)
-            {
-                throw new ArgumentNullException(nameof(backupSource));
-            }
-
-            if (this.State == DbState.Uninitialized)
-            {
-                throw new InvalidOperationException(this.GetType()
-                                                        .Name + " must be initialized to perform a restore; current state is " + this.State + ".");
-            }
-
-            if (!this.SupportsRestore)
-            {
-                throw new NotSupportedException(this.GetType()
-                                                    .Name + " does not support restores.");
-            }
-
-            bool result = this.RestoreImpl(backupSource);
-
-            this.DetectStateAndVersion();
-
-            return result;
-        }
-
-        /// <inheritdoc />
         public bool Cleanup ()
         {
             if (!this.IsReady())
             {
                 throw new InvalidOperationException(this.GetType()
-                                                        .Name + " must be in a ready state to perform a cleanup; current state is " + this.State + ".");
+                                                        .Name +
+                                                    " must be in a ready state to perform a cleanup; current state is " +
+                                                    this.State + ".");
             }
 
             if (!this.SupportsCleanup)
@@ -909,12 +971,21 @@ namespace RI.DatabaseManager.Manager
         }
 
         /// <inheritdoc />
+        public void Close ()
+        {
+            this.Dispose(true);
+            GC.SuppressFinalize(this);
+        }
+
+        /// <inheritdoc />
         public bool Create ()
         {
             if (this.State != DbState.New)
             {
                 throw new InvalidOperationException(this.GetType()
-                                                        .Name + " must be in the new state to perform creation; current state is " + this.State + ".");
+                                                        .Name +
+                                                    " must be in the new state to perform creation; current state is " +
+                                                    this.State + ".");
             }
 
             if (!this.SupportsCreate)
@@ -931,12 +1002,95 @@ namespace RI.DatabaseManager.Manager
         }
 
         /// <inheritdoc />
+        IDbBatch IDbManager.CreateBatch () => this.CreateBatch();
+
+        /// <inheritdoc />
+        DbConnection IDbManager.CreateConnection (bool readOnly) => this.CreateConnection(readOnly);
+
+        /// <inheritdoc />
+        DbTransaction IDbManager.CreateTransaction (bool readOnly, IsolationLevel isolationLevel) =>
+            this.CreateTransaction(readOnly, isolationLevel);
+
+        /// <inheritdoc />
+        bool IDbManager.ExecuteBatch (IDbBatch batch, bool readOnly, bool detectVersionAndStateAfterExecution)
+        {
+            return this.ExecuteBatch((IDbBatch<TConnection, TTransaction, TParameterTypes>)batch, readOnly,
+                                     detectVersionAndStateAfterExecution);
+        }
+
+        /// <inheritdoc />
+        IDbBatch IDbManager.GetBatch (string name, string commandSeparator)
+        {
+            return this.GetBatch(name, commandSeparator);
+        }
+
+        /// <inheritdoc />
+        public ISet<string> GetBatchNames ()
+        {
+            return this.GetBatchNamesImpl();
+        }
+
+        /// <inheritdoc />
+        public IDbManagerOptions GetOptions () => this.Options;
+
+        /// <inheritdoc />
+        public void Initialize ()
+        {
+            this.Log(LogLevel.Debug, "Initializing database manager");
+
+            if (this.State != DbState.Uninitialized)
+            {
+                throw new InvalidOperationException("The database manager is already initialized.");
+            }
+
+            GC.ReRegisterForFinalize(this);
+
+            this.InitializeImpl();
+
+            this.DetectStateAndVersion();
+
+            this.InitialState = this.State;
+            this.InitialVersion = this.Version;
+        }
+
+        /// <inheritdoc />
+        public bool Restore (object backupSource)
+        {
+            if (backupSource == null)
+            {
+                throw new ArgumentNullException(nameof(backupSource));
+            }
+
+            if (this.State == DbState.Uninitialized)
+            {
+                throw new InvalidOperationException(this.GetType()
+                                                        .Name +
+                                                    " must be initialized to perform a restore; current state is " +
+                                                    this.State + ".");
+            }
+
+            if (!this.SupportsRestore)
+            {
+                throw new NotSupportedException(this.GetType()
+                                                    .Name + " does not support restores.");
+            }
+
+            bool result = this.RestoreImpl(backupSource);
+
+            this.DetectStateAndVersion();
+
+            return result;
+        }
+
+        /// <inheritdoc />
         public bool Upgrade (int version)
         {
             if (!this.IsReady())
             {
                 throw new InvalidOperationException(this.GetType()
-                                                        .Name + " must be in a ready state to perform an upgrade; current state is " + this.State + ".");
+                                                        .Name +
+                                                    " must be in a ready state to perform an upgrade; current state is " +
+                                                    this.State + ".");
             }
 
             if (!this.SupportsUpgrade)
@@ -947,12 +1101,17 @@ namespace RI.DatabaseManager.Manager
 
             if ((version < this.MinVersion) || (version > this.MaxVersion))
             {
-                throw new ArgumentOutOfRangeException(nameof(version), "The specified version " + version + " is not within the supported version range (" + this.MinVersion + "..." + this.MaxVersion + ").");
+                throw new ArgumentOutOfRangeException(nameof(version),
+                                                      "The specified version " + version +
+                                                      " is not within the supported version range (" + this.MinVersion +
+                                                      "..." + this.MaxVersion + ").");
             }
 
             if (version < this.Version)
             {
-                throw new ArgumentOutOfRangeException(nameof(version), "The specified version " + version + " is lower than the current version (" + this.Version + ").");
+                throw new ArgumentOutOfRangeException(nameof(version),
+                                                      "The specified version " + version +
+                                                      " is lower than the current version (" + this.Version + ").");
             }
 
             if (version == this.Version)
@@ -979,8 +1138,22 @@ namespace RI.DatabaseManager.Manager
             return true;
         }
 
+        #endregion
+
+
+
+
+        #region Interface: IDbManager<TConnection,TTransaction,TParameterTypes>
+
         /// <inheritdoc />
-        DbConnection IDbManager.CreateConnection (bool readOnly) => this.CreateConnection(readOnly);
+        public IDbBatch<TConnection, TTransaction, TParameterTypes> CreateBatch ()
+        {
+            IDbBatch<TConnection, TTransaction, TParameterTypes> batch = this.CreateBatchImpl();
+
+            this.OnBatchCreated(batch);
+
+            return batch;
+        }
 
         /// <inheritdoc />
         public TConnection CreateConnection (bool readOnly)
@@ -988,7 +1161,9 @@ namespace RI.DatabaseManager.Manager
             if (this.State == DbState.Uninitialized)
             {
                 throw new InvalidOperationException(this.GetType()
-                                                        .Name + " must be initialized to create a connection; current state is " + this.State + ".");
+                                                        .Name +
+                                                    " must be initialized to create a connection; current state is " +
+                                                    this.State + ".");
             }
 
             if (!this.SupportsReadOnlyConnections && readOnly)
@@ -1018,15 +1193,14 @@ namespace RI.DatabaseManager.Manager
         }
 
         /// <inheritdoc />
-        DbTransaction IDbManager.CreateTransaction (bool readOnly, IsolationLevel isolationLevel) => this.CreateTransaction(readOnly, isolationLevel);
-
-        /// <inheritdoc />
         public TTransaction CreateTransaction (bool readOnly, IsolationLevel isolationLevel)
         {
             if (this.State == DbState.Uninitialized)
             {
                 throw new InvalidOperationException(this.GetType()
-                                                        .Name + " must be initialized to create a transaction; current state is " + this.State + ".");
+                                                        .Name +
+                                                    " must be initialized to create a transaction; current state is " +
+                                                    this.State + ".");
             }
 
             if (!this.SupportsReadOnlyConnections && readOnly)
@@ -1056,28 +1230,38 @@ namespace RI.DatabaseManager.Manager
         }
 
         /// <inheritdoc />
-        IDbBatch IDbManager.CreateBatch () => this.CreateBatch();
-
-        /// <inheritdoc />
-        public IDbBatch<TConnection, TTransaction, TParameterTypes> CreateBatch ()
+        public bool ExecuteBatch (IDbBatch<TConnection, TTransaction, TParameterTypes> batch, bool readOnly,
+                                  bool detectVersionAndStateAfterExecution)
         {
-            IDbBatch<TConnection, TTransaction, TParameterTypes> batch = this.CreateBatchImpl();
+            if (batch == null)
+            {
+                throw new ArgumentNullException(nameof(batch));
+            }
 
-            this.OnBatchCreated(batch);
+            if (this.State == DbState.Uninitialized)
+            {
+                throw new InvalidOperationException(this.GetType()
+                                                        .Name +
+                                                    " must be initialized to execute a batch; current state is " +
+                                                    this.State + ".");
+            }
 
-            return batch;
-        }
+            if (!this.SupportsReadOnlyConnections && readOnly)
+            {
+                throw new NotSupportedException(this.GetType()
+                                                    .Name + " does not support read-only connections.");
+            }
 
-        /// <inheritdoc />
-        public ISet<string> GetBatchNames ()
-        {
-            return this.GetBatchNamesImpl();
-        }
+            batch.Reset();
 
-        /// <inheritdoc />
-        IDbBatch IDbManager.GetBatch (string name, string commandSeparator)
-        {
-            return this.GetBatch(name, commandSeparator);
+            bool result = this.ExecuteBatchImpl(batch, readOnly);
+
+            if (detectVersionAndStateAfterExecution)
+            {
+                this.DetectStateAndVersion();
+            }
+
+            return result;
         }
 
         /// <inheritdoc />
@@ -1101,7 +1285,8 @@ namespace RI.DatabaseManager.Manager
                 }
             }
 
-            IDbBatch<TConnection, TTransaction, TParameterTypes> batch = this.GetBatchImpl(name, commandSeparator, this.CreateBatch);
+            IDbBatch<TConnection, TTransaction, TParameterTypes> batch =
+                this.GetBatchImpl(name, commandSeparator, this.CreateBatch);
 
             if (batch != null)
             {
@@ -1111,75 +1296,17 @@ namespace RI.DatabaseManager.Manager
             return batch;
         }
 
-        /// <inheritdoc />
-        bool IDbManager.ExecuteBatch (IDbBatch batch, bool readOnly, bool detectVersionAndStateAfterExecution)
-        {
-            return this.ExecuteBatch((IDbBatch<TConnection, TTransaction, TParameterTypes>)batch, readOnly, detectVersionAndStateAfterExecution);
-        }
+        #endregion
 
-        /// <inheritdoc />
-        public bool ExecuteBatch (IDbBatch<TConnection, TTransaction, TParameterTypes> batch, bool readOnly, bool detectVersionAndStateAfterExecution)
-        {
-            if (batch == null)
-            {
-                throw new ArgumentNullException(nameof(batch));
-            }
 
-            if (this.State == DbState.Uninitialized)
-            {
-                throw new InvalidOperationException(this.GetType()
-                                                        .Name + " must be initialized to execute a batch; current state is " + this.State + ".");
-            }
 
-            if (!this.SupportsReadOnlyConnections && readOnly)
-            {
-                throw new NotSupportedException(this.GetType()
-                                                    .Name + " does not support read-only connections.");
-            }
 
-            batch.Reset();
-
-            bool result = this.ExecuteBatchImpl(batch, readOnly);
-
-            if (detectVersionAndStateAfterExecution)
-            {
-                this.DetectStateAndVersion();
-            }
-
-            return result;
-        }
+        #region Interface: IDisposable
 
         /// <inheritdoc />
         void IDisposable.Dispose ()
         {
             this.Close();
-        }
-
-        /// <inheritdoc />
-        public void Initialize ()
-        {
-            this.Log(LogLevel.Debug, "Initializing database manager");
-
-            if (this.State != DbState.Uninitialized)
-            {
-                throw new InvalidOperationException("The database manager is already initialized.");
-            }
-
-            GC.ReRegisterForFinalize(this);
-
-            this.InitializeImpl();
-
-            this.DetectStateAndVersion();
-
-            this.InitialState = this.State;
-            this.InitialVersion = this.Version;
-        }
-
-        /// <inheritdoc />
-        public void Close ()
-        {
-            this.Dispose(true);
-            GC.SuppressFinalize(this);
         }
 
         #endregion
@@ -1192,7 +1319,9 @@ namespace RI.DatabaseManager.Manager
     /// <typeparam name="TParameters"> The database command parameter collection type. </typeparam>
     /// <typeparam name="TParameter"> The database command parameter type. </typeparam>
     /// <typeparam name="TOptions"> The database option type. </typeparam>
-    public abstract class DbManagerBase <TConnection, TTransaction, TParameterTypes, TParameters, TParameter, TOptions> : DbManagerBase<TConnection, TTransaction, TParameterTypes, TParameters, TParameter>
+    public abstract class
+        DbManagerBase <TConnection, TTransaction, TParameterTypes, TParameters, TParameter, TOptions> : DbManagerBase<
+            TConnection, TTransaction, TParameterTypes, TParameters, TParameter>
         where TConnection : DbConnection
         where TTransaction : DbTransaction
         where TParameterTypes : Enum
@@ -1200,18 +1329,44 @@ namespace RI.DatabaseManager.Manager
         where TParameter : DbParameter, new()
         where TOptions : IDbManagerOptions
     {
+        #region Instance Constructor/Destructor
+
         /// <inheritdoc />
-        protected DbManagerBase (ILogger logger, IDbBatchLocator<TConnection, TTransaction, TParameterTypes> batchLocator, IDbVersionDetector<TConnection, TTransaction, TParameterTypes> versionDetector, IDbBackupCreator<TConnection, TTransaction, TParameterTypes> backupCreator, IDbCleanupProcessor<TConnection, TTransaction, TParameterTypes> cleanupProcessor, IDbVersionUpgrader<TConnection, TTransaction, TParameterTypes> versionUpgrader, IDbCreator<TConnection, TTransaction, TParameterTypes> creator, TOptions options) : base(logger, batchLocator, versionDetector, backupCreator, cleanupProcessor, versionUpgrader, creator, (TOptions)options.Clone()) { }
+        protected DbManagerBase (ILogger logger,
+                                 IDbBatchLocator<TConnection, TTransaction, TParameterTypes> batchLocator,
+                                 IDbVersionDetector<TConnection, TTransaction, TParameterTypes> versionDetector,
+                                 IDbBackupCreator<TConnection, TTransaction, TParameterTypes> backupCreator,
+                                 IDbCleanupProcessor<TConnection, TTransaction, TParameterTypes> cleanupProcessor,
+                                 IDbVersionUpgrader<TConnection, TTransaction, TParameterTypes> versionUpgrader,
+                                 IDbCreator<TConnection, TTransaction, TParameterTypes> creator, TOptions options) :
+            base(logger, batchLocator, versionDetector, backupCreator, cleanupProcessor, versionUpgrader, creator,
+                 (TOptions)options.Clone()) { }
+
+        #endregion
+
+
+
+
+        #region Instance Properties/Indexer
 
         /// <summary>
-        /// Gets the used options.
+        ///     Gets the used options.
         /// </summary>
         /// <value>
-        /// The used options or null if no options are used.
+        ///     The used options or null if no options are used.
         /// </value>
         protected new TOptions Options => (TOptions)base.Options;
 
-        /// <inheritdoc cref="IDbManager.GetOptions"/>
-        public new TOptions GetOptions() => this.Options;
+        #endregion
+
+
+
+
+        #region Instance Methods
+
+        /// <inheritdoc cref="IDbManager.GetOptions" />
+        public new TOptions GetOptions () => this.Options;
+
+        #endregion
     }
 }

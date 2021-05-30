@@ -21,12 +21,10 @@ namespace RI.DatabaseManager.Cleanup
         /// <summary>
         ///     Creates a new instance of <see cref="SQLiteDbCleanupProcessor" />.
         /// </summary>
-        /// <param name="options"> The used SQLite database manager options.</param>
+        /// <param name="options"> The used SQLite database manager options. </param>
         /// <param name="logger"> The used logger. </param>
         /// <exception cref="ArgumentNullException"> <paramref name="options" /> or <paramref name="logger" /> is null. </exception>
-        public SQLiteDbCleanupProcessor(SQLiteDbManagerOptions options, ILogger logger) : base(options, logger)
-        {
-        }
+        public SQLiteDbCleanupProcessor (SQLiteDbManagerOptions options, ILogger logger) : base(options, logger) { }
 
         #endregion
     }

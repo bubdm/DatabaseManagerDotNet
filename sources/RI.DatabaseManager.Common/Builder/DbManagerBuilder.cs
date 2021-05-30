@@ -61,7 +61,7 @@ namespace RI.DatabaseManager.Builder
 
 
 
-        #region Interface: IDbManagerBuilder
+        #region Interface: IBuilder
 
         /// <inheritdoc />
         public bool AlreadyBuilt => this.Builder.AlreadyBuilt;
@@ -83,10 +83,18 @@ namespace RI.DatabaseManager.Builder
         #region Type: NullInstance
 
         /// <summary>
-        ///     Null object used if no registration for <see cref="IDbBackupCreator{TConnection,TTransaction,TParameterTypes}" />, <see cref="IDbCleanupProcessor{TConnection,TTransaction,TParameterTypes}" />, <see cref="IDbVersionUpgrader{TConnection,TTransaction,TParameterTypes}" />, or <see cref="IDbBatchLocator" /> is provided.
+        ///     Null object used if no registration for <see cref="IDbBackupCreator{TConnection,TTransaction,TParameterTypes}" />,
+        ///     <see cref="IDbCleanupProcessor{TConnection,TTransaction,TParameterTypes}" />,
+        ///     <see cref="IDbVersionUpgrader{TConnection,TTransaction,TParameterTypes}" />, or <see cref="IDbBatchLocator" /> is
+        ///     provided.
         /// </summary>
         /// <threadsafety static="false" instance="false" />
-        public sealed class NullInstance <TConnection, TTransaction, TParameterTypes> : IDbBackupCreator<TConnection, TTransaction, TParameterTypes>, IDbCleanupProcessor<TConnection, TTransaction, TParameterTypes>, IDbVersionUpgrader<TConnection, TTransaction, TParameterTypes>, IDbBatchLocator<TConnection, TTransaction, TParameterTypes>, IDbCreator<TConnection, TTransaction, TParameterTypes>, IDbManagerOptions
+        public sealed class NullInstance <TConnection, TTransaction, TParameterTypes> :
+            IDbBackupCreator<TConnection, TTransaction, TParameterTypes>,
+            IDbCleanupProcessor<TConnection, TTransaction, TParameterTypes>,
+            IDbVersionUpgrader<TConnection, TTransaction, TParameterTypes>,
+            IDbBatchLocator<TConnection, TTransaction, TParameterTypes>,
+            IDbCreator<TConnection, TTransaction, TParameterTypes>, IDbManagerOptions
             where TConnection : DbConnection
             where TTransaction : DbTransaction
             where TParameterTypes : Enum
@@ -100,7 +108,17 @@ namespace RI.DatabaseManager.Builder
 
 
 
-            #region Interface: IDbBackupCreator<TConnection,TTransaction>
+            #region Interface: ICloneable
+
+            /// <inheritdoc />
+            public object Clone () => new NullInstance<TConnection, TTransaction, TParameterTypes>();
+
+            #endregion
+
+
+
+
+            #region Interface: IDbBackupCreator
 
             /// <inheritdoc />
             bool IDbBackupCreator.SupportsBackup => false;
@@ -112,23 +130,59 @@ namespace RI.DatabaseManager.Builder
             bool IDbBackupCreator.Backup (IDbManager manager, object backupTarget) => false;
 
             /// <inheritdoc />
-            bool IDbBackupCreator<TConnection, TTransaction, TParameterTypes>.Backup (IDbManager<TConnection, TTransaction, TParameterTypes> manager, object backupTarget) => false;
-
-            /// <inheritdoc />
             bool IDbBackupCreator.Restore (IDbManager manager, object backupSource) => false;
-
-            /// <inheritdoc />
-            bool IDbBackupCreator<TConnection, TTransaction, TParameterTypes>.Restore (IDbManager<TConnection, TTransaction, TParameterTypes> manager, object backupTarget) => false;
 
             #endregion
 
 
 
 
-            #region Interface: IDbCleanupProcessor<TConnection,TTransaction>
+            #region Interface: IDbBackupCreator<TConnection,TTransaction,TParameterTypes>
 
             /// <inheritdoc />
-            bool IDbCleanupProcessor<TConnection, TTransaction, TParameterTypes>.Cleanup (IDbManager<TConnection, TTransaction, TParameterTypes> manager) => false;
+            bool IDbBackupCreator<TConnection, TTransaction, TParameterTypes>.Backup (
+                IDbManager<TConnection, TTransaction, TParameterTypes> manager, object backupTarget) =>
+                false;
+
+            /// <inheritdoc />
+            bool IDbBackupCreator<TConnection, TTransaction, TParameterTypes>.Restore (
+                IDbManager<TConnection, TTransaction, TParameterTypes> manager, object backupTarget) =>
+                false;
+
+            #endregion
+
+
+
+
+            #region Interface: IDbBatchLocator
+
+            /// <inheritdoc />
+            IDbBatch IDbBatchLocator.GetBatch (string name, string commandSeparator, Func<IDbBatch> batchCreator) =>
+                null;
+
+            /// <inheritdoc />
+            ISet<string> IDbBatchLocator.GetNames () => null;
+
+            #endregion
+
+
+
+
+            #region Interface: IDbBatchLocator<TConnection,TTransaction,TParameterTypes>
+
+            /// <inheritdoc />
+            IDbBatch<TConnection, TTransaction, TParameterTypes>
+                IDbBatchLocator<TConnection, TTransaction, TParameterTypes>.GetBatch (
+                    string name, string commandSeparator,
+                    Func<IDbBatch<TConnection, TTransaction, TParameterTypes>> batchCreator) =>
+                null;
+
+            #endregion
+
+
+
+
+            #region Interface: IDbCleanupProcessor
 
             /// <inheritdoc />
             bool IDbCleanupProcessor.Cleanup (IDbManager manager) => false;
@@ -138,65 +192,99 @@ namespace RI.DatabaseManager.Builder
 
 
 
-            #region Interface: IDbVersionUpgrader<TConnection,TTransaction>
+            #region Interface: IDbCleanupProcessor<TConnection,TTransaction,TParameterTypes>
 
             /// <inheritdoc />
-            int IDbVersionUpgrader.GetMaxVersion (IDbManager manager) => -1;
-
-            /// <inheritdoc />
-            int IDbVersionUpgrader<TConnection, TTransaction, TParameterTypes>.GetMaxVersion (IDbManager<TConnection, TTransaction, TParameterTypes> manager) => -1;
-
-            /// <inheritdoc />
-            int IDbVersionUpgrader.GetMinVersion (IDbManager manager) => -1;
-
-            /// <inheritdoc />
-            int IDbVersionUpgrader<TConnection, TTransaction, TParameterTypes>.GetMinVersion (IDbManager<TConnection, TTransaction, TParameterTypes> manager) => -1;
-
-            /// <inheritdoc />
-            bool IDbVersionUpgrader.Upgrade (IDbManager manager, int sourceVersion) => false;
-
-            /// <inheritdoc />
-            bool IDbVersionUpgrader<TConnection, TTransaction, TParameterTypes>.Upgrade (IDbManager<TConnection, TTransaction, TParameterTypes> manager, int sourceVersion) => false;
+            bool IDbCleanupProcessor<TConnection, TTransaction, TParameterTypes>.Cleanup (
+                IDbManager<TConnection, TTransaction, TParameterTypes> manager) =>
+                false;
 
             #endregion
 
 
 
 
-            /// <inheritdoc />
-            IDbBatch<TConnection, TTransaction, TParameterTypes> IDbBatchLocator<TConnection, TTransaction, TParameterTypes>.GetBatch (string name, string commandSeparator, Func<IDbBatch<TConnection, TTransaction, TParameterTypes>> batchCreator) => null;
-
-            /// <inheritdoc />
-            IDbBatch IDbBatchLocator.GetBatch(string name, string commandSeparator, Func<IDbBatch> batchCreator) => null;
-
-            /// <inheritdoc />
-            ISet<string> IDbBatchLocator.GetNames () => null;
-
-            /// <inheritdoc />
-            public bool Create (IDbManager<TConnection, TTransaction, TParameterTypes> manager) => false;
+            #region Interface: IDbCreator
 
             /// <inheritdoc />
             public bool Create (IDbManager manager) => false;
 
+            #endregion
+
+
+
+
+            #region Interface: IDbCreator<TConnection,TTransaction,TParameterTypes>
+
             /// <inheritdoc />
-            public object Clone () => new NullInstance<TConnection, TTransaction, TParameterTypes>();
+            public bool Create (IDbManager<TConnection, TTransaction, TParameterTypes> manager) => false;
+
+            #endregion
+
+
+
+
+            #region Interface: IDbManagerOptions
 
             /// <inheritdoc />
             public string GetConnectionString () => null;
+
+            #endregion
+
+
+
+
+            #region Interface: IDbVersionUpgrader
+
+            /// <inheritdoc />
+            int IDbVersionUpgrader.GetMaxVersion (IDbManager manager) => -1;
+
+            /// <inheritdoc />
+            int IDbVersionUpgrader.GetMinVersion (IDbManager manager) => -1;
+
+            /// <inheritdoc />
+            bool IDbVersionUpgrader.Upgrade (IDbManager manager, int sourceVersion) => false;
+
+            #endregion
+
+
+
+
+            #region Interface: IDbVersionUpgrader<TConnection,TTransaction,TParameterTypes>
+
+            /// <inheritdoc />
+            int IDbVersionUpgrader<TConnection, TTransaction, TParameterTypes>.GetMaxVersion (
+                IDbManager<TConnection, TTransaction, TParameterTypes> manager) =>
+                -1;
+
+            /// <inheritdoc />
+            int IDbVersionUpgrader<TConnection, TTransaction, TParameterTypes>.GetMinVersion (
+                IDbManager<TConnection, TTransaction, TParameterTypes> manager) =>
+                -1;
+
+            /// <inheritdoc />
+            bool IDbVersionUpgrader<TConnection, TTransaction, TParameterTypes>.Upgrade (
+                IDbManager<TConnection, TTransaction, TParameterTypes> manager, int sourceVersion) =>
+                false;
+
+            #endregion
         }
 
         #endregion
     }
 
     /// <summary>
-    ///     Default implementation of <see cref="IDbManagerBuilder" /> and <see cref="IDbManagerBuilder{TConnection,TTransaction,TParameterTypes,TManager}" /> suitable for most scenarios.
+    ///     Default implementation of <see cref="IDbManagerBuilder" /> and
+    ///     <see cref="IDbManagerBuilder{TConnection,TTransaction,TParameterTypes,TManager}" /> suitable for most scenarios.
     /// </summary>
     /// <typeparam name="TConnection"> The database connection type. </typeparam>
     /// <typeparam name="TTransaction"> The database transaction type. </typeparam>
     /// <typeparam name="TParameterTypes"> The database command parameter type. </typeparam>
     /// <typeparam name="TManager"> The type of the database manager. </typeparam>
     /// <threadsafety static="false" instance="false" />
-    public sealed class DbManagerBuilder <TConnection, TTransaction, TParameterTypes, TManager> : IDbManagerBuilder<TConnection, TTransaction, TParameterTypes, TManager>
+    public sealed class
+        DbManagerBuilder <TConnection, TTransaction, TParameterTypes, TManager> : IDbManagerBuilder<TConnection,
+            TTransaction, TParameterTypes, TManager>
         where TConnection : DbConnection
         where TTransaction : DbTransaction
         where TParameterTypes : Enum
@@ -241,7 +329,7 @@ namespace RI.DatabaseManager.Builder
 
 
 
-        #region Interface: IDbManagerBuilder<TConnection,TTransaction,TManager>
+        #region Interface: IBuilder
 
         /// <inheritdoc />
         public bool AlreadyBuilt => this.Builder.AlreadyBuilt;

@@ -14,10 +14,12 @@ namespace RI.DatabaseManager.Creation
     /// <remarks>
     ///     <para>
     ///         Database creators are used to create new databases if they do not yet exist.
-    ///         What the creation does in detail depends on the database type and the implementation of <see cref="IDbCreator" />.
+    ///         What the creation does in detail depends on the database type and the implementation of
+    ///         <see cref="IDbCreator" />.
     ///     </para>
     ///     <para>
-    ///         Implementations of <see cref="IDbCreator" /> are always specific for a particular type of database (or particular implementation of <see cref="IDbManager" /> respectively).
+    ///         Implementations of <see cref="IDbCreator" /> are always specific for a particular type of database (or
+    ///         particular implementation of <see cref="IDbManager" /> respectively).
     ///     </para>
     ///     <note type="note">
     ///         Database creators are optional.

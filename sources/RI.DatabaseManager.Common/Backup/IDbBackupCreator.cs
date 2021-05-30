@@ -14,10 +14,12 @@ namespace RI.DatabaseManager.Backup
     /// <remarks>
     ///     <para>
     ///         Database backup creators are used to create backups of databases and, optionally, restore them.
-    ///         What the backup and/or restore does in detail depends on the database type and the implementation of <see cref="IDbBackupCreator" />.
+    ///         What the backup and/or restore does in detail depends on the database type and the implementation of
+    ///         <see cref="IDbBackupCreator" />.
     ///     </para>
     ///     <para>
-    ///         Implementations of <see cref="IDbBackupCreator" /> are always specific for a particular type of database (or particular implementation of <see cref="IDbManager" /> respectively).
+    ///         Implementations of <see cref="IDbBackupCreator" /> are always specific for a particular type of database (or
+    ///         particular implementation of <see cref="IDbManager" /> respectively).
     ///     </para>
     ///     <note type="note">
     ///         Database backup creators are optional.
@@ -56,7 +58,10 @@ namespace RI.DatabaseManager.Backup
         ///     Details about failures should be written to logs.
         /// </returns>
         /// <exception cref="ArgumentNullException"> <paramref name="manager" /> is null. </exception>
-        /// <exception cref="ArgumentException"> <paramref name="backupTarget" /> is of a type which is not supported by the this backup creator. </exception>
+        /// <exception cref="ArgumentException">
+        ///     <paramref name="backupTarget" /> is of a type which is not supported by the this
+        ///     backup creator.
+        /// </exception>
         bool Backup (IDbManager manager, object backupTarget);
 
         /// <summary>
@@ -69,7 +74,10 @@ namespace RI.DatabaseManager.Backup
         ///     Details about failures should be written to logs.
         /// </returns>
         /// <exception cref="ArgumentNullException"> <paramref name="manager" /> is null. </exception>
-        /// <exception cref="ArgumentException"> <paramref name="backupSource" /> is of a type which is not supported by the this backup creator. </exception>
+        /// <exception cref="ArgumentException">
+        ///     <paramref name="backupSource" /> is of a type which is not supported by the this
+        ///     backup creator.
+        /// </exception>
         bool Restore (IDbManager manager, object backupSource);
     }
 

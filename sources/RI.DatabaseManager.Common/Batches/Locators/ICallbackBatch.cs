@@ -17,10 +17,10 @@ namespace RI.DatabaseManager.Batches.Locators
     ///         See <see cref="AssemblyCallbackBatchLocator{TConnection,TTransaction,TParameterTypes}" /> for more details.
     ///     </para>
     /// </remarks>
-    public interface ICallbackBatch<TConnection, TTransaction, TParameterTypes>
+    public interface ICallbackBatch <TConnection, TTransaction, TParameterTypes>
         where TConnection : DbConnection
         where TTransaction : DbTransaction
-        where  TParameterTypes : Enum
+        where TParameterTypes : Enum
     {
         /// <summary>
         ///     Executes the batch code.
@@ -29,10 +29,15 @@ namespace RI.DatabaseManager.Batches.Locators
         /// <param name="transaction"> The used database transaction or null if no transaction is used. </param>
         /// <param name="parameters"> The parameters used in the command. </param>
         /// <param name="error"> The database specific error which occurred during execution (or null if none is available). </param>
-        /// <param name="exception"> The database specific exception which occurred during execution (or null if none is available). </param>
+        /// <param name="exception">
+        ///     The database specific exception which occurred during execution (or null if none is
+        ///     available).
+        /// </param>
         /// <returns>
         ///     The result of the code callback.
         /// </returns>
-        object Execute (TConnection connection, TTransaction transaction, IDbBatchCommandParameterCollection<TParameterTypes> parameters, out string error, out Exception exception);
+        object Execute (TConnection connection, TTransaction transaction,
+                        IDbBatchCommandParameterCollection<TParameterTypes> parameters, out string error,
+                        out Exception exception);
     }
 }

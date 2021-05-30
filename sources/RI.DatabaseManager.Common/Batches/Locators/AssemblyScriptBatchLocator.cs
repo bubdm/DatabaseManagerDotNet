@@ -29,17 +29,24 @@ namespace RI.DatabaseManager.Batches.Locators
     ///         <see cref="Encoding" /> is the used encoding for reading the scripts as strings from the assembly resources.
     ///     </para>
     ///     <para>
-    ///         Currently, the following options are supported which are extracted from the scripts (see <see cref="DbBatchLocatorBase{TConnection,TTransaction,TParameterTypes}.OptionsFormat" /> for more details):
+    ///         Currently, the following options are supported which are extracted from the scripts (see
+    ///         <see cref="DbBatchLocatorBase{TConnection,TTransaction,TParameterTypes}.OptionsFormat" /> for more details):
     ///     </para>
     ///     <list type="bullet">
-    ///         <item> <c> TransactionRequirement </c> [optional] One of the <see cref="DbBatchTransactionRequirement" /> values (as string), e.g. <c> /* DBMANAGER:TransactionRequirement=Disallowed */ </c> </item>
+    ///         <item>
+    ///             <c> TransactionRequirement </c> [optional] One of the <see cref="DbBatchTransactionRequirement" />
+    ///             values (as string), e.g. <c> /* DBMANAGER:TransactionRequirement=Disallowed */ </c>
+    ///         </item>
     ///     </list>
     ///     <note type="note">
-    ///         If the <c> TransactionRequirement </c> option is not specified, <see cref="DbBatchTransactionRequirement.DontCare" /> is used.
+    ///         If the <c> TransactionRequirement </c> option is not specified,
+    ///         <see cref="DbBatchTransactionRequirement.DontCare" /> is used.
     ///     </note>
     /// </remarks>
     /// <threadsafety static="false" instance="false" />
-    public sealed class AssemblyScriptBatchLocator<TConnection, TTransaction, TParameterTypes> : DbBatchLocatorBase<TConnection, TTransaction, TParameterTypes>
+    public sealed class
+        AssemblyScriptBatchLocator <TConnection, TTransaction, TParameterTypes> : DbBatchLocatorBase<TConnection,
+            TTransaction, TParameterTypes>
         where TConnection : DbConnection
         where TTransaction : DbTransaction
         where TParameterTypes : Enum
@@ -133,7 +140,8 @@ namespace RI.DatabaseManager.Batches.Locators
         }
 
         /// <summary>
-        ///     Gets or sets the used name format as a regular expression (RegEx) used to lookup scripts using the assembly resource names.
+        ///     Gets or sets the used name format as a regular expression (RegEx) used to lookup scripts using the assembly
+        ///     resource names.
         /// </summary>
         /// <value>
         ///     The used name format as a regular expression (RegEx) used to lookup scripts using the assembly resource names.
@@ -143,9 +151,13 @@ namespace RI.DatabaseManager.Batches.Locators
         ///         The default value is <c> (?&lt;name&gt;^.+?)([\.]+[^.]*)(sql$) </c>.
         ///     </note>
         ///     <note type="important">
-        ///         The name format must be a regular expression which provides a named capture <c> name </c>. That capture is used to extract the name of the batch from the resources manifest name.
-        ///         The resource manifest name is typically <c> Folder1.Folder2.Filename.Extension </c>, e.g. <c> MyApp.Scripts.Cleanup.sql </c> in an assembly named MyApp with a folder named Scripts which contains an embedded assembly resource named Cleanup.sql.
-        ///         Using the default value, <c> MyApp.Scripts.Cleanup </c> would be extracted from <c> MyApp.Scripts.Cleanup.sql </c>.
+        ///         The name format must be a regular expression which provides a named capture <c> name </c>. That capture is used
+        ///         to extract the name of the batch from the resources manifest name.
+        ///         The resource manifest name is typically <c> Folder1.Folder2.Filename.Extension </c>, e.g.
+        ///         <c> MyApp.Scripts.Cleanup.sql </c> in an assembly named MyApp with a folder named Scripts which contains an
+        ///         embedded assembly resource named Cleanup.sql.
+        ///         Using the default value, <c> MyApp.Scripts.Cleanup </c> would be extracted from
+        ///         <c> MyApp.Scripts.Cleanup.sql </c>.
         ///     </note>
         /// </remarks>
         /// <exception cref="ArgumentNullException"> <paramref name="value" /> is null. </exception>
@@ -178,7 +190,8 @@ namespace RI.DatabaseManager.Batches.Locators
 
         private string GetBatchNameFromResourceName (string resource)
         {
-            Match match = Regex.Match(resource, this.NameFormat, RegexOptions.CultureInvariant | RegexOptions.IgnoreCase);
+            Match match = Regex.Match(resource, this.NameFormat,
+                                      RegexOptions.CultureInvariant | RegexOptions.IgnoreCase);
 
             if (!match.Success)
             {
@@ -199,7 +212,14 @@ namespace RI.DatabaseManager.Batches.Locators
         #region Overrides
 
         /// <inheritdoc />
-        protected override bool FillBatch (IDbBatch<TConnection, TTransaction, TParameterTypes> batch, string name, string commandSeparator)
+        public override bool SupportsCallbacks => false;
+
+        /// <inheritdoc />
+        public override bool SupportsScripts => true;
+
+        /// <inheritdoc />
+        protected override bool FillBatch (IDbBatch<TConnection, TTransaction, TParameterTypes> batch, string name,
+                                           string commandSeparator)
         {
             bool found = false;
 
@@ -212,7 +232,8 @@ namespace RI.DatabaseManager.Batches.Locators
                     string candidate = this.GetBatchNameFromResourceName(resource);
                     string nameOnlyCandidate = candidate.Substring(candidate.LastIndexOf('.') + 1);
 
-                    if (this.DefaultNameComparer.Equals(name, candidate) || this.DefaultNameComparer.Equals(name, nameOnlyCandidate))
+                    if (this.DefaultNameComparer.Equals(name, candidate) ||
+                        this.DefaultNameComparer.Equals(name, nameOnlyCandidate))
                     {
                         string script;
 
@@ -235,7 +256,9 @@ namespace RI.DatabaseManager.Batches.Locators
                         {
                             if (!string.IsNullOrWhiteSpace(command))
                             {
-                                DbBatchTransactionRequirement transactionRequirement = this.GetTransactionRequirementFromCommandOptions(command);
+                                DbBatchTransactionRequirement transactionRequirement =
+                                    this.GetTransactionRequirementFromCommandOptions(command);
+
                                 IsolationLevel? isolationLevel = this.GetIsolationLevelFromCommandOptions(command);
 
                                 batch.AddScript(command, transactionRequirement, isolationLevel);
@@ -273,12 +296,6 @@ namespace RI.DatabaseManager.Batches.Locators
 
             return names;
         }
-
-        /// <inheritdoc />
-        public override bool SupportsScripts => true;
-
-        /// <inheritdoc />
-        public override bool SupportsCallbacks => false;
 
         #endregion
     }

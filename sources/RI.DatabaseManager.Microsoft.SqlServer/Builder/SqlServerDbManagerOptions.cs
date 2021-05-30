@@ -19,7 +19,7 @@ namespace RI.DatabaseManager.Builder
     ///     <para>
     ///         The default cleanup script is (each line executed as a separate command):
     ///     </para>
-    /// <code language="sql">
+    ///     <code language="sql">
     ///  <![CDATA[
     /// DBCC SHRINKDATABASE 0
     ///  ]]>
@@ -27,7 +27,7 @@ namespace RI.DatabaseManager.Builder
     ///     <para>
     ///         The default version detection script is (each line executed as a separate command):
     ///     </para>
-    /// <code language="sql">
+    ///     <code language="sql">
     ///  <![CDATA[
     /// IF EXISTS (SELECT 1 FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_TYPE='BASE TABLE' AND TABLE_NAME='_DatabaseSettings') SELECT 1 ELSE SELECT 0;
     /// IF (SELECT count(*) FROM [_DatabaseSettings] WHERE [Name] = 'Database.Version') = 0 SELECT -1 ELSE SELECT 1;
@@ -37,7 +37,7 @@ namespace RI.DatabaseManager.Builder
     ///     <para>
     ///         The default create script is (each line executed as a separate command):
     ///     </para>
-    /// <code language="sql">
+    ///     <code language="sql">
     ///  <![CDATA[
     /// CREATE TABLE [_DatabaseSettings]
     /// (
@@ -45,22 +45,21 @@ namespace RI.DatabaseManager.Builder
     ///     [Name]  NVARCHAR(1024) NOT NULL,
     ///     [Value] NVARCHAR(MAX)  NULL
     /// );
-    ///
+    /// 
     /// INSERT INTO [_DatabaseSettings] ([Name], [Value]) VALUES ('Database.Version', '0');
     ///  ]]>
     ///  </code>
     /// </remarks>
     /// <threadsafety static="false" instance="false" />
-    public sealed class SqlServerDbManagerOptions : DbManagerOptionsBase<SqlServerDbManagerOptions, SqlConnectionStringBuilder>
+    public sealed class
+        SqlServerDbManagerOptions : DbManagerOptionsBase<SqlServerDbManagerOptions, SqlConnectionStringBuilder>
     {
         #region Instance Constructor/Destructor
 
         /// <summary>
         ///     Creates a new instance of <see cref="SqlServerDbManagerOptions" />.
         /// </summary>
-        public SqlServerDbManagerOptions()
-        {
-        }
+        public SqlServerDbManagerOptions () { }
 
         /// <summary>
         ///     Creates a new instance of <see cref="SqlServerDbManagerOptions" />.
@@ -68,28 +67,27 @@ namespace RI.DatabaseManager.Builder
         /// <param name="connectionString"> The used connection string. </param>
         /// <exception cref="ArgumentNullException"> <paramref name="connectionString" /> is null. </exception>
         /// <exception cref="ArgumentException"> <paramref name="connectionString" /> is an empty string. </exception>
-        public SqlServerDbManagerOptions(string connectionString)
-            : base(connectionString)
-        {
-        }
+        public SqlServerDbManagerOptions (string connectionString)
+            : base(connectionString) { }
 
         /// <summary>
         ///     Creates a new instance of <see cref="SqlServerDbManagerOptions" />.
         /// </summary>
         /// <param name="connectionString"> The used connection string. </param>
         /// <exception cref="ArgumentNullException"> <paramref name="connectionString" /> is null. </exception>
-        public SqlServerDbManagerOptions(SqlConnectionStringBuilder connectionString)
-            : base(connectionString)
-        {
-        }
+        public SqlServerDbManagerOptions (SqlConnectionStringBuilder connectionString)
+            : base(connectionString) { }
 
         #endregion
 
 
 
 
+        #region Overrides
+
         /// <inheritdoc />
-        public override string[] GetDefaultCleanupScript(out DbBatchTransactionRequirement transactionRequirement, out IsolationLevel? isolationLevel)
+        public override string[] GetDefaultCleanupScript (out DbBatchTransactionRequirement transactionRequirement,
+                                                          out IsolationLevel? isolationLevel)
         {
             transactionRequirement = DbBatchTransactionRequirement.Disallowed;
             isolationLevel = null;
@@ -101,7 +99,8 @@ namespace RI.DatabaseManager.Builder
         }
 
         /// <inheritdoc />
-        public override string[] GetDefaultCreationScript(out DbBatchTransactionRequirement transactionRequirement, out IsolationLevel? isolationLevel)
+        public override string[] GetDefaultCreationScript (out DbBatchTransactionRequirement transactionRequirement,
+                                                           out IsolationLevel? isolationLevel)
         {
             transactionRequirement = DbBatchTransactionRequirement.Disallowed;
             isolationLevel = null;
@@ -114,7 +113,8 @@ namespace RI.DatabaseManager.Builder
         }
 
         /// <inheritdoc />
-        public override string[] GetDefaultVersioningScript(out DbBatchTransactionRequirement transactionRequirement, out IsolationLevel? isolationLevel)
+        public override string[] GetDefaultVersioningScript (out DbBatchTransactionRequirement transactionRequirement,
+                                                             out IsolationLevel? isolationLevel)
         {
             transactionRequirement = DbBatchTransactionRequirement.Disallowed;
             isolationLevel = null;
@@ -126,5 +126,7 @@ namespace RI.DatabaseManager.Builder
                 "SELECT [Value] FROM [_DatabaseSettings] WHERE [Name] = 'Database.Version';",
             };
         }
+
+        #endregion
     }
 }

@@ -23,16 +23,26 @@ namespace RI.DatabaseManager.Batches.Locators
     ///         <see cref="Assemblies" /> is the list of assemblies used to lookup callbacks.
     ///     </para>
     ///     <para>
-    ///         <see cref="AssemblyCallbackBatchLocator{TConnection,TTransaction,TParameterTypes}" /> searches the assemblies for non-abstract class types which implement <see cref="ICallbackBatch{TConnection,TTransaction,TParameterTypes}" /> and which have a public parameterless constructor.
-    ///         Each found type is considered an independent batch. Each type such a batch is executed, a new instance of the corresponding type is instantiated (using <see cref="Activator.CreateInstance(Type,bool)" />) and <see cref="ICallbackBatch{TConnection,TTransaction,TParameterTypes}.Execute" /> is called.
+    ///         <see cref="AssemblyCallbackBatchLocator{TConnection,TTransaction,TParameterTypes}" /> searches the assemblies
+    ///         for non-abstract class types which implement
+    ///         <see cref="ICallbackBatch{TConnection,TTransaction,TParameterTypes}" /> and which have a public parameterless
+    ///         constructor.
+    ///         Each found type is considered an independent batch. Each type such a batch is executed, a new instance of the
+    ///         corresponding type is instantiated (using <see cref="Activator.CreateInstance(Type,bool)" />) and
+    ///         <see cref="ICallbackBatch{TConnection,TTransaction,TParameterTypes}.Execute" /> is called.
     ///     </para>
     ///     <para>
-    ///         By default, the name of the types which implement <see cref="ICallbackBatch{TConnection,TTransaction,TParameterTypes}" /> are used as the batch names and <see cref="DbBatchTransactionRequirement.DontCare" /> is used as transaction requirement.
-    ///         This can be overriden with the optional <see cref="CallbackBatchAttribute" />, applied to the type, which overrides the name and/or transaction requirement.
+    ///         By default, the name of the types which implement
+    ///         <see cref="ICallbackBatch{TConnection,TTransaction,TParameterTypes}" /> are used as the batch names and
+    ///         <see cref="DbBatchTransactionRequirement.DontCare" /> is used as transaction requirement.
+    ///         This can be overriden with the optional <see cref="CallbackBatchAttribute" />, applied to the type, which
+    ///         overrides the name and/or transaction requirement.
     ///     </para>
     /// </remarks>
     /// <threadsafety static="false" instance="false" />
-    public sealed class AssemblyCallbackBatchLocator<TConnection, TTransaction, TParameterTypes> : DbBatchLocatorBase<TConnection, TTransaction, TParameterTypes>
+    public sealed class
+        AssemblyCallbackBatchLocator <TConnection, TTransaction, TParameterTypes> : DbBatchLocatorBase<TConnection,
+            TTransaction, TParameterTypes>
         where TConnection : DbConnection
         where TTransaction : DbTransaction
         where TParameterTypes : Enum
@@ -95,14 +105,17 @@ namespace RI.DatabaseManager.Batches.Locators
 
         private Dictionary<string, List<CallbackType>> GetCallbackTypes ()
         {
-            Dictionary<string, List<CallbackType>> callbackTypes = new Dictionary<string, List<CallbackType>>(this.DefaultNameComparer);
+            Dictionary<string, List<CallbackType>> callbackTypes =
+                new Dictionary<string, List<CallbackType>>(this.DefaultNameComparer);
 
             foreach (Assembly assembly in this.Assemblies)
             {
                 List<Type> types = assembly.GetTypes()
                                            .Where(x => x.IsClass)
                                            .Where(x => !x.IsAbstract)
-                                           .Where(x => typeof(ICallbackBatch<TConnection, TTransaction, TParameterTypes>).IsAssignableFrom(x))
+                                           .Where(x =>
+                                                      typeof(ICallbackBatch<TConnection, TTransaction, TParameterTypes>)
+                                                          .IsAssignableFrom(x))
                                            .Where(x => x.GetConstructor(new Type[0])
                                                         ?.IsPublic ?? false)
                                            .ToList();
@@ -126,7 +139,8 @@ namespace RI.DatabaseManager.Batches.Locators
                         callbackTypes.Add(name, new List<CallbackType>());
                     }
 
-                    callbackTypes[name].Add(new CallbackType(type, name, transactionRequirement, isolationLevel));
+                    callbackTypes[name]
+                        .Add(new CallbackType(type, name, transactionRequirement, isolationLevel));
                 }
             }
 
@@ -141,7 +155,14 @@ namespace RI.DatabaseManager.Batches.Locators
         #region Overrides
 
         /// <inheritdoc />
-        protected override bool FillBatch (IDbBatch<TConnection, TTransaction, TParameterTypes> batch, string name, string commandSeparator)
+        public override bool SupportsCallbacks => true;
+
+        /// <inheritdoc />
+        public override bool SupportsScripts => false;
+
+        /// <inheritdoc />
+        protected override bool FillBatch (IDbBatch<TConnection, TTransaction, TParameterTypes> batch, string name,
+                                           string commandSeparator)
         {
             Dictionary<string, List<CallbackType>> callbackTypes = this.GetCallbackTypes();
 
@@ -154,7 +175,7 @@ namespace RI.DatabaseManager.Batches.Locators
             {
                 batch.AddCode(callback.CreateCallback(), callback.TransactionRequirement, callback.IsolationLevel);
             }
-            
+
             return true;
         }
 
@@ -165,12 +186,6 @@ namespace RI.DatabaseManager.Batches.Locators
 
             return callbackTypes.Keys;
         }
-
-        /// <inheritdoc />
-        public override bool SupportsScripts => false;
-
-        /// <inheritdoc />
-        public override bool SupportsCallbacks => true;
 
         #endregion
 
@@ -183,7 +198,8 @@ namespace RI.DatabaseManager.Batches.Locators
         {
             #region Instance Constructor/Destructor
 
-            public CallbackType (Type type, string name, DbBatchTransactionRequirement transactionRequirement, IsolationLevel? isolationLevel)
+            public CallbackType (Type type, string name, DbBatchTransactionRequirement transactionRequirement,
+                                 IsolationLevel? isolationLevel)
             {
                 if (type == null)
                 {
@@ -213,13 +229,13 @@ namespace RI.DatabaseManager.Batches.Locators
 
             #region Instance Properties/Indexer
 
+            public IsolationLevel? IsolationLevel { get; }
+
             public string Name { get; }
 
             public DbBatchTransactionRequirement TransactionRequirement { get; }
 
             public Type Type { get; }
-
-            public IsolationLevel? IsolationLevel { get; }
 
             #endregion
 
@@ -228,11 +244,17 @@ namespace RI.DatabaseManager.Batches.Locators
 
             #region Instance Methods
 
-            public CallbackBatchCommandDelegate<TConnection, TTransaction, TParameterTypes> CreateCallback () => this.Target;
+            public CallbackBatchCommandDelegate<TConnection, TTransaction, TParameterTypes> CreateCallback () =>
+                this.Target;
 
-            private object Target (TConnection connection, TTransaction transaction, IDbBatchCommandParameterCollection<TParameterTypes> parameters, out string error, out Exception exception)
+            private object Target (TConnection connection, TTransaction transaction,
+                                   IDbBatchCommandParameterCollection<TParameterTypes> parameters, out string error,
+                                   out Exception exception)
             {
-                ICallbackBatch<TConnection, TTransaction, TParameterTypes> instance = (ICallbackBatch<TConnection, TTransaction, TParameterTypes>)Activator.CreateInstance(this.Type, false);
+                ICallbackBatch<TConnection, TTransaction, TParameterTypes> instance =
+                    (ICallbackBatch<TConnection, TTransaction, TParameterTypes>)
+                    Activator.CreateInstance(this.Type, false);
+
                 return instance.Execute(connection, transaction, parameters, out error, out exception);
             }
 

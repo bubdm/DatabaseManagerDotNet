@@ -13,18 +13,23 @@ using RI.DatabaseManager.Manager;
 namespace RI.DatabaseManager.Cleanup
 {
     /// <summary>
-    ///     Boilerplate implementation of <see cref="IDbCleanupProcessor" /> and <see cref="IDbCleanupProcessor{TConnection,TTransaction,TParameterTypes}" />.
+    ///     Boilerplate implementation of <see cref="IDbCleanupProcessor" /> and
+    ///     <see cref="IDbCleanupProcessor{TConnection,TTransaction,TParameterTypes}" />.
     /// </summary>
     /// <typeparam name="TConnection"> The database connection type. </typeparam>
     /// <typeparam name="TTransaction"> The database transaction type. </typeparam>
     /// <typeparam name="TParameterTypes"> The database command parameter type. </typeparam>
     /// <remarks>
     ///     <note type="implement">
-    ///         It is recommended that database cleanup processor implementations use this base class as it already implements most of the database-independent logic defined by <see cref="IDbCleanupProcessor" /> and <see cref="IDbCleanupProcessor{TConnection,TTransaction,TParameterTypes}" />.
+    ///         It is recommended that database cleanup processor implementations use this base class as it already implements
+    ///         most of the database-independent logic defined by <see cref="IDbCleanupProcessor" /> and
+    ///         <see cref="IDbCleanupProcessor{TConnection,TTransaction,TParameterTypes}" />.
     ///     </note>
     /// </remarks>
     /// <threadsafety static="false" instance="false" />
-    public abstract class DbCleanupProcessorBase <TConnection, TTransaction, TParameterTypes> : IDbCleanupProcessor<TConnection, TTransaction, TParameterTypes>
+    public abstract class
+        DbCleanupProcessorBase <TConnection, TTransaction, TParameterTypes> : IDbCleanupProcessor<TConnection,
+            TTransaction, TParameterTypes>
         where TConnection : DbConnection
         where TTransaction : DbTransaction
         where TParameterTypes : Enum
@@ -61,14 +66,6 @@ namespace RI.DatabaseManager.Cleanup
         #region Instance Properties/Indexer
 
         /// <summary>
-        ///     Gets the used database manager options.
-        /// </summary>
-        /// <value>
-        ///     The used database manager options.
-        /// </value>
-        protected IDbManagerOptions Options { get; }
-
-        /// <summary>
         ///     Gets the used logger.
         /// </summary>
         /// <value>
@@ -77,12 +74,30 @@ namespace RI.DatabaseManager.Cleanup
         protected ILogger Logger { get; }
 
         /// <summary>
+        ///     Gets the used database manager options.
+        /// </summary>
+        /// <value>
+        ///     The used database manager options.
+        /// </value>
+        protected IDbManagerOptions Options { get; }
+
+        #endregion
+
+
+
+
+        #region Instance Methods
+
+        /// <summary>
         ///     Writes a log message.
         /// </summary>
         /// <param name="level"> The log level of the log message. </param>
-        /// <param name="format"> Log message (with optional string expansion arguments such as <c> {0} </c>, <c> {1} </c>, etc. which are expanded by <paramref name="args" />). </param>
+        /// <param name="format">
+        ///     Log message (with optional string expansion arguments such as <c> {0} </c>, <c> {1} </c>, etc.
+        ///     which are expanded by <paramref name="args" />).
+        /// </param>
         /// <param name="args"> Optional message arguments expanded into <paramref name="format" />. </param>
-        protected void Log(LogLevel level, string format, params object[] args)
+        protected void Log (LogLevel level, string format, params object[] args)
         {
             this.Logger.Log(level, this.GetType()
                                        .Name, null, format, args);
@@ -93,9 +108,12 @@ namespace RI.DatabaseManager.Cleanup
         /// </summary>
         /// <param name="level"> The log level of the log message. </param>
         /// <param name="exception"> Exception associated with the log message. </param>
-        /// <param name="format"> Optional log message (with optional string expansion arguments such as <c> {0} </c>, <c> {1} </c>, etc. which are expanded by <paramref name="args" />). </param>
+        /// <param name="format">
+        ///     Optional log message (with optional string expansion arguments such as <c> {0} </c>, <c> {1} </c>
+        ///     , etc. which are expanded by <paramref name="args" />).
+        /// </param>
         /// <param name="args"> Optional message arguments expanded into <paramref name="format" />. </param>
-        protected void Log(LogLevel level, Exception exception, string format, params object[] args)
+        protected void Log (LogLevel level, Exception exception, string format, params object[] args)
         {
             this.Logger.Log(level, this.GetType()
                                        .Name, exception, format, args);
@@ -103,26 +121,35 @@ namespace RI.DatabaseManager.Cleanup
 
         #endregion
 
+
+
+
+        #region Virtuals
+
         /// <summary>
-        /// Gets the cleanup step as batch.
+        ///     Gets the cleanup step as batch.
         /// </summary>
         /// <param name="manager"> The used database manager. </param>
-        /// <param name="steps">The available step (batch). </param>
+        /// <param name="steps"> The available step (batch). </param>
         /// <returns>
-        /// true if the cleanup step could be retrieved, false otherwise.
+        ///     true if the cleanup step could be retrieved, false otherwise.
         /// </returns>
         /// <remarks>
-        /// <note type="implement">
-        /// The default implementation uses <see cref="ISupportDefaultDatabaseCleanup.GetDefaultCleanupScript"/> to retrieve all cleanup commands which are converted to a batch.
-        /// </note>
+        ///     <note type="implement">
+        ///         The default implementation uses <see cref="ISupportDefaultDatabaseCleanup.GetDefaultCleanupScript" /> to
+        ///         retrieve all cleanup commands which are converted to a batch.
+        ///     </note>
         /// </remarks>
-        protected virtual bool GetCleanupSteps(IDbManager<TConnection, TTransaction, TParameterTypes> manager, out IDbBatch<TConnection, TTransaction, TParameterTypes> steps)
+        protected virtual bool GetCleanupSteps (IDbManager<TConnection, TTransaction, TParameterTypes> manager,
+                                                out IDbBatch<TConnection, TTransaction, TParameterTypes> steps)
         {
             steps = null;
             DbBatchTransactionRequirement transactionRequirement = DbBatchTransactionRequirement.DontCare;
             IsolationLevel? isolationLevel = null;
 
-            string[] commands = (this.Options as ISupportDefaultDatabaseCleanup)?.GetDefaultCleanupScript(out transactionRequirement, out isolationLevel);
+            string[] commands =
+                (this.Options as ISupportDefaultDatabaseCleanup)?.GetDefaultCleanupScript(out transactionRequirement,
+                    out isolationLevel);
 
             if (commands == null)
             {
@@ -146,10 +173,23 @@ namespace RI.DatabaseManager.Cleanup
             return true;
         }
 
+        #endregion
 
 
 
-        #region Interface: IDbCleanupProcessor<TConnection,TTransaction>
+
+        #region Interface: IDbCleanupProcessor
+
+        /// <inheritdoc />
+        bool IDbCleanupProcessor.Cleanup (IDbManager manager) =>
+            this.Cleanup((IDbManager<TConnection, TTransaction, TParameterTypes>)manager);
+
+        #endregion
+
+
+
+
+        #region Interface: IDbCleanupProcessor<TConnection,TTransaction,TParameterTypes>
 
         /// <inheritdoc />
         public virtual bool Cleanup (IDbManager<TConnection, TTransaction, TParameterTypes> manager)
@@ -191,9 +231,6 @@ namespace RI.DatabaseManager.Cleanup
                 return false;
             }
         }
-
-        /// <inheritdoc />
-        bool IDbCleanupProcessor.Cleanup (IDbManager manager) => this.Cleanup((IDbManager<TConnection, TTransaction, TParameterTypes>)manager);
 
         #endregion
     }

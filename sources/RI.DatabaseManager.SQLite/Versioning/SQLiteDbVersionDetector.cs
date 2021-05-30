@@ -24,9 +24,7 @@ namespace RI.DatabaseManager.Versioning
         /// <param name="options"> The used SQLite database manager options. </param>
         /// <param name="logger"> The used logger. </param>
         /// <exception cref="ArgumentNullException"> <paramref name="options" /> or <paramref name="logger" /> is null. </exception>
-        public SQLiteDbVersionDetector (SQLiteDbManagerOptions options, ILogger logger) : base(options, logger)
-        {
-        }
+        public SQLiteDbVersionDetector (SQLiteDbManagerOptions options, ILogger logger) : base(options, logger) { }
 
         #endregion
     }

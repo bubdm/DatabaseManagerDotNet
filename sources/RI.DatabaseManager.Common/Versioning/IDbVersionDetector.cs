@@ -14,10 +14,12 @@ namespace RI.DatabaseManager.Versioning
     /// <remarks>
     ///     <para>
     ///         Database version detectors are used to detect the state and version of a database.
-    ///         What the version detection does in detail depends on the database type and the implementation of <see cref="IDbVersionDetector" />.
+    ///         What the version detection does in detail depends on the database type and the implementation of
+    ///         <see cref="IDbVersionDetector" />.
     ///     </para>
     ///     <para>
-    ///         Implementations of <see cref="IDbVersionDetector" /> are always specific for a particular type of database (or particular implementation of <see cref="IDbManager" /> respectively).
+    ///         Implementations of <see cref="IDbVersionDetector" /> are always specific for a particular type of database (or
+    ///         particular implementation of <see cref="IDbManager" /> respectively).
     ///     </para>
     ///     <note type="note">
     ///         Database version detectors are mandatory.
@@ -34,8 +36,15 @@ namespace RI.DatabaseManager.Versioning
         ///     Detects the state and version of a database.
         /// </summary>
         /// <param name="manager"> The used database manager. </param>
-        /// <param name="state"> Returns the state of the database. Can return null to let <paramref name="manager" /> (or the implementation of <see cref="IDbManager" /> respectively) determine the state based on <paramref name="version" /> alone. </param>
-        /// <param name="version"> Returns the version of the database. Return -1 to indicate when the database is damaged or in an invalid state. Return 0 to indicate that the database does not yet exist and needs to be created. </param>
+        /// <param name="state">
+        ///     Returns the state of the database. Can return null to let <paramref name="manager" /> (or the
+        ///     implementation of <see cref="IDbManager" /> respectively) determine the state based on <paramref name="version" />
+        ///     alone.
+        /// </param>
+        /// <param name="version">
+        ///     Returns the version of the database. Return -1 to indicate when the database is damaged or in an
+        ///     invalid state. Return 0 to indicate that the database does not yet exist and needs to be created.
+        /// </param>
         /// <returns>
         ///     true if the state and version of the database could be successfully determined, false otherwise.
         ///     Details about failures should be written to logs.
@@ -54,6 +63,7 @@ namespace RI.DatabaseManager.Versioning
         where TParameterTypes : Enum
     {
         /// <inheritdoc cref="IDbVersionDetector.Detect" />
-        bool Detect (IDbManager<TConnection, TTransaction, TParameterTypes> manager, out DbState? state, out int version);
+        bool Detect (IDbManager<TConnection, TTransaction, TParameterTypes> manager, out DbState? state,
+                     out int version);
     }
 }

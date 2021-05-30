@@ -36,12 +36,10 @@ namespace RI.DatabaseManager.Backup
         /// <summary>
         ///     Creates a new instance of <see cref="SQLiteDbBackupCreator" />.
         /// </summary>
-        /// <param name="options"> The used SQLite database manager options.</param>
+        /// <param name="options"> The used SQLite database manager options. </param>
         /// <param name="logger"> The used logger. </param>
         /// <exception cref="ArgumentNullException"> <paramref name="options" /> or <paramref name="logger" /> is null. </exception>
-        public SQLiteDbBackupCreator (SQLiteDbManagerOptions options, ILogger logger) : base(options, logger)
-        {
-        }
+        public SQLiteDbBackupCreator (SQLiteDbManagerOptions options, ILogger logger) : base(options, logger) { }
 
         #endregion
 
@@ -57,7 +55,8 @@ namespace RI.DatabaseManager.Backup
         public override bool SupportsRestore => false;
 
         /// <inheritdoc />
-        public override bool Backup (IDbManager<SQLiteConnection, SQLiteTransaction, DbType> manager, object backupTarget)
+        public override bool Backup (IDbManager<SQLiteConnection, SQLiteTransaction, DbType> manager,
+                                     object backupTarget)
         {
             if (manager == null)
             {
@@ -75,14 +74,18 @@ namespace RI.DatabaseManager.Backup
 
             if ((file == null) && (connectionStringBuilder == null) && (connection == null))
             {
-                throw new ArgumentException($"Type {backupTarget.GetType().Name} is not supported by {this.GetType().Name}.", nameof(backupTarget));
+                throw new
+                    ArgumentException($"Type {backupTarget.GetType().Name} is not supported by {this.GetType().Name}.",
+                                      nameof(backupTarget));
             }
 
             try
             {
                 this.Log(LogLevel.Information, "Beginning SQLite database backup");
 
-                SQLiteConnectionStringBuilder targetConnectionString = connectionStringBuilder ?? new SQLiteConnectionStringBuilder(this.Options.GetConnectionString());
+                SQLiteConnectionStringBuilder targetConnectionString =
+                    connectionStringBuilder ?? new SQLiteConnectionStringBuilder(this.Options.GetConnectionString());
+
                 if (file != null)
                 {
                     targetConnectionString.DataSource = file;
@@ -90,7 +93,10 @@ namespace RI.DatabaseManager.Backup
 
                 using (SQLiteConnection source = manager.CreateConnection(true))
                 {
-                    using (SQLiteConnection target = connection ?? ((SQLiteDbManager)manager).CreateInternalConnection(targetConnectionString.ConnectionString, false))
+                    using (SQLiteConnection target =
+                        connection ??
+                        ((SQLiteDbManager)manager).CreateInternalConnection(targetConnectionString.ConnectionString,
+                                                                            false))
                     {
                         if (target.State != ConnectionState.Open)
                         {
@@ -109,13 +115,16 @@ namespace RI.DatabaseManager.Backup
             }
             catch (Exception exception)
             {
-                this.Log(LogLevel.Error, "SQLite database backup failed:{0}{1}", Environment.NewLine, exception.ToString());
+                this.Log(LogLevel.Error, "SQLite database backup failed:{0}{1}", Environment.NewLine,
+                         exception.ToString());
+
                 return false;
             }
         }
 
         /// <inheritdoc />
-        public override bool Restore (IDbManager<SQLiteConnection, SQLiteTransaction, DbType> manager, object backupSource)
+        public override bool Restore (IDbManager<SQLiteConnection, SQLiteTransaction, DbType> manager,
+                                      object backupSource)
         {
             throw new NotSupportedException($"{this.GetType().Name} does not support restore.");
         }

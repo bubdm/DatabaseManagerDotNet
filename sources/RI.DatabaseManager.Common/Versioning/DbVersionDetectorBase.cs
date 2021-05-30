@@ -15,18 +15,23 @@ using RI.DatabaseManager.Manager;
 namespace RI.DatabaseManager.Versioning
 {
     /// <summary>
-    ///     Boilerplate implementation of <see cref="IDbVersionDetector" /> and <see cref="IDbVersionDetector{TConnection,TTransaction,TParameterTypes}" />.
+    ///     Boilerplate implementation of <see cref="IDbVersionDetector" /> and
+    ///     <see cref="IDbVersionDetector{TConnection,TTransaction,TParameterTypes}" />.
     /// </summary>
     /// <typeparam name="TConnection"> The database connection type. </typeparam>
     /// <typeparam name="TTransaction"> The database transaction type. </typeparam>
     /// <typeparam name="TParameterTypes"> The database command parameter type. </typeparam>
     /// <remarks>
     ///     <note type="implement">
-    ///         It is recommended that database version detector implementations use this base class as it already implements most of the database-independent logic defined by <see cref="IDbVersionDetector" /> and <see cref="IDbVersionDetector{TConnection,TTransaction,TParameterTypes}" />.
+    ///         It is recommended that database version detector implementations use this base class as it already implements
+    ///         most of the database-independent logic defined by <see cref="IDbVersionDetector" /> and
+    ///         <see cref="IDbVersionDetector{TConnection,TTransaction,TParameterTypes}" />.
     ///     </note>
     /// </remarks>
     /// <threadsafety static="false" instance="false" />
-    public abstract class DbVersionDetectorBase <TConnection, TTransaction, TParameterTypes> : IDbVersionDetector<TConnection, TTransaction, TParameterTypes>
+    public abstract class
+        DbVersionDetectorBase <TConnection, TTransaction, TParameterTypes> : IDbVersionDetector<TConnection,
+            TTransaction, TParameterTypes>
         where TConnection : DbConnection
         where TTransaction : DbTransaction
         where TParameterTypes : Enum
@@ -63,14 +68,6 @@ namespace RI.DatabaseManager.Versioning
         #region Instance Properties/Indexer
 
         /// <summary>
-        ///     Gets the used database manager options.
-        /// </summary>
-        /// <value>
-        ///     The used database manager options.
-        /// </value>
-        protected IDbManagerOptions Options { get; }
-
-        /// <summary>
         ///     Gets the used logger.
         /// </summary>
         /// <value>
@@ -79,12 +76,30 @@ namespace RI.DatabaseManager.Versioning
         protected ILogger Logger { get; }
 
         /// <summary>
+        ///     Gets the used database manager options.
+        /// </summary>
+        /// <value>
+        ///     The used database manager options.
+        /// </value>
+        protected IDbManagerOptions Options { get; }
+
+        #endregion
+
+
+
+
+        #region Instance Methods
+
+        /// <summary>
         ///     Writes a log message.
         /// </summary>
         /// <param name="level"> The log level of the log message. </param>
-        /// <param name="format"> Log message (with optional string expansion arguments such as <c> {0} </c>, <c> {1} </c>, etc. which are expanded by <paramref name="args" />). </param>
+        /// <param name="format">
+        ///     Log message (with optional string expansion arguments such as <c> {0} </c>, <c> {1} </c>, etc.
+        ///     which are expanded by <paramref name="args" />).
+        /// </param>
         /// <param name="args"> Optional message arguments expanded into <paramref name="format" />. </param>
-        protected void Log(LogLevel level, string format, params object[] args)
+        protected void Log (LogLevel level, string format, params object[] args)
         {
             this.Logger.Log(level, this.GetType()
                                        .Name, null, format, args);
@@ -95,9 +110,12 @@ namespace RI.DatabaseManager.Versioning
         /// </summary>
         /// <param name="level"> The log level of the log message. </param>
         /// <param name="exception"> Exception associated with the log message. </param>
-        /// <param name="format"> Optional log message (with optional string expansion arguments such as <c> {0} </c>, <c> {1} </c>, etc. which are expanded by <paramref name="args" />). </param>
+        /// <param name="format">
+        ///     Optional log message (with optional string expansion arguments such as <c> {0} </c>, <c> {1} </c>
+        ///     , etc. which are expanded by <paramref name="args" />).
+        /// </param>
         /// <param name="args"> Optional message arguments expanded into <paramref name="format" />. </param>
-        protected void Log(LogLevel level, Exception exception, string format, params object[] args)
+        protected void Log (LogLevel level, Exception exception, string format, params object[] args)
         {
             this.Logger.Log(level, this.GetType()
                                        .Name, exception, format, args);
@@ -105,26 +123,35 @@ namespace RI.DatabaseManager.Versioning
 
         #endregion
 
+
+
+
+        #region Virtuals
+
         /// <summary>
-        /// Gets the version detection step as batch.
+        ///     Gets the version detection step as batch.
         /// </summary>
         /// <param name="manager"> The used database manager. </param>
-        /// <param name="steps">The available step (batch). </param>
+        /// <param name="steps"> The available step (batch). </param>
         /// <returns>
-        /// true if the version detection step could be retrieved, false otherwise.
+        ///     true if the version detection step could be retrieved, false otherwise.
         /// </returns>
         /// <remarks>
-        /// <note type="implement">
-        /// The default implementation uses <see cref="ISupportDefaultDatabaseVersioning.GetDefaultVersioningScript"/> to retrieve all version detection commands which are converted to a batch.
-        /// </note>
+        ///     <note type="implement">
+        ///         The default implementation uses <see cref="ISupportDefaultDatabaseVersioning.GetDefaultVersioningScript" /> to
+        ///         retrieve all version detection commands which are converted to a batch.
+        ///     </note>
         /// </remarks>
-        protected virtual bool GetVersionDetectionSteps(IDbManager<TConnection, TTransaction, TParameterTypes> manager, out IDbBatch<TConnection, TTransaction, TParameterTypes> steps)
+        protected virtual bool GetVersionDetectionSteps (IDbManager<TConnection, TTransaction, TParameterTypes> manager,
+                                                         out IDbBatch<TConnection, TTransaction, TParameterTypes> steps)
         {
             steps = null;
             DbBatchTransactionRequirement transactionRequirement = DbBatchTransactionRequirement.DontCare;
             IsolationLevel? isolationLevel = null;
 
-            string[] commands = (this.Options as ISupportDefaultDatabaseVersioning)?.GetDefaultVersioningScript(out transactionRequirement, out isolationLevel);
+            string[] commands =
+                (this.Options as ISupportDefaultDatabaseVersioning)
+                ?.GetDefaultVersioningScript(out transactionRequirement, out isolationLevel);
 
             if (commands == null)
             {
@@ -149,13 +176,13 @@ namespace RI.DatabaseManager.Versioning
         }
 
         /// <summary>
-        /// Tries to convert the result of an executed version detection command to an <see cref="int"/>.
+        ///     Tries to convert the result of an executed version detection command to an <see cref="int" />.
         /// </summary>
-        /// <param name="value">The command result.</param>
+        /// <param name="value"> The command result. </param>
         /// <returns>
-        /// The converted value or null if the result cannot be converted.
+        ///     The converted value or null if the result cannot be converted.
         /// </returns>
-        protected virtual int? ToInt32FromResult(object value)
+        protected virtual int? ToInt32FromResult (object value)
         {
             if (value == null)
             {
@@ -236,13 +263,27 @@ namespace RI.DatabaseManager.Versioning
             return null;
         }
 
+        #endregion
 
 
 
-        #region Interface: IDbVersionDetector<TConnection,TTransaction>
+
+        #region Interface: IDbVersionDetector
 
         /// <inheritdoc />
-        public virtual bool Detect (IDbManager<TConnection, TTransaction, TParameterTypes> manager, out DbState? state, out int version)
+        bool IDbVersionDetector.Detect (IDbManager manager, out DbState? state, out int version) =>
+            this.Detect((IDbManager<TConnection, TTransaction, TParameterTypes>)manager, out state, out version);
+
+        #endregion
+
+
+
+
+        #region Interface: IDbVersionDetector<TConnection,TTransaction,TParameterTypes>
+
+        /// <inheritdoc />
+        public virtual bool Detect (IDbManager<TConnection, TTransaction, TParameterTypes> manager, out DbState? state,
+                                    out int version)
         {
             if (manager == null)
             {
@@ -289,13 +330,12 @@ namespace RI.DatabaseManager.Versioning
             }
             catch (Exception exception)
             {
-                this.Log(LogLevel.Error, "Failed version detection of database:{0}{1}", Environment.NewLine, exception.ToString());
+                this.Log(LogLevel.Error, "Failed version detection of database:{0}{1}", Environment.NewLine,
+                         exception.ToString());
+
                 return false;
             }
         }
-
-        /// <inheritdoc />
-        bool IDbVersionDetector.Detect (IDbManager manager, out DbState? state, out int version) => this.Detect((IDbManager<TConnection, TTransaction, TParameterTypes>)manager, out state, out version);
 
         #endregion
     }

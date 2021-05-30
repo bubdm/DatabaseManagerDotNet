@@ -14,7 +14,7 @@ namespace RI.DatabaseManager.Upgrading
     ///     Implements a database version upgrader for SQLite databases.
     /// </summary>
     /// <threadsafety static="false" instance="false" />
-    public sealed class SQLiteDbVersionUpgrader : DbVersionUpgraderBase<SQLiteConnection,SQLiteTransaction, DbType>
+    public sealed class SQLiteDbVersionUpgrader : DbVersionUpgraderBase<SQLiteConnection, SQLiteTransaction, DbType>
     {
         #region Instance Constructor/Destructor
 
@@ -24,9 +24,7 @@ namespace RI.DatabaseManager.Upgrading
         /// <param name="options"> The used SQLite database manager options. </param>
         /// <param name="logger"> The used logger. </param>
         /// <exception cref="ArgumentNullException"> <paramref name="options" /> or <paramref name="logger" /> is null. </exception>
-        public SQLiteDbVersionUpgrader(SQLiteDbManagerOptions options, ILogger logger) : base(options, logger)
-        {
-        }
+        public SQLiteDbVersionUpgrader (SQLiteDbManagerOptions options, ILogger logger) : base(options, logger) { }
 
         #endregion
     }

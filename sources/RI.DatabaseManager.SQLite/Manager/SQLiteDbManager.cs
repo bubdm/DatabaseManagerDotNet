@@ -22,14 +22,15 @@ namespace RI.DatabaseManager.Manager
     ///     Implements a database manager for SQLite databases.
     /// </summary>
     /// <threadsafety static="false" instance="false" />
-    public sealed class SQLiteDbManager : DbManagerBase<SQLiteConnection, SQLiteTransaction, DbType, SQLiteParameterCollection, SQLiteParameter, SQLiteDbManagerOptions>
+    public sealed class SQLiteDbManager : DbManagerBase<SQLiteConnection, SQLiteTransaction, DbType,
+        SQLiteParameterCollection, SQLiteParameter, SQLiteDbManagerOptions>
     {
-        #region Instance Properties/Indexer
+        #region Instance Constructor/Destructor
 
         /// <summary>
         ///     Creates a new instance of <see cref="SQLiteDbManager" />.
         /// </summary>
-        /// <param name="options"> The used SQLite database manager options.</param>
+        /// <param name="options"> The used SQLite database manager options. </param>
         /// <param name="logger"> The used logger. </param>
         /// <param name="batchLocator"> The used batch locator. </param>
         /// <param name="versionDetector"> The used version detector. </param>
@@ -37,10 +38,19 @@ namespace RI.DatabaseManager.Manager
         /// <param name="cleanupProcessor"> The used cleanup processor, if any. </param>
         /// <param name="versionUpgrader"> The used version upgrader, if any. </param>
         /// <param name="creator"> The used database creator, if any. </param>
-        /// <exception cref="ArgumentNullException"> <paramref name="options" />, <paramref name="logger" />, <paramref name="batchLocator" />, or <paramref name="versionDetector" /> is null. </exception>
-        public SQLiteDbManager (SQLiteDbManagerOptions options, ILogger logger, IDbBatchLocator<SQLiteConnection, SQLiteTransaction, DbType> batchLocator, IDbVersionDetector<SQLiteConnection, SQLiteTransaction, DbType> versionDetector, IDbBackupCreator<SQLiteConnection, SQLiteTransaction, DbType> backupCreator, IDbCleanupProcessor<SQLiteConnection, SQLiteTransaction, DbType> cleanupProcessor, IDbVersionUpgrader<SQLiteConnection, SQLiteTransaction, DbType> versionUpgrader, IDbCreator<SQLiteConnection, SQLiteTransaction, DbType> creator) : base(logger, batchLocator, versionDetector, backupCreator, cleanupProcessor, versionUpgrader, creator, options)
-        {
-        }
+        /// <exception cref="ArgumentNullException">
+        ///     <paramref name="options" />, <paramref name="logger" />,
+        ///     <paramref name="batchLocator" />, or <paramref name="versionDetector" /> is null.
+        /// </exception>
+        public SQLiteDbManager (SQLiteDbManagerOptions options, ILogger logger,
+                                IDbBatchLocator<SQLiteConnection, SQLiteTransaction, DbType> batchLocator,
+                                IDbVersionDetector<SQLiteConnection, SQLiteTransaction, DbType> versionDetector,
+                                IDbBackupCreator<SQLiteConnection, SQLiteTransaction, DbType> backupCreator,
+                                IDbCleanupProcessor<SQLiteConnection, SQLiteTransaction, DbType> cleanupProcessor,
+                                IDbVersionUpgrader<SQLiteConnection, SQLiteTransaction, DbType> versionUpgrader,
+                                IDbCreator<SQLiteConnection, SQLiteTransaction, DbType> creator) :
+            base(logger, batchLocator, versionDetector, backupCreator, cleanupProcessor, versionUpgrader, creator,
+                 options) { }
 
         #endregion
 
@@ -51,7 +61,10 @@ namespace RI.DatabaseManager.Manager
 
         internal SQLiteConnection CreateInternalConnection (string connectionStringOverride, bool readOnly)
         {
-            SQLiteConnectionStringBuilder connectionString = new SQLiteConnectionStringBuilder(connectionStringOverride ?? this.Options.ConnectionString.ConnectionString);
+            SQLiteConnectionStringBuilder connectionString =
+                new SQLiteConnectionStringBuilder(connectionStringOverride ??
+                                                  this.Options.ConnectionString.ConnectionString);
+
             connectionString.ReadOnly = readOnly;
 
             SQLiteConnection connection = new SQLiteConnection(connectionString.ConnectionString);
@@ -59,10 +72,16 @@ namespace RI.DatabaseManager.Manager
 
             foreach (SQLiteFunction customFunction in this.Options.CustomFunctions)
             {
-                SQLiteFunctionAttribute attribute = customFunction.GetType().GetCustomAttributes(typeof(SQLiteFunctionAttribute), true).OfType<SQLiteFunctionAttribute>().FirstOrDefault();
+                SQLiteFunctionAttribute attribute = customFunction.GetType()
+                                                                  .GetCustomAttributes(typeof(SQLiteFunctionAttribute),
+                                                                      true)
+                                                                  .OfType<SQLiteFunctionAttribute>()
+                                                                  .FirstOrDefault();
+
                 if (attribute == null)
                 {
-                    throw new SQLiteException($"The specified SQLite function does not have {nameof(SQLiteFunctionAttribute)} applied: {customFunction.GetType().Name}");
+                    throw new
+                        SQLiteException($"The specified SQLite function does not have {nameof(SQLiteFunctionAttribute)} applied: {customFunction.GetType().Name}");
                 }
 
                 connection.BindFunction(attribute, customFunction);
@@ -70,10 +89,16 @@ namespace RI.DatabaseManager.Manager
 
             foreach (SQLiteFunction customCollation in this.Options.CustomCollations)
             {
-                SQLiteFunctionAttribute attribute = customCollation.GetType().GetCustomAttributes(typeof(SQLiteFunctionAttribute), true).OfType<SQLiteFunctionAttribute>().FirstOrDefault();
+                SQLiteFunctionAttribute attribute = customCollation.GetType()
+                                                                   .GetCustomAttributes(typeof(SQLiteFunctionAttribute),
+                                                                       true)
+                                                                   .OfType<SQLiteFunctionAttribute>()
+                                                                   .FirstOrDefault();
+
                 if (attribute == null)
                 {
-                    throw new SQLiteException($"The specified SQLite collation does not have {nameof(SQLiteFunctionAttribute)} applied: {customCollation.GetType().Name}");
+                    throw new
+                        SQLiteException($"The specified SQLite collation does not have {nameof(SQLiteFunctionAttribute)} applied: {customCollation.GetType().Name}");
                 }
 
                 connection.BindFunction(attribute, customCollation);
@@ -82,7 +107,8 @@ namespace RI.DatabaseManager.Manager
             return connection;
         }
 
-        internal SQLiteTransaction CreateInternalTransaction(string connectionStringOverride, bool readOnly, IsolationLevel isolationLevel)
+        internal SQLiteTransaction CreateInternalTransaction (string connectionStringOverride, bool readOnly,
+                                                              IsolationLevel isolationLevel)
         {
             SQLiteConnection connection = this.CreateInternalConnection(connectionStringOverride, readOnly);
             return connection.BeginTransaction(isolationLevel);
@@ -114,33 +140,12 @@ namespace RI.DatabaseManager.Manager
         protected override bool SupportsUpgradeImpl => true;
 
         /// <inheritdoc />
-        protected override SQLiteConnection CreateConnectionImpl (bool readOnly) => this.CreateInternalConnection(null, readOnly);
+        protected override SQLiteConnection CreateConnectionImpl (bool readOnly) =>
+            this.CreateInternalConnection(null, readOnly);
 
         /// <inheritdoc />
-        protected override SQLiteTransaction CreateTransactionImpl (bool readOnly, IsolationLevel isolationLevel) => this.CreateInternalTransaction(null, readOnly, isolationLevel);
-
-        /// <inheritdoc />
-        protected override IsolationLevel GetDefaultIsolationLevel() => IsolationLevel.ReadCommitted;
-
-        /// <inheritdoc />
-        protected override object ExecuteCommandScriptImpl (SQLiteConnection connection, SQLiteTransaction transaction, string script, IDbBatchCommandParameterCollection<DbType> parameters, out string error, out Exception exception)
-        {
-            error = null;
-            exception = null;
-
-            this.Log(LogLevel.Debug, "Executing SQLite database processing command:{0}{1}", Environment.NewLine, script);
-
-            using (SQLiteCommand command = transaction == null ? new SQLiteCommand(script, connection) : new SQLiteCommand(script, connection, transaction))
-            {
-                foreach (IDbBatchCommandParameter<DbType> parameter in parameters)
-                {
-                    command.Parameters.Add(parameter.Name, parameter.Type)
-                           .Value = parameter.Value;
-                }
-
-                return command.ExecuteScalar();
-            }
-        }
+        protected override SQLiteTransaction CreateTransactionImpl (bool readOnly, IsolationLevel isolationLevel) =>
+            this.CreateInternalTransaction(null, readOnly, isolationLevel);
 
         /// <inheritdoc />
         protected override bool DetectStateAndVersionImpl (out DbState? state, out int version)
@@ -163,6 +168,34 @@ namespace RI.DatabaseManager.Manager
 
             return base.DetectStateAndVersionImpl(out state, out version);
         }
+
+        /// <inheritdoc />
+        protected override object ExecuteCommandScriptImpl (SQLiteConnection connection, SQLiteTransaction transaction,
+                                                            string script,
+                                                            IDbBatchCommandParameterCollection<DbType> parameters,
+                                                            out string error, out Exception exception)
+        {
+            error = null;
+            exception = null;
+
+            this.Log(LogLevel.Debug, "Executing SQLite database processing command:{0}{1}", Environment.NewLine,
+                     script);
+
+            using (SQLiteCommand command = transaction == null ? new SQLiteCommand(script, connection)
+                                               : new SQLiteCommand(script, connection, transaction))
+            {
+                foreach (IDbBatchCommandParameter<DbType> parameter in parameters)
+                {
+                    command.Parameters.Add(parameter.Name, parameter.Type)
+                           .Value = parameter.Value;
+                }
+
+                return command.ExecuteScalar();
+            }
+        }
+
+        /// <inheritdoc />
+        protected override IsolationLevel GetDefaultIsolationLevel () => IsolationLevel.ReadCommitted;
 
         #endregion
     }

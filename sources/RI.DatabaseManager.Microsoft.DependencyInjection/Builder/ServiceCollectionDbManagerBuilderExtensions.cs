@@ -15,6 +15,8 @@ namespace RI.DatabaseManager.Builder
     /// <threadsafety static="false" instance="false" />
     public static class ServiceCollectionDbManagerBuilderExtensions
     {
+        #region Static Methods
+
         /// <summary>
         ///     Creates a new database manager builder and uses the given Service Collection as the composition container.
         /// </summary>
@@ -24,7 +26,8 @@ namespace RI.DatabaseManager.Builder
         ///     <note type="important">
         ///         <see cref="AddDbManager" /> does not yet configure or build any services.
         ///         It just prepares the builder for use in further configuration/build steps.
-        ///         Services are only added to the Service Collection and usable after <see cref="IBuilder.Build" /> is called on the returned <see cref="DbManagerBuilder" />.
+        ///         Services are only added to the Service Collection and usable after <see cref="IBuilder.Build" /> is called on
+        ///         the returned <see cref="DbManagerBuilder" />.
         ///     </note>
         /// </remarks>
         /// <exception cref="ArgumentNullException"> <paramref name="services" /> is null. </exception>
@@ -39,5 +42,7 @@ namespace RI.DatabaseManager.Builder
             builder.UseServiceCollection(services);
             return builder;
         }
+
+        #endregion
     }
 }

@@ -14,10 +14,12 @@ namespace RI.DatabaseManager.Cleanup
     /// <remarks>
     ///     <para>
     ///         Database cleanup processors are used to cleanup a database.
-    ///         What the cleanup does in detail depends on the database type and the implementation of <see cref="IDbCleanupProcessor" />.
+    ///         What the cleanup does in detail depends on the database type and the implementation of
+    ///         <see cref="IDbCleanupProcessor" />.
     ///     </para>
     ///     <para>
-    ///         Implementations of <see cref="IDbCleanupProcessor" /> are always specific for a particular type of database (or particular implementation of <see cref="IDbManager" /> respectively).
+    ///         Implementations of <see cref="IDbCleanupProcessor" /> are always specific for a particular type of database (or
+    ///         particular implementation of <see cref="IDbManager" /> respectively).
     ///     </para>
     ///     <note type="note">
     ///         Database cleanup processors are optional.

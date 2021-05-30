@@ -13,18 +13,23 @@ using RI.DatabaseManager.Manager;
 namespace RI.DatabaseManager.Creation
 {
     /// <summary>
-    ///     Boilerplate implementation of <see cref="IDbCreator" /> and <see cref="IDbCreator{TConnection,TTransaction,TParameterTypes}" />.
+    ///     Boilerplate implementation of <see cref="IDbCreator" /> and
+    ///     <see cref="IDbCreator{TConnection,TTransaction,TParameterTypes}" />.
     /// </summary>
     /// <typeparam name="TConnection"> The database connection type. </typeparam>
     /// <typeparam name="TTransaction"> The database transaction type. </typeparam>
     /// <typeparam name="TParameterTypes"> The database command parameter type. </typeparam>
     /// <remarks>
     ///     <note type="implement">
-    ///         It is recommended that database creator implementations use this base class as it already implements most of the database-independent logic defined by <see cref="IDbCreator" /> and <see cref="IDbCreator{TConnection,TTransaction,TParameterTypes}" />.
+    ///         It is recommended that database creator implementations use this base class as it already implements most of
+    ///         the database-independent logic defined by <see cref="IDbCreator" /> and
+    ///         <see cref="IDbCreator{TConnection,TTransaction,TParameterTypes}" />.
     ///     </note>
     /// </remarks>
     /// <threadsafety static="false" instance="false" />
-    public abstract class DbCreatorBase <TConnection, TTransaction, TParameterTypes> : IDbCreator<TConnection, TTransaction, TParameterTypes>
+    public abstract class
+        DbCreatorBase <TConnection, TTransaction, TParameterTypes> : IDbCreator<TConnection, TTransaction,
+            TParameterTypes>
         where TConnection : DbConnection
         where TTransaction : DbTransaction
         where TParameterTypes : Enum
@@ -37,7 +42,7 @@ namespace RI.DatabaseManager.Creation
         /// <param name="options"> The used database manager options. </param>
         /// <param name="logger"> The used logger. </param>
         /// <exception cref="ArgumentNullException"> <paramref name="options" /> or <paramref name="logger" /> is null. </exception>
-        protected DbCreatorBase(IDbManagerOptions options, ILogger logger)
+        protected DbCreatorBase (IDbManagerOptions options, ILogger logger)
         {
             if (options == null)
             {
@@ -61,14 +66,6 @@ namespace RI.DatabaseManager.Creation
         #region Instance Properties/Indexer
 
         /// <summary>
-        ///     Gets the used database manager options.
-        /// </summary>
-        /// <value>
-        ///     The used database manager options.
-        /// </value>
-        protected IDbManagerOptions Options { get; }
-
-        /// <summary>
         ///     Gets the used logger.
         /// </summary>
         /// <value>
@@ -77,12 +74,30 @@ namespace RI.DatabaseManager.Creation
         protected ILogger Logger { get; }
 
         /// <summary>
+        ///     Gets the used database manager options.
+        /// </summary>
+        /// <value>
+        ///     The used database manager options.
+        /// </value>
+        protected IDbManagerOptions Options { get; }
+
+        #endregion
+
+
+
+
+        #region Instance Methods
+
+        /// <summary>
         ///     Writes a log message.
         /// </summary>
         /// <param name="level"> The log level of the log message. </param>
-        /// <param name="format"> Log message (with optional string expansion arguments such as <c> {0} </c>, <c> {1} </c>, etc. which are expanded by <paramref name="args" />). </param>
+        /// <param name="format">
+        ///     Log message (with optional string expansion arguments such as <c> {0} </c>, <c> {1} </c>, etc.
+        ///     which are expanded by <paramref name="args" />).
+        /// </param>
         /// <param name="args"> Optional message arguments expanded into <paramref name="format" />. </param>
-        protected void Log(LogLevel level, string format, params object[] args)
+        protected void Log (LogLevel level, string format, params object[] args)
         {
             this.Logger.Log(level, this.GetType()
                                        .Name, null, format, args);
@@ -93,9 +108,12 @@ namespace RI.DatabaseManager.Creation
         /// </summary>
         /// <param name="level"> The log level of the log message. </param>
         /// <param name="exception"> Exception associated with the log message. </param>
-        /// <param name="format"> Optional log message (with optional string expansion arguments such as <c> {0} </c>, <c> {1} </c>, etc. which are expanded by <paramref name="args" />). </param>
+        /// <param name="format">
+        ///     Optional log message (with optional string expansion arguments such as <c> {0} </c>, <c> {1} </c>
+        ///     , etc. which are expanded by <paramref name="args" />).
+        /// </param>
         /// <param name="args"> Optional message arguments expanded into <paramref name="format" />. </param>
-        protected void Log(LogLevel level, Exception exception, string format, params object[] args)
+        protected void Log (LogLevel level, Exception exception, string format, params object[] args)
         {
             this.Logger.Log(level, this.GetType()
                                        .Name, exception, format, args);
@@ -103,26 +121,35 @@ namespace RI.DatabaseManager.Creation
 
         #endregion
 
+
+
+
+        #region Virtuals
+
         /// <summary>
-        /// Gets the creation step as batch.
+        ///     Gets the creation step as batch.
         /// </summary>
         /// <param name="manager"> The used database manager. </param>
-        /// <param name="steps">The available step (batch). </param>
+        /// <param name="steps"> The available step (batch). </param>
         /// <returns>
-        /// true if the creation step could be retrieved, false otherwise.
+        ///     true if the creation step could be retrieved, false otherwise.
         /// </returns>
         /// <remarks>
-        /// <note type="implement">
-        /// The default implementation uses <see cref="ISupportDefaultDatabaseCreation.GetDefaultCreationScript"/> to retrieve all creation commands which are converted to batches (one batch per command).
-        /// </note>
+        ///     <note type="implement">
+        ///         The default implementation uses <see cref="ISupportDefaultDatabaseCreation.GetDefaultCreationScript" /> to
+        ///         retrieve all creation commands which are converted to batches (one batch per command).
+        ///     </note>
         /// </remarks>
-        protected virtual bool GetCreationSteps(IDbManager<TConnection, TTransaction, TParameterTypes> manager, out IDbBatch<TConnection, TTransaction, TParameterTypes> steps)
+        protected virtual bool GetCreationSteps (IDbManager<TConnection, TTransaction, TParameterTypes> manager,
+                                                 out IDbBatch<TConnection, TTransaction, TParameterTypes> steps)
         {
             steps = null;
             DbBatchTransactionRequirement transactionRequirement = DbBatchTransactionRequirement.DontCare;
             IsolationLevel? isolationLevel = null;
 
-            string[] commands = (this.Options as ISupportDefaultDatabaseCreation)?.GetDefaultCreationScript(out transactionRequirement, out isolationLevel);
+            string[] commands =
+                (this.Options as ISupportDefaultDatabaseCreation)?.GetDefaultCreationScript(out transactionRequirement,
+                    out isolationLevel);
 
             if (commands == null)
             {
@@ -146,10 +173,23 @@ namespace RI.DatabaseManager.Creation
             return true;
         }
 
+        #endregion
 
 
 
-        #region Interface: IDbCleanupProcessor<TConnection,TTransaction>
+
+        #region Interface: IDbCreator
+
+        /// <inheritdoc />
+        bool IDbCreator.Create (IDbManager manager) =>
+            this.Create((IDbManager<TConnection, TTransaction, TParameterTypes>)manager);
+
+        #endregion
+
+
+
+
+        #region Interface: IDbCreator<TConnection,TTransaction,TParameterTypes>
 
         /// <inheritdoc />
         public virtual bool Create (IDbManager<TConnection, TTransaction, TParameterTypes> manager)
@@ -191,9 +231,6 @@ namespace RI.DatabaseManager.Creation
                 return false;
             }
         }
-
-        /// <inheritdoc />
-        bool IDbCreator.Create (IDbManager manager) => this.Create((IDbManager<TConnection, TTransaction, TParameterTypes>)manager);
 
         #endregion
     }

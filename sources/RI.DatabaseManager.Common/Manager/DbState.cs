@@ -42,17 +42,20 @@ namespace RI.DatabaseManager.Manager
         Unavailable = 5,
 
         /// <summary>
-        ///     The database manager is initialized but is not ready for use because the database version is newer than the newest version known/supported.
+        ///     The database manager is initialized but is not ready for use because the database version is newer than the newest
+        ///     version known/supported.
         /// </summary>
         TooNew = 6,
 
         /// <summary>
-        ///     The database manager is initialized but is not ready for use because the database version is too old and cannot be upgraded.
+        ///     The database manager is initialized but is not ready for use because the database version is too old and cannot be
+        ///     upgraded.
         /// </summary>
         TooOld = 7,
 
         /// <summary>
-        ///     The database manager is initialized but is not ready for use because the database is damaged or in an invalid state.
+        ///     The database manager is initialized but is not ready for use because the database is damaged or in an invalid
+        ///     state.
         /// </summary>
         DamagedOrInvalid = 8,
     }

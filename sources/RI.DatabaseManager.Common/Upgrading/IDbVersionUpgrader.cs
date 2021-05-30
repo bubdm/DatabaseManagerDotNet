@@ -14,19 +14,25 @@ namespace RI.DatabaseManager.Upgrading
     /// <remarks>
     ///     <para>
     ///         Database version upgraders are used to upgrade a databases version from version n to version n+1.
-    ///         What the upgrade does in detail depends on the database type and the implementation of <see cref="IDbVersionUpgrader" />.
+    ///         What the upgrade does in detail depends on the database type and the implementation of
+    ///         <see cref="IDbVersionUpgrader" />.
     ///     </para>
     ///     <para>
-    ///         Implementations of <see cref="IDbVersionUpgrader" /> are always specific for a particular type of database (or particular implementation of <see cref="IDbManager" /> respectively).
+    ///         Implementations of <see cref="IDbVersionUpgrader" /> are always specific for a particular type of database (or
+    ///         particular implementation of <see cref="IDbManager" /> respectively).
     ///     </para>
     ///     <para>
-    ///         <see cref="IDbVersionUpgrader" /> performs upgrades incrementally through multiple calls to <see cref="Upgrade" />.
-    ///         <see cref="Upgrade" /> is always called for the current/source version and then upgrades to the current/source version + 1.
-    ///         Therefore, database managers must call <see cref="Upgrade" /> as many times as necessary to upgrade incrementally from the current version to the desired version, advancing the schema version version by version.
+    ///         <see cref="IDbVersionUpgrader" /> performs upgrades incrementally through multiple calls to
+    ///         <see cref="Upgrade" />.
+    ///         <see cref="Upgrade" /> is always called for the current/source version and then upgrades to the current/source
+    ///         version + 1.
+    ///         Therefore, database managers must call <see cref="Upgrade" /> as many times as necessary to upgrade
+    ///         incrementally from the current version to the desired version, advancing the schema version version by version.
     ///     </para>
     ///     <note type="note">
     ///         Database version upgraders are optional.
-    ///         If not configured, upgrading is not available / not supported and some versioning information about the database will not be available.
+    ///         If not configured, upgrading is not available / not supported and some versioning information about the
+    ///         database will not be available.
     ///     </note>
     ///     <note type="note">
     ///         <see cref="IDbVersionUpgrader" /> implementations are used by database managers.
@@ -44,11 +50,15 @@ namespace RI.DatabaseManager.Upgrading
         /// </returns>
         /// <remarks>
         ///     <note type="implement">
-        ///         <see cref="GetMaxVersion" /> always represents a target version, not a source version, meaning that <see cref="GetMaxVersion" /> is the highest version to which can be upgraded.
+        ///         <see cref="GetMaxVersion" /> always represents a target version, not a source version, meaning that
+        ///         <see cref="GetMaxVersion" /> is the highest version to which can be upgraded.
         ///     </note>
         /// </remarks>
         /// <exception cref="ArgumentNullException"> <paramref name="manager" /> is null. </exception>
-        /// <exception cref="InvalidOperationException"> The version upgrader has been provided with an empty or non-contiguous set of versions to upgrade from/to. </exception>
+        /// <exception cref="InvalidOperationException">
+        ///     The version upgrader has been provided with an empty or non-contiguous set
+        ///     of versions to upgrade from/to.
+        /// </exception>
         int GetMaxVersion (IDbManager manager);
 
         /// <summary>
@@ -61,11 +71,15 @@ namespace RI.DatabaseManager.Upgrading
         /// </returns>
         /// <remarks>
         ///     <note type="implement">
-        ///         <see cref="GetMinVersion" /> always represents a source version, not a target version, meaning that <see cref="GetMinVersion" /> is the lowest version from which can be upgraded.
+        ///         <see cref="GetMinVersion" /> always represents a source version, not a target version, meaning that
+        ///         <see cref="GetMinVersion" /> is the lowest version from which can be upgraded.
         ///     </note>
         /// </remarks>
         /// <exception cref="ArgumentNullException"> <paramref name="manager" /> is null. </exception>
-        /// <exception cref="InvalidOperationException"> The version upgrader has been provided with an empty or non-contiguous set of versions to upgrade from/to. </exception>
+        /// <exception cref="InvalidOperationException">
+        ///     The version upgrader has been provided with an empty or non-contiguous set
+        ///     of versions to upgrade from/to.
+        /// </exception>
         int GetMinVersion (IDbManager manager);
 
         /// <summary>
@@ -83,8 +97,14 @@ namespace RI.DatabaseManager.Upgrading
         ///     </note>
         /// </remarks>
         /// <exception cref="ArgumentNullException"> <paramref name="manager" /> is null. </exception>
-        /// <exception cref="ArgumentOutOfRangeException"> <paramref name="sourceVersion" /> is less than zero, less than <see cref="GetMinVersion" />, or equal or greater than <see cref="GetMaxVersion" />. </exception>
-        /// <exception cref="InvalidOperationException"> The version upgrader has been provided with an empty or non-contiguous set of versions to upgrade from/to. </exception>
+        /// <exception cref="ArgumentOutOfRangeException">
+        ///     <paramref name="sourceVersion" /> is less than zero, less than
+        ///     <see cref="GetMinVersion" />, or equal or greater than <see cref="GetMaxVersion" />.
+        /// </exception>
+        /// <exception cref="InvalidOperationException">
+        ///     The version upgrader has been provided with an empty or non-contiguous set
+        ///     of versions to upgrade from/to.
+        /// </exception>
         bool Upgrade (IDbManager manager, int sourceVersion);
     }
 

@@ -9,7 +9,7 @@
     <title>RI.DatabaseManager.Microsoft.SqlServer</title>
     <copyright>Copyright (c) 2017-2020 Roten Informatik</copyright>
     <description>Database manager for .NET</description>
-    <tags>dotnet database manager sqlite sql-server</tags>
+    <tags>dotnet database manager sqlite sql-server boilerplate database-manager</tags>
     <icon>images\ICON.png</icon>
     <requireLicenseAcceptance>true</requireLicenseAcceptance>
     <license type="expression">Apache-2.0</license>
