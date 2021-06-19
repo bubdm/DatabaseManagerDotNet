@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Data;
 using System.Data.Common;
 
@@ -41,6 +42,14 @@ namespace RI.DatabaseManager.Batches
         Exception Exception { get; set; }
 
         /// <summary>
+        ///     Gets the execution type used for this command.
+        /// </summary>
+        /// <value>
+        ///     One of the <see cref="DbBatchExecutionType" /> values.
+        /// </value>
+        DbBatchExecutionType ExecutionType { get; }
+
+        /// <summary>
         ///     Gets the used isolation level, if any.
         /// </summary>
         /// <value>
@@ -67,13 +76,17 @@ namespace RI.DatabaseManager.Batches
         IDbBatchCommandParameterCollection Parameters { get; }
 
         /// <summary>
-        ///     Gets or sets the result of the last execution of this command.
+        ///     Gets the list of results from the last execution of this command.
         /// </summary>
         /// <value>
-        ///     The result of the last execution of this command or null if the command was not executed. Note that "no result" is
-        ///     indicated by a return value of <see cref="DBNull" />.
+        ///     The list of results from the last execution of this command or an empty list if the command was not executed.
         /// </value>
-        object Result { get; set; }
+        /// <remarks>
+        ///     <note type="implement">
+        ///         This property should never be null.
+        ///     </note>
+        /// </remarks>
+        List<object> Results { get; }
 
         /// <summary>
         ///     Gets the database script code of this command (if used).

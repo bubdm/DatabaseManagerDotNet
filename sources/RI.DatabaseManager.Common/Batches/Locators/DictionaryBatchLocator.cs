@@ -75,6 +75,8 @@ namespace RI.DatabaseManager.Batches.Locators
                 new Dictionary<string, DbBatchTransactionRequirement>(this.DefaultNameComparer);
 
             this.IsolationLevels = new Dictionary<string, IsolationLevel?>(this.DefaultNameComparer);
+
+            this.ExecutionTypes = new Dictionary<string, DbBatchExecutionType>(this.DefaultNameComparer);
         }
 
         #endregion
@@ -94,6 +96,14 @@ namespace RI.DatabaseManager.Batches.Locators
         {
             get;
         }
+
+        /// <summary>
+        ///     Gets the dictionary with execution types.
+        /// </summary>
+        /// <value>
+        ///     The dictionary with execution types.
+        /// </value>
+        public Dictionary<string, DbBatchExecutionType> ExecutionTypes { get; }
 
         /// <summary>
         ///     Gets the dictionary with isolation level requirements.
@@ -136,12 +146,17 @@ namespace RI.DatabaseManager.Batches.Locators
         ///     <see cref="DbBatchTransactionRequirement.DontCare" />.
         /// </param>
         /// <param name="isolationLevel"> The optional isolation level requirement specification. Default value is null. </param>
+        /// <param name="executionType">
+        ///     The optional execution type specification. Default value is
+        ///     <see cref="DbBatchExecutionType.Reader" />.
+        /// </param>
         /// <exception cref="ArgumentNullException"> <paramref name="batchName" /> or <paramref name="callback" /> is null. </exception>
         /// <exception cref="ArgumentException"> <paramref name="batchName" /> is an empty string. </exception>
         public void AddCode (string batchName,
                              CallbackBatchCommandDelegate<TConnection, TTransaction, TParameterTypes> callback,
                              DbBatchTransactionRequirement transactionRequirement =
-                                 DbBatchTransactionRequirement.DontCare, IsolationLevel? isolationLevel = null)
+                                 DbBatchTransactionRequirement.DontCare, IsolationLevel? isolationLevel = null,
+                             DbBatchExecutionType executionType = DbBatchExecutionType.Reader)
         {
             if (batchName == null)
             {
@@ -161,6 +176,7 @@ namespace RI.DatabaseManager.Batches.Locators
             this.Callbacks.Add(batchName, callback);
             this.TransactionRequirements.Add(batchName, transactionRequirement);
             this.IsolationLevels.Add(batchName, isolationLevel);
+            this.ExecutionTypes.Add(batchName, executionType);
         }
 
         /// <summary>
@@ -173,11 +189,16 @@ namespace RI.DatabaseManager.Batches.Locators
         ///     <see cref="DbBatchTransactionRequirement.DontCare" />.
         /// </param>
         /// <param name="isolationLevel"> The optional isolation level requirement specification. Default value is null. </param>
+        /// <param name="executionType">
+        ///     The optional execution type specification. Default value is
+        ///     <see cref="DbBatchExecutionType.Reader" />.
+        /// </param>
         /// <exception cref="ArgumentNullException"> <paramref name="batchName" /> is null. </exception>
         /// <exception cref="ArgumentException"> <paramref name="batchName" /> is an empty string. </exception>
         public void AddScript (string batchName, string script,
                                DbBatchTransactionRequirement transactionRequirement =
-                                   DbBatchTransactionRequirement.DontCare, IsolationLevel? isolationLevel = null)
+                                   DbBatchTransactionRequirement.DontCare, IsolationLevel? isolationLevel = null,
+                               DbBatchExecutionType executionType = DbBatchExecutionType.Reader)
         {
             if (batchName == null)
             {
@@ -194,6 +215,7 @@ namespace RI.DatabaseManager.Batches.Locators
             this.Scripts.Add(batchName, script);
             this.TransactionRequirements.Add(batchName, transactionRequirement);
             this.IsolationLevels.Add(batchName, isolationLevel);
+            this.ExecutionTypes.Add(batchName, executionType);
         }
 
         /// <summary>
@@ -211,6 +233,10 @@ namespace RI.DatabaseManager.Batches.Locators
         ///     <see cref="DbBatchTransactionRequirement.DontCare" />.
         /// </param>
         /// <param name="isolationLevel"> The optional isolation level requirement specification. Default value is null. </param>
+        /// <param name="executionType">
+        ///     The optional execution type specification. Default value is
+        ///     <see cref="DbBatchExecutionType.Reader" />.
+        /// </param>
         /// <exception cref="ArgumentNullException">
         ///     <paramref name="batchName" />, <paramref name="assembly" />, or
         ///     <paramref name="name" /> is null.
@@ -220,7 +246,8 @@ namespace RI.DatabaseManager.Batches.Locators
                                                    Encoding encoding = null,
                                                    DbBatchTransactionRequirement transactionRequirement =
                                                        DbBatchTransactionRequirement.DontCare,
-                                                   IsolationLevel? isolationLevel = null)
+                                                   IsolationLevel? isolationLevel = null,
+                                                   DbBatchExecutionType executionType = DbBatchExecutionType.Reader)
         {
             if (batchName == null)
             {
@@ -249,7 +276,8 @@ namespace RI.DatabaseManager.Batches.Locators
 
             using (Stream stream = assembly.GetManifestResourceStream(name))
             {
-                this.AddScriptFromStream(batchName, stream, encoding, transactionRequirement, isolationLevel);
+                this.AddScriptFromStream(batchName, stream, encoding, transactionRequirement, isolationLevel,
+                                         executionType);
             }
         }
 
@@ -267,12 +295,17 @@ namespace RI.DatabaseManager.Batches.Locators
         ///     <see cref="DbBatchTransactionRequirement.DontCare" />.
         /// </param>
         /// <param name="isolationLevel"> The optional isolation level requirement specification. Default value is null. </param>
+        /// <param name="executionType">
+        ///     The optional execution type specification. Default value is
+        ///     <see cref="DbBatchExecutionType.Reader" />.
+        /// </param>
         /// <exception cref="ArgumentNullException"> <paramref name="batchName" /> or <paramref name="file" /> is null. </exception>
         /// <exception cref="ArgumentException"> <paramref name="batchName" /> is an empty string. </exception>
         public void AddScriptFromFile (string batchName, string file, Encoding encoding = null,
                                        DbBatchTransactionRequirement transactionRequirement =
                                            DbBatchTransactionRequirement.DontCare,
-                                       IsolationLevel? isolationLevel = null)
+                                       IsolationLevel? isolationLevel = null,
+                                       DbBatchExecutionType executionType = DbBatchExecutionType.Reader)
         {
             if (batchName == null)
             {
@@ -291,7 +324,8 @@ namespace RI.DatabaseManager.Batches.Locators
 
             using (FileStream fs = new FileStream(file, FileMode.Open, FileAccess.Read, FileShare.Read))
             {
-                this.AddScriptFromStream(batchName, fs, encoding, transactionRequirement, isolationLevel);
+                this.AddScriptFromStream(batchName, fs, encoding, transactionRequirement, isolationLevel,
+                                         executionType);
             }
         }
 
@@ -305,12 +339,17 @@ namespace RI.DatabaseManager.Batches.Locators
         ///     <see cref="DbBatchTransactionRequirement.DontCare" />.
         /// </param>
         /// <param name="isolationLevel"> The optional isolation level requirement specification. Default value is null. </param>
+        /// <param name="executionType">
+        ///     The optional execution type specification. Default value is
+        ///     <see cref="DbBatchExecutionType.Reader" />.
+        /// </param>
         /// <exception cref="ArgumentNullException"> <paramref name="batchName" /> or <paramref name="reader" /> is null. </exception>
         /// <exception cref="ArgumentException"> <paramref name="batchName" /> is an empty string. </exception>
         public void AddScriptFromReader (string batchName, TextReader reader,
                                          DbBatchTransactionRequirement transactionRequirement =
                                              DbBatchTransactionRequirement.DontCare,
-                                         IsolationLevel? isolationLevel = null)
+                                         IsolationLevel? isolationLevel = null,
+                                         DbBatchExecutionType executionType = DbBatchExecutionType.Reader)
         {
             if (batchName == null)
             {
@@ -327,7 +366,7 @@ namespace RI.DatabaseManager.Batches.Locators
                 throw new ArgumentNullException(nameof(reader));
             }
 
-            this.AddScript(batchName, reader.ReadToEnd(), transactionRequirement, isolationLevel);
+            this.AddScript(batchName, reader.ReadToEnd(), transactionRequirement, isolationLevel, executionType);
         }
 
         /// <summary>
@@ -344,6 +383,10 @@ namespace RI.DatabaseManager.Batches.Locators
         ///     <see cref="DbBatchTransactionRequirement.DontCare" />.
         /// </param>
         /// <param name="isolationLevel"> The optional isolation level requirement specification. Default value is null. </param>
+        /// <param name="executionType">
+        ///     The optional execution type specification. Default value is
+        ///     <see cref="DbBatchExecutionType.Reader" />.
+        /// </param>
         /// <exception cref="ArgumentNullException"> <paramref name="batchName" /> or <paramref name="stream" /> is null. </exception>
         /// <exception cref="ArgumentException">
         ///     <paramref name="batchName" /> is an empty string or <paramref name="stream" /> is
@@ -352,7 +395,8 @@ namespace RI.DatabaseManager.Batches.Locators
         public void AddScriptFromStream (string batchName, Stream stream, Encoding encoding = null,
                                          DbBatchTransactionRequirement transactionRequirement =
                                              DbBatchTransactionRequirement.DontCare,
-                                         IsolationLevel? isolationLevel = null)
+                                         IsolationLevel? isolationLevel = null,
+                                         DbBatchExecutionType executionType = DbBatchExecutionType.Reader)
         {
             if (batchName == null)
             {
@@ -376,7 +420,7 @@ namespace RI.DatabaseManager.Batches.Locators
 
             using (StreamReader sr = new StreamReader(stream, encoding ?? Encoding.UTF8))
             {
-                this.AddScriptFromReader(batchName, sr, transactionRequirement, isolationLevel);
+                this.AddScriptFromReader(batchName, sr, transactionRequirement, isolationLevel, executionType);
             }
         }
 
@@ -403,6 +447,9 @@ namespace RI.DatabaseManager.Batches.Locators
 
             IsolationLevel? isolationLevel = this.IsolationLevels.ContainsKey(name) ? this.IsolationLevels[name] : null;
 
+            DbBatchExecutionType executionType = this.ExecutionTypes.ContainsKey(name) ? this.ExecutionTypes[name]
+                                                     : DbBatchExecutionType.Reader;
+
             bool found = false;
 
             if (this.Callbacks.ContainsKey(name))
@@ -410,7 +457,7 @@ namespace RI.DatabaseManager.Batches.Locators
                 CallbackBatchCommandDelegate<TConnection, TTransaction, TParameterTypes>
                     callback = this.Callbacks[name];
 
-                batch.AddCode(callback, transactionRequirement, isolationLevel);
+                batch.AddCode(callback, transactionRequirement, isolationLevel, executionType);
                 found = true;
             }
 
@@ -428,6 +475,9 @@ namespace RI.DatabaseManager.Batches.Locators
 
                         IsolationLevel? commandSpecifiedIsolationLevel =
                             this.GetIsolationLevelFromCommandOptions(command);
+
+                        DbBatchExecutionType? commandSpecifiedExecutionType =
+                            this.GetExecutionTypeFromCommandOptions(command);
 
                         if ((commandSpecifiedTransactionRequirement != DbBatchTransactionRequirement.DontCare) &&
                             (transactionRequirement != DbBatchTransactionRequirement.DontCare))
@@ -456,7 +506,12 @@ namespace RI.DatabaseManager.Batches.Locators
                             isolationLevel = commandSpecifiedIsolationLevel;
                         }
 
-                        batch.AddScript(command, transactionRequirement, isolationLevel);
+                        if (commandSpecifiedExecutionType.HasValue)
+                        {
+                            executionType = commandSpecifiedExecutionType.Value;
+                        }
+
+                        batch.AddScript(command, transactionRequirement, isolationLevel, executionType);
                     }
                 }
 

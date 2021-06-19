@@ -17,11 +17,12 @@ namespace RI.DatabaseManager.Builder.Options
         /// </summary>
         /// <param name="transactionRequirement"> The transaction requirement. </param>
         /// <param name="isolationLevel"> The isolation level requirement. </param>
+        /// <param name="executionType"> The optional execution type specification. </param>
         /// <returns>
         ///     The array with the commands of the default cleanup script or null or an empty array if a default cleanup script is
         ///     not available.
         /// </returns>
         string[] GetDefaultCleanupScript (out DbBatchTransactionRequirement transactionRequirement,
-                                          out IsolationLevel? isolationLevel);
+                                          out IsolationLevel? isolationLevel, out DbBatchExecutionType executionType);
     }
 }

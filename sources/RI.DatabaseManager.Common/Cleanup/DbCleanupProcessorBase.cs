@@ -146,10 +146,11 @@ namespace RI.DatabaseManager.Cleanup
             steps = null;
             DbBatchTransactionRequirement transactionRequirement = DbBatchTransactionRequirement.DontCare;
             IsolationLevel? isolationLevel = null;
+            DbBatchExecutionType executionType = DbBatchExecutionType.Reader;
 
             string[] commands =
                 (this.Options as ISupportDefaultDatabaseCleanup)?.GetDefaultCleanupScript(out transactionRequirement,
-                    out isolationLevel);
+                    out isolationLevel, out executionType);
 
             if (commands == null)
             {
@@ -165,7 +166,7 @@ namespace RI.DatabaseManager.Cleanup
 
             foreach (string command in commands)
             {
-                batch.AddScript(command, transactionRequirement, isolationLevel);
+                batch.AddScript(command, transactionRequirement, isolationLevel, executionType);
             }
 
             steps = batch;

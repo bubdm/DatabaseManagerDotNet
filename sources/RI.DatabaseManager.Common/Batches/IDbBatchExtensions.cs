@@ -36,6 +36,10 @@ namespace RI.DatabaseManager.Batches
         ///     <see cref="DbBatchTransactionRequirement.DontCare" />.
         /// </param>
         /// <param name="isolationLevel"> The optional isolation level requirement specification. Default value is null. </param>
+        /// <param name="executionType">
+        ///     The optional execution type specification. Default value is
+        ///     <see cref="DbBatchExecutionType.Reader" />.
+        /// </param>
         /// <returns>
         ///     The index in the list of commands the callback was added.
         /// </returns>
@@ -50,7 +54,7 @@ namespace RI.DatabaseManager.Batches
                 this IDbBatch<TConnection, TTransaction, TParameterTypes> batch,
                 CallbackBatchCommandDelegate<TConnection, TTransaction, TParameterTypes> callback,
                 DbBatchTransactionRequirement transactionRequirement = DbBatchTransactionRequirement.DontCare,
-                IsolationLevel? isolationLevel = null)
+                IsolationLevel? isolationLevel = null, DbBatchExecutionType executionType = DbBatchExecutionType.Reader)
             where TConnection : DbConnection
             where TTransaction : DbTransaction
             where TParameterTypes : Enum
@@ -63,7 +67,7 @@ namespace RI.DatabaseManager.Batches
             CallbackBatchCommand<TConnection, TTransaction, TParameterTypes> command =
                 callback == null ? null
                     : new CallbackBatchCommand<TConnection, TTransaction, TParameterTypes>(callback,
-                        transactionRequirement, isolationLevel);
+                        transactionRequirement, isolationLevel, executionType);
 
             batch.Commands.Add(command);
 
@@ -83,6 +87,10 @@ namespace RI.DatabaseManager.Batches
         ///     <see cref="DbBatchTransactionRequirement.DontCare" />.
         /// </param>
         /// <param name="isolationLevel"> The optional isolation level requirement specification. Default value is null. </param>
+        /// <param name="executionType">
+        ///     The optional execution type specification. Default value is
+        ///     <see cref="DbBatchExecutionType.Reader" />.
+        /// </param>
         /// <returns>
         ///     The index in the list of commands the script was added.
         /// </returns>
@@ -96,7 +104,7 @@ namespace RI.DatabaseManager.Batches
             AddScript <TConnection, TTransaction, TParameterTypes> (
                 this IDbBatch<TConnection, TTransaction, TParameterTypes> batch, string script,
                 DbBatchTransactionRequirement transactionRequirement = DbBatchTransactionRequirement.DontCare,
-                IsolationLevel? isolationLevel = null)
+                IsolationLevel? isolationLevel = null, DbBatchExecutionType executionType = DbBatchExecutionType.Reader)
             where TConnection : DbConnection
             where TTransaction : DbTransaction
             where TParameterTypes : Enum
@@ -109,7 +117,7 @@ namespace RI.DatabaseManager.Batches
             ScriptBatchCommand<TConnection, TTransaction, TParameterTypes> command =
                 script == null ? null
                     : new ScriptBatchCommand<TConnection, TTransaction, TParameterTypes>(script, transactionRequirement,
-                        isolationLevel);
+                        isolationLevel, executionType);
 
             batch.Commands.Add(command);
 
@@ -134,6 +142,10 @@ namespace RI.DatabaseManager.Batches
         ///     <see cref="DbBatchTransactionRequirement.DontCare" />.
         /// </param>
         /// <param name="isolationLevel"> The optional isolation level requirement specification. Default value is null. </param>
+        /// <param name="executionType">
+        ///     The optional execution type specification. Default value is
+        ///     <see cref="DbBatchExecutionType.Reader" />.
+        /// </param>
         /// <returns>
         ///     The index in the list of commands the script was added.
         /// </returns>
@@ -147,7 +159,7 @@ namespace RI.DatabaseManager.Batches
                 this IDbBatch<TConnection, TTransaction, TParameterTypes> batch, Assembly assembly, string name,
                 Encoding encoding = null,
                 DbBatchTransactionRequirement transactionRequirement = DbBatchTransactionRequirement.DontCare,
-                IsolationLevel? isolationLevel = null)
+                IsolationLevel? isolationLevel = null, DbBatchExecutionType executionType = DbBatchExecutionType.Reader)
             where TConnection : DbConnection
             where TTransaction : DbTransaction
             where TParameterTypes : Enum
@@ -174,7 +186,8 @@ namespace RI.DatabaseManager.Batches
 
             using (Stream stream = assembly.GetManifestResourceStream(name))
             {
-                return batch.AddScriptFromStream(stream, encoding, transactionRequirement, isolationLevel);
+                return batch.AddScriptFromStream(stream, encoding, transactionRequirement, isolationLevel,
+                                                 executionType);
             }
         }
 
@@ -195,6 +208,10 @@ namespace RI.DatabaseManager.Batches
         ///     <see cref="DbBatchTransactionRequirement.DontCare" />.
         /// </param>
         /// <param name="isolationLevel"> The optional isolation level requirement specification. Default value is null. </param>
+        /// <param name="executionType">
+        ///     The optional execution type specification. Default value is
+        ///     <see cref="DbBatchExecutionType.Reader" />.
+        /// </param>
         /// <returns>
         ///     The index in the list of commands the script was added.
         /// </returns>
@@ -203,7 +220,7 @@ namespace RI.DatabaseManager.Batches
             AddScriptFromFile <TConnection, TTransaction, TParameterTypes> (
                 this IDbBatch<TConnection, TTransaction, TParameterTypes> batch, string file, Encoding encoding = null,
                 DbBatchTransactionRequirement transactionRequirement = DbBatchTransactionRequirement.DontCare,
-                IsolationLevel? isolationLevel = null)
+                IsolationLevel? isolationLevel = null, DbBatchExecutionType executionType = DbBatchExecutionType.Reader)
             where TConnection : DbConnection
             where TTransaction : DbTransaction
             where TParameterTypes : Enum
@@ -220,7 +237,7 @@ namespace RI.DatabaseManager.Batches
 
             using (FileStream fs = new FileStream(file, FileMode.Open, FileAccess.Read, FileShare.Read))
             {
-                return batch.AddScriptFromStream(fs, encoding, transactionRequirement, isolationLevel);
+                return batch.AddScriptFromStream(fs, encoding, transactionRequirement, isolationLevel, executionType);
             }
         }
 
@@ -237,6 +254,10 @@ namespace RI.DatabaseManager.Batches
         ///     <see cref="DbBatchTransactionRequirement.DontCare" />.
         /// </param>
         /// <param name="isolationLevel"> The optional isolation level requirement specification. Default value is null. </param>
+        /// <param name="executionType">
+        ///     The optional execution type specification. Default value is
+        ///     <see cref="DbBatchExecutionType.Reader" />.
+        /// </param>
         /// <returns>
         ///     The index in the list of commands the script was added.
         /// </returns>
@@ -245,7 +266,7 @@ namespace RI.DatabaseManager.Batches
             AddScriptFromReader <TConnection, TTransaction, TParameterTypes> (
                 this IDbBatch<TConnection, TTransaction, TParameterTypes> batch, TextReader reader,
                 DbBatchTransactionRequirement transactionRequirement = DbBatchTransactionRequirement.DontCare,
-                IsolationLevel? isolationLevel = null)
+                IsolationLevel? isolationLevel = null, DbBatchExecutionType executionType = DbBatchExecutionType.Reader)
             where TConnection : DbConnection
             where TTransaction : DbTransaction
             where TParameterTypes : Enum
@@ -260,7 +281,7 @@ namespace RI.DatabaseManager.Batches
                 throw new ArgumentNullException(nameof(reader));
             }
 
-            return batch.AddScript(reader.ReadToEnd(), transactionRequirement, isolationLevel);
+            return batch.AddScript(reader.ReadToEnd(), transactionRequirement, isolationLevel, executionType);
         }
 
         /// <summary>
@@ -280,6 +301,10 @@ namespace RI.DatabaseManager.Batches
         ///     <see cref="DbBatchTransactionRequirement.DontCare" />.
         /// </param>
         /// <param name="isolationLevel"> The optional isolation level requirement specification. Default value is null. </param>
+        /// <param name="executionType">
+        ///     The optional execution type specification. Default value is
+        ///     <see cref="DbBatchExecutionType.Reader" />.
+        /// </param>
         /// <returns>
         ///     The index in the list of commands the script was added.
         /// </returns>
@@ -290,7 +315,7 @@ namespace RI.DatabaseManager.Batches
                 this IDbBatch<TConnection, TTransaction, TParameterTypes> batch, Stream stream,
                 Encoding encoding = null,
                 DbBatchTransactionRequirement transactionRequirement = DbBatchTransactionRequirement.DontCare,
-                IsolationLevel? isolationLevel = null)
+                IsolationLevel? isolationLevel = null, DbBatchExecutionType executionType = DbBatchExecutionType.Reader)
             where TConnection : DbConnection
             where TTransaction : DbTransaction
             where TParameterTypes : Enum
@@ -312,7 +337,7 @@ namespace RI.DatabaseManager.Batches
 
             using (StreamReader sr = new StreamReader(stream, encoding ?? Encoding.UTF8))
             {
-                return batch.AddScriptFromReader(sr, transactionRequirement, isolationLevel);
+                return batch.AddScriptFromReader(sr, transactionRequirement, isolationLevel, executionType);
             }
         }
 
@@ -366,6 +391,28 @@ namespace RI.DatabaseManager.Batches
             }
 
             return disallowed;
+        }
+
+        /// <summary>
+        ///     Gets all results of the last execution of this batch.
+        /// </summary>
+        /// <param name="batch"> The batch. </param>
+        /// <returns>
+        ///     The list of all results of all executed commands.
+        ///     The list is empty if no command was executed.
+        /// </returns>
+        /// <exception cref="ArgumentNullException"> <paramref name="batch" /> is null. </exception>
+        public static List<object> GetAllResults (this IDbBatch batch)
+        {
+            if (batch == null)
+            {
+                throw new ArgumentNullException(nameof(batch));
+            }
+
+            return batch.Commands.GetAll()
+                        .Where(x => x.WasExecuted)
+                        .SelectMany(x => x.Results)
+                        .ToList();
         }
 
         /// <summary>
@@ -479,6 +526,35 @@ namespace RI.DatabaseManager.Batches
         }
 
         /// <summary>
+        ///     Gets the first result of the last executed command from the last execution of this batch.
+        /// </summary>
+        /// <param name="batch"> The batch. </param>
+        /// <returns>
+        ///     The list of all results of the last command of all executed commands.
+        ///     The list is empty if no command was executed.
+        /// </returns>
+        /// <exception cref="ArgumentNullException"> <paramref name="batch" /> is null. </exception>
+        public static List<object> GetLastResults (this IDbBatch batch)
+        {
+            if (batch == null)
+            {
+                throw new ArgumentNullException(nameof(batch));
+            }
+
+            List<object> results = new List<object>();
+
+            foreach (IDbBatchCommand command in batch.Commands.GetAll())
+            {
+                if (command?.WasExecuted ?? false)
+                {
+                    results.AddRange(command.Results);
+                }
+            }
+
+            return results;
+        }
+
+        /// <summary>
         ///     Determines the required isolation level of a batch.
         /// </summary>
         /// <param name="batch"> The batch. </param>
@@ -522,56 +598,6 @@ namespace RI.DatabaseManager.Batches
             }
 
             return isolationLevel;
-        }
-
-        /// <summary>
-        ///     Gets the result of the last executed command from the last execution of this batch.
-        /// </summary>
-        /// <param name="batch"> The batch. </param>
-        /// <returns>
-        ///     The result of the last executed command or null if no command was executed.
-        /// </returns>
-        /// <exception cref="ArgumentNullException"> <paramref name="batch" /> is null. </exception>
-        public static object GetResult (this IDbBatch batch)
-        {
-            if (batch == null)
-            {
-                throw new ArgumentNullException(nameof(batch));
-            }
-
-            object result = null;
-
-            foreach (IDbBatchCommand command in batch.Commands.GetAll())
-            {
-                if (command?.WasExecuted ?? false)
-                {
-                    result = command.Result;
-                }
-            }
-
-            return result;
-        }
-
-        /// <summary>
-        ///     Gets all results of the last execution of this batch.
-        /// </summary>
-        /// <param name="batch"> The batch. </param>
-        /// <returns>
-        ///     The list of all results of all executed commands.
-        ///     The list is empty if no command was executed.
-        /// </returns>
-        /// <exception cref="ArgumentNullException"> <paramref name="batch" /> is null. </exception>
-        public static List<object> GetResults (this IDbBatch batch)
-        {
-            if (batch == null)
-            {
-                throw new ArgumentNullException(nameof(batch));
-            }
-
-            return batch.Commands.GetAll()
-                        .Where(x => x.WasExecuted)
-                        .Select(x => x.Result)
-                        .ToList();
         }
 
         /// <summary>

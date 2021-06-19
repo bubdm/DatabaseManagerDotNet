@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Data.Common;
 
 
@@ -21,6 +22,7 @@ namespace RI.DatabaseManager.Batches.Commands
     ///     The result of the code callback.
     /// </returns>
     public delegate object CallbackBatchCommandDelegate (DbConnection connection, DbTransaction transaction,
+                                                         DbBatchExecutionType executionType,
                                                          IDbBatchCommandParameterCollection parameters,
                                                          out string error, out Exception exception);
 
@@ -39,10 +41,10 @@ namespace RI.DatabaseManager.Batches.Commands
     ///     available).
     /// </param>
     /// <returns>
-    ///     The result of the code callback.
+    ///     The list of results of the code callback.
     /// </returns>
-    public delegate object CallbackBatchCommandDelegate <TConnection, TTransaction, TParameterTypes> (
-        TConnection connection, TTransaction transaction,
+    public delegate List<object> CallbackBatchCommandDelegate <TConnection, TTransaction, TParameterTypes> (
+        TConnection connection, TTransaction transaction, DbBatchExecutionType executionType,
         IDbBatchCommandParameterCollection<TParameterTypes> parameters, out string error, out Exception exception)
         where TConnection : DbConnection
         where TTransaction : DbTransaction

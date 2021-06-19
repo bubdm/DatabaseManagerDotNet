@@ -37,14 +37,14 @@ namespace RI.DatabaseManager.Tests.SQLite.Manager
 
             Assert.Null(batch.GetError());
             Assert.Null(batch.GetException());
-            Assert.Null(batch.GetResult());
             Assert.Null(batch.GetRequiredIsolationLevel());
+            Assert.Empty(batch.GetLastResults());
 
             Assert.Empty(batch.Commands);
             Assert.Empty(batch.Parameters);
             Assert.Empty(batch.GetErrors());
             Assert.Empty(batch.GetExceptions());
-            Assert.Empty(batch.GetResults());
+            Assert.Empty(batch.GetAllResults());
 
             Assert.False(batch.DisallowsTransaction());
             Assert.False(batch.HasFailed());

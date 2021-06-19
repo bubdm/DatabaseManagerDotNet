@@ -54,7 +54,7 @@ namespace RI.DatabaseManager.Tests.SQLite.Builder
                                                   options.ConnectionString.DataSource = tempFile.FullPath;
                                               }).UseBatches(dictionary =>
                                               {
-                                                  dictionary.AddCode("Test1", (SQLiteConnection connection, SQLiteTransaction transaction, IDbBatchCommandParameterCollection<DbType> parameters, out string error, out Exception exception) =>
+                                                  dictionary.AddCode("Test1", (SQLiteConnection connection, SQLiteTransaction transaction, DbBatchExecutionType executionType, IDbBatchCommandParameterCollection<DbType> parameters, out string error, out Exception exception) =>
                                                   {
                                                       error = null;
                                                       exception = null;

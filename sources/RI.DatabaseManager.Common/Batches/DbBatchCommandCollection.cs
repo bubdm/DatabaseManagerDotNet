@@ -122,7 +122,7 @@ namespace RI.DatabaseManager.Batches
         public IDbBatchCommand<TConnection, TTransaction, TParameterTypes> AddCallback (
             CallbackBatchCommandDelegate<TConnection, TTransaction, TParameterTypes> callback,
             DbBatchTransactionRequirement transactionRequirement = DbBatchTransactionRequirement.DontCare,
-            IsolationLevel? isolationLevel = null)
+            IsolationLevel? isolationLevel = null, DbBatchExecutionType executionType = DbBatchExecutionType.Reader)
         {
             if (callback == null)
             {
@@ -131,7 +131,7 @@ namespace RI.DatabaseManager.Batches
 
             CallbackBatchCommand<TConnection, TTransaction, TParameterTypes> command =
                 new CallbackBatchCommand<TConnection, TTransaction, TParameterTypes>(callback, transactionRequirement,
-                    isolationLevel);
+                    isolationLevel, executionType);
 
             this.InternalList.Add(command);
 
@@ -153,14 +153,13 @@ namespace RI.DatabaseManager.Batches
         }
 
         /// <inheritdoc />
-        public IDbBatchCommand<TConnection, TTransaction, TParameterTypes> AddScript (
-            string script,
+        public IDbBatchCommand<TConnection, TTransaction, TParameterTypes> AddScript (string script,
             DbBatchTransactionRequirement transactionRequirement = DbBatchTransactionRequirement.DontCare,
-            IsolationLevel? isolationLevel = null)
+            IsolationLevel? isolationLevel = null, DbBatchExecutionType executionType = DbBatchExecutionType.Reader)
         {
             ScriptBatchCommand<TConnection, TTransaction, TParameterTypes> command =
                 new ScriptBatchCommand<TConnection, TTransaction, TParameterTypes>(script, transactionRequirement,
-                    isolationLevel);
+                    isolationLevel, executionType);
 
             this.InternalList.Add(command);
 

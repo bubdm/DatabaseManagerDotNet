@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Data;
 using System.Data.SQLite;
 using System.IO;
@@ -170,13 +171,17 @@ namespace RI.DatabaseManager.Manager
         }
 
         /// <inheritdoc />
-        protected override object ExecuteCommandScriptImpl (SQLiteConnection connection, SQLiteTransaction transaction,
-                                                            string script,
-                                                            IDbBatchCommandParameterCollection<DbType> parameters,
-                                                            out string error, out Exception exception)
+        protected override List<object> ExecuteCommandScriptImpl (SQLiteConnection connection,
+                                                                  SQLiteTransaction transaction,
+                                                                  DbBatchExecutionType executionType,
+                                                                  string script,
+                                                                  IDbBatchCommandParameterCollection<DbType> parameters,
+                                                                  out string error, out Exception exception)
         {
             error = null;
             exception = null;
+
+            List<object> results = new List<object>();
 
             this.Log(LogLevel.Debug, "Executing SQLite database processing command:{0}{1}", Environment.NewLine,
                      script);
@@ -190,7 +195,34 @@ namespace RI.DatabaseManager.Manager
                            .Value = parameter.Value;
                 }
 
-                return command.ExecuteScalar();
+                switch (executionType)
+                {
+                    case DbBatchExecutionType.Reader:
+                        SQLiteDataReader reader = command.ExecuteReader(CommandBehavior.Default);
+
+                        while (reader.Read())
+                        {
+                            for (int i1 = 0; i1 < reader.FieldCount; i1++)
+                            {
+                                object readerResult = reader[i1];
+                                results.Add(readerResult);
+                            }
+                        }
+
+                        break;
+
+                    case DbBatchExecutionType.Scalar:
+                        object resultScalar = command.ExecuteScalar();
+                        results.Add(resultScalar);
+                        break;
+
+                    case DbBatchExecutionType.NonQuery:
+                        int resultNonQuery = command.ExecuteNonQuery();
+                        results.Add(resultNonQuery);
+                        break;
+                }
+
+                return results;
             }
         }
 

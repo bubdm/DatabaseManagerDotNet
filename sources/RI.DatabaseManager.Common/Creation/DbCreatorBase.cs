@@ -146,10 +146,11 @@ namespace RI.DatabaseManager.Creation
             steps = null;
             DbBatchTransactionRequirement transactionRequirement = DbBatchTransactionRequirement.DontCare;
             IsolationLevel? isolationLevel = null;
+            DbBatchExecutionType executionType = DbBatchExecutionType.Reader;
 
             string[] commands =
                 (this.Options as ISupportDefaultDatabaseCreation)?.GetDefaultCreationScript(out transactionRequirement,
-                    out isolationLevel);
+                    out isolationLevel, out executionType);
 
             if (commands == null)
             {
@@ -165,7 +166,7 @@ namespace RI.DatabaseManager.Creation
 
             foreach (string command in commands)
             {
-                batch.AddScript(command, transactionRequirement, isolationLevel);
+                batch.AddScript(command, transactionRequirement, isolationLevel, executionType);
             }
 
             steps = batch;

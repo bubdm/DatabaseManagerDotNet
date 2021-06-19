@@ -49,6 +49,10 @@ namespace RI.DatabaseManager.Batches
         ///     <see cref="DbBatchTransactionRequirement.DontCare" />.
         /// </param>
         /// <param name="isolationLevel"> The optional isolation level requirement specification. Default value is null. </param>
+        /// <param name="executionType">
+        ///     The optional execution type specification. Default value is
+        ///     <see cref="DbBatchExecutionType.Reader" />.
+        /// </param>
         /// <returns>
         ///     The created and added command.
         /// </returns>
@@ -56,7 +60,7 @@ namespace RI.DatabaseManager.Batches
         IDbBatchCommand<TConnection, TTransaction, TParameterTypes> AddCallback (
             CallbackBatchCommandDelegate<TConnection, TTransaction, TParameterTypes> callback,
             DbBatchTransactionRequirement transactionRequirement = DbBatchTransactionRequirement.DontCare,
-            IsolationLevel? isolationLevel = null);
+            IsolationLevel? isolationLevel = null, DbBatchExecutionType executionType = DbBatchExecutionType.Reader);
 
         /// <summary>
         ///     Adds multiple commands to the collection.
@@ -78,12 +82,20 @@ namespace RI.DatabaseManager.Batches
         ///     <see cref="DbBatchTransactionRequirement.DontCare" />.
         /// </param>
         /// <param name="isolationLevel"> The optional isolation level requirement specification. Default value is null. </param>
+        /// <param name="executionType">
+        ///     The optional execution type specification. Default value is
+        ///     <see cref="DbBatchExecutionType.Reader" />.
+        /// </param>
         /// <returns>
         ///     The created and added command.
         /// </returns>
-        IDbBatchCommand<TConnection, TTransaction, TParameterTypes> AddScript (
-            string script,
-            DbBatchTransactionRequirement transactionRequirement = DbBatchTransactionRequirement.DontCare,
-            IsolationLevel? isolationLevel = null);
+        IDbBatchCommand<TConnection, TTransaction, TParameterTypes> AddScript (string script,
+                                                                               DbBatchTransactionRequirement
+                                                                                   transactionRequirement =
+                                                                                   DbBatchTransactionRequirement
+                                                                                       .DontCare,
+                                                                               IsolationLevel? isolationLevel = null,
+                                                                               DbBatchExecutionType executionType =
+                                                                                   DbBatchExecutionType.Reader);
     }
 }

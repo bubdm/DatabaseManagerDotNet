@@ -21,11 +21,30 @@ namespace RI.DatabaseManager.Batches.Locators
         #region Instance Properties/Indexer
 
         /// <summary>
+        ///     Gets or sets the execution type.
+        /// </summary>
+        /// <value>
+        ///     The execution type.
+        /// </value>
+        /// <remarks>
+        ///     <para>
+        ///         The default value is <see cref="DbBatchExecutionType.Reader" />.
+        ///     </para>
+        /// </remarks>
+        public DbBatchExecutionType ExecutionType { get; set; } =
+            DbBatchExecutionType.Reader;
+
+        /// <summary>
         ///     Gets or sets the isolation level requirement.
         /// </summary>
         /// <value>
         ///     The isolation level requirement.
         /// </value>
+        /// <remarks>
+        ///     <para>
+        ///         The default value is <see cref="System.Data.IsolationLevel.Unspecified" />.
+        ///     </para>
+        /// </remarks>
         public IsolationLevel IsolationLevel
         {
             get => this.IsolationLevelInternal.GetValueOrDefault(IsolationLevel.Unspecified);
@@ -38,6 +57,11 @@ namespace RI.DatabaseManager.Batches.Locators
         /// <value>
         ///     The name of the batch or null if the batch name is not specified or overriden respectively.
         /// </value>
+        /// <remarks>
+        ///     <para>
+        ///         The default value is null.
+        ///     </para>
+        /// </remarks>
         public string Name { get; set; } = null;
 
         /// <summary>
@@ -46,6 +70,11 @@ namespace RI.DatabaseManager.Batches.Locators
         /// <value>
         ///     The transaction requirement.
         /// </value>
+        /// <remarks>
+        ///     <para>
+        ///         The default value is <see cref="DbBatchTransactionRequirement.DontCare" />.
+        ///     </para>
+        /// </remarks>
         public DbBatchTransactionRequirement TransactionRequirement { get; set; } =
             DbBatchTransactionRequirement.DontCare;
 

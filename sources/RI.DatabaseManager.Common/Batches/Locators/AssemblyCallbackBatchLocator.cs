@@ -125,6 +125,7 @@ namespace RI.DatabaseManager.Batches.Locators
                     string name = type.Name;
                     DbBatchTransactionRequirement transactionRequirement = DbBatchTransactionRequirement.DontCare;
                     IsolationLevel? isolationLevel = null;
+                    DbBatchExecutionType executionType = DbBatchExecutionType.Reader;
                     CallbackBatchAttribute attribute = type.GetCustomAttribute<CallbackBatchAttribute>(true);
 
                     if (attribute != null)
@@ -132,6 +133,7 @@ namespace RI.DatabaseManager.Batches.Locators
                         name = (string.IsNullOrWhiteSpace(attribute.Name) ? null : attribute.Name) ?? name;
                         transactionRequirement = attribute.TransactionRequirement;
                         isolationLevel = attribute.IsolationLevel;
+                        executionType = attribute.ExecutionType;
                     }
 
                     if (!callbackTypes.ContainsKey(name))
@@ -140,7 +142,7 @@ namespace RI.DatabaseManager.Batches.Locators
                     }
 
                     callbackTypes[name]
-                        .Add(new CallbackType(type, name, transactionRequirement, isolationLevel));
+                        .Add(new CallbackType(type, name, transactionRequirement, isolationLevel, executionType));
                 }
             }
 
@@ -173,7 +175,8 @@ namespace RI.DatabaseManager.Batches.Locators
 
             foreach (CallbackType callback in callbackTypes[name])
             {
-                batch.AddCode(callback.CreateCallback(), callback.TransactionRequirement, callback.IsolationLevel);
+                batch.AddCode(callback.CreateCallback(), callback.TransactionRequirement, callback.IsolationLevel,
+                              callback.ExecutionType);
             }
 
             return true;
@@ -199,7 +202,7 @@ namespace RI.DatabaseManager.Batches.Locators
             #region Instance Constructor/Destructor
 
             public CallbackType (Type type, string name, DbBatchTransactionRequirement transactionRequirement,
-                                 IsolationLevel? isolationLevel)
+                                 IsolationLevel? isolationLevel, DbBatchExecutionType executionType)
             {
                 if (type == null)
                 {
@@ -220,6 +223,7 @@ namespace RI.DatabaseManager.Batches.Locators
                 this.Name = name;
                 this.TransactionRequirement = transactionRequirement;
                 this.IsolationLevel = isolationLevel;
+                this.ExecutionType = executionType;
             }
 
             #endregion
@@ -228,6 +232,8 @@ namespace RI.DatabaseManager.Batches.Locators
 
 
             #region Instance Properties/Indexer
+
+            public DbBatchExecutionType ExecutionType { get; }
 
             public IsolationLevel? IsolationLevel { get; }
 
@@ -247,9 +253,11 @@ namespace RI.DatabaseManager.Batches.Locators
             public CallbackBatchCommandDelegate<TConnection, TTransaction, TParameterTypes> CreateCallback () =>
                 this.Target;
 
-            private object Target (TConnection connection, TTransaction transaction,
-                                   IDbBatchCommandParameterCollection<TParameterTypes> parameters, out string error,
-                                   out Exception exception)
+            private List<object> Target (TConnection connection, TTransaction transaction,
+                                         DbBatchExecutionType executionType,
+                                         IDbBatchCommandParameterCollection<TParameterTypes> parameters,
+                                         out string error,
+                                         out Exception exception)
             {
                 ICallbackBatch<TConnection, TTransaction, TParameterTypes> instance =
                     (ICallbackBatch<TConnection, TTransaction, TParameterTypes>)

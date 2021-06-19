@@ -172,10 +172,12 @@ namespace RI.DatabaseManager.Builder.Options
 
         /// <inheritdoc />
         public virtual string[] GetDefaultCleanupScript (out DbBatchTransactionRequirement transactionRequirement,
-                                                         out IsolationLevel? isolationLevel)
+                                                         out IsolationLevel? isolationLevel,
+                                                         out DbBatchExecutionType executionType)
         {
             transactionRequirement = DbBatchTransactionRequirement.DontCare;
             isolationLevel = null;
+            executionType = DbBatchExecutionType.Reader;
             return null;
         }
 
@@ -188,10 +190,12 @@ namespace RI.DatabaseManager.Builder.Options
 
         /// <inheritdoc />
         public virtual string[] GetDefaultCreationScript (out DbBatchTransactionRequirement transactionRequirement,
-                                                          out IsolationLevel? isolationLevel)
+                                                          out IsolationLevel? isolationLevel,
+                                                          out DbBatchExecutionType executionType)
         {
             transactionRequirement = DbBatchTransactionRequirement.DontCare;
             isolationLevel = null;
+            executionType = DbBatchExecutionType.Reader;
             return null;
         }
 
@@ -214,10 +218,12 @@ namespace RI.DatabaseManager.Builder.Options
 
         /// <inheritdoc />
         public virtual string[] GetDefaultVersioningScript (out DbBatchTransactionRequirement transactionRequirement,
-                                                            out IsolationLevel? isolationLevel)
+                                                            out IsolationLevel? isolationLevel,
+                                                            out DbBatchExecutionType executionType)
         {
             transactionRequirement = DbBatchTransactionRequirement.DontCare;
             isolationLevel = null;
+            executionType = DbBatchExecutionType.Reader;
             return null;
         }
 
