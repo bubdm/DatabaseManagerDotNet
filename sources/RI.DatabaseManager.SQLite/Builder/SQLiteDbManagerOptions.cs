@@ -114,10 +114,12 @@ namespace RI.DatabaseManager.Builder
 
         /// <inheritdoc />
         public override string[] GetDefaultCleanupScript (out DbBatchTransactionRequirement transactionRequirement,
-                                                          out IsolationLevel? isolationLevel)
+                                                          out IsolationLevel? isolationLevel,
+                                                          out DbBatchExecutionType executionType)
         {
             transactionRequirement = DbBatchTransactionRequirement.Disallowed;
             isolationLevel = null;
+            executionType = DbBatchExecutionType.Scalar;
 
             return new[]
             {
@@ -129,10 +131,12 @@ namespace RI.DatabaseManager.Builder
 
         /// <inheritdoc />
         public override string[] GetDefaultCreationScript (out DbBatchTransactionRequirement transactionRequirement,
-                                                           out IsolationLevel? isolationLevel)
+                                                           out IsolationLevel? isolationLevel,
+                                                           out DbBatchExecutionType executionType)
         {
             transactionRequirement = DbBatchTransactionRequirement.Disallowed;
             isolationLevel = null;
+            executionType = DbBatchExecutionType.Scalar;
 
             return new[]
             {
@@ -143,10 +147,12 @@ namespace RI.DatabaseManager.Builder
 
         /// <inheritdoc />
         public override string[] GetDefaultVersioningScript (out DbBatchTransactionRequirement transactionRequirement,
-                                                             out IsolationLevel? isolationLevel)
+                                                             out IsolationLevel? isolationLevel,
+                                                             out DbBatchExecutionType executionType)
         {
             transactionRequirement = DbBatchTransactionRequirement.Disallowed;
             isolationLevel = null;
+            executionType = DbBatchExecutionType.Scalar;
 
             return new[]
             {

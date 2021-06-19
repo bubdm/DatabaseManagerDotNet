@@ -30,11 +30,13 @@ namespace RI.DatabaseManager.Builder.Options
         /// </summary>
         /// <param name="transactionRequirement"> The transaction requirement. </param>
         /// <param name="isolationLevel"> The isolation level requirement. </param>
+        /// <param name="executionType"> The optional execution type specification. </param>
         /// <returns>
         ///     The array with the commands of the default versioning script or null or an empty array if a default versioning
         ///     script is not available.
         /// </returns>
         string[] GetDefaultVersioningScript (out DbBatchTransactionRequirement transactionRequirement,
-                                             out IsolationLevel? isolationLevel);
+                                             out IsolationLevel? isolationLevel,
+                                             out DbBatchExecutionType executionType);
     }
 }

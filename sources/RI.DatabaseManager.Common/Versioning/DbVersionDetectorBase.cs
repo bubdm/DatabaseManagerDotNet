@@ -1,8 +1,10 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Data;
 using System.Data.Common;
 using System.Globalization;
+using System.Linq;
 
 using RI.Abstractions.Logging;
 using RI.DatabaseManager.Batches;
@@ -148,10 +150,11 @@ namespace RI.DatabaseManager.Versioning
             steps = null;
             DbBatchTransactionRequirement transactionRequirement = DbBatchTransactionRequirement.DontCare;
             IsolationLevel? isolationLevel = null;
+            DbBatchExecutionType executionType = DbBatchExecutionType.Reader;
 
             string[] commands =
                 (this.Options as ISupportDefaultDatabaseVersioning)
-                ?.GetDefaultVersioningScript(out transactionRequirement, out isolationLevel);
+                ?.GetDefaultVersioningScript(out transactionRequirement, out isolationLevel, out executionType);
 
             if (commands == null)
             {
@@ -167,7 +170,7 @@ namespace RI.DatabaseManager.Versioning
 
             foreach (string command in commands)
             {
-                batch.AddScript(command, transactionRequirement, isolationLevel);
+                batch.AddScript(command, transactionRequirement, isolationLevel, executionType);
             }
 
             steps = batch;
@@ -260,6 +263,17 @@ namespace RI.DatabaseManager.Versioning
                 return int.Parse((string)value, CultureInfo.InvariantCulture);
             }
 
+            if (value is IEnumerable)
+            {
+                object first = ((IEnumerable)value).Cast<object>()
+                                                   .FirstOrDefault();
+
+                if (first != null)
+                {
+                    return this.ToInt32FromResult(first);
+                }
+            }
+
             return null;
         }
 
@@ -316,7 +330,7 @@ namespace RI.DatabaseManager.Versioning
                         return false;
                     }
 
-                    object value = command.GetResult();
+                    object value = command.GetLastResults();
                     version = this.ToInt32FromResult(value) ?? -1;
 
                     if (version <= -1)

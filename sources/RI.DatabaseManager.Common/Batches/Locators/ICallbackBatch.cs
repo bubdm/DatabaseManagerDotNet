@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Data.Common;
 
 
@@ -34,10 +35,10 @@ namespace RI.DatabaseManager.Batches.Locators
         ///     available).
         /// </param>
         /// <returns>
-        ///     The result of the code callback.
+        ///     The results of the code callback.
         /// </returns>
-        object Execute (TConnection connection, TTransaction transaction,
-                        IDbBatchCommandParameterCollection<TParameterTypes> parameters, out string error,
-                        out Exception exception);
+        List<object> Execute (TConnection connection, TTransaction transaction,
+                              IDbBatchCommandParameterCollection<TParameterTypes> parameters, out string error,
+                              out Exception exception);
     }
 }

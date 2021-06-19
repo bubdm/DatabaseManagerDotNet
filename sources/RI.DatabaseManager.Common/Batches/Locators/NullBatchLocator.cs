@@ -34,9 +34,9 @@ namespace RI.DatabaseManager.Batches.Locators
         #region Interface: IDbBatchLocator<TConnection,TTransaction,TParameterTypes>
 
         /// <inheritdoc />
-        public IDbBatch<TConnection, TTransaction, TParameterTypes> GetBatch (
-            string name, string commandSeparator,
-            Func<IDbBatch<TConnection, TTransaction, TParameterTypes>> batchCreator) =>
+        public IDbBatch<TConnection, TTransaction, TParameterTypes> GetBatch (string name, string commandSeparator,
+                                                                              Func<IDbBatch<TConnection, TTransaction,
+                                                                                  TParameterTypes>> batchCreator) =>
             null;
 
         #endregion

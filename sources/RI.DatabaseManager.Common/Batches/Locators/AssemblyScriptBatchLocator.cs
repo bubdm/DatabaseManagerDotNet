@@ -261,7 +261,10 @@ namespace RI.DatabaseManager.Batches.Locators
 
                                 IsolationLevel? isolationLevel = this.GetIsolationLevelFromCommandOptions(command);
 
-                                batch.AddScript(command, transactionRequirement, isolationLevel);
+                                DbBatchExecutionType? executionType = this.GetExecutionTypeFromCommandOptions(command);
+
+                                batch.AddScript(command, transactionRequirement, isolationLevel,
+                                                executionType.GetValueOrDefault(DbBatchExecutionType.Reader));
                             }
                         }
 

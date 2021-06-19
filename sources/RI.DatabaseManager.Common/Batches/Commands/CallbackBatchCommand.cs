@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Data;
 using System.Data.Common;
 
@@ -32,19 +33,26 @@ namespace RI.DatabaseManager.Batches.Commands
         ///     <see cref="DbBatchTransactionRequirement.DontCare" />.
         /// </param>
         /// <param name="isolationLevel"> The optional isolation level requirement specification. Default value is null. </param>
+        /// <param name="executionType">
+        ///     The optional execution type specification. Default value is
+        ///     <see cref="DbBatchExecutionType.Reader" />.
+        /// </param>
         /// <exception cref="ArgumentNullException"> <paramref name="callback" /> is null. </exception>
         public CallbackBatchCommand (CallbackBatchCommandDelegate<TConnection, TTransaction, TParameterTypes> callback,
                                      DbBatchTransactionRequirement transactionRequirement =
-                                         DbBatchTransactionRequirement.DontCare, IsolationLevel? isolationLevel = null)
+                                         DbBatchTransactionRequirement.DontCare, IsolationLevel? isolationLevel = null,
+                                     DbBatchExecutionType executionType = DbBatchExecutionType.Reader)
         {
             if (callback == null)
             {
                 throw new ArgumentNullException(nameof(callback));
             }
 
+            this.Results = new List<object>();
             this.Code = callback;
             this.TransactionRequirement = transactionRequirement;
             this.IsolationLevel = isolationLevel;
+            this.ExecutionType = executionType;
         }
 
         #endregion
@@ -59,9 +67,9 @@ namespace RI.DatabaseManager.Batches.Commands
         {
             CallbackBatchCommand<TConnection, TTransaction, TParameterTypes> clone =
                 new CallbackBatchCommand<TConnection, TTransaction, TParameterTypes>(this.Code,
-                    this.TransactionRequirement, this.IsolationLevel);
+                    this.TransactionRequirement, this.IsolationLevel, this.ExecutionType);
 
-            clone.Result = this.Result;
+            clone.Results.AddRange(this.Results);
             clone.Exception = this.Exception;
             clone.Error = this.Error;
             clone.WasExecuted = this.WasExecuted;
@@ -75,9 +83,10 @@ namespace RI.DatabaseManager.Batches.Commands
         }
 
         private object CodeExecution (DbConnection connection, DbTransaction transaction,
+                                      DbBatchExecutionType executionType,
                                       IDbBatchCommandParameterCollection parameters, out string error,
                                       out Exception exception) =>
-            this.Code((TConnection)connection, (TTransaction)transaction,
+            this.Code((TConnection)connection, (TTransaction)transaction, executionType,
                       (IDbBatchCommandParameterCollection<TParameterTypes>)parameters, out error, out exception);
 
         #endregion
@@ -107,13 +116,16 @@ namespace RI.DatabaseManager.Batches.Commands
         public Exception Exception { get; set; }
 
         /// <inheritdoc />
+        public DbBatchExecutionType ExecutionType { get; }
+
+        /// <inheritdoc />
         public IsolationLevel? IsolationLevel { get; }
 
         /// <inheritdoc />
         IDbBatchCommandParameterCollection IDbBatchCommand.Parameters => this.Parameters;
 
         /// <inheritdoc />
-        public object Result { get; set; }
+        public List<object> Results { get; }
 
         /// <inheritdoc />
         string IDbBatchCommand.Script => null;

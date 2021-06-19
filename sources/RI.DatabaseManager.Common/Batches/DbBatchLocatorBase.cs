@@ -194,6 +194,58 @@ namespace RI.DatabaseManager.Batches
         protected virtual StringComparer DefaultNameComparer => StringComparer.InvariantCultureIgnoreCase;
 
         /// <summary>
+        ///     Gets the execution type of a command based on its options.
+        /// </summary>
+        /// <param name="command"> The command. </param>
+        /// <returns>
+        ///     One of the <see cref="DbBatchTransactionRequirement" /> values if the option <c> TransactionRequirement </c> was
+        ///     specified and has a valid value, <see cref="DbBatchTransactionRequirement.DontCare" /> otherwise.
+        ///     If command is null or empty, <see cref="DbBatchTransactionRequirement.DontCare" /> is returned.
+        /// </returns>
+        protected virtual DbBatchExecutionType? GetExecutionTypeFromCommandOptions (string command)
+        {
+            if (string.IsNullOrWhiteSpace(command))
+            {
+                return null;
+            }
+
+            Dictionary<string, string> options = this.GetOptionsFromCommand(command);
+
+            return this.GetExecutionTypeFromCommandOptions(options);
+        }
+
+        /// <summary>
+        ///     Gets the execution type of a command based on its options.
+        /// </summary>
+        /// <param name="options"> The already extracted command options (e.g. by <see cref="GetOptionsFromCommand" />). </param>
+        /// <returns>
+        ///     One of the <see cref="DbBatchTransactionRequirement" /> values if the option <c> TransactionRequirement </c> was
+        ///     specified and has a valid value, <see cref="DbBatchTransactionRequirement.DontCare" /> otherwise.
+        ///     If command is null or empty, <see cref="DbBatchTransactionRequirement.DontCare" /> is returned.
+        /// </returns>
+        protected virtual DbBatchExecutionType? GetExecutionTypeFromCommandOptions (IDictionary<string, string> options)
+        {
+            if (options == null)
+            {
+                return null;
+            }
+
+            const string key = "ExecutionType";
+
+            if (options.ContainsKey(key))
+            {
+                string value = options[key];
+
+                if (Enum.TryParse(value, true, out DbBatchExecutionType tr))
+                {
+                    return tr;
+                }
+            }
+
+            return null;
+        }
+
+        /// <summary>
         ///     Gets the isolation level of a command based on its options.
         /// </summary>
         /// <param name="command"> The command. </param>

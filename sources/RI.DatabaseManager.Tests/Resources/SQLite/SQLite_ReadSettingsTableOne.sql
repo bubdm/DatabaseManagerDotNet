@@ -1,0 +1,1 @@
+﻿SELECT [Value] FROM [_DatabaseSettings] WHERE [Name] = 'TestValue';

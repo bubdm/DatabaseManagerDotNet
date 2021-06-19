@@ -72,7 +72,7 @@ namespace RI.DatabaseManager.Batches
                 throw new ArgumentNullException(nameof(command));
             }
 
-            command.Result = null;
+            command.Results.Clear();
             command.Exception = null;
             command.Error = null;
             command.WasExecuted = false;

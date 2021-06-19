@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Data;
 
 using Microsoft.Data.SqlClient;
@@ -110,13 +111,17 @@ namespace RI.DatabaseManager.Manager
             this.CreateInternalTransaction(null, isolationLevel);
 
         /// <inheritdoc />
-        protected override object ExecuteCommandScriptImpl (SqlConnection connection, SqlTransaction transaction,
-                                                            string script,
-                                                            IDbBatchCommandParameterCollection<SqlDbType> parameters,
-                                                            out string error, out Exception exception)
+        protected override List<object> ExecuteCommandScriptImpl (SqlConnection connection, SqlTransaction transaction,
+                                                                  DbBatchExecutionType executionType,
+                                                                  string script,
+                                                                  IDbBatchCommandParameterCollection<SqlDbType>
+                                                                      parameters,
+                                                                  out string error, out Exception exception)
         {
             error = null;
             exception = null;
+
+            List<object> results = new List<object>();
 
             this.Log(LogLevel.Debug, "Executing SQL Server database processing command script:{0}{1}",
                      Environment.NewLine, script);
@@ -130,7 +135,34 @@ namespace RI.DatabaseManager.Manager
                            .Value = parameter.Value;
                 }
 
-                return command.ExecuteScalar();
+                switch (executionType)
+                {
+                    case DbBatchExecutionType.Reader:
+                        SqlDataReader reader = command.ExecuteReader(CommandBehavior.Default);
+
+                        while (reader.Read())
+                        {
+                            for (int i1 = 0; i1 < reader.FieldCount; i1++)
+                            {
+                                object readerResult = reader[i1];
+                                results.Add(readerResult);
+                            }
+                        }
+
+                        break;
+
+                    case DbBatchExecutionType.Scalar:
+                        object resultScalar = command.ExecuteScalar();
+                        results.Add(resultScalar);
+                        break;
+
+                    case DbBatchExecutionType.NonQuery:
+                        int resultNonQuery = command.ExecuteNonQuery();
+                        results.Add(resultNonQuery);
+                        break;
+                }
+
+                return results;
             }
         }
 
