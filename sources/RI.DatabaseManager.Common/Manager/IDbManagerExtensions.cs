@@ -251,6 +251,59 @@ namespace RI.DatabaseManager.Manager
         }
 
         /// <summary>
+        /// </summary>
+        /// <typeparam name="TConnection"> The database connection type. </typeparam>
+        /// <typeparam name="TTransaction"> The database transaction type. </typeparam>
+        /// <typeparam name="TParameterTypes"> The database command parameter type. </typeparam>
+        /// <param name="manager"> The used database manager. </param>
+        /// <param name="sql"> The SQL script to run. </param>
+        /// <param name="executionType">
+        ///     Specifies the execution type of the script. Default value is
+        ///     <see cref="DbBatchExecutionType.Reader" />.
+        /// </param>
+        /// <param name="transaction"> Specifies whether the script is executed within a transaction. Default value is true. </param>
+        /// <param name="readOnly"> Specifies whether the script is executed as read-only. Default value is false. </param>
+        /// <param name="detectVersionAfterExecution">
+        ///     Specifies whether the database state and version should be determined again
+        ///     after the script is executed. Default value is false.
+        /// </param>
+        /// <param name="isolationLevel"> Specifies the isolation level the script is run under. Default value is null. </param>
+        /// <returns>
+        ///     The executed batch, providing the results of the script.
+        /// </returns>
+        /// <exception cref="ArgumentNullException"> <paramref name="manager" /> is null </exception>
+        /// <exception cref="InvalidOperationException"> The database manager is not initialized. </exception>
+        /// <exception cref="NotSupportedException">
+        ///     <paramref name="readOnly" /> is true but read-only connections are not
+        ///     supported.
+        /// </exception>
+        public static IDbBatch<TConnection, TTransaction, TParameterTypes>
+            ExecuteSql <TConnection, TTransaction, TParameterTypes> (
+                this IDbManager<TConnection, TTransaction, TParameterTypes> manager, string sql,
+                DbBatchExecutionType executionType = DbBatchExecutionType.Reader, bool transaction = true,
+                bool readOnly = false, bool detectVersionAfterExecution = false,
+                IsolationLevel? isolationLevel = null)
+            where TConnection : DbConnection
+            where TTransaction : DbTransaction
+            where TParameterTypes : Enum
+        {
+            if (manager == null)
+            {
+                throw new ArgumentNullException(nameof(manager));
+            }
+
+            IDbBatch<TConnection, TTransaction, TParameterTypes> batch = manager.CreateBatch();
+
+            batch.AddScript(sql,
+                            transaction ? DbBatchTransactionRequirement.Required
+                                : DbBatchTransactionRequirement.Disallowed, isolationLevel, executionType);
+
+            manager.ExecuteBatch(batch, readOnly, detectVersionAfterExecution);
+
+            return batch;
+        }
+
+        /// <summary>
         ///     Gets a batch (for later execution) of a specified name using the configured <see cref="IDbBatchLocator" />.
         /// </summary>
         /// <param name="manager"> The used database manager. </param>

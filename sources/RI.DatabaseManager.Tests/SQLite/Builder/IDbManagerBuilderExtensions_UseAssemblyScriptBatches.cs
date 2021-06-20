@@ -37,10 +37,13 @@ namespace RI.DatabaseManager.Tests.SQLite.Builder
 
             Assert.NotNull(batch);
             Assert.Equal(2, batch.Commands.Count);
+
             Assert.Null(batch.Commands[0].Code);
             Assert.NotNull(batch.Commands[0].Script);
             Assert.NotEmpty(batch.Commands[0].Script);
             Assert.Equal("Command1", batch.Commands[0].Script);
+
+            Assert.Null(batch.Commands[1].Code);
             Assert.NotNull(batch.Commands[1].Script);
             Assert.NotEmpty(batch.Commands[1].Script);
             Assert.Equal("Command2", batch.Commands[1].Script);

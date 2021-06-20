@@ -8,6 +8,8 @@
 
   <ItemGroup>
     <None Remove="Resources\SQLite\SQLite_CreateSettingsTable.sql" />
+    <None Remove="Resources\SQLite\SQLite_ReadMultipleExecutionTypes.sql" />
+    <None Remove="Resources\SQLite\SQLite_ReadSettingsTableMultiple.sql" />
     <None Remove="Resources\SQLite\SQLite_ReadSettingsTableOne.sql" />
     <None Remove="Resources\TestScript1.sql" />
     <None Remove="Resources\TestScript2.sql" />
@@ -15,6 +17,8 @@
 
   <ItemGroup>
     <EmbeddedResource Include="Resources\SQLite\SQLite_CreateSettingsTable.sql" />
+    <EmbeddedResource Include="Resources\SQLite\SQLite_ReadMultipleExecutionTypes.sql" />
+    <EmbeddedResource Include="Resources\SQLite\SQLite_ReadSettingsTableMultiple.sql" />
     <EmbeddedResource Include="Resources\SQLite\SQLite_ReadSettingsTableOne.sql" />
     <EmbeddedResource Include="Resources\TestScript2.sql" />
     <EmbeddedResource Include="Resources\TestScript1.sql" />

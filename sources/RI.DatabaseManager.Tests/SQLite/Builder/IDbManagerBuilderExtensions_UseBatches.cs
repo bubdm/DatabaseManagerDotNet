@@ -74,6 +74,7 @@ namespace RI.DatabaseManager.Tests.SQLite.Builder
 
             // Assert
 
+            Assert.Equal(3, names.Count);
             Assert.Contains("Test1", names);
             Assert.Contains("Test2", names);
             Assert.Contains("Test3", names);

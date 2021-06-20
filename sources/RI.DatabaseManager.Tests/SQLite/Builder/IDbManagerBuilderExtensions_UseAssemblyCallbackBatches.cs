@@ -49,11 +49,13 @@ namespace RI.DatabaseManager.Tests.SQLite.Builder
             Assert.NotNull(batch1.Commands[0].Code);
             Assert.Null(batch1.Commands[0].IsolationLevel);
             Assert.Equal(DbBatchTransactionRequirement.DontCare, batch1.Commands[0].TransactionRequirement);
+            Assert.Equal(DbBatchExecutionType.Reader, batch1.Commands[0].ExecutionType);
 
 
             Assert.NotNull(batch2.Commands[0].Code);
             Assert.Equal(IsolationLevel.Chaos, batch2.Commands[0].IsolationLevel);
             Assert.Equal(DbBatchTransactionRequirement.Disallowed, batch2.Commands[0].TransactionRequirement);
+            Assert.Equal(DbBatchExecutionType.Reader, batch2.Commands[0].ExecutionType);
         }
     }
 }

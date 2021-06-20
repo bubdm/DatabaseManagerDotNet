@@ -124,7 +124,8 @@ namespace RI.DatabaseManager.Batches
         ///     <note type="important">
         ///         The options format must be a regular expression which provides two named captures: <c> key </c> and
         ///         <c> value </c>. Those captures are used to extract key/value pairs from the script itself (e.g. SQL code).
-        ///         Using the default value, <c> /* DBMANAGER:MyValue=123 </c> would provide a key <c> MyValue </c> with the value
+        ///         Using the default value, <c> /* DBMANAGER:MyValue=123 */ </c> would provide a key <c> MyValue </c> with the
+        ///         value
         ///         <c> 123 </c>.
         ///     </note>
         /// </remarks>

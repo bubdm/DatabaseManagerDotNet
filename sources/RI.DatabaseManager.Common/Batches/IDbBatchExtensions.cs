@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Data;
 using System.Data.Common;
+using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Reflection;
@@ -552,6 +553,145 @@ namespace RI.DatabaseManager.Batches
             }
 
             return results;
+        }
+
+        /// <summary>
+        ///     Gets the first column of the first row -or- the scalar value -or- the number of affected rows of the last executed
+        ///     command from the last execution of this batch.
+        /// </summary>
+        /// <param name="batch"> The batch. </param>
+        /// <returns>
+        ///     The value from the last executed command or null if none is available or no command was executed.
+        /// </returns>
+        /// <remarks>
+        ///     <para>
+        ///         Which kind of value (first column of first row, scalar, number of affected rows) is returned is determined by
+        ///         the last commands execution type (<see cref="IDbBatchCommand.ExecutionType" />).
+        ///     </para>
+        /// </remarks>
+        /// <exception cref="ArgumentNullException"> <paramref name="batch" /> is null. </exception>
+        public static object GetLastScalar (this IDbBatch batch)
+        {
+            if (batch == null)
+            {
+                throw new ArgumentNullException(nameof(batch));
+            }
+
+            IList<IDbBatchCommand> commands = batch.Commands.GetAll();
+
+            if (commands.Count == 0)
+            {
+                return null;
+            }
+
+            for (int i1 = commands.Count - 1; i1 >= 0; i1--)
+            {
+                IDbBatchCommand command = commands[i1];
+
+                if (command?.WasExecuted ?? false)
+                {
+                    if (command.Results.Count > 0)
+                    {
+                        return command.Results[command.Results.Count - 1];
+                    }
+                }
+            }
+
+            return null;
+        }
+
+        /// <summary>
+        ///     Gets the first column of the first row -or- the scalar value -or- the number of affected rows of the last executed
+        ///     command from the last execution of this batch.
+        /// </summary>
+        /// <typeparam name="T"> The type to which the scalar value shall be converted. </typeparam>
+        /// <param name="batch"> The batch. </param>
+        /// <returns>
+        ///     The value from the last executed command or the default value of <typeparamref name="T" /> if none is available or
+        ///     no command was executed.
+        /// </returns>
+        /// <remarks>
+        ///     <para>
+        ///         Which kind of value (first column of first row, scalar, number of affected rows) is returned is determined by
+        ///         the last commands execution type (<see cref="IDbBatchCommand.ExecutionType" />).
+        ///     </para>
+        /// </remarks>
+        /// <exception cref="ArgumentNullException"> <paramref name="batch" /> is null. </exception>
+        /// <exception cref="InvalidCastException"> The value cannot be converted to <typeparamref name="T" />. </exception>
+        public static T GetLastScalar <T> (this IDbBatch batch)
+        {
+            if (batch == null)
+            {
+                throw new ArgumentNullException(nameof(batch));
+            }
+
+            object value = batch.GetLastScalar(typeof(T));
+
+            if (value == null)
+            {
+                return default;
+            }
+
+            return (T)value;
+        }
+
+        /// <summary>
+        ///     Gets the first column of the first row -or- the scalar value -or- the number of affected rows of the last executed
+        ///     command from the last execution of this batch.
+        /// </summary>
+        /// <param name="batch"> The batch. </param>
+        /// <param name="type"> The type to which the scalar value shall be converted. </param>
+        /// <returns>
+        ///     The converted value from the last executed command or null if none is available or no command was executed.
+        /// </returns>
+        /// <remarks>
+        ///     <para>
+        ///         Which kind of value (first column of first row, scalar, number of affected rows) is returned is determined by
+        ///         the last commands execution type (<see cref="IDbBatchCommand.ExecutionType" />).
+        ///     </para>
+        /// </remarks>
+        /// <exception cref="ArgumentNullException"> <paramref name="batch" /> or <paramref name="type" /> is null. </exception>
+        /// <exception cref="InvalidCastException"> The value cannot be converted to <paramref name="type" />. </exception>
+        public static object GetLastScalar (this IDbBatch batch, Type type)
+        {
+            if (batch == null)
+            {
+                throw new ArgumentNullException(nameof(batch));
+            }
+
+            if (type == null)
+            {
+                throw new ArgumentNullException(nameof(type));
+            }
+
+            object value = batch.GetLastScalar();
+
+            if (value == null)
+            {
+                return null;
+            }
+
+            object converted;
+
+            try
+            {
+                converted = Convert.ChangeType(value, type, CultureInfo.InvariantCulture);
+            }
+            catch
+            {
+                try
+                {
+                    converted = Convert.ChangeType(value, type);
+                }
+                catch (Exception e2)
+                {
+                    throw new
+                        InvalidCastException($"The value cannot be converted from {value.GetType().Name} to {type.Name}",
+                                             e2);
+                }
+            }
+
+            return converted;
         }
 
         /// <summary>

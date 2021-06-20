@@ -7,7 +7,7 @@
 
 GO
 
-INSERT INTO [_DatabaseSettings] ([Name], [Value]) VALUES ('Database.Version', '0');
+INSERT INTO [_DatabaseSettings] ([Name], [Value]) VALUES ('Database.Version', '123');
 INSERT INTO [_DatabaseSettings] ([Name], [Value]) VALUES ('TestValue', 'xyz');
 
 GO
